@@ -6794,10 +6794,11 @@
             // 必须经代理转发 —— 见下面的 CF_PROXY。
             const YRC_ORIGIN = 'https://music.163.com/api/song/lyric?os=pc&lv=-1&yv=-1&ytv=-1&id=';
 
-            // ===== 自建代理（唯一的正式通道）=====
+            // ===== 自建代理（唯一的通道）=====
             //
             // 公共 CORS 代理没有一家靠得住，2026-09 实测 12 个全部阵亡，
-            // 死法见下方 CORS_PROXIES 的说明。所以这个播放器改用自建代理。
+            // 遂整层弃用（死因清单见下方 fetchViaProxies 上方注释）。
+            // 这个播放器现在只认自建代理，不做任何降级。
             //
             // 部署在 Cloudflare Pages（不是 Worker）—— 这点很关键：
             // *.workers.dev 在国内被 DNS 污染（解析到 2a03:2880:...:face:b00c
@@ -6818,78 +6819,47 @@
             // 换密钥：改 GitHub 上 functions/api.js 里的 AUTH_KEY，重新部署即可。
             const CF_PROXY_KEY = 'mky_71f344d993a2';
 
-            // ===== 公共代理兜底（基本指望不上，只求"聊胜于无"）=====
+            // 【为什么不留公共代理兜底】
             //
-            // 留这两个不是为了可靠性 —— 它们已经不可靠了 —— 而是因为
-            // 自建代理偶尔也会遇到 Cloudflare 侧的瞬时故障，那时有个
-            // 慢速兜底总比直接报错强。
+            // 历史上这里有一层"自建失败 → 逐个试公共代理"的降级，
+            // 2026-09 已整层删除。理由：
             //
-            // 【实测记录】2026-09 逐个验过，全部失败：
-            //   corsfix    要 token。不带 token 时 file:// 下 400 invalid_origin
-            //              （file:// 发不出 Origin 头，这是死结），
-            //              https 域名下 403。两条路都堵死。
-            //   cors.sh    TypeError
-            //   cors.x2u.in TypeError（文档说 100/小时，实际连不上）
-            //   thingproxy TypeError
-            //   whateverorigin  HTTP 200，但返回的是它自己的 HTML 主页 —— 不是转发结果
-            //   test.cors.workers.dev  必超时（workers.dev 被污染的又一例证）
-            //   cors.eu.org / codetabs / corsproxy.io  域名解析失败 / 超时 / 401
-            //   cors.lol   曾经唯一能用的（1.2~2.4s），现在按 IP 限流，
-            //              连续几首就 Rate limit exceeded。表现为约 150ms 内
-            //              直接 TypeError: Failed to fetch —— 长得像"挂了"，
-            //              其实是限流，别误判。
-            //   allorigins 极慢（探活 httpbin 就要 15s），/raw 时好时坏，
-            //              只有 /get 勉强可用，还多包一层 {contents:"..."}。
+            //   1. 全死了。corsfix（要 token，且 file:// 发不出 Origin，死结）、
+            //      cors.sh / cors.x2u.in / thingproxy（TypeError）、
+            //      whateverorigin（返回自己的 HTML）、test.cors.workers.dev
+            //      （超时，workers.dev 被污染）、cors.eu.org / codetabs /
+            //      corsproxy.io（解析失败 / 超时 / 401）、cors.lol（按 IP 限流）、
+            //      allorigins（探活就要 15s，还多包一层 {contents:"..."}）。
+            //      留着它们等于留一个"必然失败但会先浪费 5 秒"的等待。
+            //   2. 也不需要。node.api.xfabe.com 本身就带
+            //      access-control-allow-origin: *，YRC 有它自己的直连通道；
+            //      歌词渲染侧还有"匀速滚动"兜底 —— 拿不到逐字歌词也能正常滚。
+            //      降级链路早已冗余，公共代理这一段是纯负债。
+            //   3. 少一层 = 少一类误判。公共代理失败的样子五花八门
+            //      （TypeError / 超时 / 返回 HTML），混在日志里会掩盖
+            //      自建代理真正的故障原因。
             //
-            // cors.lol 的地址是 `api.cors.lol?url=` —— **没有斜杠**。
-            // 写成 `api.cors.lol/?url=` 会 net::ERR_FAILED（该路径不存在），
-            // 这个失败长得很像"代理挂了"，极易误判成对方服务不可用。
-            //
-            // 【超时为什么是 2500ms】这两个已经形同虚设，让用户为它们
-            // 干等没有意义。cors.lol 被限流时是"秒失败"，2500ms 足够快；
-            // allorigins 那种"7 秒才回"的慢，现在不值得为它放宽 ——
-            // 有那 7 秒，自建代理早该成功了。全败也就 5 秒出结果。
-            const PROXY_TIMEOUT = 2500;
-            const CORS_PROXIES = [
-                u => 'https://api.cors.lol?url=' + encodeURIComponent(u),
-                u => 'https://api.allorigins.win/get?url=' + encodeURIComponent(u)
-            ];
+            // 现在只有一条路：自建代理。它挂了就直接报错，干净利落。
+            const FETCH_TIMEOUT = 12000;
 
-            // 取歌词：先走自建代理，失败再逐个试公共代理。
+            // 取自建代理。唯一的通道，失败即失败。
             //
-            // 【为什么是串行而不是并发竞速】
-            // 并发看着优雅（取最快成功者），但会把同一批请求在同一瞬间
-            // 轰给所有代理 —— 免费代理大多按 IP 限流，这一下正好把自己打限流。
-            // 尤其我们还并行发着"行级 + 逐字"两路。串行后第一个成功就停，
-            // 请求量降到 1~2 个，反而更稳。
+            // 【超时 12000ms 是怎么来的】本地 file:// 直连很快，
+            // 但在国内网络下访问 pages.dev 偶尔要绕，加上代理侧还要
+            // 回源 music.163.com，12 秒是给"最慢但能成功"留的余量。
+            // 再长就没意义了 —— 用户已经等不及，重开一次更快。
             async function fetchViaProxies(target) {
-                const failures = [];
-
                 try {
                     return await fetchOne(
                         u => CF_PROXY + '?key=' + encodeURIComponent(CF_PROXY_KEY) +
                              '&url=' + encodeURIComponent(u),
-                        target, 12000);
+                        target, FETCH_TIMEOUT);
                 } catch (e) {
-                    // 自建代理是正式通道，它挂了值得记一笔
-                    failures.push('自建代理 ' + e.message);
-                    console.warn('自建歌词代理失败，降级到公共代理:', e.message);
+                    throw new Error('歌词代理不可用（' + e.message + '）');
                 }
-
-                for (let i = 0; i < CORS_PROXIES.length; i++) {
-                    try {
-                        return await fetchOne(CORS_PROXIES[i], target, PROXY_TIMEOUT);
-                    } catch (e) {
-                        // 记下每一条的真实死因。别用 `catch (_) {}` 整个吞掉 ——
-                        // 那样"超时"和"域名解析失败"会压成同一句话，
-                        // 排查时完全看不出该换哪个代理。
-                        failures.push('代理' + (i + 1) + ' ' + e.message);
-                    }
-                }
-                throw new Error('所有歌词代理均不可用（' + failures.join('；') + '）');
             }
 
-            // 走单个代理取一次。失败就把原因抛得足够具体。
+            // 走代理取一次。失败就把原因抛得足够具体。
             async function fetchOne(buildUrl, target, timeoutMs) {
                 const ctrl = new AbortController();
                 const timer = setTimeout(() => ctrl.abort(), timeoutMs);
@@ -6905,11 +6875,10 @@
                         // （whateverorigin 就是这种），不是网络问题。
                         throw new Error('返回非 JSON（疑似代理异常页）');
                     }
-                    // allorigins 的 /get 会把响应包成 `{contents: "<json 字符串>"}`。
-                    // 必须在**成功路径**上解包：外层是合法 JSON，JSON.parse
-                    // 不会抛错，所以放进 catch 里的解包逻辑永远轮不到执行，
-                    // 最后会以"code 是 undefined"的形式失败，误导性极强。
-                    if (data && typeof data.contents === 'string') data = JSON.parse(data.contents);
+                    // 自建代理是原样转发二进制/文本，不做任何封装，
+                    // 所以这里只需 JSON.parse 一次即可拿到接口原始结构。
+                    // （历史注：以前要给 allorigins 的 /get 解包
+                    //  {contents:"..."}，该代理已弃用，解包逻辑一并删除。）
                     return data;
                 } catch (e) {
                     const reason = e.name === 'AbortError' ? '超时 ' + timeoutMs + 'ms' : e.message;
@@ -6970,8 +6939,8 @@
             // 带超时地取逐字歌词。任何一步失败都抛错，由调用方降级。
             // 译文（ytlrc）就在同一个响应里，顺手一起拿走 —— 不额外发请求。
             //
-            // 超时不再写在这里：各家代理该等多久差别很大，
-            // 由 fetchViaProxies 按代理分别决定（见那边的说明）。
+            // 超时统一在 fetchViaProxies 里定（见那边的说明），
+            // 这里不必重复关心。
             async function fetchYRC(id) {
                 const data = await fetchViaProxies(YRC_ORIGIN + encodeURIComponent(id));
                 if (data.code !== 200) throw new Error(data.msg || '接口返回异常');
