@@ -2198,11 +2198,13 @@
             -webkit-overflow-scrolling: touch;
             scroll-behavior: auto;
             overflow-anchor: none;
-            /* 上下渐隐，避免歌词硬切边 */
+            /* 上下渐隐，避免歌词硬切边。
+               18%/82% 而不是 12%/88%：渐变带要有"两行多"的宽度才看得出来，
+               太窄等于没做（尤其底部还会被浮动播放器压住一部分）。 */
             mask-image: linear-gradient(to bottom,
-                transparent 0, #000 12%, #000 88%, transparent 100%);
+                transparent 0, #000 18%, #000 82%, transparent 100%);
             -webkit-mask-image: linear-gradient(to bottom,
-                transparent 0, #000 12%, #000 88%, transparent 100%);
+                transparent 0, #000 18%, #000 82%, transparent 100%);
         }
         .player-lyrics-inner .lyrics-line {
             text-align: left;
@@ -2626,12 +2628,11 @@
                遮罩作用在元素的边框盒上，所以它锚定的是「视口边缘」而不是内容，
                卷动时不会跟着内容跑 —— 这正是"越靠边越淡"该有的行为。
                参数与 .player-lyrics-inner 保持一致，两处观感才统一。
-               12%/88% 而不是 0/100：留出上下各一段完全实色的区域，
-               否则歌词会在离边缘很远的地方就开始发虚，显得整体发灰。 */
+               18%/82%：渐变带要够宽才看得出来，太窄等于没做。 */
             mask-image: linear-gradient(to bottom,
-                transparent 0, #000 12%, #000 88%, transparent 100%);
+                transparent 0, #000 18%, #000 82%, transparent 100%);
             -webkit-mask-image: linear-gradient(to bottom,
-                transparent 0, #000 12%, #000 88%, transparent 100%);
+                transparent 0, #000 18%, #000 82%, transparent 100%);
         }
 
         .lyrics-line {
@@ -2648,9 +2649,13 @@
             position: relative;
             z-index: 1;
             color: var(--text-muted);
-            /* 只过渡颜色类属性。font-size / padding 一律不进 transition，
-               因为它们会改变行高 → offsetTop 漂移 → 滚动目标算错。 */
-            transition: color 0.45s ease, opacity 0.45s ease, text-shadow 0.45s ease;
+            /* 只过渡"不参与布局"的属性。font-size / padding 一律不进 transition，
+               因为它们会改变行高 → offsetTop 漂移 → 滚动目标算错。
+               transform 可以进：它是合成层属性，不改变 offsetTop / offsetHeight，
+               这样当前行的放大才是"长"出来的，而不是"啪"地跳一下。
+               缓动带一点过冲（1.18），和滚动用的弹簧是同一套物理语言。 */
+            transition: color 0.45s ease, opacity 0.45s ease, text-shadow 0.45s ease,
+                        transform 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.18);
             width: 100%;
             font-weight: 300;
             letter-spacing: 0.3px;
@@ -2675,6 +2680,22 @@
             transform: scale(1.06);
             z-index: 2;
         }
+        /* ===== 距离衰减 =====
+           只把当前行点亮是不够的 —— 其余行亮度完全一致时，整片歌词仍然是"平"的，
+           视线没有落点。真正的聚焦感来自梯度：离当前行越近越亮，越远越暗。
+           档位由 JS 写在 data-near 上：
+               0  当前行（不在这里定档，交给上面的 .active，opacity:1）
+               1~4 相邻行，逐档压暗
+               9  窗口之外
+           窗口外必须**显式标 9**，而不是"不标"。否则某行从窗口里退出去以后
+           会保留上一档的亮度，一屏歌词里留下一串"褪不掉的残影"。
+           只调 opacity、不调 color —— color 要留着给 .lyric-seg
+           的"已唱 / 未唱"双色渐变当基色。 */
+        .lyrics-line[data-near="1"] { opacity: 0.74; }
+        .lyrics-line[data-near="2"] { opacity: 0.56; }
+        .lyrics-line[data-near="3"] { opacity: 0.42; }
+        .lyrics-line[data-near="4"] { opacity: 0.32; }
+        .lyrics-line[data-near="9"] { opacity: 0.24; }
         /* ===== 歌词翻译行 =====
            紧跟在原文下方。刻意不参与扫过高亮（译文没有逐字时间，
            硬扫就会重演"光带和声音对不上"），也不左右滚动 ——
@@ -3757,12 +3778,11 @@
                 opacity: 1;
                 text-shadow: 0 0 24px var(--lyric-glow);
             }
-            /* 未播行压暗一档：拉开与高亮行的距离。
-               只调 opacity，不动 color —— color 要留着给 .lyric-seg
+            /* 未播行的压暗统一交给「距离衰减」（见 .lyrics-line[data-near]）。
+               这里不再单独定一档：两套规则叠加会让右栏比左栏更暗，
+               同一份歌词在两侧观感就不一致了。
+               仍然只调 opacity、不动 color —— color 要留着给 .lyric-seg
                的"已唱/未唱"双色渐变当基色。 */
-            #player-lyrics-inner .lyrics-line:not(.active) {
-                opacity: 0.55;
-            }
 
             /* 独立歌词页：宽屏下隐藏返回 / 播放暂停 / 上下首 */
             #lyrics-page .player-header {
@@ -4215,7 +4235,7 @@
         <div class="about-body">
             <div class="about-logo"><i class="fas fa-music"></i></div>
             <div class="about-name">MKY音乐</div>
-            <div class="about-version">版本 1.6</div>
+            <div class="about-version">版本 1.7</div>
             <div class="about-slogan">把每一处细节听懂<br>把听歌这件事做好</div>
             <div class="about-copyright">Copyright &copy; 2026 Monkeysoft<br>All Rights Reserved.</div>
         </div>
@@ -7192,6 +7212,9 @@
                 lyricsLines = lyricsContainer ? Array.from(lyricsContainer.children) : [];
                 // 立即注入上下留白，保证首屏任意行都能居中
                 applyLyricsPadding();
+                // 先把所有行压到"最远"档，等第一帧 updateLyrics 找到当前行
+                // 再让邻近几行亮起来。反过来（先全亮再收成梯度）会闪一下。
+                markLyricDistance(-1);
 
                 // 歌词刚到：立刻对齐一次"当前行"。真实歌词是异步 fetch 回来的，
                 // 落地那一刻逐帧循环可能根本没在跑（手机端没进歌词页），
@@ -7501,6 +7524,44 @@
                 }
             }
 
+            // ===== 距离衰减：把"焦点"真正落到当前行 =====
+            //
+            // 只把当前行加粗、其余行保持同一亮度，视觉上仍然是"一片平" —— 没有
+            // 纵深，视线不知道该落在哪。梯度才是聚焦感的来源：越近越亮、越远越暗。
+            // 相邻行各自平滑地走向各自的新亮度，这就是"周围行柔和地重新排布"
+            // （平滑由 CSS 的 opacity transition 负责，这里只负责改档位）。
+            //
+            // 为什么最多只标到 4：再远的行早就淡到看不出差别了，标了也是白标。
+            const NEAR_SPAN = 4;
+            const NEAR_FAR = '9';      // 窗口外的档位，必须显式写
+
+            function markLyricDistance(activeIdx) {
+                paintLyricDistance(lyricsContainer, activeIdx);
+                paintLyricDistance(playerLyricsInner, activeIdx);
+            }
+
+            // 遍历整个列表而不是只算窗口 —— 行数最多几百，切行又是几秒一次，
+            // 这点开销可以忽略；换来的是不必维护"上一窗口"的游标：
+            // 窗口内外的档位天然互斥，也就不会留下褪不掉的残影。
+            function paintLyricDistance(box, activeIdx) {
+                if (!box) return;
+                const kids = box.children;
+                for (let i = 0; i < kids.length; i++) {
+                    const el = kids[i];
+                    // 占位行（如"暂无歌词"）没有 lyrics-line 类，跳过
+                    if (!el.classList || !el.classList.contains('lyrics-line')) continue;
+
+                    let d = NEAR_FAR;
+                    if (activeIdx >= 0) {
+                        const dist = i - activeIdx;
+                        // 用对称距离，前后同样衰减
+                        d = String(Math.abs(dist) <= NEAR_SPAN ? Math.abs(dist) : NEAR_FAR);
+                    }
+                    // 只在真的变了的时候写 DOM，避免每帧无谓的重绘
+                    if (el.dataset.near !== d) el.dataset.near = d;
+                }
+            }
+
             // 每帧调用：维护高亮行，并把滚动位置持续逼近"该行居中"
             function updateLyrics(currentTime) {
                 if (lyricsLines.length === 0) return;
@@ -7537,6 +7598,8 @@
                         lyricsLayoutDirty = true;
                         cacheLyricsOffsets();
                     }
+                    // 距离衰减：两侧列表一起标注，保证左右栏观感一致
+                    markLyricDistance(activeIdx);
                     // 桌面右栏同步高亮（内部同样会拆片段）
                     syncDeskLyricsHighlight(activeIdx);
                     // 唱片下方的当前歌词行同步
@@ -7769,11 +7832,15 @@
             //   ζ < 1  欠阻尼，会有回弹（ζ 越小弹得越明显）
             //   ζ = 1  临界阻尼，最快收敛且完全不过冲
             //   ζ > 1  过阻尼，慢吞吞爬过去，毫无生气
-            // 当前 k=120、c=17 → ζ ≈ 0.78，约 2% 的轻微过冲、约 470ms 收敛。
-            // 那 2% 就是"惯性"的来源：滑过一点点，再被轻轻拉回来。
-            // 想更"弹"就调小 c，想更"稳"就调大 c（c=22 已接近临界，完全不过冲）。
-            const SPRING_K = 120;              // 刚度
-            const SPRING_C = 17;               // 阻尼
+            // 当前 k=150、c=13 → ζ ≈ 0.53，过冲约 14%、约 620ms 收敛。
+            //
+            // ★ 那 14% 就是"惯性"本身。这里踩过一个坑：最初用的是 ζ≈0.78
+            //   （过冲只 2%），结果"完全看不出在弹" —— 相邻两行只差一个行高
+            //   （约 68px），2% 换算下来才 1.4px，等于没做。
+            //   想让人一眼认出是弹簧，过冲必须往两位数走。
+            // 想更"弹"调小 c，想更"稳"调大 c（c=22 已是临界阻尼，完全不过冲）。
+            const SPRING_K = 150;              // 刚度
+            const SPRING_C = 13;               // 阻尼
             const SPRING_SUB = 4;              // 每帧子步数，用于保稳定
             const SPRING_MAX_DT = 1 / 30;      // 秒。夹住 dt 上限，见上文"标签页"
             const SPRING_EPS_POS = 0.35;       // px，判定"到位"
