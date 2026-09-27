@@ -4,47 +4,105 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>MKY音乐</title>
+
+    <!-- ===== 站点图标 =====
+         全站到处在用 Font Awesome 的 fa-music，但那只管页面内的图标；
+         浏览器标签页/书签/桌面快捷方式读的是 favicon，跟页面内的字体图标
+         毫无关系 —— 之前一直没写，于是标签页上是个空白默认图。
+
+         这里用内联 SVG data URI 而不是 .ico 文件，理由：
+           · 单文件交付，不额外带一个二进制资源；
+           · SVG 矢量，在 16px 标签页和 180px 桌面图标下都清晰；
+           · 主题色玫红 #e91e63 直接写进图形，与全站主色一致。
+
+         图形是一枚唱片：外圈深色黑胶 + 中心玫红标签 + 白色高光弧，
+         缩到 16px 仍能认出"这是个音乐应用"。
+         另给 apple-touch-icon 一份 180x180 的，iOS 加到主屏时才不留白底。 -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23ff3d77'/%3E%3Cstop offset='1' stop-color='%23c2185b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='32' cy='32' r='30' fill='%23141418'/%3E%3Ccircle cx='32' cy='32' r='30' fill='none' stroke='%23ffffff' stroke-opacity='.14' stroke-width='2'/%3E%3Ccircle cx='32' cy='32' r='21' fill='none' stroke='%23ffffff' stroke-opacity='.10' stroke-width='1.5'/%3E%3Ccircle cx='32' cy='32' r='14' fill='none' stroke='%23ffffff' stroke-opacity='.08' stroke-width='1.5'/%3E%3Ccircle cx='32' cy='32' r='12' fill='url(%23g)'/%3E%3Ccircle cx='32' cy='32' r='3.4' fill='%23141418'/%3E%3Cpath d='M32 6a26 26 0 0 1 20 9' fill='none' stroke='%23ffffff' stroke-opacity='.5' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E" />
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23ff3d77'/%3E%3Cstop offset='1' stop-color='%23c2185b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' fill='%23141418'/%3E%3Ccircle cx='32' cy='32' r='21' fill='none' stroke='%23ffffff' stroke-opacity='.10' stroke-width='1.5'/%3E%3Ccircle cx='32' cy='32' r='14' fill='none' stroke='%23ffffff' stroke-opacity='.08' stroke-width='1.5'/%3E%3Ccircle cx='32' cy='32' r='12' fill='url(%23g)'/%3E%3Ccircle cx='32' cy='32' r='3.4' fill='%23141418'/%3E%3C/svg%3E" />
+    <meta name="theme-color" content="#141418" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="MKY音乐" />
     <script>
-        // 主题引导：必须在 <style> 之前同步执行，否则首帧会先按暗色渲染、
-        // 再被 JS 改成亮色 —— 用户会看到一次明显的白闪。
-        // 这里只做"读 localStorage → 打属性"这一件事，
-        // 按钮图标同步等其余逻辑仍放在 init() 里。
-        (function () {
-            try {
-                var t = localStorage.getItem('mky_theme');
-                document.documentElement.setAttribute(
-                    'data-theme', t === 'light' ? 'light' : 'dark');
-            } catch (_) {
-                // 隐私模式等 localStorage 不可用：兜底暗色
-                document.documentElement.setAttribute('data-theme', 'dark');
-            }
-        })();
-    </script>
-    <script>
-        // 原生音频适配层：用浏览器内置 HTMLAudioElement 实现原本 Awdio 用到的接口。
-        // 仅暴露项目实际使用的能力：currentTime / duration / play() / pause() /
-        // stop() / destroy() / on(event)。无第三方依赖，零解析开销。
         (function () {
             'use strict';
 
-    class NativeAudio {
-        constructor(opts) {
-            opts = opts || {};
-            this._events = Object.create(null);
-            this._destroyed = false;
+            /* ============================================================
+               播放器：纯 <audio> 输出 + el.volume 渐变（不接 Web Audio）
+               ============================================================
 
-            const el = new Audio();
-            this._el = el;
-            // 预加载元数据，确保 duration 尽早可用
-            el.preload = 'auto';
-            el.loop = !!opts.loop;
-            el.volume = Math.max(0, Math.min(1, (opts.volume == null ? 100 : opts.volume) / 100));
-            el.autoplay = !!opts.autoplay;
+               【为什么没有 Web Audio】
 
-            // 全局登记：切歌时统一销毁，杜绝"上一首还在响"
-            NativeAudio._live.add(this);
+               之前为了做"播放/暂停/切歌淡入淡出"，给 <audio> 接了
+               createMediaElementSource → GainNode → destination。
+               代价是：一旦建立这条图，元素自身的 el.volume 就被【旁路】，
+               音量、暂停、销毁全部要绕开这个图去管，任何一处没对齐就是
+               "没声音"，而且现象极难定位 —— 因为元素状态看着全是正常的
+               （paused=false、currentTime 在走、volume=1）。
+               2026-09-27 整层删除，声音回到 <audio> 元素自己的输出通道。
 
-                    // 把原生事件转发到内部事件表
+               【淡变后来怎么加回来的】
+
+               不接 Web Audio，改为【分小步渐变 el.volume】：淡变 = 约
+               60fps 把 el.volume 从当前值挪到目标值（180~300ms），
+               走完再执行真正的 pause()/起播。安全性来自四条规则：
+                 · el.volume 仍是唯一真相，没有第二条音频链路 ——
+                   渐变最坏退化为一次硬切，绝不会"没声音"；
+                 · 任何新操作（连点、拖进度、改音量、出错）都立刻作废
+                   进行中的渐变（token 失效）；
+                 · 渐变基准永远是用户音量 this._volume，不写死 1；
+                 · 播放请求失败时立刻把音量拉回基准，不停留在低音量。
+
+               iOS Safari 的 el.volume 只读（跟随硬件音量，赋值被静默
+               忽略）。构造时探测一次：不可控的平台上所有淡变直接
+               退化为硬操作，行为与从前完全一致。 */
+
+            class NativeAudio {
+                constructor(opts) {
+                    opts = opts || {};
+                    this._events = Object.create(null);
+                    this._destroyed = false;
+
+                    // 用户音量（0~1）。直接用元素音量，所见即所得。
+                    this._volume = Math.max(0, Math.min(1,
+                        (opts.volume == null ? 100 : opts.volume) / 100));
+
+                    // 淡变状态：token 是"进行中的渐变"的代号，任何新操作
+                    // （硬播/硬停/改音量/新渐变）都 ++ 使旧渐变作废
+                    this._fadeToken = 0;
+                    this._fading = false;   // pauseFaded 进行中（销毁兜底要放过它）
+
+                    const el = new Audio();
+                    this._el = el;
+                    el.preload = 'auto';
+                    el.loop = !!opts.loop;
+                    // 【关键】先设音量再设 src：部分浏览器在 src 赋值后
+                    // 会以默认音量开始缓冲，先设好可以避免起播瞬间的爆音。
+                    el.volume = this._volume;
+                    el.autoplay = !!opts.autoplay;
+
+                    // el.volume 可控性探测：iOS Safari 只读（跟随硬件音量，
+                    // 赋值被静默忽略）。写一个探针值再读回来对比，不可控的
+                    // 平台上所有淡变直接退化为硬操作，行为与从前一致。
+                    this._canFade = true;
+                    try {
+                        const probe = this._volume > 0.5 ? 0.25 : 0.75;
+                        el.volume = probe;
+                        this._canFade = Math.abs(el.volume - probe) < 0.01;
+                        el.volume = this._volume;
+                    } catch (_) { this._canFade = false; }
+
+                    // 出错时把音量拉回基准：渐变可能停在半路，
+                    // 别让"下一次播放"继承一个残缺的音量（没声陷阱）
+                    el.addEventListener('error', () => {
+                        this._fadeToken++;
+                        try { el.volume = this._volume; } catch (_) {}
+                    });
+
+                    // 全局登记：切歌时兜底全停，杜绝"上一首还在响"
+                    NativeAudio._live.add(this);
+
                     this._bind('play', 'play');
                     this._bind('pause', 'pause');
                     this._bind('ended', 'end');
@@ -54,9 +112,10 @@
 
                     if (opts.src) el.src = opts.src;
 
-                    // autoplay：等元数据就绪后再播，避免部分浏览器直接 play() 被忽略
+                    // autoplay：等元数据就绪再播，避免部分浏览器直接
+                    // play() 被忽略（这也是原实现的处理，保留）
                     if (opts.autoplay) {
-                        const kick = () => { this.play(); };
+                        const kick = () => this.play();
                         if (el.readyState >= 1) kick();
                         else el.addEventListener('loadedmetadata', kick, { once: true });
                     }
@@ -89,9 +148,8 @@
                 }
 
                 get currentTime() { return this._el.currentTime || 0; }
-                set currentTime(t) {
-                    try { this._el.currentTime = t; } catch (_) {}
-                }
+                set currentTime(t) { try { this._el.currentTime = t; } catch (_) {} }
+
                 get duration() {
                     const d = this._el.duration;
                     return (isFinite(d) && d > 0) ? d : 0;
@@ -99,38 +157,39 @@
                 get paused() { return this._el.paused; }
                 get playing() { return !this._el.paused && !this._el.ended; }
 
-                get volume() { return Math.round(this._el.volume * 1000) / 10; }
+                get volume() { return this._volume * 100; }
                 set volume(v) {
-                    this._el.volume = Math.max(0, Math.min(1, (v || 0) / 100));
+                    this._volume = Math.max(0, Math.min(1, (v || 0) / 100));
+                    // 用户改音量 = 手动接管输出，进行中的渐变立即作废
+                    this._fadeToken++;
+                    this._fading = false;
+                    try { this._el.volume = this._volume; } catch (_) {}
                 }
+
                 get muted() { return this._el.muted; }
                 set muted(v) { this._el.muted = !!v; }
 
-                // 播放倍速：切换后新实例要沿用当前值，
-                // 因此这里必须成对代理读写（只写不读的话，切歌会回到 1.0）
-                get playbackRate() { return this._el.playbackRate || 1; }
-                set playbackRate(r) {
-                    try { this._el.playbackRate = r; } catch (_) {}
-                }
-
-                get src() { return this._el.src; }
-                set src(v) { this._el.src = v; }
-
                 play() {
                     if (this._destroyed) return this;
+                    // 硬播放：作废进行中的渐变、音量回到用户基准。
+                    // 保证"不走淡变的每一次 play"都以正确音量出声。
+                    this._fadeToken++;
+                    this._fading = false;
+                    try { this._el.volume = this._volume; } catch (_) {}
                     let p;
                     try { p = this._el.play(); } catch (_) { return this; }
                     if (p && typeof p.catch === 'function') {
                         p.then(() => {
-                            // 关键：play() 的 promise 可能在 pause()/destroy() 之后才 resolve，
-                            // 此时元素会被重新置为播放态 → 出现"上一首歌没停"。
-                            // 因此 resolve 后再校验一次，已销毁就立刻暂停。
+                            // play() 的 promise 可能在 pause()/destroy() 之后才
+                            // resolve，此时元素会被重新置为播放态 →
+                            // 出现"上一首歌没停"。resolve 后再校验一次。
                             if (this._destroyed) {
                                 try { this._el.pause(); } catch (_) {}
                             }
                         }).catch((err) => {
                             if (err && err.name !== 'AbortError') {
-                                console.warn('播放失败:', err && err.name);
+                                console.warn('播放失败:', err && err.name,
+                                             err && err.message);
                             }
                         });
                     }
@@ -139,12 +198,106 @@
 
                 pause() {
                     if (this._destroyed) return this;
+                    // 硬暂停：作废进行中的渐变（拖进度等需要立即静音的路径）
+                    this._fadeToken++;
+                    this._fading = false;
                     try { this._el.pause(); } catch (_) {}
+                    return this;
+                }
+
+                /* ---- 音量渐变：淡入淡出的实现本体 ----
+
+                   分小步改 el.volume，用 setTimeout(16) 而非 rAF：
+                   后台标签页里 rAF 完全停摆，淡出会永远走不完、pause()
+                   永远不落地；setTimeout 最坏被节流成秒级，但【一定会走完】
+                   —— 可靠性优先于平滑度。另有超时兜底：节流离谱时直接
+                   落定到目标值，宁可硬切也不悬挂。
+
+                   onEnd 最多被调一次；渐变被新操作接管/实例销毁时一次都不调
+                   （接管者自己负责后续）。返回本次渐变的 token 供外部核对。 */
+                _startFade(target, ms, onEnd) {
+                    const el = this._el;
+                    const token = ++this._fadeToken;
+                    const from = el.volume;
+                    const clock = (window.performance && performance.now) ? performance : Date;
+                    const start = clock.now();
+                    let timer = null;
+                    let finished = false;
+                    const clear = () => { if (timer) { clearTimeout(timer); timer = null; } };
+                    const finish = () => {
+                        if (finished) return;
+                        finished = true;
+                        clear();
+                        try { el.volume = target; } catch (_) {}
+                        onEnd && onEnd();
+                    };
+                    const step = () => {
+                        timer = null;
+                        // 被新操作接管或已销毁：立即退出，不作任何收尾
+                        if (token !== this._fadeToken || this._destroyed || finished) return;
+                        const k = Math.min(1, (clock.now() - start) / ms);
+                        if (k >= 1) { finish(); return; }
+                        // smoothstep：两端慢中间快，比线性少一点机械感
+                        const t = k * k * (3 - 2 * k);
+                        try { el.volume = from + (target - from) * t; } catch (_) {}
+                        timer = setTimeout(step, 16);
+                    };
+                    timer = setTimeout(step, 16);
+                    setTimeout(() => {
+                        if (token === this._fadeToken && !finished) finish();
+                    }, ms + 800);
+                    return token;
+                }
+
+                /* 淡入播放：el.play() 后把音量从当前值平滑拉到用户基准。
+                   音量本就在基准上（如拖进度后的恢复）→ 无淡变空间，硬播放。 */
+                playFaded(ms) {
+                    if (this._destroyed) return this;
+                    const el = this._el;
+                    if (!this._canFade || !(ms > 0) || el.volume >= this._volume - 0.001) {
+                        return this.play();
+                    }
+                    let p;
+                    try { p = el.play(); } catch (_) {
+                        try { el.volume = this._volume; } catch (_) {}
+                        return this;
+                    }
+                    if (p && typeof p.catch === 'function') {
+                        p.catch((err) => {
+                            // 起播失败（最典型是自动播放策略）：立刻把音量
+                            // 拉回基准，绝不停留在低音量"看似在播却没有声"
+                            this._fadeToken++;
+                            try { el.volume = this._volume; } catch (_) {}
+                            if (err && err.name !== 'AbortError') {
+                                console.warn('播放失败:', err && err.name, err && err.message);
+                            }
+                        });
+                    }
+                    this._startFade(this._volume, ms);
+                    return this;
+                }
+
+                /* 淡出后暂停。没在响 / 平台不可控 → 直接硬暂停。
+                   onEnd 在真正 pause() 之后回调（切歌销毁交接用）。
+                   同一刻重复调用是安全的：新渐变作废旧渐变，收尾只走一次。 */
+                pauseFaded(ms, onEnd) {
+                    if (this._destroyed) return this;
+                    if (!this._canFade || !(ms > 0) || !this.playing) {
+                        return this.pause(), onEnd && onEnd(), this;
+                    }
+                    this._fading = true;
+                    this._startFade(0, ms, () => {
+                        this._fading = false;
+                        try { this._el.pause(); } catch (_) {}
+                        onEnd && onEnd();
+                    });
                     return this;
                 }
 
                 stop() {
                     if (this._destroyed) return this;
+                    this._fadeToken++;
+                    this._fading = false;
                     try {
                         this._el.pause();
                         this._el.currentTime = 0;
@@ -156,7 +309,6 @@
                     if (this._destroyed) return;
                     this._destroyed = true;
                     NativeAudio._live.delete(this);
-                    // 先解绑事件，避免停止过程中再回调业务逻辑
                     this._events = Object.create(null);
                     const el = this._el;
                     try {
@@ -167,11 +319,42 @@
                         el.removeAttribute('src');
                         el.load();
                     } catch (_) {}
-                    // 下一帧再确认一次：防止 play() 迟到 resolve 把它重新唤醒
+                    // 下一帧再确认一次：防止 play() 迟到 resolve 把它唤醒
                     requestAnimationFrame(() => {
                         try { el.pause(); } catch (_) {}
                     });
                 }
+
+                /* ---- 播放倍速 ----
+                   preservesPitch 必须显式【同时】设置标准名和 webkit 前缀名：
+                   Chrome/Safari 只认自己那个前缀，只设一个在某些版本上无效。
+                   设成 false = 变速时连带变调（磁带式）。
+
+                   为什么这里选了"变调"：网易云原声是音乐，慢放时若保持音高，
+                   浏览器会做相位声码器重采样，0.5× 下会出现明显的金属味、
+                   颤音和水声（"怪怪的感觉"）。关掉音高保持后，慢放就是单纯的
+                   时间拉伸，听感自然得多。 */
+                get playbackRate() { return this._el.playbackRate || 1; }
+                set playbackRate(r) {
+                    const rate = Math.max(0.25, Math.min(4, +r || 1));
+                    try {
+                        this._el.defaultPlaybackRate = rate;
+                        this._el.playbackRate = rate;
+                        // 兼容老 WebKit / Blink
+                        if ('preservesPitch' in this._el) {
+                            this._el.preservesPitch = false;
+                        }
+                        if ('mozPreservesPitch' in this._el) {
+                            this._el.mozPreservesPitch = false;
+                        }
+                        if ('webkitPreservesPitch' in this._el) {
+                            this._el.webkitPreservesPitch = false;
+                        }
+                    } catch (_) {}
+                }
+
+                get src() { return this._el.src; }
+                set src(v) { this._el.src = v; }
             }
 
             // 存活实例登记表 + 一键全停（切歌时兜底调用）
@@ -188,6 +371,45 @@
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
+        /* ===== 自定义属性注册 =====
+
+           为什么要注册 --halo-angle：
+
+           未注册的自定义属性，浏览器按【字符串替换】处理 —— 每次
+           JS 改它的值，都算一次"样式变更"，会触发重新解析、重新计算，
+           进而让用到它的元素（.album-cover-wrap::before，一个
+           blur(26px) 的 conic-gradient）重新栅格化。
+
+           播放时这个属性每秒被改写 60 次，等于每秒让一层大模糊重新
+           栅格化 60 次 —— 本来就卡。而更糟的是【暂停那一刻】：
+           JS 的 rAF 停了，属性值不再变化，之前"每帧都在重算"的
+           图层突然稳定下来，合成器做了一次收尾的重新栅格化 ——
+           视觉上就是"暂停时闪一下"。
+
+           注册成 <angle> 之后，它变成有类型、可插值的值，
+           浏览器把它当普通数值处理，不再触发字符串替换那套重算，
+           栅格化结果可以稳定复用，闪烁随之消失。
+           （语法用 @property，Chrome/Safari/Firefox 均已支持；
+             不支持时退化为原行为，只是仍会闪，不会更差。） */
+        @property --halo-angle {
+            syntax: '<angle>';
+            inherits: false;
+            initial-value: 0deg;
+        }
+
+        /* 扫光坐标也必须注册成有类型的 <percentage>。
+
+           未注册时它们只是字符串，--seg-start 会以"未求值的 calc() 文本"
+           形式传给 linear-gradient，而渐变的色标位置不接受字符串，
+           整条渐变会失效（扫光不显示）。
+
+           注册为 <percentage> 后，浏览器在计算样式阶段就把它算成数值，
+           渐变能正常解析；--scan 也因此可以逐帧改写而只触发数值更新。 */
+        @property --scan {
+            syntax: '<percentage>';
+            inherits: true;
+            initial-value: 0%;
+        }
         :root {
             --glass-bg: rgba(255, 255, 255, 0.06);
             --glass-border: rgba(255, 255, 255, 0.10);
@@ -254,6 +476,11 @@
             --text-control: rgba(255, 255, 255, 0.86); /* 控制条按钮 / 加载弧 */
             /* 永远叠在彩色（封面/渐变）之上的白字，两种主题下都不变 */
             --text-on-media: rgba(255, 255, 255, 0.70);
+            /* 封面未加载时的占位配色：暗色主题下用深黑，
+               亮色主题下用近白（见 [data-theme="light"] 覆盖）。
+               两者都靠 --cover-ph-fg 上的图标与灰边框来定义形状。 */
+            --cover-ph-bg: #0b0b0f;
+            --cover-ph-fg: rgba(255, 255, 255, 0.34);
 
             /* ---- 唱片外圈分离环 ---- */
             --album-ring: rgba(255, 255, 255, 0.07);
@@ -273,6 +500,37 @@
             /* ---- 弹层顶边高光：1px 内高光模拟受光边，
                亮色下弹层本身变白，须反向成极淡的黑才看得见 ---- */
             --inset-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+            /* ===== 毛玻璃材质 =====
+               下面这几个变量只服务于"被 backdrop-filter 取样的表面"
+               （tab 栏 / 音乐条 / 顶栏 / 歌词页遮罩）。
+
+               要点：backdrop-filter 模糊的是它身后已经画好的像素。
+               若身后是一片纯色（原来的 --bg-body），模糊纯色等于纯色 ——
+               玻璃"看起来"纹丝不动，白付一次图层合成开销（移动端很贵）。
+               所以必须先有一层有明暗变化的氛围背景（见 body::before），
+               玻璃才有东西可折射。 */
+            --glass-blur-strong: 34px;   /* 顶栏 / 音乐条：面积大，可以糊狠一点 */
+            --glass-blur-soft: 22px;     /* tab 栏 / 按钮：面积小，糊过头会变脏 */
+            --glass-saturate: 175%;      /* 提饱和：把背后透上来的光晕"洗"得更艳 */
+            --glass-brightness: 116%;    /* 提亮：玻璃整体比背景浮起一档 */
+
+            /* 玻璃面板底色。暗色下用"极低 alpha 的白"——
+               不能让 alpha 太高，否则又把背景糊成实心，
+               玻璃白做了。 */
+            --glass-panel: rgba(18, 18, 24, 0.55);
+            --glass-panel-strong: rgba(16, 16, 22, 0.62);
+            --glass-edge: rgba(255, 255, 255, 0.09);   /* 受光顶边 */
+            /* 玻璃的高光渐变：从左到右微微起伏，避免整块玻璃"死平" */
+            --glass-sheen: linear-gradient(180deg,
+                rgba(255, 255, 255, 0.055) 0%,
+                rgba(255, 255, 255, 0.012) 42%,
+                rgba(255, 255, 255, 0) 100%);
+
+            /* 歌词上下边缘遮罩的"玻璃色"：
+               遮罩本体是一层渐变蒙版，颜色须与页面底色同源，
+               否则会在歌词区顶部/底部糊出一条比背景更亮的带子。 */
+            --lyrics-veil: rgba(11, 11, 14, 0.92);
         }
 
         /* ===== 亮色主题 =====
@@ -332,6 +590,8 @@
             --lyric-glow: rgba(233, 30, 99, 0.18);
             --text-control: rgba(0, 0, 0, 0.80);
             --text-on-media: rgba(255, 255, 255, 0.85);
+            --cover-ph-bg: #f2f2f5;
+            --cover-ph-fg: rgba(0, 0, 0, 0.30);
 
             /* 唱片圈：白描边在白底上会隐形，转成暗描边 */
             --album-ring: rgba(0, 0, 0, 0.08);
@@ -360,6 +620,25 @@
             --glass-bg: rgba(0, 0, 0, 0.03);
             --glass-border: rgba(0, 0, 0, 0.06);
             --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
+
+            /* ===== 亮色毛玻璃 =====
+               亮色下玻璃的"通透"来自浅色本身，不能靠提亮 ——
+               背景已经是白的，再提亮就是一片过曝的白。
+               所以 brightness 收到 100%，改靠"白底 + 高饱和"出玻璃感。 */
+            --glass-brightness: 100%;
+            --glass-saturate: 150%;
+
+            /* 亮色玻璃面板：白底要够实，否则和背后的浅灰糊成一片。
+               0.72 是实测的平衡点 —— 再低边界就看不出来了。 */
+            --glass-panel: rgba(255, 255, 255, 0.72);
+            --glass-panel-strong: rgba(255, 255, 255, 0.80);
+            --glass-edge: rgba(0, 0, 0, 0.06);
+            --glass-sheen: linear-gradient(180deg,
+                rgba(255, 255, 255, 0.60) 0%,
+                rgba(255, 255, 255, 0.20) 42%,
+                rgba(255, 255, 255, 0) 100%);
+
+            --lyrics-veil: rgba(245, 245, 247, 0.92);
         }
 
         * {
@@ -376,6 +655,62 @@
             height: 100%;
             overflow: hidden;
             overscroll-behavior: none;
+        }
+
+        /* ===== 背景氛围层 =====
+
+           backdrop-filter 模糊的是"身后已经画好的像素"，所以它必须
+           有明暗变化可糊 —— 背后是纯色时，模糊纯色还是纯色，
+           玻璃看起来纹丝不动，白付一次图层合成开销。
+
+           之前这里铺过三团彩色径向渐变，观感是"页面上浮着一层彩色雾气"，
+           把浅色文字压得发灰，所以整层删掉了。
+
+           现在回来的是它的"极淡版"：只保留明暗起伏，几乎不带色彩。
+           亮处 alpha 0.045、暗处 0.055，靠这点差异给玻璃提供可折射的
+           细节 —— 肉眼看是干净的纯色，但玻璃扫过时会有微妙的光感变化。
+
+           固定定位 + 不随内容滚动：它要盖住整个视口当"底片"，
+           跟着滚动会让玻璃一晃一晃。z-index:-1 沉到所有内容之下。 */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            /* 两团极淡的明暗：左上偏亮、右下偏暗。
+               刻意用同色系的灰白/黑，避免之前那种彩色雾气。 */
+            background:
+                radial-gradient(120% 80% at 12% 0%,
+                    rgba(255, 255, 255, 0.045) 0%,
+                    rgba(255, 255, 255, 0) 62%),
+                radial-gradient(110% 75% at 92% 100%,
+                    rgba(0, 0, 0, 0.055) 0%,
+                    rgba(0, 0, 0, 0) 60%);
+        }
+        :root[data-theme="light"] body::before {
+            background:
+                radial-gradient(120% 80% at 12% 0%,
+                    rgba(255, 255, 255, 0.72) 0%,
+                    rgba(255, 255, 255, 0) 62%),
+                radial-gradient(110% 75% at 92% 100%,
+                    rgba(0, 0, 0, 0.045) 0%,
+                    rgba(0, 0, 0, 0) 60%);
+        }
+
+        /* ===== 毛玻璃基类 =====
+           全站需要"透出背后光晕"的组件统一挂这个类，
+           避免每个组件各写一套 blur 参数导致质感不齐。
+           用 @supports 兜底：不支持的浏览器退回半透明纯色，
+           至少不比原来的实心黑块差。 */
+        .glass-surface {
+            background: var(--glass-panel);
+            -webkit-backdrop-filter: blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+            backdrop-filter: blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+            border-top: 1px solid var(--glass-edge);
+        }
+        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+            .glass-surface { background: var(--bg-elevated); }
         }
 
         /* 防止误触选中文字（移动端长按会泛起蓝色选区）。
@@ -423,11 +758,19 @@
             letter-spacing: 0.01em;
             transition: padding-bottom 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
-        /* 迷你播放器显示时，才为主内容腾出底部空间（避免默认一片黑）。
-           注意：只在没有覆盖层打开时生效 —— 覆盖层（结果页/收藏页/歌单页）
-           是 fixed 定位、自己处理底部偏移，若 body 再加 padding 会多出一条空白。 */
+        /* 底部让位改为"内边距"而不是"缩小页面"。
+
+           原先 body 加 padding-bottom: var(--mini-height) 是把整页
+           向上顶，主内容的底边停在音乐条上沿 —— 音乐条背后于是
+           永远只有 body 的纯色，backdrop-filter 糊纯色等于没糊，
+           这正是"音乐条有毛玻璃但看不出效果"的根因。
+
+           改成：页面照旧铺满到屏幕底部，音乐条高度作为【滚动内容
+           的尾部内边距】让出来（见 .main-content / .fav-list /
+           .results-list 的 padding-bottom）。列表于是会从音乐条背后
+           滚过，同时滚到底时最后一行也不会被音乐条压住。 */
         body.has-mini-player:not(.tab-bar-hidden) {
-            padding-bottom: var(--mini-height);
+            padding-bottom: 0;
         }
 
         .tab-bar {
@@ -440,9 +783,24 @@
             display: flex;
             align-items: stretch;
             z-index: 520;
-            background: var(--bg-elevated);
-            border-top: 1px solid var(--border);
+            /* 毛玻璃。
+               背后压着的是列表内容（.main-content 一直滚到底，不给底栏让位），
+               所以 backdrop-filter 有真实的明暗可糊。 */
+            background: var(--glass-panel-strong);
+            -webkit-backdrop-filter: blur(var(--glass-blur-soft)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+            backdrop-filter: blur(var(--glass-blur-soft)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+            /* 与音乐条之间的分界线。
+               两块同色玻璃直接叠在一起时边界完全看不出来，
+               整条底栏糊成一片，分不清哪里是播放器、哪里是导航。
+               一条极淡的顶边线把两者分开 —— 取 --glass-edge，
+               与顶栏下边线同一支颜色。 */
+            border-top: 1px solid var(--glass-edge);
             transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.24s;
+        }
+        /* 不支持 backdrop-filter：退回实心底色，
+           半透明底会让 tab 文字压在榜单内容上，可读性反而更差 */
+        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+            .tab-bar { background: var(--bg-elevated); }
         }
         .tab-item {
             flex: 1;
@@ -818,12 +1176,28 @@
         }
 
         .header {
-            position: relative;
+            /* 浮层，不占文档流高度。
+
+               原来是 position:relative 参与 flex 纵排，它会把自己
+               75px 的高度"让"出来 —— 内容从它下沿才开始，于是顶栏
+               背后永远是 body 纯色，毛玻璃无像素可糊（模糊纯色=纯色）。
+
+               改成绝对定位浮在最上层后，main-content 从视口顶部开始，
+               列表会从顶栏底下穿过，玻璃背后才有真实的滚动内容。
+               内容顶部再多留出顶栏的高度，避免第一行被挡。 */
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
             z-index: 100;
-            flex-shrink: 0;          /* 永不被压缩，高度由内容决定 */
             padding: 14px 20px;
-            background: var(--bg-body);
-            border-bottom: 1px solid var(--border-subtle);
+            background: var(--glass-panel-strong);
+            -webkit-backdrop-filter: blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+            backdrop-filter: blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+            border-bottom: 1px solid var(--glass-edge);
+        }
+        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+            .header { background: var(--bg-body); }
         }
 
         .search-container {
@@ -885,15 +1259,19 @@
 
         .search-input {
             flex: 1;
-            background: var(--surface-input);
-            border: 1px solid var(--border);
+            /* 输入框也做成玻璃片：底色半透明 + 糊背后内容。
+               这里必须连 -webkit- 前缀一起写 —— 只写标准属性时
+               Safari 完全不生效，输入框会退回半透明灰。 */
+            background: var(--glass-panel);
+            -webkit-backdrop-filter: blur(var(--glass-blur-soft)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+            backdrop-filter: blur(var(--glass-blur-soft)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+            border: 1px solid var(--glass-edge);
             border-radius: 60px;
             padding: 12px 22px;
             color: var(--text-primary);
             font-size: 15px;
             outline: none;
             transition: all var(--transition);
-            backdrop-filter: blur(8px);
         }
         .search-input:focus {
             background: var(--surface-input-focus);
@@ -1086,14 +1464,26 @@
         }
 
         .main-content {
-            padding: 20px 20px 30px;
-            /* flex:1 吃掉 header 之外的全部高度；min-height:0 让内部滚动生效 */
+            /* 顶部内边距 = 顶栏高度 + 原呼吸位。
+               顶栏是浮层（不占流），内容要自己让开这一段，
+               否则第一行会被压在玻璃下面看不清。 */
+            padding: calc(var(--header-h, 75px) + 12px) 20px 30px;
+            /* 顶栏浮层就位后，main 独占整个高度 */
             flex: 1 1 auto;
             min-height: 0;
             overflow-y: auto;
-            /* 底部为 tab 栏 / 迷你播放器留出空间 */
-            padding-bottom: calc(30px + var(--tab-height) + var(--bottom-stack));
-            transition: opacity 0.3s;
+            /* 底部留白 = 底栏高度（tab 栏 + 音乐条，按当前是否显示音乐条取值）
+               ＋ 一点呼吸位。
+
+               注意这里【不是】在躲避底栏 —— 内容照样会从底栏背后滚过
+               （这是毛玻璃的像素来源）。这段内边距是为了让"滚到底"时
+               最后一行停在底栏上方，不至于被永久压住看不见。 */
+            padding-bottom: calc(var(--tab-height) + 12px);
+            transition: opacity 0.3s, padding-bottom 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        /* 音乐条显示时，底部再多让出音乐条高度 */
+        body.has-mini-player:not(.tab-bar-hidden) .main-content {
+            padding-bottom: calc(var(--tab-height) + var(--mini-height) + 12px);
         }
         .main-content.hidden {
             opacity: 0;
@@ -1137,13 +1527,19 @@
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            /* 行间距。原来 2px：行本身有 44px 封面 + 12px 上下内边距，
+               两行之间只剩 2px 空隙，视觉上糊成一片。放到 6px 让每行
+               成为独立的一块，滑动时也更容易分清点到哪一行。 */
+            gap: 6px;
         }
 
         .song-item {
             display: flex;
             align-items: center;
-            padding: 12px 14px;
+            /* 上下内边距跟着行高提一点：44px 封面需要呼吸空间，
+               但也不宜过大 —— 榜单 100 首，每行多 4px 就是 400px 的
+               额外滚动距离。 */
+            padding: 10px 14px;
             cursor: pointer;
             border-radius: 12px;
             transition: background 0.2s, transform 0.15s;
@@ -1157,6 +1553,36 @@
         .song-item:active {
             transform: scale(0.98);
         }
+        /* ===== 点歌后的行内加载态 =====
+
+           点一首歌到真正出声之间要等接口取播放地址（多源轮询，可能几秒）。
+           这段时间原来界面上【毫无反馈】—— 用户只看到自己点了、然后什么都没发生，
+           很容易以为点漏了而反复点，反而不断作废重来。
+
+           给被点的那一行加 .row-loading，用序号位置显示一个小转圈：
+             · 位置替换序号，不改变行高，列表不会跳动；
+             · 序号先隐藏，转圈占它的位置。 */
+        .song-item.row-loading .song-index,
+        .result-item.row-loading .song-index,
+        .fav-item.row-loading .song-index {
+            position: relative;
+            color: transparent;
+        }
+        .song-item.row-loading .song-index::after,
+        .result-item.row-loading .song-index::after,
+        .fav-item.row-loading .song-index::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 15px;
+            height: 15px;
+            margin: -8px 0 0 -8px;
+            border-radius: 50%;
+            border: 2px solid var(--surface-control-strong);
+            border-top-color: var(--text-control);
+            animation: spin 0.8s linear infinite;
+        }
         /* 点击行内的收藏按钮时，整行给出按下反馈（仅缩放）。
            注意：这里【不要】把标题变红 —— 点收藏按钮却让歌名闪红会很突兀，
            变红是"选中/播放中"的语义，不该被一次点击触发。 */
@@ -1167,18 +1593,27 @@
         }
 
         .song-index {
-            width: 34px;
+            width: 28px;
             text-align: center;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             color: var(--text-secondary);
             opacity: 0.6;
+            font-variant-numeric: tabular-nums;   /* 序号等宽，纵向对齐 */
+        }
+
+        /* 榜单行封面：与搜索结果行同一套外观（.result-cover），
+           这里只负责把它和序号、歌名之间的距离定好。 */
+        .song-item .song-cover {
+            margin-left: 10px;
         }
 
         .song-details {
             flex: 1;
             overflow: hidden;
-            margin-left: 4px;
+            /* 封面与文字之间的留白。原来 4px，加上封面紧贴序号，
+               整行读起来发闷；这里一起放大。 */
+            margin-left: 12px;
         }
         .song-title {
             font-size: 16px;
@@ -1186,7 +1621,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            margin-bottom: 2px;
+            margin-bottom: 3px;
         }
         .song-artist {
             font-size: 13px;
@@ -1275,9 +1710,15 @@
         /* 有播放器时，收藏页底部上移，露出音乐条。
            注意：收藏页属于覆盖层，此时 tab 栏是隐藏的，所以只让出音乐条高度，
            不能再加 --tab-height，否则底部会多出一段空白。 */
-        .fav-page.has-player {
-            bottom: var(--mini-height);
-        }
+        /* 有音乐条时【不再】把页面底边上移到音乐条上方。
+
+           原因：底边上移后，页面最底部就是纯背景色，音乐条背后
+           永远只有一片纯色 —— backdrop-filter 糊纯色还是纯色，
+           这就是"音乐条加了毛玻璃却没效果"的根因。
+
+           改成仍铺满到屏幕底部，页面底部内边距里让出音乐条高度
+           （.fav-scroll / .results-list 的 padding-bottom），
+           列表内容于是会从音乐条背后穿过，玻璃才有像素可糊。 */
         /* .fav-header 的完整定义在下方（两行纵向结构），此处不再重复 */
         .fav-title {
             font-size: 16px;
@@ -1317,6 +1758,14 @@
         .fav-icon-btn:active {
             transform: scale(0.9);
         }
+        /* 顶栏里的"播放全部"：与旁边的搜索/更多图标完全同款 ——
+           无边框、无底色、跟随文字色，hover 只降透明度。
+           原先想给它描一圈玫红边来突出主操作，但顶栏一排图标里
+           单独一个带框反而显得突兀，统一外观更干净。 */
+        .fav-play-btn i {
+            /* 播放三角光学重心偏左，补一点让它在图标位里看着居中 */
+            margin-left: 2px;
+        }
 
         /* ===== 顶栏内的搜索框：独立占一行，展开时把 fav-header 撑高 =====
            fav-header 是个上下两行的纵向容器：
@@ -1328,10 +1777,20 @@
             display: flex;
             flex-direction: column;
             gap: 0;
-            padding: 14px 16px;
-            background: var(--bg-body);
-            border-bottom: 1px solid var(--border-subtle);
+            /* 同 .search-results-header：宽屏把标题行和搜索行一起收进
+               540px 居中栏，和主搜索的宽度语言对齐；窄屏回落 16px */
+            padding: 14px max(16px, calc((100% - 540px) / 2));
+            /* 毛玻璃：
+               顶栏改绝对定位浮在内容之上后，概览区和列表都会从它底下
+               穿过，backdrop-filter 才有变化的像素可糊（见 .fav-scroll）。 */
+            background: var(--glass-panel-strong);
+            -webkit-backdrop-filter: blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+            backdrop-filter: blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+            border-bottom: 1px solid var(--glass-edge);
             flex-shrink: 0;
+        }
+        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+            .fav-header { background: var(--bg-body); }
         }
         .fav-header-row {
             display: flex;
@@ -1389,19 +1848,25 @@
 
         .fav-list {
             padding: 12px 16px 30px;
-            /* 不独立滚动：由父级页面统一滚动，让概览区能随之下移滚走 */
+            /* 不独立滚动：由 .fav-scroll 统一滚动，概览区随之滚走 */
             overflow: visible;
         }
-        /* 有播放器时，页面自身已经上移到音乐条上方，列表只需少量尾部留白 */
+        /* 有音乐条时，列表底部让出音乐条高度：
+           内容仍会从音乐条背后滚过（这正是玻璃的像素来源），
+           但滚到底时最后一行不会被压在音乐条下面。
+           tab 栏在覆盖层打开时是隐藏的，所以这里只让音乐条。 */
         .fav-page.has-player .fav-list,
         .playlist-page.has-player .fav-list {
-            padding-bottom: 24px;
+            padding-bottom: calc(var(--mini-height) + 24px);
         }
-        /* 收藏页 / 歌单页：页面自身滚动，头部悬浮、概览区随内容滚走 */
+        /* 收藏页 / 歌单页：内容区自身滚动，顶栏悬浮、概览区随内容滚走 */
         /* 收藏页 / 歌单页：自身滚动 + 隐藏滚动条 */
         .fav-page,
         .playlist-page {
-            overflow-y: auto;
+            /* 页面本身不滚：顶栏是浮层，必须留在视口里；
+               滚动交给内部的 .fav-scroll，内容从顶栏背后穿过，
+               顶栏的 backdrop-filter 才有变化的像素可糊。 */
+            overflow: hidden;
             scrollbar-width: none;
             -ms-overflow-style: none;
             overscroll-behavior: contain;
@@ -1413,13 +1878,38 @@
             width: 0;
             height: 0;
         }
-        /* 头部吸顶，滚动时始终可见 */
+        /* 真正滚动的容器：占满整页，顶部留出顶栏高度。
+           有了这段留白，未滚动时概览区正好停在玻璃下沿；
+           一旦滚动，概览区就从玻璃背后经过。 */
+        .fav-scroll {
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            overscroll-behavior: contain;
+            -webkit-overflow-scrolling: touch;
+            padding-top: var(--fav-header-h, 62px);
+            /* 覆盖层里 tab 栏是隐藏的，底栏只有音乐条，
+               音乐条显示时其高度由 .fav-list 的 padding-bottom 让出，
+               这里只补一点兜底留白。 */
+            padding-bottom: 4px;
+        }
+        .fav-scroll::-webkit-scrollbar {
+            display: none;
+            width: 0;
+            height: 0;
+        }
+        /* 顶栏：铺满宽度、浮在内容之上。
+           高度由 JS 实测写入 --fav-header-h（搜索行展开时会变高），
+           既用于定位顶栏自身，也用于给上面的滚动容器让位。 */
         .fav-page .fav-header,
         .playlist-page .fav-header {
-            position: sticky;
+            position: absolute;
             top: 0;
+            left: 0;
+            right: 0;
             z-index: 10;
-            background: var(--bg-body);
         }
         .fav-empty {
             text-align: center;
@@ -1760,18 +2250,30 @@
 
         .mini-player {
             position: fixed;
+            /* 紧贴 tab 栏上沿，中间不留缝 */
             bottom: var(--tab-height);
             left: 0;
             right: 0;
             height: var(--mini-height);
-            background: var(--bg-elevated-2);
-            border-top: 1px solid var(--border-subtle);
+            /* 毛玻璃。它悬在列表上方，背后是正在滚动的歌曲行
+               （各页面的列表底部都让出了音乐条高度，内容会从它背后穿过来），
+               所以 backdrop-filter 有真实像素可糊。
+               顶边那道受光高光留在这里，作为整条底栏的上沿受光。
+               与 tab 栏之间【不画线】—— 分界线由 tab 栏自己的 border-top 提供，
+               两边都画会变成两道线。 */
+            background: var(--glass-panel-strong);
+            -webkit-backdrop-filter: blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+            backdrop-filter: blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+            box-shadow: var(--inset-highlight);
             display: flex;
             align-items: center;
             padding: 0 16px;
             z-index: 500;
             transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             gap: 12px;
+        }
+        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+            .mini-player { background: var(--bg-elevated-2); }
         }
         .mini-player.hidden {
             transform: translateY(100%);
@@ -1947,6 +2449,20 @@
         #lyrics-trans-btn.active {
             color: var(--primary);
         }
+        /* 歌词页顶栏的收藏按钮：和"译"并排贴右上角（.player-head-actions 组）。
+           无底板 —— 上方那条给顶栏按钮统一加的暗底+模糊（压亮色歌词用的）
+           优先级更高，这里用更高优先级豁免掉，避免"被包住"的观感；
+           激活态只把颜色切到主色、心形换实心（icon 由 syncFavUI 统一换）。 */
+        #lyrics-page .player-header #lyrics-fav-btn,
+        #lyrics-page .player-header #lyrics-fav-btn:hover,
+        #lyrics-page .player-header #lyrics-fav-btn:active {
+            background: none;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+        }
+        #lyrics-fav-btn.active {
+            color: var(--primary);
+        }
         /* "译"字按钮（手机端歌词页顶栏 + 电脑端唱片右上角共用）。
            用文字而非图标 —— "译"本身比任何语言类图标都直白。 */
         .lc-trans-label {
@@ -2095,6 +2611,9 @@
         .full-player {
             position: fixed;
             inset: 0;
+            /* 不透明底：保证播放器一打开就把底下的榜单完全盖住。
+               但它同时是 .player-panel 等玻璃元素的"背景"，
+               玻璃要靠这套环境色才有质感 —— 见下面的 ambient 层。 */
             background: var(--bg-overlay);
             z-index: 3000;
             display: flex;
@@ -2107,6 +2626,12 @@
             transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
                         opacity 0.4s ease,
                         visibility 0s linear 0.5s;
+        }
+        /* 播放器内部的环境光层：已移除，背景改为纯色。
+           原来靠它给面板的毛玻璃提供可折射的明暗，现在不需要了。 */
+        .full-player > * {
+            position: relative;
+            z-index: 1;
         }
         .full-player.active {
             opacity: 1;
@@ -2125,6 +2650,14 @@
             padding: 16px 20px;
             position: relative;
             flex-shrink: 0;
+            z-index: 20;
+            /* 顶栏是实色底、不做毛玻璃。
+
+               顶栏上方就是屏幕边缘，底下本来就没有多少可看的层次，
+               backdrop-filter 在这里取不到有内容变化的像素 ——
+               玻璃做出来只是一条灰扑扑的带子，还把顶栏文字压得发闷。
+               歌词的纵向纵深由上下遮罩单独承担，不需要再叠一层。 */
+            background: var(--bg-overlay);
         }
         /* 顶栏右侧按钮组：倍速 + 加入歌单。
            两个都是 32px 的圆，视觉重心本来就在中心，
@@ -2186,6 +2719,8 @@
             min-width: 0;
             min-height: 0;
             overflow: hidden;
+            /* 遮罩的定位参照 */
+            position: relative;
         }
         .player-lyrics-inner {
             height: 100%;
@@ -2198,13 +2733,81 @@
             -webkit-overflow-scrolling: touch;
             scroll-behavior: auto;
             overflow-anchor: none;
-            /* 上下渐隐，避免歌词硬切边。
-               18%/82% 而不是 12%/88%：渐变带要有"两行多"的宽度才看得出来，
-               太窄等于没做（尤其底部还会被浮动播放器压住一部分）。 */
-            mask-image: linear-gradient(to bottom,
-                transparent 0, #000 18%, #000 82%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom,
-                transparent 0, #000 18%, #000 82%, transparent 100%);
+            /* 上下边缘遮罩改由 .player-lyrics::before/::after 承担：
+               原来这里用 mask 把容器自己擦淡，问题有两个 ——
+                 ① 遮罩跟着内容滚（scroll 容器自身的 mask 不随滚动固定）；
+                 ② 只能"淡出"，出不来毛玻璃的景深。
+               旧规则删除，避免和新遮罩叠加导致边缘双层减淡、发白发灰。 */
+        }
+        /* 右栏的上下毛玻璃遮罩。
+
+           与歌词页用同一套"多层堆叠景深"方案（原理详见
+           .lyrics-veil 上方大段注释），区别只有：
+             · 右栏更窄更矮，遮罩高度收到 56px；
+             · 模糊半径整体降一档，避免在小区域里糊成一片灰。
+
+           这里用 ::before/::after 只能挂两层，所以把
+           「压色层 + 最重一级模糊」合并成一个伪元素承担，
+           另外两级轻模糊交给 .player-lyrics 内部的实例元素
+           （见 HTML 里的 .desk-veil-blur）。 */
+        .player-lyrics::before,
+        .player-lyrics::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 56px;
+            pointer-events: none;
+            z-index: 6;              /* 压在 .desk-veil-blur 之上 */
+            --veil-dir: to bottom;
+            background: linear-gradient(var(--veil-dir),
+                var(--lyrics-veil) 0%,
+                color-mix(in srgb, var(--lyrics-veil) 62%, transparent) 38%,
+                transparent 92%);
+        }
+        .player-lyrics::before { top: 0; }
+        .player-lyrics::after {
+            bottom: 0;
+            --veil-dir: to top;
+        }
+
+        /* 右栏的两级轻模糊层 */
+        .desk-veil-blur {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 56px;
+            pointer-events: none;
+            z-index: 5;
+            --veil-dir: to bottom;
+        }
+        .desk-veil-top { top: 0; }
+        .desk-veil-bottom {
+            bottom: 0;
+            --veil-dir: to top;
+        }
+        .desk-veil-blur-1 {
+            -webkit-backdrop-filter: blur(4px) saturate(140%);
+            backdrop-filter: blur(4px) saturate(140%);
+            -webkit-mask-image: linear-gradient(var(--veil-dir),
+                rgba(0,0,0,0.80) 0%, rgba(0,0,0,0.45) 40%,
+                rgba(0,0,0,0.14) 70%, transparent 100%);
+            mask-image: linear-gradient(var(--veil-dir),
+                rgba(0,0,0,0.80) 0%, rgba(0,0,0,0.45) 40%,
+                rgba(0,0,0,0.14) 70%, transparent 100%);
+        }
+        .desk-veil-blur-2 {
+            -webkit-backdrop-filter: blur(11px) saturate(140%);
+            backdrop-filter: blur(11px) saturate(140%);
+            -webkit-mask-image: linear-gradient(var(--veil-dir),
+                rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.30) 18%,
+                transparent 42%);
+            mask-image: linear-gradient(var(--veil-dir),
+                rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.30) 18%,
+                transparent 42%);
+        }
+        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+            .desk-veil-blur { display: none; }
         }
         .player-lyrics-inner .lyrics-line {
             text-align: left;
@@ -2245,8 +2848,28 @@
             filter: blur(26px);
             opacity: 0.8;
             z-index: 0;
-            transform: rotate(var(--halo-angle, 0deg));
             will-change: transform;
+            /* 光晕旋转由 CSS 动画驱动，跑在合成器线程上：
+               · 只改变换矩阵，不触发重绘/重栅格化；
+               · 暂停时 animation-play-state 冻结在当前角度，
+                 不会有"停下来的那一刻"，也就没有闪烁。
+               （之前是 JS 每帧写 --halo-angle，见 setCoverSpin
+                 上方关于"暂停闪一下"的完整分析。）
+               19s 一圈，比唱片稍快一点，两者转速不同才有层次。 */
+            animation: haloSpin 19s linear infinite;
+            animation-play-state: paused;
+        }
+        /* 播放时才转。用 play-state 而不是增删 animation 属性：
+           后者会让动画从头重来，光晕"啪"地跳回 0deg。 */
+        .album-cover-wrap.spinning::before {
+            animation-play-state: running;
+        }
+        @keyframes haloSpin {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .album-cover-wrap::before { animation: none; }
         }
         /* 黑胶底盘 */
         .album-cover-wrap::after {
@@ -2372,19 +2995,10 @@
             -webkit-text-fill-color: transparent;
             color: var(--lyric-dim);   /* background-clip 不支持时的兜底 */
         }
-        @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
-            .cover-lyric-line {
-                background-image: none;
-                color: var(--lyric-dim);
-                -webkit-text-fill-color: currentColor;
-            }
-        }
         /* 有真实歌词在跟随时提亮一点，与"占位 / 暂无歌词"区分开 */
         .cover-lyric.has-line .cover-lyric-line {
             color: var(--lyric-bright);
         }
-        /* 小歌词的逐字片段：用自己那套明暗色（bright/dim），
-           而不是主歌词的 active/pending —— 两者亮度调校不同。 */
         .cover-lyric .lyric-seg {
             --scan: 0%;
             background-image: linear-gradient(90deg,
@@ -2406,15 +3020,27 @@
         .player-panel {
             width: 100%;
             max-width: 520px;
-            background: var(--surface-card);
-            border: 1px solid var(--border);
+            /* 控制卡片恢复毛玻璃。
+               
+               之前删掉它的理由是"父级 .full-player 是纯色，
+               模糊纯色等于没效果"—— 这个理由本身没错，
+               但解法应该是【给父级补上可折射的内容】，
+               而不是把玻璃删掉（见 .full-player::before 的环境光层）。
+               
+               底色用 --glass-panel 而不是 --surface-card：
+               后者是给"贴在实底上的卡片"用的，alpha 很低，
+               盖不住玻璃该有的那点厚度感。 */
+            background: var(--glass-panel);
+            -webkit-backdrop-filter: blur(var(--glass-blur-soft)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+            backdrop-filter: blur(var(--glass-blur-soft)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+            border: 1px solid var(--glass-edge);
             border-radius: 26px;
             padding: 20px 22px 14px;
-            /* 原本这里有 backdrop-filter: blur(20px)，但父级 .full-player
-               是不透明的纯色，模糊一块纯色等于没有效果 —— 只是白白
-               多触发一次图层合成（移动端有实打实的性能成本）。
-               删掉后暗色下视觉完全不变，亮色下也成立。 */
             box-shadow: var(--shadow-card);
+        }
+        /* 不支持 backdrop-filter：退回实心卡片，至少可读 */
+        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+            .player-panel { background: var(--surface-card); }
         }
 
         /* ===== 进度条 =====
@@ -2606,8 +3232,313 @@
                         visibility 0s;
         }
 
+        /* ===== 歌词滚动区：上下边缘毛玻璃遮罩（景深模糊）=====
+
+           设计意图：让歌词"沉入水下 / 浮出水面"。
+
+           注意 .lyrics-container 自己是滚动容器，不能直接给它加
+           mask，否则遮罩会跟着内容一起滚（顶部的渐隐会跑到屏幕外），
+           而且没有视觉纵深。所以遮罩必须由覆盖在容器之上的
+           兄弟层（.lyrics-veil，见 HTML）承担。
+
+           ------------------------------------------------------------
+           【关键原理：blur 半径无法用渐变插值】
+
+           这是"遮罩太糙"的根因，务必理解：
+
+           blur() 是【滤镜函数】，不是一个可以沿渐变插值的几何量。
+           过去写成「一层 blur(12px) + 一个渐变 mask」，得到的其实是
+           "一个固定强度的模糊，逐渐淡出" —— 边缘那一圈始终是
+           同样糊的 12px，只是透明度在变。那不是景深，
+           是"在一片均匀的毛玻璃上开了个渐隐洞"。
+
+           要做出"越靠边越糊"的层次，必须【堆层】：
+           每一层用不同的 blur 半径，再用 mask 让它只显示在
+           对应的那一段范围里 ——
+             轻模糊覆盖最大范围，重模糊只出现在最外沿。
+           叠加后，模糊强度沿边缘阶梯式上升，才是真的景深。
+
+           （参考：Josh W. Comeau "Next-level frosted glass"、
+             front-talk 关于多层 mask 叠加渐变毛玻璃的实现思路）
+
+           本实现用 3 层，蒙版区间依次收窄：
+             L1  blur(4px)  →  覆盖 0~62%
+             L2  blur(10px) →  覆盖 0~38%
+             L3  blur(18px) →  覆盖 0~18%
+           三层叠起来，从离边缘 62% 处开始有轻微模糊，
+           到最外沿堆到约 18px 的重模糊。
+
+           ------------------------------------------------------------
+           【为什么颜色层要单独拆出来，不能和模糊层合并】
+
+           mask-image 作用在元素上时，会把该元素的【所有绘制内容】
+           按同一个蒙版裁掉 —— 背景色和 backdrop-filter 一视同仁。
+           若把"渐变底色 + blur"放在同一层，想让底色铺满 100%
+           就必须让 mask 在 100% 处仍然不透明，那 blur 也就跟着
+           铺满整个区域，边缘就没法重糊了。
+
+           所以拆成两类层，各自管一件事：
+             .lyrics-veil-blur-N  → 只管模糊，mask 收窄，制造层次
+             .lyrics-veil-tint    → 只管压色，mask 拉满，把歌词吃掉
+           tint 压在最上面，负责"沉入水下"的观感；
+           blur 层在它下面，负责"近实远虚"的景深。 */
+        .lyrics-scroll-wrap {
+            /* 撑满 .lyrics-page 里 header 之外的全部剩余高度。
+
+               关键：这一层必须是「有确定高度的 flex 容器」。
+
+               踩坑记录（歌词"加载后全部消失"的根因）：
+               最初 wrap 只写了 flex:1 + overflow:hidden。wrap 自己拿到了
+               795px 高度没错，但它的子项 .lyrics-container 只是普通
+               块级流子元素 —— flex:1 对块级子元素完全无效，
+               于是 container 按【内容高度】长到了 1863px。
+               多出来的 1068px 被 wrap 的 overflow:hidden 直接裁掉，
+               而歌词行分布在整条 1863px 上 → 落在裁切区里的行
+               全看不见，表现就是"加载完成后歌词全都没了"。
+
+               两处修正缺一不可：
+                 ① display:flex + flex-direction:column
+                    让 container 真正成为 flex 项，flex:1 才生效；
+                 ② min-height:0 解除 flex 项默认的"自动最小尺寸"，
+                    否则内容多时它仍然拒绝收缩，还是会被撑开。 */
+            flex: 1 1 0;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            position: relative;   /* 遮罩的定位参照 */
+            overflow: hidden;
+        }
+
+        /* ===== 顶部遮罩：从顶栏开始渐变 =====
+
+           【用户反馈与设计改动】
+
+           原来遮罩只覆盖滚动区顶部 78px（--lyrics-veil-h），
+           而它上方是【不透明的顶栏】（.player-header，background:
+           var(--bg-overlay)）。于是歌名/歌手下方有一条清晰的横向分界：
+           顶栏实色 → 遮罩起点，歌词滑到这里就被"硬切"，
+           观感很割裂。
+
+           现在改成：顶栏背景【透明】，让遮罩从屏幕最顶端（y=0）
+           就开始渐变。这样从状态栏往下一路降低不透明度，
+           直到歌词区中部才完全消失 —— 没有起止线，也就没有割裂。
+
+           为此做了三件事：
+             ① .player-header 去掉实色底，改为透明；
+             ② 遮罩层从 .lyrics-scroll-wrap 里【移出】到 .lyrics-page
+                直属，定位改为从 y=0 起、高度含顶栏；
+             ③ 顶栏文字（歌名/歌手/按钮）用 z-index 抬到遮罩之上，
+                形成"文字浮在雾面之上"的层次。
+
+           注意遮罩必须仍在滚动容器【之外】：放进 .lyrics-container
+           会跟着滚动内容一起移动，顶部的渐隐就跑到屏幕外了。 */
+        #lyrics-page .lyrics-veil-top {
+            /* 从页面最顶端开始，覆盖顶栏 + 滚动区上沿 */
+            top: 0;
+            height: calc(var(--lyrics-header-h, 64px) + var(--lyrics-veil-h, 78px));
+        }
+
+        /* ---- 顶栏改透明 ----
+           原来靠实色底"兜住"歌词，现在改由遮罩承担这个职责。
+           顶栏本身不再绘制背景，只是按钮和文字的定位容器。 */
+        #lyrics-page .player-header {
+            background: transparent;
+            /* 必须高于遮罩：歌词页顶栏的按钮（返回/翻译）不能被雾面盖住。
+               遮罩在 .lyrics-page 内是 z-index 5（见 .lyrics-veil）。 */
+            z-index: 10;
+        }
+        /* 顶栏文字/按钮单独抬到遮罩之上，并加一点点文字阴影 ——
+           浅色歌词从下方透上来时，仅靠 z-index 仍会显得发灰、
+           对比度不够。阴影让文字始终"贴"在雾面之上。 */
+        #lyrics-page .player-header .player-song-name,
+        #lyrics-page .player-header .player-artist-name {
+            text-shadow: 0 1px 8px rgba(0, 0, 0, 0.55),
+                         0 1px 2px rgba(0, 0, 0, 0.40);
+        }
+        #lyrics-page .player-header .control-btn {
+            /* 按钮自己也带一圈暗底，避免正好压在亮色歌词上时糊成一片 */
+            background: rgba(0, 0, 0, 0.28);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        :root[data-theme="light"] #lyrics-page .player-header .player-song-name,
+        :root[data-theme="light"] #lyrics-page .player-header .player-artist-name {
+            text-shadow: 0 1px 8px rgba(255, 255, 255, 0.70),
+                         0 1px 2px rgba(255, 255, 255, 0.55);
+        }
+        :root[data-theme="light"] #lyrics-page .player-header .control-btn {
+            background: rgba(255, 255, 255, 0.42);
+        }
+
+        /* 横屏矮屏下顶栏更薄，遮罩起点跟着收 */
+        @media (min-width: 640px) and (max-height: 500px) {
+            #lyrics-page .lyrics-veil-top {
+                height: calc(var(--lyrics-header-h, 48px) + var(--lyrics-veil-h, 60px));
+            }
+        }
+
+        .lyrics-veil {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: var(--lyrics-veil-h, 78px);
+            pointer-events: none;
+            z-index: 5;
+        }
+        .lyrics-veil-top { top: 0; }
+        .lyrics-veil-bottom { bottom: 0; }
+
+        /* ---- 模糊层（3 级）----
+           共用一个占满遮罩高度的模糊层，靠各自的 mask 控制生效范围。
+           方向由 .lyrics-veil-top / -bottom 上的自定义属性决定，
+           避免为上下两组再各写一套选择器。 */
+        .lyrics-veil-blur {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            /* 模糊方向变量：顶部 to bottom，底部 to top。
+               蒙版与视觉方向必须一致 —— 用 scaleY(-1) 翻转元素会让
+               mask 坐标系跟着翻，导致"深色一侧不糊、透明一侧糊过头"。 */
+            --veil-dir: to bottom;
+        }
+        .lyrics-veil-bottom .lyrics-veil-blur { --veil-dir: to top; }
+
+        .lyrics-veil-blur-1 {
+            -webkit-backdrop-filter: blur(4px) saturate(140%);
+            backdrop-filter: blur(4px) saturate(140%);
+            -webkit-mask-image: linear-gradient(var(--veil-dir),
+                rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.55) 34%,
+                rgba(0,0,0,0.18) 62%, transparent 96%);
+            mask-image: linear-gradient(var(--veil-dir),
+                rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.55) 34%,
+                rgba(0,0,0,0.18) 62%, transparent 96%);
+        }
+        .lyrics-veil-blur-2 {
+            -webkit-backdrop-filter: blur(10px) saturate(140%);
+            backdrop-filter: blur(10px) saturate(140%);
+            -webkit-mask-image: linear-gradient(var(--veil-dir),
+                rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.40) 20%,
+                rgba(0,0,0,0.10) 38%, transparent 62%);
+            mask-image: linear-gradient(var(--veil-dir),
+                rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.40) 20%,
+                rgba(0,0,0,0.10) 38%, transparent 62%);
+        }
+        .lyrics-veil-blur-3 {
+            -webkit-backdrop-filter: blur(18px) saturate(140%);
+            backdrop-filter: blur(18px) saturate(140%);
+            -webkit-mask-image: linear-gradient(var(--veil-dir),
+                rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.32) 9%,
+                transparent 20%);
+            mask-image: linear-gradient(var(--veil-dir),
+                rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.32) 9%,
+                transparent 20%);
+        }
+
+        /* 顶部遮罩比原来高得多（含整个顶栏），模糊层的覆盖范围
+           如果还按原来的百分比，重模糊就会被压缩在很窄的一条里，
+           层次出不来。所以单独把三级的覆盖区间按比例拉开：
+
+             高度 = 顶栏(≈25%) + 原遮罩(≈75%)，大致放大 1.6 倍，
+             各级区间同步放大，保持"轻模糊铺得最广、重模糊只在最外沿"
+             的堆叠关系不变。
+
+           不要直接改上面的通用规则 —— 底部遮罩仍是原来的高度，
+           百分比不能一起动。 */
+        .lyrics-veil-top .lyrics-veil-blur-1 {
+            -webkit-mask-image: linear-gradient(var(--veil-dir),
+                rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.55) 52%,
+                rgba(0,0,0,0.18) 78%, transparent 100%);
+            mask-image: linear-gradient(var(--veil-dir),
+                rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.55) 52%,
+                rgba(0,0,0,0.18) 78%, transparent 100%);
+        }
+        .lyrics-veil-top .lyrics-veil-blur-2 {
+            -webkit-mask-image: linear-gradient(var(--veil-dir),
+                rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.40) 36%,
+                rgba(0,0,0,0.10) 60%, transparent 84%);
+            mask-image: linear-gradient(var(--veil-dir),
+                rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.40) 36%,
+                rgba(0,0,0,0.10) 60%, transparent 84%);
+        }
+        .lyrics-veil-top .lyrics-veil-blur-3 {
+            -webkit-mask-image: linear-gradient(var(--veil-dir),
+                rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.32) 18%,
+                transparent 38%);
+            mask-image: linear-gradient(var(--veil-dir),
+                rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.32) 18%,
+                transparent 38%);
+        }
+
+        /* ---- 压色层 ----
+           把边缘的歌词"吃掉"。最外沿必须是【完全不透明】的背景色，
+           否则最顶上的一行歌词会透出来，看着像被裁断而不是沉下去。
+
+           顶部与底部分开写，因为两者的"实色段"长度完全不同：
+
+             · 底部遮罩只覆盖滚动区下沿，最外沿就是屏幕边缘附近，
+               实色段短一点（前 28%）就够了；
+             · 顶部遮罩现在从屏幕顶端一路铺下来，中间还压着顶栏的
+               歌名/歌手。如果实色段还按 28% 给，顶栏那一段就是半透明的，
+               歌词会从歌名背后透出来 —— 所以实色段要拉长到约 55%
+               （大致就是顶栏高度在整条遮罩里的占比），
+               保证"顶栏区域 = 实色背景"，歌词到顶栏下沿才开始显形。
+
+           颜色用 --lyrics-veil 而不是 --bg-overlay：
+           歌词页背景本来就是 --bg-overlay，而 --lyrics-veil 是它的
+           "略高一档不透明度"版本（0.92），专门给遮罩收口用 ——
+           纯色背景再叠一层同色，视觉上完全一致，但能把透上来的
+           歌词压住。 */
+        .lyrics-veil-tint {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            --veil-dir: to bottom;
+            background: linear-gradient(var(--veil-dir),
+                var(--lyrics-veil) 0%,
+                color-mix(in srgb, var(--lyrics-veil) 72%, transparent) 28%,
+                color-mix(in srgb, var(--lyrics-veil) 30%, transparent) 58%,
+                transparent 88%);
+        }
+        .lyrics-veil-bottom .lyrics-veil-tint { --veil-dir: to top; }
+
+        /* 顶部遮罩的压色层：实色段拉长，把顶栏整片盖成实底。
+           --lyrics-header-h 是顶栏实测高度，--lyrics-veil-h 是遮罩高度，
+           两者之比就是"顶栏占比"。用 calc 算出来，横屏/竖屏自动适配，
+           不用写死百分比。
+
+           再往外多给 6% 的过渡：正好在顶栏下沿形成一条柔和的起步带，
+           让第一行歌词是"从雾里浮出来"，而不是从实色里"冒"出来。 */
+        .lyrics-veil-top .lyrics-veil-tint {
+            background: linear-gradient(var(--veil-dir),
+                var(--lyrics-veil) calc(var(--lyrics-header-h, 64px) + 6%),
+                color-mix(in srgb, var(--lyrics-veil) 66%, transparent) 62%,
+                color-mix(in srgb, var(--lyrics-veil) 26%, transparent) 82%,
+                transparent 100%);
+        }
+
+        /* 不支持 backdrop-filter：模糊层整层停用，只留压色层。
+           此时退化成"纯渐变淡出"，不比老实现差，且不会白烧 GPU。 */
+        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+            .lyrics-veil-blur { display: none; }
+        }
+
         .lyrics-container {
-            flex: 1;
+            /* flex: 1 1 0% = 占满 wrap 的剩余高度。
+
+               踩坑记录（很反直觉，务必别改）：
+               这里【绝对不能】写 min-height: 0。
+
+               min-height:auto 是 flex 项的默认值，它触发规范里的
+               "自动最小尺寸"规则：当父容器高度确定时，子项会被压缩到
+               父容器高度，溢出交给 overflow-y 滚动。
+               而一旦显式写成 min-height:0，在"wrap 的高度由 flex 分配"
+               这种嵌套场景下，container 反而会退化成按内容撑开 ——
+               实测被撑到 1863px，scrollHeight === clientHeight，
+               maxScroll 恒为 0，歌词就彻底不动了。
+
+               父级 .lyrics-scroll-wrap 已经用 flex:1 1 0 + min-height:0
+               确保了自己拿到确定高度，这一层保持默认即可。 */
+            flex: 1 1 0%;
             overflow-y: auto;
             /* 首尾各留一段居中余量（由 JS 按行高动态计算），
                但只留"一小屏"级别，避免开头出现大片空白 */
@@ -2618,21 +3549,9 @@
             align-items: stretch;
             text-align: left;
             -webkit-overflow-scrolling: touch;
-            /* 平滑由 JS 的弹簧物理逐帧驱动，不用原生 smooth ——
-               原生 smooth 每次设定新目标都会从当前位置重新起步，
-               高频更新（每句都在换目标）下会被反复打断，产生回弹感。 */
+            /* 平滑由 JS 逐帧插值实现，避免原生 smooth 被高频更新打断产生回弹 */
             scroll-behavior: auto;
             overflow-anchor: none;
-            /* 上下渐隐遮罩：靠近视口边缘的歌词淡出，制造"沉入水下 / 浮出水面"
-               的纵深，把视觉焦点压到中间那一行。
-               遮罩作用在元素的边框盒上，所以它锚定的是「视口边缘」而不是内容，
-               卷动时不会跟着内容跑 —— 这正是"越靠边越淡"该有的行为。
-               参数与 .player-lyrics-inner 保持一致，两处观感才统一。
-               18%/82%：渐变带要够宽才看得出来，太窄等于没做。 */
-            mask-image: linear-gradient(to bottom,
-                transparent 0, #000 18%, #000 82%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom,
-                transparent 0, #000 18%, #000 82%, transparent 100%);
         }
 
         .lyrics-line {
@@ -2649,13 +3568,9 @@
             position: relative;
             z-index: 1;
             color: var(--text-muted);
-            /* 只过渡"不参与布局"的属性。font-size / padding 一律不进 transition，
-               因为它们会改变行高 → offsetTop 漂移 → 滚动目标算错。
-               transform 可以进：它是合成层属性，不改变 offsetTop / offsetHeight，
-               这样当前行的放大才是"长"出来的，而不是"啪"地跳一下。
-               缓动带一点过冲（1.18），和滚动用的弹簧是同一套物理语言。 */
-            transition: color 0.45s ease, opacity 0.45s ease, text-shadow 0.45s ease,
-                        transform 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.18);
+            /* 只过渡颜色类属性。font-size / padding 一律不进 transition，
+               因为它们会改变行高 → offsetTop 漂移 → 滚动目标算错。 */
+            transition: color 0.45s ease, opacity 0.45s ease, text-shadow 0.45s ease;
             width: 100%;
             font-weight: 300;
             letter-spacing: 0.3px;
@@ -2679,23 +3594,17 @@
                z-index 抬到最上层，确保高亮行始终盖在相邻行之上而非被吞掉。 */
             transform: scale(1.06);
             z-index: 2;
+            /* 弹簧缓动：切行时行"弹"到 1.06 再稳住。
+               原来用 ease 是恒定速度曲线，放大过程像被推过去；
+               弹簧带一点回弹，才像被"抛"进高亮态。
+               这里用 CSS 的线性缓动近似弹簧——
+               真正的弹簧解算在 JS 的滚动里做（见 springScrollTo），
+               但那套逐帧写 transform 会和布局计算打架（offsetTop 漂移），
+               所以行内放大交给 CSS 曲线，效果等价且零风险。 */
+            transition: color 0.45s ease, opacity 0.45s ease,
+                        text-shadow 0.45s ease,
+                        transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        /* ===== 距离衰减 =====
-           只把当前行点亮是不够的 —— 其余行亮度完全一致时，整片歌词仍然是"平"的，
-           视线没有落点。真正的聚焦感来自梯度：离当前行越近越亮，越远越暗。
-           档位由 JS 写在 data-near 上：
-               0  当前行（不在这里定档，交给上面的 .active，opacity:1）
-               1~4 相邻行，逐档压暗
-               9  窗口之外
-           窗口外必须**显式标 9**，而不是"不标"。否则某行从窗口里退出去以后
-           会保留上一档的亮度，一屏歌词里留下一串"褪不掉的残影"。
-           只调 opacity、不调 color —— color 要留着给 .lyric-seg
-           的"已唱 / 未唱"双色渐变当基色。 */
-        .lyrics-line[data-near="1"] { opacity: 0.74; }
-        .lyrics-line[data-near="2"] { opacity: 0.56; }
-        .lyrics-line[data-near="3"] { opacity: 0.42; }
-        .lyrics-line[data-near="4"] { opacity: 0.32; }
-        .lyrics-line[data-near="9"] { opacity: 0.24; }
         /* ===== 歌词翻译行 =====
            紧跟在原文下方。刻意不参与扫过高亮（译文没有逐字时间，
            硬扫就会重演"光带和声音对不上"），也不左右滚动 ——
@@ -2720,7 +3629,25 @@
         .lyrics-line .lyric-trans[hidden] {
             display: none;
         }
-        /* 单个片段：未拆分的普通行，本身就是一个片段 */
+        /* ===== 单个片段：卡拉OK 渐变填充 =====
+
+           这是全页最显眼的效果：颜色像一道光"扫过"文字。
+
+           原理上它并不是"在文字上叠加一层颜色"，而是把渐变当作
+           Alpha 遮罩用 —— 等价于原生渲染里的：
+             ① saveLayer 把这一行隔离到离屏缓冲区
+             ② 在缓冲区里正常绘制文字
+             ③ 再用一个水平渐变矩形以 DstIn 混合模式"切"出已唱部分
+                （DstIn 只保留"目标 ∩ 源"的像素，于是渐变成了文字的
+                 不透明度蒙版，文字形状被原样保留）
+
+           Web 端 @supports 到 background-clip:text 时，这条链路
+           可以由浏览器一次性完成：把渐变当作元素的背景，再用
+           background-clip:text 把它裁进字形里 —— 得到的结果与
+           saveLayer + DstIn 完全一致，且不产生中间层。
+
+           分界处是硬切：--scan 左侧为已唱色，右侧为未唱色，
+           由 JS 逐帧推进 --scan，光带于是自左向右扫过。 */
         .lyric-seg {
             --scan: 100%;
             background-image: linear-gradient(90deg,
@@ -2756,25 +3683,36 @@
             opacity: 1;
             transform: translateY(0);
         }
-        /* 有播放器时，结果页底部上移，露出音乐条。
-           注意：结果页属于覆盖层，此时 tab 栏是隐藏的，所以只让出音乐条高度，
-           不能再加 --tab-height，否则底部会多出一段空白。 */
-        .search-results.has-player {
-            bottom: var(--mini-height);
-        }
+        /* 与收藏页同理：结果页不再上移让位，而是铺满到屏幕底部，
+           让列表从音乐条背后穿过 —— 否则音乐条背后只有纯色，
+           backdrop-filter 无能为力（详见 .fav-page.has-player 处的说明）。 */
 
+        /* 与榜单页顶栏同一套做法：绝对定位浮层，不占文档流高度。
+
+           原来是 position:relative 参与 flex 纵排，把结果列表推到自己
+           下沿之后 —— 顶栏背后于是只有 .search-results 的实色底，
+           backdrop-filter 无像素可糊。改成浮层后列表会从它底下穿过。 */
         .search-results-header {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px 16px;
-            background: var(--bg-body);
-            border-bottom: 1px solid var(--border-subtle);
-            flex-shrink: 0;
-            flex-wrap: wrap;
-            /* 独立层叠上下文，保证内部的历史下拉永远盖住下方结果列表 */
-            position: relative;
+            /* 左右内边距在宽屏下自动外扩，把搜索行收进与主搜索一致的
+               540px 居中栏（主搜索 .search-container 就是这个上限）；
+               窄屏时 max() 回落到 16px，行为与从前完全一样 */
+            padding: 12px max(16px, calc((100% - 540px) / 2));
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
             z-index: 30;
+            background: var(--glass-panel-strong);
+            -webkit-backdrop-filter: blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+            backdrop-filter: blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+            border-bottom: 1px solid var(--glass-edge);
+            flex-wrap: wrap;
+        }
+        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+            .search-results-header { background: var(--bg-body); }
         }
         .back-btn {
             background: none;
@@ -2845,14 +3783,18 @@
         .results-list {
             flex: 1;
             overflow-y: auto;
-            padding: 12px 16px 30px;
+            /* 顶部让开浮层顶栏的高度（--results-header-h 由 JS 实测写入，
+               含搜索框换行的情况），否则第一条结果被压在玻璃下面。 */
+            padding: calc(var(--results-header-h, 71px) + 8px) 16px 30px;
             /* 层级低于 header，避免列表内的收藏按钮盖住历史浮窗 */
             position: relative;
             z-index: 1;
         }
-        /* 结果页有播放器时，让列表底部贴合音乐条，不留大片空白 */
+        /* 有音乐条时让出底部空间：列表照旧从音乐条背后穿过（玻璃的像素来源），
+           只是滚到底时最后一条结果不会被压住。覆盖层里 tab 栏是隐藏的，
+           所以只让音乐条高度。 */
         .search-results.has-player .results-list {
-            padding-bottom: 20px;
+            padding-bottom: calc(var(--mini-height) + 20px);
         }
 
         .result-item {
@@ -3096,7 +4038,14 @@
             opacity: 0.92;
         }
 
-        /* 搜索结果里的封面缩略图 */
+        /* 搜索结果 / 榜单行里的封面缩略图。
+
+           两层结构：
+             ① 占位层（.result-cover-fallback）：纯黑/纯白底 + 灰边框 + 音符图标。
+                封面没到之前就是这个静态方块 —— 不放转圈。
+             ② 图片层（img）：拿到地址前 display:none。
+                一旦加载成功就整个替换掉占位层 —— 而不是把图片叠在占位
+                之上"半透出来"，那样底色会从图片边缘渗出来一圈脏边。 */
         .result-cover {
             position: relative;
             width: 44px;
@@ -3104,25 +4053,32 @@
             border-radius: 9px;
             overflow: hidden;
             flex-shrink: 0;
-            background: linear-gradient(135deg, #e91e63 0%, #7b1fa2 100%);
+            background: var(--cover-ph-bg);
+            border: 1px solid var(--glass-edge);
         }
         .result-cover img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: block;
+            display: none;
         }
+        .result-cover img.loaded { display: block; }
         .result-cover-fallback {
             position: absolute;
             inset: 0;
-            display: none;
+            display: flex;
             align-items: center;
             justify-content: center;
             font-size: 15px;
-            color: var(--text-on-media);
+            color: var(--cover-ph-fg);
         }
-        .result-cover.no-cover img { display: none; }
-        .result-cover.no-cover .result-cover-fallback { display: flex; }
+        /* 占位层让位：只在【图片真正显示出来】之后才隐藏。
+
+           注意判据是 .loaded（applyCoverToEl 在 img load 事件里加的），
+           不是 .has-cover（那只看 song.picurl 有没有值）。
+           用 has-cover 的话，图片还在下载的这段时间里占位层已经先没了，
+           封面位置就是一个空白方块 —— 得等到图片下载完才补上图标。 */
+        .result-cover img.loaded ~ .result-cover-fallback { display: none; }
 
         /* ===== 歌单详情页 / 关于页（共用同一套覆盖层外观与进出动画） ===== */
         .playlist-page,
@@ -3257,23 +4213,36 @@
             font-size: 12.5px;
             color: var(--text-secondary);
         }
+        /* 概览区右侧的播放键：只有一个图标，玫红描边、背景留空。
+           原来是个填充实心胶囊（"▶ 播放"两个字），在概览区里视觉重量
+           比歌单名还大，抢了标题的注意力。改成描边图标后它退回
+           "一个可点的操作"，和左侧封面的圆形语言也更统一。 */
         .pl-play-all {
-            border: none;
-            background: var(--primary);
-            color: #fff;
-            font-size: 13px;
-            padding: 9px 18px;
+            /* 扁一点：宽大于高，看着更像一个"播放条"而不是圆点 */
+            width: 62px;
+            height: 40px;
+            border: 1.5px solid var(--primary);
+            background: transparent;
+            color: var(--primary);
+            font-size: 14px;
+            padding: 0;
             border-radius: 999px;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            justify-content: center;
             flex-shrink: 0;
-            box-shadow: 0 6px 18px var(--primary-glow);
-            transition: transform 0.16s, background 0.2s;
+            transition: transform 0.16s, background 0.2s, color 0.2s;
         }
-        .pl-play-all:hover { background: #f0346f; }
-        .pl-play-all:active { transform: scale(0.95); }
+        /* 播放三角在光学中心上偏右，补一点左边距让它看起来是居中的 */
+        .pl-play-all i {
+            margin-left: 2px;
+        }
+        .pl-play-all:hover {
+            background: var(--primary);
+            color: #fff;
+        }
+        .pl-play-all:active { transform: scale(0.92); }
 
         .sheet {
             position: fixed;
@@ -3778,11 +4747,12 @@
                 opacity: 1;
                 text-shadow: 0 0 24px var(--lyric-glow);
             }
-            /* 未播行的压暗统一交给「距离衰减」（见 .lyrics-line[data-near]）。
-               这里不再单独定一档：两套规则叠加会让右栏比左栏更暗，
-               同一份歌词在两侧观感就不一致了。
-               仍然只调 opacity、不动 color —— color 要留着给 .lyric-seg
+            /* 未播行压暗一档：拉开与高亮行的距离。
+               只调 opacity，不动 color —— color 要留着给 .lyric-seg
                的"已唱/未唱"双色渐变当基色。 */
+            #player-lyrics-inner .lyrics-line:not(.active) {
+                opacity: 0.55;
+            }
 
             /* 独立歌词页：宽屏下隐藏返回 / 播放暂停 / 上下首 */
             #lyrics-page .player-header {
@@ -4072,6 +5042,17 @@
             </div>
             <!-- 桌面端右侧实时歌词（窄屏隐藏） -->
             <div class="player-lyrics" id="player-lyrics">
+                <!-- 上下景深模糊的两级轻层。
+                     带重模糊与压色的那两层由 .player-lyrics::before/::after
+                     承担（见 CSS），这里只补它做不到的轻模糊梯度。 -->
+                <div class="desk-veil-blur desk-veil-top" aria-hidden="true">
+                    <div class="desk-veil-blur-1"></div>
+                    <div class="desk-veil-blur-2"></div>
+                </div>
+                <div class="desk-veil-blur desk-veil-bottom" aria-hidden="true">
+                    <div class="desk-veil-blur-1"></div>
+                    <div class="desk-veil-blur-2"></div>
+                </div>
                 <div class="player-lyrics-inner" id="player-lyrics-inner">
                     <div class="lyrics-line lyrics-line-plain">歌词加载中…</div>
                 </div>
@@ -4089,14 +5070,59 @@
                 <div class="player-song-name" id="lyrics-song-name"></div>
                 <div class="player-artist-name" id="lyrics-artist-name"></div>
             </div>
-            <!-- 翻译开关：顶栏右上角。仅当这首歌确实有译文时显示 -->
-            <button class="control-btn lc-trans" id="lyrics-trans-btn"
-                    aria-label="歌词翻译" title="歌词翻译" hidden>
-                <span class="lc-trans-label">译</span>
-            </button>
+            <div class="player-head-actions">
+                <!-- 收藏当前歌曲：紧挨"译"左侧贴右上角。
+                     无底板（不参与 control-btn 的悬停圆底），
+                     激活态只变主色 + 心形换实心（syncFavUI 换 icon）。 -->
+                <button class="control-btn" id="lyrics-fav-btn"
+                        aria-label="收藏当前歌曲" title="收藏当前歌曲">
+                    <i class="far fa-heart"></i>
+                </button>
+                <!-- 翻译开关：顶栏右上角。仅当这首歌确实有译文时显示 -->
+                <button class="control-btn lc-trans" id="lyrics-trans-btn"
+                        aria-label="歌词翻译" title="歌词翻译" hidden>
+                    <span class="lc-trans-label">译</span>
+                </button>
+            </div>
         </div>
-        <div class="lyrics-container" id="lyrics-container">
-            <div class="lyrics-line">歌词加载中…</div>
+        <!-- 顶部毛玻璃遮罩。
+             【必须放在 .lyrics-scroll-wrap 之外】
+
+             原来它是滚动区内部的兄弟层，遮罩只能覆盖滚动区自己
+             那 78px，够不到上方的顶栏 —— 于是顶栏与遮罩交界处
+             出现一条硬边，歌词滑到那里像被切断。
+
+             现在挪到 .lyrics-page 直属：起点是屏幕顶端（top:0），
+             高度 = 顶栏高 + 遮罩高，一路从状态栏渐隐下来，
+             中间没有任何分界线。顶栏文字再用 z-index 压上来。
+
+             非顶部遮罩（bottom）仍留在滚动区内 —— 它的参照系
+             就是滚动区底边，挪出去反而要额外算偏移。 -->
+        <div class="lyrics-veil lyrics-veil-top" aria-hidden="true">
+            <div class="lyrics-veil-blur lyrics-veil-blur-1"></div>
+            <div class="lyrics-veil-blur lyrics-veil-blur-2"></div>
+            <div class="lyrics-veil-blur lyrics-veil-blur-3"></div>
+            <div class="lyrics-veil-tint"></div>
+        </div>
+        <div class="lyrics-scroll-wrap" id="lyrics-scroll-wrap">
+            <!-- 底部边缘毛玻璃遮罩：制造"沉入水下"的纵深。
+                 必须是 .lyrics-container 的兄弟节点而非子节点 ——
+                 子节点会跟着滚动内容一起跑，遮罩就失效了。
+
+                 四层，顺序即叠放顺序（后写的在上面）：
+                   1~3 级模糊层：不同半径、不同覆盖范围，堆出景深
+                   4   压色层  ：把歌词吃掉，收口成"沉下去"
+                 模糊层在下面、压色层在上面 —— 反了的话，
+                 压色层的不透明渐变会把模糊层整个盖掉，白做。 -->
+            <div class="lyrics-veil lyrics-veil-bottom" aria-hidden="true">
+                <div class="lyrics-veil-blur lyrics-veil-blur-1"></div>
+                <div class="lyrics-veil-blur lyrics-veil-blur-2"></div>
+                <div class="lyrics-veil-blur lyrics-veil-blur-3"></div>
+                <div class="lyrics-veil-tint"></div>
+            </div>
+            <div class="lyrics-container" id="lyrics-container">
+                <div class="lyrics-line">歌词加载中…</div>
+            </div>
         </div>
         <div class="lyrics-controls" id="lyrics-controls">
             <button class="lc-btn" id="lyrics-prev-btn" aria-label="上一首" title="上一首">
@@ -4142,7 +5168,10 @@
                     <i class="fas fa-chevron-left"></i>
                 </button>
                 <div class="fav-title">我的收藏</div>
-                <!-- 顶栏右侧：搜索图标 + 更多（三个点） -->
+                <!-- 顶栏右侧：播放全部 + 搜索图标 + 更多（三个点） -->
+                <button class="fav-icon-btn fav-play-btn" id="fav-header-play" aria-label="播放全部" title="播放全部">
+                    <i class="fas fa-play"></i>
+                </button>
                 <button class="fav-icon-btn" id="fav-search-toggle" aria-label="搜索收藏" title="搜索">
                     <i class="fas fa-search"></i>
                 </button>
@@ -4161,21 +5190,26 @@
                 </div>
             </div>
         </div>
-        <div class="pl-summary" id="fav-summary">
-            <div class="pl-summary-cover" id="fav-summary-cover">
-                <img src="" alt="">
-                <div class="mine-cover-fallback"><i class="fas fa-heart"></i></div>
+        <!-- 内容区整体滚动：概览区和列表都从顶栏背后穿过，
+             顶栏的毛玻璃才有东西可糊。
+             顶栏自身 absolute 浮在上层，不再占用文档流。 -->
+        <div class="fav-scroll">
+            <div class="pl-summary" id="fav-summary">
+                <div class="pl-summary-cover" id="fav-summary-cover">
+                    <img src="" alt="">
+                    <div class="mine-cover-fallback"><i class="fas fa-heart"></i></div>
+                </div>
+                <div class="pl-summary-info">
+                    <div class="pl-summary-name">我的收藏</div>
+                    <div class="pl-summary-sub" id="fav-summary-sub">0 首</div>
+                </div>
+                <button class="pl-play-all" id="fav-play-all" aria-label="播放全部" title="播放全部">
+                    <i class="fas fa-play"></i>
+                </button>
             </div>
-            <div class="pl-summary-info">
-                <div class="pl-summary-name">我的收藏</div>
-                <div class="pl-summary-sub" id="fav-summary-sub">0 首</div>
-            </div>
-            <button class="pl-play-all" id="fav-play-all">
-                <i class="fas fa-play"></i> 播放
-            </button>
+            <!-- 搜索行在顶栏内部（收起时不占高度） -->
+            <div class="fav-list" id="fav-list"></div>
         </div>
-        <!-- 搜索行在顶栏内部（收起时不占高度） -->
-        <div class="fav-list" id="fav-list"></div>
     </div>
 
     <!-- ===== 歌单详情页 ===== -->
@@ -4186,7 +5220,10 @@
                     <i class="fas fa-chevron-left"></i>
                 </button>
                 <div class="fav-title" id="pl-page-title">歌单</div>
-                <!-- 顶栏右侧：搜索图标 + 更多（三个点） -->
+                <!-- 顶栏右侧：播放全部 + 搜索图标 + 更多（三个点） -->
+                <button class="fav-icon-btn fav-play-btn" id="pl-header-play" aria-label="播放全部" title="播放全部">
+                    <i class="fas fa-play"></i>
+                </button>
                 <button class="fav-icon-btn" id="pl-search-toggle" aria-label="搜索歌单内歌曲" title="搜索">
                     <i class="fas fa-search"></i>
                 </button>
@@ -4205,21 +5242,26 @@
                 </div>
             </div>
         </div>
-        <div class="pl-summary" id="pl-summary">
-            <div class="pl-summary-cover" id="pl-summary-cover">
-                <img src="" alt="">
-                <div class="mine-cover-fallback"><i class="fas fa-music"></i></div>
+        <!-- 内容区整体滚动：概览区和列表都从顶栏背后穿过，
+             顶栏的毛玻璃才有东西可糊。
+             顶栏自身 absolute 浮在上层，不再占用文档流。 -->
+        <div class="fav-scroll">
+            <div class="pl-summary" id="pl-summary">
+                <div class="pl-summary-cover" id="pl-summary-cover">
+                    <img src="" alt="">
+                    <div class="mine-cover-fallback"><i class="fas fa-music"></i></div>
+                </div>
+                <div class="pl-summary-info">
+                    <div class="pl-summary-name" id="pl-summary-name">歌单</div>
+                    <div class="pl-summary-sub" id="pl-summary-sub">0 首</div>
+                </div>
+                <button class="pl-play-all" id="pl-play-all" aria-label="播放全部" title="播放全部">
+                    <i class="fas fa-play"></i>
+                </button>
             </div>
-            <div class="pl-summary-info">
-                <div class="pl-summary-name" id="pl-summary-name">歌单</div>
-                <div class="pl-summary-sub" id="pl-summary-sub">0 首</div>
-            </div>
-            <button class="pl-play-all" id="pl-play-all">
-                <i class="fas fa-play"></i> 播放
-            </button>
+            <!-- 搜索行在顶栏内部（收起时不占高度） -->
+            <div class="fav-list" id="pl-list"></div>
         </div>
-        <!-- 搜索行在顶栏内部（收起时不占高度） -->
-        <div class="fav-list" id="pl-list"></div>
     </div>
 
     <!-- ===== 关于页 ===== -->
@@ -4235,7 +5277,7 @@
         <div class="about-body">
             <div class="about-logo"><i class="fas fa-music"></i></div>
             <div class="about-name">MKY音乐</div>
-            <div class="about-version">版本 1.7</div>
+            <div class="about-version">版本 1.5</div>
             <div class="about-slogan">把每一处细节听懂<br>把听歌这件事做好</div>
             <div class="about-copyright">Copyright &copy; 2026 Monkeysoft<br>All Rights Reserved.</div>
         </div>
@@ -4287,6 +5329,10 @@
         <div class="select-head">
             <span class="select-count" id="select-count">请选择歌曲</span>
         </div>
+        <button class="menu-item" id="select-all">
+            <i class="fas fa-check-double"></i>
+            <span id="select-all-label">全选</span>
+        </button>
         <button class="menu-item" id="select-play" disabled>
             <i class="fas fa-play"></i>
             <span>播放</span>
@@ -4309,10 +5355,6 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        // ============================================================
-        //  MKY音乐 · 毛玻璃重构版  –  完整逻辑
-        // ============================================================
-
         (function() {
             'use strict';
 
@@ -4374,6 +5416,7 @@
             const favBackBtn = $('#fav-back-btn');
             const favPageMoreBtn = $('#fav-page-more-btn');
             const favPlayAllBtn = $('#fav-play-all');
+            const favHeaderPlay = $('#fav-header-play');
             const favSearchInput = $('#fav-search-input');
             const favSearchClear = $('#fav-search-clear');
             const favSearchToggle = $('#fav-search-toggle');
@@ -4382,6 +5425,7 @@
 
             const selectBar = $('#select-bar');
             const selectCountEl = $('#select-count');
+            const selectAllBtn = $('#select-all');
             const selectPlayBtn = $('#select-play');
             const selectAddBtn = $('#select-add');
             const selectFavBtn = $('#select-fav');
@@ -4394,6 +5438,7 @@
             const plBackBtn = $('#pl-back-btn');
             const plPageTitle = $('#pl-page-title');
             const plMoreBtn = $('#pl-more-btn');
+            const plHeaderPlay = $('#pl-header-play');
             const plSummaryCover = $('#pl-summary-cover');
             const plSummaryName = $('#pl-summary-name');
             const plSummarySub = $('#pl-summary-sub');
@@ -4450,9 +5495,16 @@
 
             const lyricsPage = $('#lyrics-page');
             const backToPlayerBtn = $('#back-to-player-btn');
+            const lyricsFavBtn = $('#lyrics-fav-btn');
             const lyricsSongName = $('#lyrics-song-name');
             const lyricsArtistName = $('#lyrics-artist-name');
             const lyricsContainer = $('#lyrics-container');
+            // 歌词页顶栏。顶部遮罩要算"顶栏 + 滚动区上沿"的总高度，
+            // 所以这里也留一个引用，用来读顶栏实际高度。
+            const lyricsHeader = lyricsPage ? lyricsPage.querySelector('.player-header') : null;
+            // 歌词滚动区外壳：底部遮罩的定位参照（遮罩是它的子节点、
+            // 滚动容器的兄弟节点），JS 侧用来挂 --lyrics-veil-h 变量。
+            const lyricsScrollWrap = $('#lyrics-scroll-wrap');
             // 桌面端全屏播放器右侧的实时歌词栏（窄屏隐藏）
             const playerLyrics = $('#player-lyrics');
             const playerLyricsInner = $('#player-lyrics-inner');
@@ -4512,6 +5564,21 @@
             let isRestoring = false;     // 是否处于"恢复播放"流程
             let savePlaybackTimer = null;
             let toastTimer = null;
+
+            /* ===== 关于淡入淡出 =====
+               这里曾有一组 FADE_IN_MS / FADE_OUT_MS 和 dyingAudios 集合，
+               配合底层的 Web Audio GainNode 做播放、暂停、切歌的淡变。
+               2026-09-27 曾整层删除：createMediaElementSource 会旁路
+               el.volume，把"能不能出声"绑在一整条额外链路上，极难排查。
+
+               现在的淡变回到 NativeAudio 内部，用【渐变 el.volume】实现
+               （_startFade / playFaded / pauseFaded，见文件开头说明）：
+               el.volume 仍是唯一真相，任何异常都退化为硬切，绝不静音。
+               这一层只保留时长与接线：
+                 · 暂停/恢复（togglePlay）   180 / 200ms
+                 · 切歌：旧曲淡出 180ms（后台进行，不拖慢新歌），
+                         新曲淡入 280ms
+                 · 自然播完的旧曲不淡出（已经没声音可淡） */
 
             // Tab / 榜单 / 歌单 状态
             let activeTab = 'chart';
@@ -4660,6 +5727,11 @@
                     fullFavBtn.classList.toggle('active', fav);
                     fullFavBtn.innerHTML = `<i class="${fav ? 'fas' : 'far'} fa-heart"></i>`;
                 }
+                // 歌词页顶栏（手机端，"译"左边那颗）
+                if (lyricsFavBtn) {
+                    lyricsFavBtn.classList.toggle('active', fav);
+                    lyricsFavBtn.innerHTML = `<i class="${fav ? 'fas' : 'far'} fa-heart"></i>`;
+                }
                 // 列表内的心形按钮
                 $$('.song-fav-btn, .result-item .song-fav-btn').forEach(btn => {
                     const id = btn.dataset.id;
@@ -4796,6 +5868,8 @@
                 if (favHeaderSearch) favHeaderSearch.classList.remove('active');
                 renderFavorites('');
                 favPage.classList.add('active');
+                // 顶栏是浮层，显示后量一次高度给滚动容器让位
+                syncHeaderHeight();
                 // 若播放器已显示，让收藏页底部让位，突出下方状态栏
                 syncFavPageOffset();
                 // 概览封面若还没回填，用最新一首的 id 补一次
@@ -5357,10 +6431,17 @@
                 activeChart = name;
                 syncChartChips();
                 songList.innerHTML = '<li class="loading"><svg viewBox="0 0 24 24" aria-hidden="true"><circle class="ring-track" cx="12" cy="12" r="9"></circle><circle class="ring-arc" cx="12" cy="12" r="9"></circle></svg><span>加载中…</span></li>';
-                try {
-                    const res = await fetch(
-                        'https://node.api.xfabe.com/api/wangyi/musicChart?list=' + encodeURIComponent(name));
-                    const data = await res.json();
+                try {                    /* 走统一的直连+代理通道，而不是裸 fetch。
+
+                       原先这里是 fetch(裸 URL)：一旦这个接口不带 CORS 头
+                       或所在域名不可达，整条榜单就彻底失败，连"换个通道"
+                       的机会都没有。重进时榜单是首屏内容，它挂了会
+                       连锁影响"点唱片没反应"（见 init 里的注释）。
+
+                       url 写成函数形式，与其它源保持一致。 */
+                    const data = await fetchDirectOrProxy(
+                        'https://node.api.xfabe.com/api/wangyi/musicChart?list=' +
+                        encodeURIComponent(name));
                     if (data.code === 200 && data.data) {
                         chartCover.src = data.data.listImg || '';
                         chartInfo.innerHTML = `
@@ -5969,6 +7050,8 @@
                 // 每次进歌单都收起搜索框，只留顶栏的搜索图标
                 if (plHeaderSearch) plHeaderSearch.classList.remove('active');
                 playlistPage.classList.add('active');
+                // 顶栏是浮层，显示后量一次高度给滚动容器让位
+                syncHeaderHeight();
                 syncFavPageOffset();
                 renderPlaylistDetail();
             }
@@ -6083,12 +7166,20 @@
 
             if (mineAboutBtn) mineAboutBtn.addEventListener('click', openAboutPage);
             if (aboutBackBtn) aboutBackBtn.addEventListener('click', closeAboutPage);
+            // 播放整个歌单（概览区的按钮与顶栏按钮共用同一段逻辑）
+            function playPlaylist(plId) {
+                const pl = getPlaylist(plId);
+                if (!pl || pl.songs.length === 0) { showToast('歌单还是空的'); return; }
+                currentSongs = pl.songs.map(s => ({ ...s, pay: s.pay || '免费音乐' }));
+                playSong(0);
+            }
             if (plPlayAll) {
-                plPlayAll.addEventListener('click', () => {
-                    const pl = getPlaylist(openedPlaylistId);
-                    if (!pl || pl.songs.length === 0) { showToast('歌单还是空的'); return; }
-                    currentSongs = pl.songs.map(s => ({ ...s, pay: s.pay || '免费音乐' }));
-                    playSong(0);
+                plPlayAll.addEventListener('click', () => playPlaylist(openedPlaylistId));
+            }
+            if (plHeaderPlay) {
+                plHeaderPlay.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    playPlaylist(openedPlaylistId);
                 });
             }
             if (plMoreBtn) {
@@ -6102,12 +7193,15 @@
                 if (!plHeaderSearch) return;
                 plHeaderSearch.classList.add('active');
                 if (plSearchInput) plSearchInput.focus();
+                // 搜索行展开会撑高顶栏，重测给滚动容器让位
+                syncHeaderHeight();
             }
             function closePlSearch() {
                 if (!plHeaderSearch) return;
                 plHeaderSearch.classList.remove('active');
                 if (plSearchClear) plSearchClear.classList.remove('show');
                 if (plSearchInput) plSearchInput.blur();
+                syncHeaderHeight();
             }
             if (plSearchToggle) {
                 plSearchToggle.addEventListener('click', (e) => {
@@ -6227,6 +7321,42 @@
                 selectCtx.rerender && selectCtx.rerender();
             }
 
+            /* 全选 / 取消全选（单按钮切换）。
+
+               之前把所有列表的 DOM 都扫了一遍：榜单 200 行 + 搜索结果残留的 2 行
+               一起算，于是"200 首选出 202 首"。这里只取【当前正在看的那个列表】
+               （chart→#song-list / search→#results-list / fav→#fav-list / playlist→#pl-list）。
+
+               行的来源统一取 DOM（带 data-song-id 的行），和"用户看到什么"最一致，
+               比如歌单里搜索过滤后只选看得见的几首，不会误删没看到的歌。 */
+            function activeListEl() {
+                const map = { chart: songList, search: resultsList, fav: favList, playlist: plList };
+                return map[selectCtx.from] || null;
+            }
+
+            function selectableIds() {
+                const root = activeListEl();
+                if (!root) return [];
+                const ids = [];
+                root.querySelectorAll('[data-song-id]').forEach(el => {
+                    const id = el.dataset.songId;
+                    // 不存在的歌（如占位行）不参与选择
+                    if (id) ids.push(String(id));
+                });
+                return ids;
+            }
+
+            // 单按钮：已全部选中则取消全选，否则全选
+            function toggleSelectAll() {
+                const ids = selectableIds();
+                if (ids.length === 0) return;
+                const allSelected = ids.every(id => selectedIds.has(id));
+                selectedIds.clear();
+                if (!allSelected) ids.forEach(id => selectedIds.add(id));
+                syncSelectBar();
+                selectCtx.rerender && selectCtx.rerender();
+            }
+
             // 取当前选中的歌曲对象（按列表顺序）
             function getSelectedSongs() {
                 const all = (selectCtx.getSongs && selectCtx.getSongs()) || [];
@@ -6239,6 +7369,12 @@
                 const n = selectedIds.size;
                 if (selectCountEl) selectCountEl.textContent = n > 0 ? ('已选 ' + n + ' 首') : '请选择歌曲';
                 if (selectBar) selectBar.classList.toggle('active', selectMode);
+                // 全选按钮：已全部选中时变成"取消全选"
+                if (selectAllBtn) {
+                    const ids = selectableIds();
+                    const allSelected = ids.length > 0 && ids.every(id => selectedIds.has(id));
+                    selectAllBtn.querySelector('#select-all-label').textContent = allSelected ? '取消全选' : '全选';
+                }
                 // 没有选中时禁用操作按钮
                 [selectPlayBtn, selectAddBtn, selectFavBtn, selectDelBtn].forEach(b => {
                     if (b) b.disabled = n === 0;
@@ -6298,6 +7434,14 @@
             }
 
             // ----- 多选操作菜单事件（无关闭按钮，点空白处关闭）-----
+
+            // 全选 / 取消全选（单按钮切换，点击后菜单保持打开）
+            if (selectAllBtn) {
+                selectAllBtn.addEventListener('click', (e) => {
+                    // 按钮在 #select-bar 内部，不会触发"点空白关闭"逻辑
+                    toggleSelectAll();
+                });
+            }
 
             // 批量：顺序播放选中的歌曲
             if (selectPlayBtn) {
@@ -6481,36 +7625,74 @@
             const coverQueue = [];
             let coverWorkers = 0;
             const COVER_MAX_WORKERS = 4;
-            const coverRequested = new Set();
+            /* 每首歌的封面请求状态：id → { tries, done }
+               
+               踩坑记录（"封面 API 挂了，就真的挂了，成默认封面了"）：
+               原先这里只是一个 coverRequested 的 Set，加进去就再也不删。
+               于是某个封面一旦请求失败（超时是最常见的原因），
+               这个 id 就永久躺在 Set 里 —— 之后再回到这一页、
+               再触发 hydrateCovers，都会因为 has(key) 为 true 而被直接跳过，
+               表现就是"这首歌的封面永远是灰底，刷新也没用"。
+               
+               改成记状态而非布尔值：失败时把记录删掉，
+               下次渲染这条列表就能重新排队再试一次。 */
+            const coverState = new Map();
+            const COVER_MAX_TRIES = 2;
 
+            /* 把封面贴到 img 上。
+
+               图片默认 display:none（占位层顶着），必须等它真正
+               解码出像素再显示 —— 直接按 src 赋值就显示的话，网络
+               慢时会先渲染一段空白，或 404 时留下一张破图。
+               所以这里等 load 事件，成功才 swap 掉占位层。 */
             function applyCoverToEl(song, imgEl) {
                 if (!song || !song.picurl || !imgEl) return;
+                const reveal = () => {
+                    imgEl.classList.add('loaded');
+                };
+                // 同一张图已经解码好了：complete + naturalWidth 就够判定
+                if (imgEl.src === song.picurl && imgEl.complete && imgEl.naturalWidth > 0) {
+                    reveal();
+                    return;
+                }
+                imgEl.addEventListener('load', reveal, { once: true });
+                // 失败：保持占位层，别让空 img 变成破图
+                imgEl.addEventListener('error', () => {
+                    imgEl.classList.remove('loaded');
+                }, { once: true });
                 imgEl.src = song.picurl;
-                const wrap = imgEl.parentElement;
-                if (wrap && wrap.classList.contains('no-cover')) wrap.classList.remove('no-cover');
+            }
+
+            // 等某个 id 的封面被写回（已排队/进行中时用）
+            function waitCoverThen(song, imgEl) {
+                if (!imgEl) return;
+                let tries = 0;
+                const timer = setInterval(() => {
+                    tries++;
+                    if (song.picurl) {
+                        applyCoverToEl(song, imgEl);
+                        clearInterval(timer);
+                    } else if (tries > 50) {
+                        // 等够了还没结果就放弃：占位层原地不动即可，
+                        // 不需要额外状态，它本来就是静态的
+                        clearInterval(timer);
+                    }
+                }, 120);
             }
 
             function ensureSongCover(song, imgEl) {
                 if (!song || !song.id) return;
                 if (song.picurl) { applyCoverToEl(song, imgEl); return; }
                 const key = String(song.id);
-                if (coverRequested.has(key)) {
-                    // 已在队列/已完成 → 轮询等它被写回
-                    if (imgEl) {
-                        let tries = 0;
-                        const timer = setInterval(() => {
-                            tries++;
-                            if (song.picurl) {
-                                applyCoverToEl(song, imgEl);
-                                clearInterval(timer);
-                            } else if (tries > 50) {
-                                clearInterval(timer);
-                            }
-                        }, 120);
-                    }
+                const st = coverState.get(key);
+                if (st) {
+                    // 已经成功过（理论上不会走到，picurl 早该填上）→ 直接贴上
+                    if (st.done && song.picurl) { applyCoverToEl(song, imgEl); return; }
+                    // 正在飞：等它写回
+                    waitCoverThen(song, imgEl);
                     return;
                 }
-                coverRequested.add(key);
+                coverState.set(key, { tries: 1, done: false });
                 coverQueue.push({ song, imgEl });
                 pumpCoverQueue();
             }
@@ -6519,12 +7701,18 @@
                 while (coverWorkers < COVER_MAX_WORKERS && coverQueue.length > 0) {
                     const job = coverQueue.shift();
                     coverWorkers++;
-                    fetch('https://node.api.xfabe.com/api/wangyi/music?type=json&id=' + encodeURIComponent(job.song.id))
-                        .then(r => r.json())
-                        .then(d => {
-                            const src = d && (d.picurl || (d.data && d.data.picurl));
-                            if (!src) return;
+                    const key = String(job.song.id);
+                    /* 双源竞速：xfabe 详情与 gdstudio pic 同时发，谁先回用谁。
+                       
+                       封面是后台回填，不值得让某个慢请求独占十几秒的
+                       等待窗口，单请求统一 8s 上限（RACE_TIMEOUT）。） */
+                    xfabeCover(job.song.id)
+                        .then(got => {
+                            const src = got && got.url;
+                            if (!src) throw new Error('无封面地址');
                             job.song.picurl = src;
+                            const st = coverState.get(key);
+                            if (st) st.done = true;
                             applyCoverToEl(job.song, job.imgEl);
                             // 顺手补上其他列表里同一首歌的封面
                             syncSongCoverEverywhere(job.song.id, src);
@@ -6534,7 +7722,23 @@
                                 applyCoverToEl(job.song, img);
                             });
                         })
-                        .catch(() => {})
+                        .catch(() => {
+                            /* 失败要能重来。
+                               
+                               这里是"封面永久变灰"的修复点：
+                               删掉状态记录 + 把内存里的请求痕迹清掉，
+                               下次这条列表被渲染回填时就会重新排队。
+                               （封面不是关键路径，静默失败即可，
+                                 不必弹提示打扰用户。） */
+                            const st = coverState.get(key);
+                            if (st && st.tries >= COVER_MAX_TRIES) {
+                                // 试满次数还不行，留着记录避免无限重试打爆接口，
+                                // 但标记 done=false 之外不再阻断后续 —— 见下面注释
+                                st.done = true;   // 视为"已尽力"，不再自动重排
+                            } else {
+                                coverState.delete(key);
+                            }
+                        })
                         .finally(() => {
                             coverWorkers--;
                             pumpCoverQueue();
@@ -6548,30 +7752,84 @@
                 if (!root || !songs || !songs.length) return;
                 const max = limit || COVER_HYDRATE_BATCH;
                 const nodes = root.querySelectorAll('[data-song-id]');
+                // 先建 id -> song 映射，避免每个节点都线性扫一遍 songs
+                const byId = new Map();
+                songs.forEach(s => byId.set(String(s.id), s));
                 let n = 0;
                 for (const node of nodes) {
                     if (n >= max) break;
-                    const id = node.dataset.songId;
-                    const song = songs.find(s => String(s.id) === String(id));
-                    if (song && !song.picurl) {
-                        n++;
-                        // 封面 img 可能是 node 自身，也可能在 node 内部（收藏/歌单行）
-                        const img = (node.tagName === 'IMG' ? node : null) ||
-                                    node.querySelector('img');
-                        if (img) ensureSongCover(song, img);
-                    }
+                    const song = byId.get(String(node.dataset.songId));
+                    if (!song) continue;
+                    // 封面 img 可能是 node 自身，也可能在 node 内部（收藏/歌单行）
+                    const img = (node.tagName === 'IMG' ? node : null) ||
+                                node.querySelector('img');
+                    if (!img) continue;
+                    n++;
+                    /* 渲染时故意不写 src（见 renderSongList），
+                       所以有 picurl 的歌也在这里统一贴上。
+                       ensureSongCover 内部会自行判断该直接贴还是去排队。 */
+                    ensureSongCover(song, img);
                 }
+            }
+
+            /* 长列表一次性排几十个封面请求会瞬间打满并发、也和
+               "首屏先出内容"的原则相冲。改成滚动到哪补到哪：
+               只处理已经进入视口（含下方一屏余量）的行，其余等滚到再看。
+
+               之前这个观察器只挂在榜单上，搜索结果页只有一次性
+               hydrateCovers(前 20) —— 往下滚的第 21 行起永远是灰底占位，
+               看起来就像"搜索结果都没有封面"。现在泛化成给任意列表挂：
+               榜单、搜索结果共用同一套滚动补图逻辑。
+
+               用 IntersectionObserver 而不是监听 scroll 事件：
+               不需要每帧读 scrollTop，也不会因为滚动回调把主线程占住。 */
+            const coverObservers = new Map();   // root 元素 → 它的观察器
+            function watchListCovers(root, songs) {
+                if (!root || !('IntersectionObserver' in window)) {
+                    // 没有 observer 就退回一次性补齐，至少不缺图
+                    hydrateCovers(root, songs, songs.length);
+                    return;
+                }
+                const prev = coverObservers.get(root);
+                if (prev) prev.disconnect();
+                // id -> song 的映射，避免每条可见行都去 songs.find 线性扫一遍
+                const byId = new Map();
+                songs.forEach(s => byId.set(String(s.id), s));
+                const obs = new IntersectionObserver(entries => {
+                    entries.forEach(entry => {
+                        if (!entry.isIntersecting) return;
+                        const node = entry.target;
+                        obs.unobserve(node);
+                        const song = byId.get(String(node.dataset.songId));
+                        if (!song) return;
+                        const img = node.querySelector('img');
+                        if (!img) return;
+                        /* 真到这一步才把 src 赋上。
+
+                           渲染时不写 src，是为了不让几百个 <img> 在列表
+                           挂上去的瞬间同时发请求 —— 那会把网络和主线程
+                           一起占住，列表本身反倒迟迟画不出来。
+                           现在只有进入（提前一屏的）视口的行才会发请求。
+                           ensureSongCover 内部会自行判断该直接贴还是去排队。 */
+                        ensureSongCover(song, img);
+                    });
+                }, {
+                    root: null,
+                    rootMargin: '0px 0px 400px 0px',   // 提前一屏开始加载
+                    threshold: 0
+                });
+                coverObservers.set(root, obs);
+                root.querySelectorAll('[data-song-id]').forEach(node => {
+                    obs.observe(node);
+                });
             }
 
             // 单首歌补封面：收藏 / 加入歌单后调用，回填后同步到所有列表
             function backfillCoverFor(song) {
                 if (!song || !song.id || song.picurl) return;
                 const key = String(song.id);
-                if (!coverRequested.has(key)) {
-                    coverRequested.add(key);
-                    coverQueue.push({ song, imgEl: null });
-                    pumpCoverQueue();
-                } else {
+                const st = coverState.get(key);
+                if (st) {
                     // 已有请求在飞，等它完成后同步
                     let tries = 0;
                     const timer = setInterval(() => {
@@ -6586,6 +7844,10 @@
                             clearInterval(timer);
                         }
                     }, 120);
+                } else {
+                    coverState.set(key, { tries: 1, done: false });
+                    coverQueue.push({ song, imgEl: null });
+                    pumpCoverQueue();
                 }
             }
 
@@ -6600,7 +7862,16 @@
                 const plId = options.playlistId || '';
                 // 榜单页不放"更多"按钮，改用长按触发
                 const showMore = options.showMore === true;
-                root.innerHTML = '';
+                /* 先在内存里把整张列表拼好，最后一次性换上。
+
+                   原来这里是 root.innerHTML = '' 开头清空，然后逐行
+                   appendChild。问题在于：清空的那一刻转圈就没了，
+                   而 200 行 DOM 还要一行一行建，这段时间列表区是【全空】
+                   的 —— 用户看到的就是"转圈突然消失、过一会儿列表才出来"。
+
+                   改成先建 DocumentFragment：转圈会一直留到整个列表
+                   准备就绪，然后一次性被替换掉，中间没有空白期。 */
+                const frag = document.createDocumentFragment();
                 songs.forEach((song, idx) => {
                     const li = document.createElement('li');
                     li.className = 'song-item' + (selectedIds.has(String(song.id)) ? ' selected' : '');
@@ -6612,6 +7883,10 @@
                     }
                     li.innerHTML = `
                         <div class="song-index">${idx + 1}</div>
+                        <div class="result-cover song-cover">
+                            <img alt="">
+                            <div class="result-cover-fallback"><i class="fas fa-music"></i></div>
+                        </div>
                         <div class="song-details">
                             <div class="song-title">${esc(song.name || '未知歌曲')}</div>
                             <div class="song-artist">${esc(song.artistsname || '未知歌手')}</div>
@@ -6651,11 +7926,15 @@
                         if (selectMode) { toggleSelect(song.id); return; }
                         openSongMore(song, from, plId, rowSelectCtx);
                     });
-                    root.appendChild(li);
+                    frag.appendChild(li);
                 });
+                // 整张列表已就绪，一次性换上（此刻才把转圈顶掉）
+                root.innerHTML = '';
+                root.appendChild(frag);
                 bindFavButtons(root, songs);
                 syncFavUI();
-                hydrateCovers(root, songs);
+                // 长列表滚到哪补到哪，别一次排满上百个请求（榜单/歌单共用）
+                watchListCovers(root, songs);
             }
 
             // 为列表中的收藏按钮绑定事件
@@ -6705,6 +7984,8 @@
                 mainContent.classList.add('hidden');
                 // 结果页也要给迷你播放器让位，展示当前播放状态栏
                 syncFavPageOffset();
+                // 结果页顶栏是浮层，显示后量一次高度给列表让位
+                syncHeaderHeight();
 
                 // 结果页搜索框保留刚才搜索的内容，方便修改关键词
                 resultsSearchInput.value = q;
@@ -6713,11 +7994,23 @@
                 resultsList.innerHTML = '<div class="loading"><svg viewBox="0 0 24 24" aria-hidden="true"><circle class="ring-track" cx="12" cy="12" r="9"></circle><circle class="ring-arc" cx="12" cy="12" r="9"></circle></svg><span>搜索中…</span></div>';
 
                 try {
-                    const res = await fetch(
-                        `https://node.api.xfabe.com/api/wangyi/search?search=${encodeURIComponent(q)}&limit=30`);
-                    const data = await res.json();
-                    if (data.code === 200 && data.data.songs && data.data.songs.length > 0) {
-                        currentSongs = data.data.songs.map(s => ({ ...s, picurl: s.picurl || '' }));
+                    // 双源轮询：xfabe 与 gdstudio 谁先成功用谁。
+                    // 两者返回结构不同，由各自的 pick 归一化成同一形状，
+                    // 下游（渲染、封面回填、播放）不必区分数据来自哪一家。
+                    let songs;
+                    try {
+                        songs = await xfabeSearch(q);
+                    } catch (srcErr) {
+                        // 所有源都失败：把"没有结果"和"接口挂了"分开表达 ——
+                        // 前者用户该换个关键词，后者等一会儿就好，提示不能一样。
+                        console.error('搜索源全部失败:', srcErr);
+                        resultsList.innerHTML =
+                            '<div class="result-item" style="text-align:center;color:var(--text-secondary);">' +
+                            '搜索服务暂时不可用，请稍后再试</div>';
+                        return;
+                    }
+                    if (songs.length > 0) {
+                        currentSongs = songs.map(s => ({ ...s, picurl: s.picurl || '' }));
                         resultsList.innerHTML = '';
                         currentSongs.forEach((song, idx) => {
                             const div = document.createElement('div');
@@ -6726,8 +8019,8 @@
                             div.dataset.id = song.id;
                             div.dataset.songId = song.id;
                             div.innerHTML = `
-                                <div class="result-cover${song.picurl ? '' : ' no-cover'}">
-                                    <img src="${esc(song.picurl || '')}" alt="">
+                                <div class="result-cover">
+                                    <img alt="">
                                     <div class="result-cover-fallback"><i class="fas fa-music"></i></div>
                                 </div>
                                 <div class="result-info">
@@ -6766,6 +8059,9 @@
                         syncFavUI();
                         // 搜索接口不返回封面，这里并发回填
                         hydrateCovers(resultsList, currentSongs);
+                        // 首 20 张之后（含回填失败的行）交给滚动观察器接力，
+                        // 否则往下滚全是灰底占位，像"搜索结果都没有封面"
+                        watchListCovers(resultsList, currentSongs);
                     } else {
                         resultsList.innerHTML = '<div class="result-item" style="text-align:center;color:var(--text-secondary);">没有找到相关歌曲</div>';
                     }
@@ -6827,18 +8123,21 @@
             // 必须经代理转发 —— 见下面的 CF_PROXY。
             const YRC_ORIGIN = 'https://music.163.com/api/song/lyric?os=pc&lv=-1&yv=-1&ytv=-1&id=';
 
-            // ===== 自建代理（唯一的通道）=====
+            // ===== 自建代理（绕 CORS 的主力通道）=====
             //
             // 公共 CORS 代理没有一家靠得住，2026-09 实测 12 个全部阵亡，
             // 遂整层弃用（死因清单见下方 fetchViaProxies 上方注释）。
-            // 这个播放器现在只认自建代理，不做任何降级。
+            // 现在只认自建代理 + 接口自身的直连能力，不做公共代理降级。
             //
             // 部署在 Cloudflare Pages（不是 Worker）—— 这点很关键：
             // *.workers.dev 在国内被 DNS 污染（解析到 2a03:2880:...:face:b00c
             // 这个假地址，属 Facebook 段），直连必然超时；
             // 而 *.pages.dev 解析正常、可直连。
             //
-            // 免费额度 10 万请求/天，只服务自己，永远打不到上限。
+            // 免费额度 10 万请求/天。为了不打满额度，
+            // 所有请求都走 fetchDirectOrProxy：能直连的就不占代理额度，
+            // 只有直连失败（CORS 或网络不通）才切到代理。
+            //
             // 源码在 GitHub: monkey2582/mky-proxy
             //   ├── index.html          自测页，浏览器打开可随时验活
             //   └── functions/api.js    代理本体，路由 /api
@@ -6892,6 +8191,96 @@
                 }
             }
 
+            /* ============================================================
+               通用请求层：直连优先，失败自动走 mky-proxy 绕 CORS
+               ============================================================
+
+               为什么需要这一层（而不是所有请求一律走代理）：
+
+                 1. 省额度。mky-proxy 是 Cloudflare Pages 免费版，
+                    每天 10 万次请求。若每个请求都过代理，
+                    光封面回填一支歌单就是几十次 —— 白白吃掉额度。
+                    能直连的（接口自带 CORS 头）就直连，一次额度都不花。
+
+                 2. 但直连的前提是"能连上"。实测本机/部分网络对境内域名
+                    （node.api.xfabe.com、music.163.com 等）不路由：DNS 能解析，
+                    请求却直接 curl 000 / 522。这类故障和 CORS 报错在
+                    前端看起来是一样的（都是 fetch reject），
+                    所以统一走"先直连、失败换代理"的策略最省心。
+
+                 3. 拿到非 JSON 也要换代理。有的源在直连被拦时会
+                    返回一个 HTML 错误页而不是抛异常 —— 只看 fetch 的
+                    ok 状态会把它当成成功，JSON.parse 才炸，
+                    那时已经错过了重试时机。 */
+
+            // 直连超时给短：能连上的接口通常 300ms 内就回，
+            // 拖到 3 秒还没动静基本就是连不上，早点切代理体验更好。
+            const DIRECT_TIMEOUT = 3500;
+
+            /**
+             * 直连 + 代理双通道请求。
+             * @param {string} target 目标 URL
+             * @param {object} [opts]
+             * @param {number} [opts.timeout] 代理通道超时（毫秒）
+             * @param {boolean} [opts.forceProxy] 跳过直连，直接走代理
+             * @returns {Promise<any>} 解析后的 JSON
+             */
+            async function fetchDirectOrProxy(target, opts) {
+                opts = opts || {};
+                const proxyTimeout = opts.timeout || FETCH_TIMEOUT;
+
+                if (!opts.forceProxy) {
+                    try {
+                        return await fetchOne(u => u, target, DIRECT_TIMEOUT);
+                    } catch (e) {
+                        // 直连失败不抛出，静默转代理 —— 这是正常降级路径，
+                        // 不是异常。只有代理也挂了才对外报错。
+                        console.debug('直连失败，转代理:', target, e.message);
+                    }
+                }
+                return await fetchOne(
+                    u => CF_PROXY + '?key=' + encodeURIComponent(CF_PROXY_KEY) +
+                         '&url=' + encodeURIComponent(u),
+                    target, proxyTimeout);
+            }
+
+            /* ============================================================
+               多源竞速：并发请求所有源，谁先成功用谁
+               ============================================================
+
+               【为什么从"串行轮询"改成"并发竞速"】
+
+               之前是 for 循环一个源一个源试。2026-09-27 实测发现
+               xfabe 的延迟抖动极大（1.4s ~ 12.9s，近 10 倍），
+               而 FETCH_TIMEOUT 是 12000ms —— 意味着最坏情况下：
+
+                 xfabe 卡满 12s 超时 → 才轮到 gdstudio → 再等 2s
+                 = 用户盯着"搜索中…"整整 14 秒
+
+               如果 12s 刚好卡在边界上，xfabe 直接 AbortError 抛错，
+               连"降级"都来不及，整次搜索就失败了 —— 这就是"重进后
+               API 挂了"的真相：不是接口挂了，是首源慢到把自己拖死。
+
+               并发竞速把最坏耗时从「Σ所有源」压到「min(所有源)」：
+               gdstudio 稳定 2s 内返回，xfabe 再慢也不影响 —— 谁快用谁。
+               代价是每次多发几个请求。但这些都是免费公共接口，
+               且省下的是用户实打实的十几秒等待，非常值。
+
+               【每源独立超时】
+               竞速若不设单源上限，一个源永久挂着会让所有源都白等
+               （Promise.any 要等全部 reject）。所以每个源给
+               PER_SOURCE_TIMEOUT，超时即视为该源失败，不拖累整体。 */
+            const RACE_TIMEOUT = 8000;   // 单请求超时上限
+
+            /**
+             * 并发请求所有源，返回第一个成功的结果。
+             * @param {Array} sources 源列表，每项含 name / url / pick / opts
+             * @param {string} label 出错时的功能名
+             * @param {*} arg 传给 src.url / src.pick 的参数
+             * @returns {Promise<any>}
+             */
+
+
             // 走代理取一次。失败就把原因抛得足够具体。
             async function fetchOne(buildUrl, target, timeoutMs) {
                 const ctrl = new AbortController();
@@ -6919,6 +8308,110 @@
                 } finally {
                     clearTimeout(timer);
                 }
+            }
+            /* ============================================================
+               网易云接口源清单（2026-09-27 实测）
+               ============================================================
+
+               只用网易云系的源 —— 这是明确的约束，不引入 QQ/酷狗/酷我。
+               所有源都经 fetchDirectOrProxy，直连优先、失败自动走 mky-proxy。
+
+               实测结论（详见代码内注释）：
+                 · 搜索   → xfabe 与 gdstudio 双源互备
+                 · 播放   → gdstudio 唯一可用（xfabe 的播放路径已整体失效）
+                 · 歌词   → 官方 YRC（逐字）+ xfabe 行级 + gdstudio 兜底
+                 · 封面   → gdstudio 按 id 直出，比逐个查详情快得多 */
+
+            // gdstudio 聚合 API 基址。它同时提供 search/url/lyric/pic 四类，
+            // 一个站点覆盖"搜、播、词、图"，是当前最完整的网易云源。
+
+            /* ---- 搜索源 ----
+               两家字段名不同，统一归一化成应用内部的形状：
+                 { id, name, artistsname, album, duration, picurl }
+               duration 统一成毫秒（xfabe 本来就是毫秒，
+               gdstudio 给的是秒，乘 1000）。 */
+            /* ===== 数据源：全线只用 xfabe 一个 API =====
+
+               这里原来是一整套"多源竞速"：fetchFirstOk + SEARCH_SOURCES /
+               PLAY_SOURCES / COVER_SOURCES，外加 meting 的两个部署、
+               gdstudio、网易官方接口作为兜底。现在整层删掉，四条链路
+               （搜索 / 播放地址 / 封面 / 行级歌词）统一走 node.api.xfabe.com。
+
+               原因：
+                 · 实测它是唯一能对【付费歌曲】给出完整版地址的源 ——
+                   meting 无 VIP Cookie，付费歌拿到的是 30 秒试听片段
+                   （481KB/30s vs 完整版 2.5MB/3 分 32 秒）；
+                 · 自带 CORS 头，浏览器可直连，不依赖代理中转；
+                 · 少一层"谁先回来"的竞速，就少一层不确定性 ——
+                   出问题时只看这一条链路。
+
+               失败判定统一为：查不到 / 返回空 / 结构不对，一律抛错，
+               交给调用方原有的错误处理（与从前"全部源都失败"的路径一致）。 */
+            const XFABE_BASE = 'https://node.api.xfabe.com/api/wangyi';
+
+            async function xfabeGet(path) {
+                const data = await fetchDirectOrProxy(path, { timeout: RACE_TIMEOUT });
+                if (!data || data.code !== 200) {
+                    throw new Error((data && data.msg) || 'xfabe 返回异常');
+                }
+                return data;
+            }
+
+            // 搜索 → 归一化歌曲数组
+            async function xfabeSearch(q) {
+                const d = await xfabeGet(XFABE_BASE + '/search?search=' +
+                    encodeURIComponent(q) + '&limit=30');
+                const list = (d.data && d.data.songs) || [];
+                const songs = list.map(s => ({
+                    id: s.id,
+                    name: s.name,
+                    artistsname: s.artistsname || s.artists || '',
+                    album: s.album || '',
+                    duration: s.duration || 0,
+                    picurl: s.picurl || ''
+                }));
+                if (!songs.length) throw new Error('xfabe 搜索无结果');
+                return songs;
+            }
+
+            // 播放地址 → { url, br, size, duration, pay }
+            async function xfabePlayUrl(id) {
+                const d = await xfabeGet(XFABE_BASE + '/music?type=json&id=' +
+                    encodeURIComponent(id));
+                const row = d.data || {};
+                if (!row.url) throw new Error('xfabe 未返回播放地址');
+                return {
+                    url: row.url,
+                    br: 0,
+                    size: 0,
+                    duration: row.duration || 0,
+                    pay: row.pay || ''
+                };
+            }
+
+            // 封面 → { url }
+            async function xfabeCover(id) {
+                const d = await xfabeGet(XFABE_BASE + '/music?type=json&id=' +
+                    encodeURIComponent(id));
+                const src = d.data && d.data.picurl;
+                if (!src) throw new Error('xfabe 未返回封面');
+                return { url: src };
+            }
+
+            // 行级歌词 → { rows, trans }
+            async function xfabeLrc(id) {
+                const d = await xfabeGet(XFABE_BASE + '/lyrics?id=' +
+                    encodeURIComponent(id));
+                const raw = d.data && d.data.lyric;
+                if (!raw) throw new Error('xfabe 未返回歌词');
+                const rows = parseLyrics(raw);
+                if (!rows.length) throw new Error('歌词解析为空');
+                // 常见字段名挨个试：中转服务对译文的命名不统一
+                const rawTrans = d.data.tlyric || d.data.translation ||
+                                 d.data.trans || null;
+                const trans = rawTrans
+                    ? alignTranslation(parseLyrics(rawTrans), rows) : [];
+                return { rows, trans };
             }
 
             function parseYRC(raw) {
@@ -6972,10 +8465,14 @@
             // 带超时地取逐字歌词。任何一步失败都抛错，由调用方降级。
             // 译文（ytlrc）就在同一个响应里，顺手一起拿走 —— 不额外发请求。
             //
-            // 超时统一在 fetchViaProxies 里定（见那边的说明），
-            // 这里不必重复关心。
+            // music.163.com 不带 CORS 头，浏览器直连必然被拦；
+            // 这里强制走代理（forceProxy），不做直连尝试 ——
+            // 试了也是白等 3.5 秒超时，不如直接发代理请求。
             async function fetchYRC(id) {
-                const data = await fetchViaProxies(YRC_ORIGIN + encodeURIComponent(id));
+                const data = await fetchDirectOrProxy(
+                    YRC_ORIGIN + encodeURIComponent(id),
+                    { forceProxy: true }   // 官方域无 CORS，直连没意义
+                );
                 if (data.code !== 200) throw new Error(data.msg || '接口返回异常');
                 const raw = data.yrc && data.yrc.lyric;
                 if (!raw) throw new Error('该曲无逐字歌词');
@@ -6993,20 +8490,9 @@
             // 中转服务是否带译文取决于它自己的实现，有就用、没有就空，
             // 不能因为缺译文把整条歌词链路判失败。
             async function fetchLRC(id) {
-                const res = await fetch(`https://node.api.xfabe.com/api/wangyi/lyrics?id=${id}`);
-                const data = await res.json();
-                if (data.code !== 200 || !data.data || !data.data.lyric) {
-                    throw new Error(data.msg || '无歌词');
-                }
-                const rows = parseLyrics(data.data.lyric);
-                let trans = [];
-                // 常见字段名挨个试：中转服务对译文的命名不统一
-                const rawTrans = data.data.tlyric || data.data.translation ||
-                                 data.data.trans || null;
-                if (rawTrans) {
-                    trans = alignTranslation(parseLyrics(rawTrans), rows);
-                }
-                return { rows, trans };
+                // 行级歌词：直接用 xfabe 的 /wangyi/lyrics，
+                // 归一化成 { rows, trans } 由 xfabeLrc 负责。
+                return await xfabeLrc(id);
             }
 
             // 歌词缓存：id → { rows, trans }（逐字版）。
@@ -7212,9 +8698,6 @@
                 lyricsLines = lyricsContainer ? Array.from(lyricsContainer.children) : [];
                 // 立即注入上下留白，保证首屏任意行都能居中
                 applyLyricsPadding();
-                // 先把所有行压到"最远"档，等第一帧 updateLyrics 找到当前行
-                // 再让邻近几行亮起来。反过来（先全亮再收成梯度）会闪一下。
-                markLyricDistance(-1);
 
                 // 歌词刚到：立刻对齐一次"当前行"。真实歌词是异步 fetch 回来的，
                 // 落地那一刻逐帧循环可能根本没在跑（手机端没进歌词页），
@@ -7280,6 +8763,51 @@
                 if (lyricsContainer.style.getPropertyValue('--lyrics-pad-bottom') !== b) {
                     lyricsContainer.style.setProperty('--lyrics-pad-bottom', b);
                 }
+                // 遮罩高度要跟着容器长
+                applyLyricsVeilHeight(vh);
+            }
+
+            /* 上下遮罩的高度按容器高度按比例给，而不是写死像素。
+
+               写死的问题：手机上歌词页是全屏竖条（≈700px），
+               PC 右栏只有 560px 高，横屏更矮。固定 78px 在手机上
+               只糊住最边上一窄条，在横屏上却会吃掉三分之一屏 ——
+               同一份 CSS 得在三处断点各写一个值，很难维护。
+
+               比例取值 13% 的由来：
+                 太小（<8%）→ 挡不住"文字被硬切"的观感；
+                 太大（>20%）→ 遮罩占掉大半屏，只剩中间两三行清晰，
+                                歌词的可读行数不够，读起来憋屈。
+               再叠一个 92px 上限，避免超大屏上遮罩厚得像两条黑边。 */
+            function applyLyricsVeilHeight(viewportH) {
+                if (!lyricsScrollWrap) return;
+                const h = Math.min(92, Math.round(viewportH * 0.13));
+                const val = h + 'px';
+                // --lyrics-veil-h 挂在滚动区上：底部遮罩是它的子节点，
+                // 直接继承即可。
+                if (lyricsScrollWrap.style.getPropertyValue('--lyrics-veil-h') !== val) {
+                    lyricsScrollWrap.style.setProperty('--lyrics-veil-h', val);
+                }
+
+                /* 顶部遮罩已移出滚动区、改挂到 .lyrics-page 上，
+                   所以 --lyrics-veil-h 与 --lyrics-header-h 都必须
+                   写在 page 上，它才读得到（自定义属性沿 DOM 树向下继承，
+                   滚动区里的变量到不了它的兄弟节点）。
+
+                   --lyrics-header-h 取顶栏实测高度而非写死：
+                   横屏断点下顶栏 padding 会收紧（8px vs 16px），
+                   字体也小一档，高度差十几像素。写死的话顶部遮罩
+                   要么盖不住顶栏、要么多铺一段，两种都不好看。 */
+                if (lyricsPage) {
+                    const hh = lyricsHeader ? lyricsHeader.offsetHeight : 64;
+                    const hhVal = Math.round(hh) + 'px';
+                    if (lyricsPage.style.getPropertyValue('--lyrics-header-h') !== hhVal) {
+                        lyricsPage.style.setProperty('--lyrics-header-h', hhVal);
+                    }
+                    if (lyricsPage.style.getPropertyValue('--lyrics-veil-h') !== val) {
+                        lyricsPage.style.setProperty('--lyrics-veil-h', val);
+                    }
+                }
             }
 
             // 二分查找当前时间对应的歌词行
@@ -7299,7 +8827,6 @@
             }
 
             let lyricsScrollTimer = null;
-            let lyricsAnimRaf = null;
             let lyricsTickRaf = null;
             // 区分"自动追随滚动"与"用户手动滚动"：否则自动滚动触发的 scroll
             // 事件会把自己误判成用户操作，暂停追随好几秒 —— 就是"一顿一顿"的根因。
@@ -7405,10 +8932,12 @@
                     cancelAnimationFrame(lyricsTickRaf);
                     lyricsTickRaf = null;
                 }
-                if (lyricsAnimRaf) {
-                    cancelAnimationFrame(lyricsAnimRaf);
-                    lyricsAnimRaf = null;
-                }
+                // 兜底停掉可能还在跑的弹簧：歌词页被关掉时逐帧循环已停，
+                // 但弹簧是独立的一条 rAF 链，不主动停会在后台空转。
+                // （mainSpring/deskSpring 在下面才定义，这里用 typeof 守卫，
+                //   避免函数被提前调用时抛 ReferenceError。）
+                if (typeof mainSpring !== 'undefined') mainSpring.stop();
+                if (typeof deskSpring !== 'undefined') deskSpring.stop();
             }
 
             // 取桌面右栏对应的歌词行元素（用于同步高亮）
@@ -7524,44 +9053,6 @@
                 }
             }
 
-            // ===== 距离衰减：把"焦点"真正落到当前行 =====
-            //
-            // 只把当前行加粗、其余行保持同一亮度，视觉上仍然是"一片平" —— 没有
-            // 纵深，视线不知道该落在哪。梯度才是聚焦感的来源：越近越亮、越远越暗。
-            // 相邻行各自平滑地走向各自的新亮度，这就是"周围行柔和地重新排布"
-            // （平滑由 CSS 的 opacity transition 负责，这里只负责改档位）。
-            //
-            // 为什么最多只标到 4：再远的行早就淡到看不出差别了，标了也是白标。
-            const NEAR_SPAN = 4;
-            const NEAR_FAR = '9';      // 窗口外的档位，必须显式写
-
-            function markLyricDistance(activeIdx) {
-                paintLyricDistance(lyricsContainer, activeIdx);
-                paintLyricDistance(playerLyricsInner, activeIdx);
-            }
-
-            // 遍历整个列表而不是只算窗口 —— 行数最多几百，切行又是几秒一次，
-            // 这点开销可以忽略；换来的是不必维护"上一窗口"的游标：
-            // 窗口内外的档位天然互斥，也就不会留下褪不掉的残影。
-            function paintLyricDistance(box, activeIdx) {
-                if (!box) return;
-                const kids = box.children;
-                for (let i = 0; i < kids.length; i++) {
-                    const el = kids[i];
-                    // 占位行（如"暂无歌词"）没有 lyrics-line 类，跳过
-                    if (!el.classList || !el.classList.contains('lyrics-line')) continue;
-
-                    let d = NEAR_FAR;
-                    if (activeIdx >= 0) {
-                        const dist = i - activeIdx;
-                        // 用对称距离，前后同样衰减
-                        d = String(Math.abs(dist) <= NEAR_SPAN ? Math.abs(dist) : NEAR_FAR);
-                    }
-                    // 只在真的变了的时候写 DOM，避免每帧无谓的重绘
-                    if (el.dataset.near !== d) el.dataset.near = d;
-                }
-            }
-
             // 每帧调用：维护高亮行，并把滚动位置持续逼近"该行居中"
             function updateLyrics(currentTime) {
                 if (lyricsLines.length === 0) return;
@@ -7598,8 +9089,6 @@
                         lyricsLayoutDirty = true;
                         cacheLyricsOffsets();
                     }
-                    // 距离衰减：两侧列表一起标注，保证左右栏观感一致
-                    markLyricDistance(activeIdx);
                     // 桌面右栏同步高亮（内部同样会拆片段）
                     syncDeskLyricsHighlight(activeIdx);
                     // 唱片下方的当前歌词行同步
@@ -7801,142 +9290,11 @@
                 seekDeskLyricsTo(clamped);
             }
 
-            // ============================================================
-            //  弹簧物理滚动引擎（左栏「歌词页」与右栏「桌面歌词栏」共用）
-            // ============================================================
-            //
-            // 【为什么不用定时补间】
-            // 之前用的是 easeInOutCubic + 固定 620ms：语义是"在 T 毫秒内从 A 匀速
-            // 加缓动走到 B"。这在歌词场景里有两个天生缺陷 ——
-            //
-            //   1. 换行时机不可预测。上一句还没走完、下一句就来了。定时补间的
-            //      做法是"以当前位置为起点、速度清零、重新起一段"，于是每次换行
-            //      运动都要从静止重新加速，观感是"一顿一顿"。
-            //   2. 时长写死。相邻两行（几十像素）和拖进度条跳副歌（上千像素）
-            //      共用同一个 620ms：短的显得拖沓，长的显得突兀。
-            //
-            // 弹簧的语义是"朝目标施加恢复力，靠阻尼收敛"，它自带两个性质刚好补上：
-            //
-            //   1. **速度是状态量**。中途改目标时速度被保留 —— 运动是"拐弯"而不是
-            //      "停车再启动"。这正是用户感知到的"惯性"，也是这条链路最值钱的地方。
-            //   2. **时长由距离和刚度共同决定**。近处轻轻滑一点，远处才明显发力；
-            //      距离越远走得越快，但收尾永远是同一种柔和感。
-            //
-            // 【积分方式】半隐式欧拉 + 固定子步。
-            // 显式欧拉在 k·dt² 偏大时会发散（表现是歌词疯狂抖动）；标签页切回来
-            // 时 dt 甚至能有几百毫秒，直接积分必炸。这里把一帧拆成 SUB 个子步，
-            // 保证每个子步的 h 远小于稳定上限 2/√k，任何刷新率下都不会发散。
-            //
-            // 【参数怎么调】
-            // 刚度 k 决定"多用力"，阻尼 c 决定"多快停下"。用阻尼比 ζ = c/(2√k) 判断：
-            //   ζ < 1  欠阻尼，会有回弹（ζ 越小弹得越明显）
-            //   ζ = 1  临界阻尼，最快收敛且完全不过冲
-            //   ζ > 1  过阻尼，慢吞吞爬过去，毫无生气
-            // 当前 k=150、c=13 → ζ ≈ 0.53，过冲约 14%、约 620ms 收敛。
-            //
-            // ★ 那 14% 就是"惯性"本身。这里踩过一个坑：最初用的是 ζ≈0.78
-            //   （过冲只 2%），结果"完全看不出在弹" —— 相邻两行只差一个行高
-            //   （约 68px），2% 换算下来才 1.4px，等于没做。
-            //   想让人一眼认出是弹簧，过冲必须往两位数走。
-            // 想更"弹"调小 c，想更"稳"调大 c（c=22 已是临界阻尼，完全不过冲）。
-            const SPRING_K = 150;              // 刚度
-            const SPRING_C = 13;               // 阻尼
-            const SPRING_SUB = 4;              // 每帧子步数，用于保稳定
-            const SPRING_MAX_DT = 1 / 30;      // 秒。夹住 dt 上限，见上文"标签页"
-            const SPRING_EPS_POS = 0.35;       // px，判定"到位"
-            const SPRING_EPS_VEL = 2;          // px/s，判定"停稳"
-
-            // 一个弹簧只管一条滚动轴。左右两栏各持一个实例，状态完全独立 ——
-            // 共用会导致窄屏下右栏不可见时，它的弹簧把左栏的位置一并带跑偏。
-            function createSpring() {
-                return { pos: 0, vel: 0, target: null, raf: null, last: 0 };
-            }
-            const springMobile = createSpring();
-            const springDesk = createSpring();
-
-            // 主动放弃控制权（用户手滑时调用）。
-            // 必须同时清掉 target 与 raf：只清 target 的话，已经排进队列的那一帧
-            // 仍会再写一次 scrollTop，和用户的手指抢一下，表现为"黏手"。
-            function springCancel(s) {
-                s.target = null;
-                s.vel = 0;
-                s.raf = null;
-            }
-
-            // 把容器滚到 target（单位 px）。同名目标重复调用是零成本的。
-            function springScrollTo(s, container, target, markProgrammatic) {
-                if (s.raf === null) {
-                    // 静止态：先以容器「真实位置」校正记忆值。
-                    // 歌词重建（innerHTML 重置）、用户手滑、容器尺寸变化都会让
-                    // 二者脱节。不校正的话，下面"目标未变"的短路会命中，
-                    // 于是歌词永远停在错的位置 —— 滚到底部时尤其明显，
-                    // 因为那里的目标被 clamp 到 maxScroll，与旧目标只差零点几像素。
-                    if (Math.abs(container.scrollTop - s.pos) > 2) {
-                        s.pos = container.scrollTop;
-                        s.target = null;          // 场景已变，旧目标作废
-                    }
-                }
-
-                // 目标没变：正在跑就让它跑完，已停稳就什么都不做。
-                // 这条短路是必需的 —— 定位函数每帧都会被调用，若每次都重设起点，
-                // 弹簧会被永远按在起点上动弹不得。
-                if (s.target !== null && Math.abs(target - s.target) < 0.5) return;
-
-                s.target = target;
-
-                if (s.raf === null) {
-                    // 静止被唤醒：速度归零起步。
-                    // 注意 pos 用的是上面校正过的值，不是上次的收敛点。
-                    s.vel = 0;
-                    s.last = performance.now();
-                    s.raf = requestAnimationFrame(function step(now) {
-                        springStep(s, container, now, markProgrammatic, step);
-                    });
-                }
-                // 若正在跑：只换目标，pos / vel 原样保留 —— 这就是惯性衔接。
-                // 不做任何"重置"，运动才不会在换行处卡顿。
-            }
-
-            function springStep(s, container, now, markProgrammatic, step) {
-                if (s.target === null) { s.raf = null; return; }
-
-                let dt = (now - s.last) / 1000;
-                s.last = now;
-                if (!(dt > 0)) dt = 1 / 60;            // 同一帧被重复驱动（理论上不会）
-                if (dt > SPRING_MAX_DT) dt = SPRING_MAX_DT;
-
-                const h = dt / SPRING_SUB;
-                for (let i = 0; i < SPRING_SUB; i++) {
-                    const a = (s.target - s.pos) * SPRING_K - s.vel * SPRING_C;
-                    s.vel += a * h;
-                    s.pos += s.vel * h;
-                }
-
-                // 到位判定：位置和速度必须同时够小。
-                // 只看位置会在过冲折返的瞬间误判 —— 那一刻位置恰好经过目标，
-                // 速度却仍然很大。提前停下会让那 2% 的过冲走不完，
-                // 观感是"滑到位时卡了一下"，正好毁掉弹簧最值钱的部分。
-                if (Math.abs(s.target - s.pos) < SPRING_EPS_POS &&
-                    Math.abs(s.vel) < SPRING_EPS_VEL) {
-                    s.pos = s.target;                  // 吸附，消除亚像素残留
-                    s.vel = 0;
-                    s.raf = null;
-                    markProgrammatic();
-                    container.scrollTop = s.pos;
-                    return;
-                }
-
-                markProgrammatic();
-                container.scrollTop = s.pos;
-                s.raf = requestAnimationFrame(step);
-            }
-
-            // 桌面右栏：把当前行推到锚点位置
+            // 桌面右栏跟随：与左栏共用弹簧解算，仅读数/写回不同容器
             function seekDeskLyricsTo(targetTop) {
-                springScrollTo(springDesk, playerLyricsInner, targetTop, () => {
-                    deskLyricsProgrammatic = true;
-                    requestAnimationFrame(() => { deskLyricsProgrammatic = false; });
-                });
+                if (!deskSpring.settledAt(targetTop) && deskSpring.target !== null
+                    && Math.abs(targetTop - deskSpring.target) < 0.5) return;
+                deskSpring.springScrollTo(targetTop);
             }
 
             // 把当前行推到锚点位置（每帧调用；位置已正确时几乎零开销）
@@ -7956,14 +9314,172 @@
                 seekLyricsTo(clamped);
             }
 
-            // 左栏（歌词页）：把当前行推到锚点位置。
-            // 定位本身每帧都会被调用（见 followLyricsCenter 的说明），
-            // 去重与"目标未变则不重启动画"都在 springScrollTo 内部处理。
+            // ============================================================
+            //  滚动定位：弹簧物理（Spring Physics）
+            // ============================================================
+            //
+            //  为什么不能用定时补间（easeInOutCubic / scroll-behavior:smooth）：
+            //  那些都是"给定起点和终点，按固定时长插值"。时长一固定，
+            //  距离短时看着拖沓、距离长时看着急促，而且到点即停 ——
+            //  机械感就来自这个"到点即停"。
+            //
+            //  弹簧则描述的是"一个物体被拉到目标位置"的物理过程：
+            //    · 位移越大，弹簧拉得越紧 → 起步越快（距离自适应）
+            //    · 到达目标时仍带着速度 → 冲过头（过冲），再被拉回来
+            //    · 阻尼逐渐吃掉能量 → 振幅衰减，最终稳稳停住
+            //  于是"惯性滑入 + 轻微回弹"是自然涌现的，不需要手调曲线。
+            //
+            //  数值积分用半隐式欧拉法（先更新速度、再用新速度更新位置）。
+            //  相比显式欧拉，它在 dt 波动时不会发散 —— rAF 的帧间隔抖动
+            //  很常见（尤其移动端），显式欧拉在那种情况下会把弹簧算飞。
+
+            /**
+             * 创建一个弹簧驱动的滚动控制器。
+             * @param {() => number} readPos   读当前滚动位置（scrollTop）
+             * @param {(v: number) => void} writePos  写滚动位置
+             * @param {(v: boolean) => void} markProgrammatic 标记"这是程序化滚动"
+             * @param {object} tune 弹簧参数
+             */
+            function createSpringScroller(readPos, writePos, markProgrammatic, tune) {
+                const stiffness = tune.stiffness;
+                const damping = tune.damping;
+                const mass = tune.mass;
+                // 速度阈值：小于 0.5px/帧 且已经贴住目标，就认定停稳。
+                // 这个阈值不能太小 —— 弹簧的尾巴是无限趋近的，
+                // 要求绝对相等会让 rAF 永远停不下来，白白耗电。
+                const REST_VEL = 0.5;
+                const REST_DIST = 0.35;
+
+                let raf = null;
+                let lastTime = 0;
+                let pos = 0;
+                let vel = 0;
+
+                const ctrl = {
+                    target: null,
+                    get rafId() { return raf; },
+                    /** 目标是否已稳定在给定值上（用于跳过无意义的重复调用） */
+                    settledAt(v) {
+                        return ctrl.target !== null
+                            && Math.abs(v - ctrl.target) < REST_DIST
+                            && raf === null;
+                    },
+                    /** 弹簧是否还在运动 */
+                    get active() { return raf !== null; },
+
+                    /**
+                     * 朝新的目标位置开始/继续弹簧运动。
+                     *
+                     * 关键点：只有在【目标发生变化】时才重置速度和起点。
+                     * followLyricsCenter 是每帧调用的，如果每次调用都重置，
+                     * 速度会被反复清零，弹簧永远走不出起步阶段 ——
+                     * 表现就是"卡在起点附近慢慢蹭"。
+                     */
+                    springScrollTo(target) {
+                        // 目标没变（同一句歌词持续播放）：交给正在跑的循环，
+                        // 不打断、不重置速度 —— 这才是"保持"而不是"重启"。
+                        if (ctrl.target !== null && Math.abs(target - ctrl.target) < REST_DIST) {
+                            return;
+                        }
+                        const now = readPos();
+                        ctrl.target = target;
+                        pos = now;
+
+                        // 起点与目标只差不到 1px：直接落位，别让弹簧空转
+                        if (Math.abs(target - now) < 0.5) {
+                            writePos(target);
+                            vel = 0;
+                            return;
+                        }
+                        if (raf !== null) return;   // 已有循环，改目标即可
+                        // 从静止起步。速度不继承上一段的残留 ——
+                        // 否则连续切行时会一带一冲，越切越飘。
+                        vel = 0;
+                        lastTime = 0;
+                        raf = requestAnimationFrame(step);
+                    },
+
+                    /** 立刻落位并停止弹簧（用户手动滚动、切歌重建时用） */
+                    stop() {
+                        if (raf !== null) {
+                            cancelAnimationFrame(raf);
+                            raf = null;
+                        }
+                        vel = 0;
+                        ctrl.target = null;
+                    },
+                };
+
+                function step(now) {
+                    raf = null;
+                    // 首帧没有可用的时间差，用 16.7ms 兜底；
+                    // 并把过大的间隔截断到 50ms —— 页面切到后台再切回来时，
+                    // 帧间隔可能是好几秒，不截断的话弹簧一步算到无穷远。
+                    const dtMs = lastTime ? Math.min(now - lastTime, 50) : 16.7;
+                    lastTime = now;
+                    // 换算成秒：物理公式里的时间单位是秒，
+                    // 用毫秒会让 stiffness 的量纲要重新标定，很容易调错。
+                    const dt = dtMs / 1000;
+
+                    const x = pos - ctrl.target;      // 相对目标的位移
+                    // 胡克定律：a = -(k·x + c·v) / m
+                    //   k·x 是弹簧回弹力（拉得越远越大）
+                    //   c·v 是阻尼力（越快阻力越大，负责收敛）
+                    const accel = (-stiffness * x - damping * vel) / mass;
+                    vel += accel * dt;                // 半隐式：先更新速度…
+                    pos += vel * dt;                  // …再用新速度更新位置
+
+                    const dist = Math.abs(ctrl.target - pos);
+                    const stopped = dist < REST_DIST && Math.abs(vel) < REST_VEL;
+
+                    markProgrammatic(true);
+                    writePos(stopped ? ctrl.target : pos);
+                    // 下一帧清除标记（scroll 事件在本次任务内同步派发，
+                    // 用微任务清理时机就晚了）
+                    requestAnimationFrame(() => { markProgrammatic(false); });
+
+                    if (stopped) {
+                        pos = ctrl.target;
+                        vel = 0;
+                        return;
+                    }
+                    raf = requestAnimationFrame(step);
+                }
+
+                return ctrl;
+            }
+
+            /* ---- 弹簧参数标定 ----
+               临界阻尼 c_crit = 2·√(k·m)。
+               取 damping 略小于临界值 → 欠阻尼 → 有轻微过冲，
+               这正是我们要的"惯性感"。过冲幅度由 阻尼比 ζ = c / c_crit 决定：
+                 ζ = 1.00  → 完全不过冲，稳但僵硬
+                 ζ = 0.75  → 过冲约 2.8%，肉眼刚好能察觉"弹"了一下
+                 ζ < 0.5   → 明显来回震荡，像弹簧门，用不得
+
+               主歌词容器：k=170, m=1 → c_crit ≈ 26.1，取 20 → ζ ≈ 0.77 */
+            const SPRING_MAIN = { stiffness: 170, damping: 20, mass: 1 };
+            /* 桌面右栏更矮更窄，同样的过冲会让视线来回追，幅度要再收一点：
+               k=190, m=1 → c_crit ≈ 27.6，取 24 → ζ ≈ 0.87 */
+            const SPRING_DESK = { stiffness: 190, damping: 24, mass: 1 };
+
+            const mainSpring = createSpringScroller(
+                () => lyricsContainer.scrollTop,
+                (v) => { lyricsContainer.scrollTop = v; },
+                (v) => { isProgrammaticScroll = v; },
+                SPRING_MAIN
+            );
+
+            const deskSpring = createSpringScroller(
+                () => playerLyricsInner.scrollTop,
+                (v) => { playerLyricsInner.scrollTop = v; },
+                (v) => { deskLyricsProgrammatic = v; },
+                SPRING_DESK
+            );
+
+            // 朝目标弹簧滑入（由 rAF 逐帧驱动）
             function seekLyricsTo(targetTop) {
-                springScrollTo(springMobile, lyricsContainer, targetTop, () => {
-                    isProgrammaticScroll = true;
-                    requestAnimationFrame(() => { isProgrammaticScroll = false; });
-                });
+                mainSpring.springScrollTo(targetTop);
             }
 
             function stopCurrentAudio() {
@@ -7981,12 +9497,39 @@
                     progressInterval = null;
                 }
                 if (currentAudio) {
-                    try { currentAudio.stop();
-                        currentAudio.destroy(); } catch (_) {}
+                    /* 交接：手动切歌时旧曲若还在响，后台淡出 ~180ms 再销毁。
+                       【不等待】—— currentAudio 立刻置空，新歌的启动
+                       （取地址/缓冲）通常比淡出更久，淡出在后台并行完成，
+                       不给切换增加任何延迟。
+                       自然播完（ended）或本来就停着：没有声音可淡，直接销毁。
+                       兜底清理（下方 _live 循环）会放过正在淡出的实例，
+                       否则刚挂上的淡出会被同一帧内的兜底掐成硬切。 */
+                    const dying = currentAudio;
                     currentAudio = null;
+                    if (dying.playing) {
+                        try {
+                            dying.pauseFaded(180, () => {
+                                try { dying.destroy(); } catch (_) {}
+                            });
+                        } catch (_) { try { dying.destroy(); } catch (_) {} }
+                    } else {
+                        try { dying.destroy(); } catch (_) {}
+                    }
                 }
-                // 兜底：销毁所有遗留实例，确保绝不会有上一首歌继续发声
-                try { if (window.Awdio && window.Awdio.stopAll) window.Awdio.stopAll(); } catch (_) {}
+                /* 兜底：清掉遗留实例（正常情况下这里应该是空的）。
+                   仍然逐个 destroy 一次 —— 代价极小，但能杜绝
+                   "上一首还在响"这种最难排查的问题。 */
+                try {
+                    if (window.Awdio && window.Awdio._live) {
+                        window.Awdio._live.forEach((inst) => {
+                            if (inst === currentAudio) return;
+                            // 正在后台淡出、随后自毁的旧实例别掐 ——
+                            // 掐了等于把淡出变回硬切
+                            if (inst._fading) return;
+                            try { inst.destroy(); } catch (_) {}
+                        });
+                    }
+                } catch (_) {}
                 isPlaying = false;
                 setCoverSpin(false);
                 updatePlayButtons();
@@ -8050,6 +9593,8 @@
                 stopCurrentAudio();
                 // 同步"当前歌曲"引用（迷你播放器 / 收藏状态等以此为准）
                 currentSong = song;
+                // 行内加载态：取播放地址期间让被点的这行转起来
+                setRowLoading(song.id, true);
 
                 // 只有"点的正是上次恢复的那首歌"才续播，否则必须从头
                 if (typeof seekTo !== 'number' && restoreSeekTime > 0
@@ -8102,23 +9647,22 @@
                 let url = song.url;
                 if (!url) {
                     try {
-                        const res = await fetch(
-                            `https://node.api.xfabe.com/api/wangyi/music?type=json&id=${song.id}`);
-                        const data = await res.json();
-                        if (data.code === 200 && data.data.url) {
-                            url = data.data.url;
-                            song.url = url;
-                            song.pay = data.data.pay || '免费音乐';
-                            song.picurl = data.data.picurl || song.picurl;
-                        } else {
-                            throw new Error(data.msg || '未获取到播放地址');
-                        }
+                        // 多源轮询：gdstudio 为主，官方接口兜底。
+                        // 返回 { url, br, size }，带上码率便于后面给用户提示音质。
+                        const got = await xfabePlayUrl(song.id);
+                        url = got.url;
+                        song.url = url;
+                        song.br = got.br || 0;
+                        song.pay = '免费音乐';
                     } catch (e) {
                         console.error('获取播放地址失败:', e);
                         pendingSeekTime = null;   // 失败即撤掉挂起标记，避免歌词被钉在目标时间
                         pendingPauseAfterSeek = false;
                         if (myToken === playSongToken) playStarting = false;
-                        alert('播放失败: ' + (song.pay === '付费音乐' ? '该歌曲为付费音乐，可能无法播放完整版' : e.message));
+                        setRowLoading(null, false);
+                        // 所有源都拿不到时，最可能的原因就是版权，而不是网络 ——
+                        // 提示要指向"这首歌不能放"，别让用户去查自己的网。
+                        alert('播放失败：该歌曲暂时无法播放（可能受版权限制）');
                         return;
                     }
                 }
@@ -8126,20 +9670,26 @@
                     pendingSeekTime = null;
                     pendingPauseAfterSeek = false;
                     if (myToken === playSongToken) playStarting = false;
+                    setRowLoading(null, false);
                     alert('无法播放: 未获取到播放地址');
                     return;
                 }
 
                 // 取地址期间用户又点了一次播放：本次已是"过期请求"，
                 // 停在这里 —— 实例交给最后一次播放去建，避免两个声音同时响。
+                // 这一行【不能】清加载态：新那次点击自己会设好，清掉反而闪一下。
                 if (myToken !== playSongToken) return;
 
                 // 创建原生音频实例（Awdio 兼容适配层，见文件顶部）
+                //
+                // autoplay 交给下面的 applySeek / 起播逻辑统一控制：
+                // 有 seekTo 时要先跳到指定进度再播，直接 autoplay 会先
+                // 从头播一句再跳，听感是"卡了一下"。
                 try {
                     currentAudio = new Awdio({
                         src: url,
                         volume: 80,
-                        autoplay: true,
+                        autoplay: false,
                         loop: false
                     });
                 } catch (e) {
@@ -8147,11 +9697,15 @@
                     pendingSeekTime = null;
                     pendingPauseAfterSeek = false;
                     if (myToken === playSongToken) playStarting = false;
+                    setRowLoading(null, false);
                     alert('播放器初始化失败');
                     return;
                 }
-                // 实例已建成，"启动中"窗口关闭
+                // 实例已建成，"启动中"窗口关闭。加载态也在这时收掉：
+                // 音频实例一旦建好就会开始缓冲播放，剩下的等待有声音反馈，
+                // 不需要再靠转圈告诉用户"在动了"。
                 if (myToken === playSongToken) playStarting = false;
+                setRowLoading(null, false);
                 // 新实例默认 1.0，必须把用户选定的倍速带上，
                 // 否则每切一首歌都会悄悄回到原速。
                 try { currentAudio.playbackRate = playbackRate; } catch (_) {}
@@ -8202,9 +9756,21 @@
                                 isPlaying = false;
                                 updatePlayButtons();
                                 setCoverSpin(false);
+                            } else {
+                                // 起播。放在 seek 之后：
+                                // 先定位再出声，避免"从头播一句 → 又跳走"的怪听感。
+                                // 新曲淡入 280ms，掩盖起播瞬间的毛刺
+                                currentAudio.playFaded(280);
                             }
                         } catch (_) {}
                     }
+                }
+
+                // 无 seek（正常点歌）时的起播路径。
+                // 有 seek 的情况由 applySeek 里负责起播 —— 那里时序更准。
+                // 淡入 280ms：新曲从静音平滑起来，不与上一首的残响硬碰
+                if (targetSeek <= 0) {
+                    currentAudio.playFaded(280);
                 }
 
                 currentAudio.on('play', () => {
@@ -8269,6 +9835,7 @@
                     pendingSeekTime = null;
                     pendingPauseAfterSeek = false;
                     isPlaying = false;
+                    setRowLoading(null, false);   // 取消启动，行内转圈一起收掉
                     updatePlayButtons();
                     setCoverSpin(false);
                     return;
@@ -8277,8 +9844,12 @@
                     // 以音频实例的真实状态为准，而不是 isPlaying 标志。
                     // 标志是异步事件（play/pause 回调）里更新的，与用户点击之间存在
                     // 时间差；连点时若按标志判断，会出现"显示暂停但仍在响"。
-                    if (currentAudio.paused) currentAudio.play();
-                    else currentAudio.pause();
+                    //
+                    // 暂停/恢复走 el.volume 渐变（180/200ms，见文件头部说明），
+                    // 不接 Web Audio：el.volume 仍是唯一真相，任何异常退化为硬切。
+                    // 拖进度等需要立即静音的路径仍用硬 pause()/play()。
+                    if (currentAudio.paused) currentAudio.playFaded(200);
+                    else currentAudio.pauseFaded(180);
                 } else {
                     // 有当前曲目即可播放（含不在榜单里的"游离曲目"）
                     if (currentSong || currentSongs.length > 0) {
@@ -8326,22 +9897,27 @@
                 coverSpinLast = now;
 
                 coverAngle = (coverAngle + COVER_DEG_PER_SEC * dt) % 360;
-                haloAngle = (haloAngle + HALO_DEG_PER_SEC * dt) % 360;
+                // haloAngle 的累加保留着（切歌归零时会用到这个变量），
+                // 但【不再】每帧写进 CSS —— 光晕旋转已经交给纯 CSS 动画，
+                // 由合成器线程驱动。见 setCoverSpin 上方的说明。
 
                 // 旋转整个封面容器：这样无封面时的渐变兜底也跟着转，
                 // 视觉上仍是一张"在转的黑胶"。
                 if (albumCoverBox) {
                     albumCoverBox.style.transform = `rotate(${coverAngle.toFixed(2)}deg)`;
                 }
-                if (albumCoverWrap) {
-                    albumCoverWrap.style.setProperty('--halo-angle', haloAngle.toFixed(2) + 'deg');
-                }
                 coverSpinRaf = requestAnimationFrame(coverSpinLoop);
             }
 
+            // 暂停闪烁的根因：光晕旋转原先由 JS 每帧写 --halo-angle 驱动，
+            // 大模糊层每帧重栅格化；暂停时 rAF 停止，合成器做收尾重栅格化 → 闪。
+            // 现改为纯 CSS 动画（见 .album-cover-wrap::before），合成器线程驱动，
+            // 暂停时用 animation-play-state 冻结，不再有重算。
             function setCoverSpin(playing) {
                 if (!albumCoverWrap) return;
                 const want = !!playing;
+                // .spinning 只负责切换光晕动画的 running/paused，
+                // 以及唱片旋转的启动开关（见下面的循环）
                 albumCoverWrap.classList.toggle('spinning', want);
                 if (want === coverSpinning) return;
                 coverSpinning = want;
@@ -8362,14 +9938,27 @@
                 coverAngle = 0;
                 haloAngle = 0;
                 if (albumCoverBox) albumCoverBox.style.transform = 'rotate(0deg)';
-                if (albumCoverWrap) albumCoverWrap.style.setProperty('--halo-angle', '0deg');
+                // 光晕现在是 CSS 动画，重置只能靠"重新开始动画"来实现。
+                // 先摘掉类、强制回流、再加回来 —— 否则浏览器认为
+                // 动画没变过，不会从头播。
+                if (albumCoverWrap) {
+                    const wasSpinning = albumCoverWrap.classList.contains('spinning');
+                    albumCoverWrap.classList.remove('spinning');
+                    void albumCoverWrap.offsetWidth;   // 强制样式重算
+                    if (wasSpinning) albumCoverWrap.classList.add('spinning');
+                }
             }
 
             // 点击唱片：播放 / 暂停
             if (albumCoverWrap) {
                 albumCoverWrap.addEventListener('click', () => {
                     // 没有在播的歌时不要凭空触发播放
-                    if (!currentSong) return;
+                    if (!currentSong) {
+                        // 静默 return 会让人以为"按钮坏了"。
+                        // 给一句解释，用户才知道该先选一首歌。
+                        showToast('请先选一首歌');
+                        return;
+                    }
                     togglePlay();
                 });
             }
@@ -8401,6 +9990,29 @@
                 $$('.song-item, .result-item, .fav-item').forEach(el => {
                     const sid = el.dataset.songId || el.dataset.id;
                     el.classList.toggle('playing', String(sid) === String(id));
+                });
+            }
+
+            /* 行内加载态开关。
+
+               on = true  ：给这一行加 .row-loading，序号位置显示小转圈。
+               on = false ：清掉【所有】行的 .row-loading，不做匹配筛选。
+
+               为什么关的时候要全清：取播放地址可能失败（版权 / 网络），
+               也可能被下一次点击作废（playSongToken 变了）。这些路径
+               散落在多处，逐个去记住自己开了哪一行很容易漏掉一行，
+               漏掉就是"那行永远在转"。全清则不可能残留。
+
+               类名用 row-loading 而不是 loading：榜单的整表转圈
+               （<li class="loading">）也用 loading，两者混在一起会互相误伤。 */
+            function setRowLoading(id, on) {
+                if (!on) {
+                    $$('.row-loading').forEach(el => el.classList.remove('row-loading'));
+                    return;
+                }
+                $$('.song-item, .result-item, .fav-item').forEach(el => {
+                    const sid = el.dataset.songId || el.dataset.id;
+                    el.classList.toggle('row-loading', String(sid) === String(id));
                 });
             }
 
@@ -8675,6 +10287,16 @@
                 if (!isAnyLyricsVisible()) stopLyricsTick();
             });
 
+            // 歌词页顶栏：收藏/取消收藏当前歌曲。
+            // 状态刷新交给 toggleFavorite 内部的 syncFavUI，不用手动补。
+            if (lyricsFavBtn) {
+                lyricsFavBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (!currentSong) return;
+                    toggleFavorite(currentSong);
+                });
+            }
+
             // 歌词页右下角：上一首 / 播放暂停 / 下一首
             if (lyricsPrevBtn) lyricsPrevBtn.addEventListener('click', () => playPrev());
             if (lyricsTransBtn) lyricsTransBtn.addEventListener('click', toggleTranslation);
@@ -8682,8 +10304,42 @@
             if (lyricsNextBtn) lyricsNextBtn.addEventListener('click', () => playNext());
             if (lyricsPlayBtn) lyricsPlayBtn.addEventListener('click', () => togglePlay());
 
+            /* 浮层顶栏的高度实测。
+
+               榜单/歌单顶栏与搜索结果顶栏都改成了绝对定位浮层，滚动内容
+               要从它们底下穿过，所以必须知道它们各自多高，才能给内容
+               留出正确的顶部内边距。高度会随搜索框换行、字号变化而变，
+               不能写死，实测后写进对应的 CSS 变量。
+
+               搜索框展开/收起、历史浮窗开合都会改变高度，所以这几个
+               时机都要重测一次。 */
+            function syncHeaderHeight() {
+                const h = document.querySelector('.header');
+                if (h) {
+                    document.documentElement.style.setProperty(
+                        '--header-h', Math.round(h.offsetHeight) + 'px');
+                }
+                const rh = document.querySelector('.search-results-header');
+                if (rh) {
+                    document.documentElement.style.setProperty(
+                        '--results-header-h', Math.round(rh.offsetHeight) + 'px');
+                }
+                /* 收藏页 / 歌单页顶栏同属浮层，高度随内部搜索行展开而变化，
+                   同样实测写入。取当前可见那一页的顶栏即可 —— 两页结构一致，
+                   隐藏的那页高度是 0，不能拿来用。 */
+                [favPage, playlistPage].forEach(page => {
+                    if (!page || !page.classList.contains('active')) return;
+                    const fh = page.querySelector('.fav-header');
+                    if (fh) {
+                        document.documentElement.style.setProperty(
+                            '--fav-header-h', Math.round(fh.offsetHeight) + 'px');
+                    }
+                });
+            }
+
             // 窗口尺寸变化时，歌词行位置缓存失效
             window.addEventListener('resize', () => {
+                syncHeaderHeight();
                 lyricsLayoutDirty = true;
                 lyricsViewportH = lyricsContainer.clientHeight;
                 // 跨越 900px 断点时，桌面右栏的显示状态会翻转，需要重新接管
@@ -8842,12 +10498,20 @@
                 openFavPage();
             });
             favBackBtn.addEventListener('click', closeFavPage);
+            // 播放全部收藏（概览区按钮与顶栏按钮共用）
+            function playAllFavorites() {
+                if (favorites.length === 0) { showToast('还没有喜欢的歌曲'); return; }
+                currentSongs = favorites.map(f => ({ ...f, pay: '免费音乐' }));
+                playSong(0);
+                markFavItemPlaying();
+            }
             if (favPlayAllBtn) {
-                favPlayAllBtn.addEventListener('click', () => {
-                    if (favorites.length === 0) { showToast('还没有喜欢的歌曲'); return; }
-                    currentSongs = favorites.map(f => ({ ...f, pay: '免费音乐' }));
-                    playSong(0);
-                    markFavItemPlaying();
+                favPlayAllBtn.addEventListener('click', playAllFavorites);
+            }
+            if (favHeaderPlay) {
+                favHeaderPlay.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    playAllFavorites();
                 });
             }
 
@@ -8884,11 +10548,14 @@
             function openFavSearch() {
                 favHeaderSearch.classList.add('active');
                 favSearchInput.focus();
+                // 搜索行展开会撑高顶栏，重测给滚动容器让位
+                syncHeaderHeight();
             }
             function closeFavSearch() {
                 favHeaderSearch.classList.remove('active');
                 favSearchClear.classList.remove('show');
                 favSearchInput.blur();
+                syncHeaderHeight();
             }
             function clearFavSearch() {
                 favSearchInput.value = '';
@@ -8902,17 +10569,15 @@
                 if (isProgrammaticScroll) return;
                 // 用户手动滚动时暂停自动追随，避免与用户操作打架
                 isLyricsScrolling = false;
-                // 作废上一段弹簧的目标并停表。
-                // 不这么做的话，弹簧会在下一帧继续写 scrollTop，跟用户的手指
-                // 抢方向（表现为"黏手"）；而且静置恢复时算出的目标往往与旧目标
-                // 只差零点几像素，会被 springScrollTo 的"目标未变"短路拦住，
-                // 于是永不回滚 —— 划到底部时最明显。
-                springCancel(springMobile);
+                // 立刻掐掉正在跑的弹簧。不掐的话，用户的手指会与弹簧
+                // 争夺 scrollTop 的写权 —— 每帧弹簧把位置拽回目标、
+                // 手指又划走，表现为"划过的地方被吸回去"，非常粘手。
+                mainSpring.stop();
                 clearTimeout(scrollTimeout);
                 scrollTimeout = setTimeout(() => {
                     isLyricsScrolling = true;
                     // 恢复自动追随，并把当前行重新拉回居中
-                    // （上面已清空补间目标，这里必然重新起一段动画）
+                    // （stop() 已把目标清空，这里必然重新起一段弹簧）
                     if (lyricsPage.classList.contains('active')) {
                         lyricsLayoutDirty = true;
                         lyricsTick();
@@ -8932,8 +10597,8 @@
                 playerLyricsInner.addEventListener('scroll', () => {
                     if (deskLyricsProgrammatic) return;
                     isLyricsScrolling = false;
-                    // 同左栏：停表并作废目标，否则静置恢复会被"目标未变"的短路拦住
-                    springCancel(springDesk);
+                    // 同左栏：掐掉弹簧，把 scrollTop 的写权还给手指
+                    deskSpring.stop();
                     clearTimeout(scrollTimeout);
                     scrollTimeout = setTimeout(() => {
                         isLyricsScrolling = true;
@@ -9051,6 +10716,7 @@
                 // 主题：data-theme 属性已由 <head> 的引导脚本打好，
                 // 这里只需把按钮图标同步成与之一致的状态。
                 applyTheme(currentTheme());
+                syncHeaderHeight();
 
                 loadFavorites();
                 loadPlaylists();
@@ -9068,8 +10734,25 @@
 
                 renderChartChips();
                 switchTab(activeTab);
-                // 加载当前榜单，完成后恢复上次播放状态
-                loadChart(activeChart).then(() => restoreLastPlayback());
+                /* 榜单是热歌榜，它的加载成功与否【不该】决定"上次播放"能否恢复。
+                
+                   踩坑记录（"重进后点击不了唱片播放"）：
+                   原先写的是 loadChart(activeChart).then(() => restoreLastPlayback())。
+                   loadChart 内部是 try/catch，网络失败时不会 reject，
+                   而是把错误吞掉、把列表区渲染成"网络错误，请稍后再试" ——
+                   听起来"then 还是会被调用"，但真正的问题是：
+                   loadChart 的 await 卡在【慢请求】上（xfabe 抖动到 12s+），
+                   这段时间里 currentSong 一直是 null。
+                   albumCoverWrap 的点击处理第一行就是
+                       if (!currentSong) return;
+                   于是用户在榜单转完圈之前的每一次点击都被静默丢弃 ——
+                   看起来就是"唱片点不动"。
+                
+                   改成两条独立的线：榜单慢慢加载，恢复立即执行。
+                   恢复不依赖榜单数据（它读的是 localStorage），
+                   两者之间本来就没有真正的依赖关系。 */
+                restoreLastPlayback();
+                loadChart(activeChart);
 
                 // Tab 栏点击
                 if (tabBar) {
