@@ -2616,9 +2616,22 @@
             align-items: stretch;
             text-align: left;
             -webkit-overflow-scrolling: touch;
-            /* 平滑由 JS 逐帧插值实现，避免原生 smooth 被高频更新打断产生回弹 */
+            /* 平滑由 JS 的弹簧物理逐帧驱动，不用原生 smooth ——
+               原生 smooth 每次设定新目标都会从当前位置重新起步，
+               高频更新（每句都在换目标）下会被反复打断，产生回弹感。 */
             scroll-behavior: auto;
             overflow-anchor: none;
+            /* 上下渐隐遮罩：靠近视口边缘的歌词淡出，制造"沉入水下 / 浮出水面"
+               的纵深，把视觉焦点压到中间那一行。
+               遮罩作用在元素的边框盒上，所以它锚定的是「视口边缘」而不是内容，
+               卷动时不会跟着内容跑 —— 这正是"越靠边越淡"该有的行为。
+               参数与 .player-lyrics-inner 保持一致，两处观感才统一。
+               12%/88% 而不是 0/100：留出上下各一段完全实色的区域，
+               否则歌词会在离边缘很远的地方就开始发虚，显得整体发灰。 */
+            mask-image: linear-gradient(to bottom,
+                transparent 0, #000 12%, #000 88%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom,
+                transparent 0, #000 12%, #000 88%, transparent 100%);
         }
 
         .lyrics-line {
@@ -7725,27 +7738,138 @@
                 seekDeskLyricsTo(clamped);
             }
 
-            // 桌面右栏的缓动补间（与左栏算法一致，状态独立互不干扰）
-            let deskScrollFrom = null, deskScrollTo = null, deskScrollStart = 0, deskScrollRaf = null;
+            // ============================================================
+            //  弹簧物理滚动引擎（左栏「歌词页」与右栏「桌面歌词栏」共用）
+            // ============================================================
+            //
+            // 【为什么不用定时补间】
+            // 之前用的是 easeInOutCubic + 固定 620ms：语义是"在 T 毫秒内从 A 匀速
+            // 加缓动走到 B"。这在歌词场景里有两个天生缺陷 ——
+            //
+            //   1. 换行时机不可预测。上一句还没走完、下一句就来了。定时补间的
+            //      做法是"以当前位置为起点、速度清零、重新起一段"，于是每次换行
+            //      运动都要从静止重新加速，观感是"一顿一顿"。
+            //   2. 时长写死。相邻两行（几十像素）和拖进度条跳副歌（上千像素）
+            //      共用同一个 620ms：短的显得拖沓，长的显得突兀。
+            //
+            // 弹簧的语义是"朝目标施加恢复力，靠阻尼收敛"，它自带两个性质刚好补上：
+            //
+            //   1. **速度是状态量**。中途改目标时速度被保留 —— 运动是"拐弯"而不是
+            //      "停车再启动"。这正是用户感知到的"惯性"，也是这条链路最值钱的地方。
+            //   2. **时长由距离和刚度共同决定**。近处轻轻滑一点，远处才明显发力；
+            //      距离越远走得越快，但收尾永远是同一种柔和感。
+            //
+            // 【积分方式】半隐式欧拉 + 固定子步。
+            // 显式欧拉在 k·dt² 偏大时会发散（表现是歌词疯狂抖动）；标签页切回来
+            // 时 dt 甚至能有几百毫秒，直接积分必炸。这里把一帧拆成 SUB 个子步，
+            // 保证每个子步的 h 远小于稳定上限 2/√k，任何刷新率下都不会发散。
+            //
+            // 【参数怎么调】
+            // 刚度 k 决定"多用力"，阻尼 c 决定"多快停下"。用阻尼比 ζ = c/(2√k) 判断：
+            //   ζ < 1  欠阻尼，会有回弹（ζ 越小弹得越明显）
+            //   ζ = 1  临界阻尼，最快收敛且完全不过冲
+            //   ζ > 1  过阻尼，慢吞吞爬过去，毫无生气
+            // 当前 k=120、c=17 → ζ ≈ 0.78，约 2% 的轻微过冲、约 470ms 收敛。
+            // 那 2% 就是"惯性"的来源：滑过一点点，再被轻轻拉回来。
+            // 想更"弹"就调小 c，想更"稳"就调大 c（c=22 已接近临界，完全不过冲）。
+            const SPRING_K = 120;              // 刚度
+            const SPRING_C = 17;               // 阻尼
+            const SPRING_SUB = 4;              // 每帧子步数，用于保稳定
+            const SPRING_MAX_DT = 1 / 30;      // 秒。夹住 dt 上限，见上文"标签页"
+            const SPRING_EPS_POS = 0.35;       // px，判定"到位"
+            const SPRING_EPS_VEL = 2;          // px/s，判定"停稳"
+
+            // 一个弹簧只管一条滚动轴。左右两栏各持一个实例，状态完全独立 ——
+            // 共用会导致窄屏下右栏不可见时，它的弹簧把左栏的位置一并带跑偏。
+            function createSpring() {
+                return { pos: 0, vel: 0, target: null, raf: null, last: 0 };
+            }
+            const springMobile = createSpring();
+            const springDesk = createSpring();
+
+            // 主动放弃控制权（用户手滑时调用）。
+            // 必须同时清掉 target 与 raf：只清 target 的话，已经排进队列的那一帧
+            // 仍会再写一次 scrollTop，和用户的手指抢一下，表现为"黏手"。
+            function springCancel(s) {
+                s.target = null;
+                s.vel = 0;
+                s.raf = null;
+            }
+
+            // 把容器滚到 target（单位 px）。同名目标重复调用是零成本的。
+            function springScrollTo(s, container, target, markProgrammatic) {
+                if (s.raf === null) {
+                    // 静止态：先以容器「真实位置」校正记忆值。
+                    // 歌词重建（innerHTML 重置）、用户手滑、容器尺寸变化都会让
+                    // 二者脱节。不校正的话，下面"目标未变"的短路会命中，
+                    // 于是歌词永远停在错的位置 —— 滚到底部时尤其明显，
+                    // 因为那里的目标被 clamp 到 maxScroll，与旧目标只差零点几像素。
+                    if (Math.abs(container.scrollTop - s.pos) > 2) {
+                        s.pos = container.scrollTop;
+                        s.target = null;          // 场景已变，旧目标作废
+                    }
+                }
+
+                // 目标没变：正在跑就让它跑完，已停稳就什么都不做。
+                // 这条短路是必需的 —— 定位函数每帧都会被调用，若每次都重设起点，
+                // 弹簧会被永远按在起点上动弹不得。
+                if (s.target !== null && Math.abs(target - s.target) < 0.5) return;
+
+                s.target = target;
+
+                if (s.raf === null) {
+                    // 静止被唤醒：速度归零起步。
+                    // 注意 pos 用的是上面校正过的值，不是上次的收敛点。
+                    s.vel = 0;
+                    s.last = performance.now();
+                    s.raf = requestAnimationFrame(function step(now) {
+                        springStep(s, container, now, markProgrammatic, step);
+                    });
+                }
+                // 若正在跑：只换目标，pos / vel 原样保留 —— 这就是惯性衔接。
+                // 不做任何"重置"，运动才不会在换行处卡顿。
+            }
+
+            function springStep(s, container, now, markProgrammatic, step) {
+                if (s.target === null) { s.raf = null; return; }
+
+                let dt = (now - s.last) / 1000;
+                s.last = now;
+                if (!(dt > 0)) dt = 1 / 60;            // 同一帧被重复驱动（理论上不会）
+                if (dt > SPRING_MAX_DT) dt = SPRING_MAX_DT;
+
+                const h = dt / SPRING_SUB;
+                for (let i = 0; i < SPRING_SUB; i++) {
+                    const a = (s.target - s.pos) * SPRING_K - s.vel * SPRING_C;
+                    s.vel += a * h;
+                    s.pos += s.vel * h;
+                }
+
+                // 到位判定：位置和速度必须同时够小。
+                // 只看位置会在过冲折返的瞬间误判 —— 那一刻位置恰好经过目标，
+                // 速度却仍然很大。提前停下会让那 2% 的过冲走不完，
+                // 观感是"滑到位时卡了一下"，正好毁掉弹簧最值钱的部分。
+                if (Math.abs(s.target - s.pos) < SPRING_EPS_POS &&
+                    Math.abs(s.vel) < SPRING_EPS_VEL) {
+                    s.pos = s.target;                  // 吸附，消除亚像素残留
+                    s.vel = 0;
+                    s.raf = null;
+                    markProgrammatic();
+                    container.scrollTop = s.pos;
+                    return;
+                }
+
+                markProgrammatic();
+                container.scrollTop = s.pos;
+                s.raf = requestAnimationFrame(step);
+            }
+
+            // 桌面右栏：把当前行推到锚点位置
             function seekDeskLyricsTo(targetTop) {
-                const c = playerLyricsInner;
-                if (deskScrollTo !== null && Math.abs(targetTop - deskScrollTo) < 0.5) return;
-                deskScrollFrom = c.scrollTop;
-                deskScrollTo = targetTop;
-                deskScrollStart = performance.now();
-                if (Math.abs(deskScrollTo - deskScrollFrom) < 0.5) return;
-                if (deskScrollRaf) return;
-                const step = (now) => {
-                    if (deskScrollTo === null) { deskScrollRaf = null; return; }
-                    const p = Math.min(1, (now - deskScrollStart) / LYRIC_SCROLL_DURATION);
-                    const cur = deskScrollFrom + (deskScrollTo - deskScrollFrom) * easeInOutCubic(p);
+                springScrollTo(springDesk, playerLyricsInner, targetTop, () => {
                     deskLyricsProgrammatic = true;
-                    c.scrollTop = (p >= 1) ? deskScrollTo : cur;
                     requestAnimationFrame(() => { deskLyricsProgrammatic = false; });
-                    if (p >= 1) { deskScrollRaf = null; return; }
-                    deskScrollRaf = requestAnimationFrame(step);
-                };
-                deskScrollRaf = requestAnimationFrame(step);
+                });
             }
 
             // 把当前行推到锚点位置（每帧调用；位置已正确时几乎零开销）
@@ -7765,53 +7889,14 @@
                 seekLyricsTo(clamped);
             }
 
-            // 补间：时间驱动（先慢、中段加速、收尾再慢），有明确时长与节奏，
-            // 比"每帧吃固定比例"的指数逼近更自然。
-            function easeInOutCubic(t) {
-                return t < 0.5
-                    ? 4 * t * t * t
-                    : 1 - Math.pow(-2 * t + 2, 3) / 2;
-            }
-
-            // 滚动动画状态：一次补间 = { 起点, 目标, 开始时刻 }
-            //   目标不变时（同一句歌词持续播放）不重启补间，
-            //   否则每帧重算会让动画永远停在起点附近。
-            const LYRIC_SCROLL_DURATION = 620;   // ms，接近 Apple Music 的过渡节奏
-            let lyricScrollFrom = null;          // 补间起点 scrollTop
-            let lyricScrollTo = null;            // 补间目标 scrollTop
-            let lyricScrollStart = 0;            // 补间开始时间戳
-            let lyricScrollRaf = null;
-
-            // 朝目标缓动（由 rAF 每帧驱动）
+            // 左栏（歌词页）：把当前行推到锚点位置。
+            // 定位本身每帧都会被调用（见 followLyricsCenter 的说明），
+            // 去重与"目标未变则不重启动画"都在 springScrollTo 内部处理。
             function seekLyricsTo(targetTop) {
-                // 目标未变：若补间仍在进行，交给它继续跑；已结束则什么都不做
-                if (lyricScrollTo !== null && Math.abs(targetTop - lyricScrollTo) < 0.5) return;
-
-                // 目标变了（切行 / 容器尺寸变化）：以当前位置为起点，重新起一段补间
-                lyricScrollFrom = lyricsContainer.scrollTop;
-                lyricScrollTo = targetTop;
-                lyricScrollStart = performance.now();
-
-                if (Math.abs(lyricScrollTo - lyricScrollFrom) < 0.5) return;
-                tickLyricScroll();
-            }
-
-            // 逐帧推进补间；结束后自动停表（无补间时不再占用 rAF）
-            function tickLyricScroll() {
-                if (lyricScrollRaf) return;    // 已有循环在跑
-                const step = (now) => {
-                    if (lyricScrollTo === null) { lyricScrollRaf = null; return; }
-                    const p = Math.min(1, (now - lyricScrollStart) / LYRIC_SCROLL_DURATION);
-                    const cur = lyricScrollFrom + (lyricScrollTo - lyricScrollFrom) * easeInOutCubic(p);
-                    // 标记为程序化滚动：scroll 事件里据此区分"用户手滑"与"自动追随"
+                springScrollTo(springMobile, lyricsContainer, targetTop, () => {
                     isProgrammaticScroll = true;
-                    lyricsContainer.scrollTop = (p >= 1) ? lyricScrollTo : cur;
-                    // 下一帧清除标记（scroll 事件在本次任务内同步派发）
                     requestAnimationFrame(() => { isProgrammaticScroll = false; });
-                    if (p >= 1) { lyricScrollRaf = null; return; }
-                    lyricScrollRaf = requestAnimationFrame(step);
-                };
-                lyricScrollRaf = requestAnimationFrame(step);
+                });
             }
 
             function stopCurrentAudio() {
@@ -8750,12 +8835,12 @@
                 if (isProgrammaticScroll) return;
                 // 用户手动滚动时暂停自动追随，避免与用户操作打架
                 isLyricsScrolling = false;
-                // 作废上一段补间的目标记忆。
-                // seekLyricsTo 有个"目标未变就不动"的短路（避免每帧重启动画），
-                // 用户划走后若不清理，静置恢复时算出的目标恰好还是旧目标，
-                // 短路再次命中 → 永不回滚。划到底部时最明显：届时目标被 clamp
-                // 到 maxScroll，与旧目标可能只差零点几像素。
-                lyricScrollTo = null;
+                // 作废上一段弹簧的目标并停表。
+                // 不这么做的话，弹簧会在下一帧继续写 scrollTop，跟用户的手指
+                // 抢方向（表现为"黏手"）；而且静置恢复时算出的目标往往与旧目标
+                // 只差零点几像素，会被 springScrollTo 的"目标未变"短路拦住，
+                // 于是永不回滚 —— 划到底部时最明显。
+                springCancel(springMobile);
                 clearTimeout(scrollTimeout);
                 scrollTimeout = setTimeout(() => {
                     isLyricsScrolling = true;
@@ -8780,8 +8865,8 @@
                 playerLyricsInner.addEventListener('scroll', () => {
                     if (deskLyricsProgrammatic) return;
                     isLyricsScrolling = false;
-                    // 同左栏：作废补间目标记忆，否则静置恢复会被短路拦住
-                    deskScrollTo = null;
+                    // 同左栏：停表并作废目标，否则静置恢复会被"目标未变"的短路拦住
+                    springCancel(springDesk);
                     clearTimeout(scrollTimeout);
                     scrollTimeout = setTimeout(() => {
                         isLyricsScrolling = true;
