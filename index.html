@@ -4,20 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>MKY音乐</title>
-
-    <!-- ===== 站点图标 =====
-         全站到处在用 Font Awesome 的 fa-music，但那只管页面内的图标；
-         浏览器标签页/书签/桌面快捷方式读的是 favicon，跟页面内的字体图标
-         毫无关系 —— 之前一直没写，于是标签页上是个空白默认图。
-
-         这里用内联 SVG data URI 而不是 .ico 文件，理由：
-           · 单文件交付，不额外带一个二进制资源；
-           · SVG 矢量，在 16px 标签页和 180px 桌面图标下都清晰；
-           · 主题色玫红 #e91e63 直接写进图形，与全站主色一致。
-
-         图形是一枚唱片：外圈深色黑胶 + 中心玫红标签 + 白色高光弧，
-         缩到 16px 仍能认出"这是个音乐应用"。
-         另给 apple-touch-icon 一份 180x180 的，iOS 加到主屏时才不留白底。 -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23ff3d77'/%3E%3Cstop offset='1' stop-color='%23c2185b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='32' cy='32' r='30' fill='%23141418'/%3E%3Ccircle cx='32' cy='32' r='30' fill='none' stroke='%23ffffff' stroke-opacity='.14' stroke-width='2'/%3E%3Ccircle cx='32' cy='32' r='21' fill='none' stroke='%23ffffff' stroke-opacity='.10' stroke-width='1.5'/%3E%3Ccircle cx='32' cy='32' r='14' fill='none' stroke='%23ffffff' stroke-opacity='.08' stroke-width='1.5'/%3E%3Ccircle cx='32' cy='32' r='12' fill='url(%23g)'/%3E%3Ccircle cx='32' cy='32' r='3.4' fill='%23141418'/%3E%3Cpath d='M32 6a26 26 0 0 1 20 9' fill='none' stroke='%23ffffff' stroke-opacity='.5' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E" />
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23ff3d77'/%3E%3Cstop offset='1' stop-color='%23c2185b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' fill='%23141418'/%3E%3Ccircle cx='32' cy='32' r='21' fill='none' stroke='%23ffffff' stroke-opacity='.10' stroke-width='1.5'/%3E%3Ccircle cx='32' cy='32' r='14' fill='none' stroke='%23ffffff' stroke-opacity='.08' stroke-width='1.5'/%3E%3Ccircle cx='32' cy='32' r='12' fill='url(%23g)'/%3E%3Ccircle cx='32' cy='32' r='3.4' fill='%23141418'/%3E%3C/svg%3E" />
     <meta name="theme-color" content="#141418" />
@@ -457,6 +443,10 @@
             --text-muted: rgba(255, 255, 255, 0.40);
             --text-faint: rgba(255, 255, 255, 0.35);
             --lyric-dim: rgba(255, 255, 255, 0.55);
+            --lyric-bright: rgba(255, 255, 255, 0.90);
+            --lyric-cover-dim: rgba(255, 255, 255, 0.30);
+            --lyric-active: #ffffff;
+            --lyric-pending: rgba(255, 255, 255, 0.42);
             --lyric-glow: rgba(255, 255, 255, 0.14);
             --text-control: rgba(255, 255, 255, 0.86);
 
@@ -548,7 +538,10 @@
             --text-faint: rgba(0, 0, 0, 0.35);
 
             --lyric-dim: rgba(0, 0, 0, 0.34);
-
+            --lyric-bright: rgba(0, 0, 0, 0.85);
+            --lyric-cover-dim: rgba(0, 0, 0, 0.28);
+            --lyric-active: #1c1c1e;
+            --lyric-pending: rgba(0, 0, 0, 0.34);
             --lyric-glow: rgba(233, 30, 99, 0.18);
             --text-control: rgba(0, 0, 0, 0.80);
             --text-on-media: rgba(255, 255, 255, 0.85);
@@ -1670,7 +1663,6 @@
         .fav-page {
             position: fixed;
             inset: 0;
-
             bottom: 0;
             background: var(--bg-overlay);
             z-index: 700;
@@ -1808,7 +1800,6 @@
 
         .fav-list {
             padding: 12px 16px 30px;
-
             overflow: visible;
         }
 
@@ -1819,7 +1810,6 @@
 
         .fav-page,
         .playlist-page {
-
             overflow: hidden;
             scrollbar-width: none;
             -ms-overflow-style: none;
@@ -1852,7 +1842,6 @@
             overscroll-behavior: contain;
             -webkit-overflow-scrolling: touch;
             padding-top: calc(var(--fav-header-h, 58px) + 8px);
-
             padding-bottom: 4px;
         }
         .fav-scroll::-webkit-scrollbar {
@@ -3019,10 +3008,14 @@
             transition: background 0.2s;
 
             height: 23px;
-            overflow-x: auto;
-            overflow-y: hidden;
 
-            scroll-behavior: auto;
+            overflow: hidden;
+            -webkit-mask-image: linear-gradient(to right,
+                transparent 0, #000 var(--cover-fade, 34px),
+                #000 calc(100% - var(--cover-fade, 34px)), transparent 100%);
+            mask-image: linear-gradient(to right,
+                transparent 0, #000 var(--cover-fade, 34px),
+                #000 calc(100% - var(--cover-fade, 34px)), transparent 100%);
 
             scrollbar-width: none;
             -ms-overflow-style: none;
@@ -3041,7 +3034,8 @@
             flex-direction: column;
             width: max-content;
             min-width: 100%;
-            transition: transform 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+
+            will-change: transform;
         }
         .cover-lyric-line {
             display: block;
@@ -3055,34 +3049,78 @@
             white-space: nowrap;
             text-align: center;
 
-            --scan: 100%;
+            --scan: 0%;
             background-image: linear-gradient(90deg,
-                var(--text-primary) 0, var(--text-primary) var(--scan),
-                var(--lyric-dim) var(--scan), var(--lyric-dim) 100%);
+                var(--lyric-bright) 0,
+                var(--lyric-bright) var(--scan),
+                var(--lyric-cover-dim) var(--scan),
+                var(--lyric-cover-dim) 100%);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
             color: var(--lyric-dim);
         }
+        .cover-lyric-line.fading {
+            background-image: linear-gradient(90deg,
+                var(--lyric-bright) 0,
+                var(--lyric-bright) calc(var(--scan) - 0.4em),
+                color-mix(in srgb, var(--lyric-bright) 70%, var(--lyric-cover-dim)) var(--scan),
+                var(--lyric-cover-dim) calc(var(--scan) + 0.4em),
+                var(--lyric-cover-dim) 100%);
+        }
 
         .cover-lyric.has-line .cover-lyric-line {
-            color: var(--text-primary);
+            color: var(--lyric-bright);
         }
         .cover-lyric .lyric-seg {
             --scan: 0%;
             background-image: linear-gradient(90deg,
-                var(--text-primary) 0, var(--text-primary) var(--scan),
-                var(--lyric-dim) var(--scan), var(--lyric-dim) 100%);
+                var(--lyric-bright) 0,
+                var(--lyric-bright) var(--scan),
+                var(--lyric-cover-dim) var(--scan),
+                var(--lyric-cover-dim) 100%);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
             color: var(--lyric-dim);
         }
+        .cover-lyric .lyric-seg.fading {
+            background-image: linear-gradient(90deg,
+                var(--lyric-bright) 0,
+                var(--lyric-bright) calc(var(--scan) - 0.4em),
+                color-mix(in srgb, var(--lyric-bright) 70%, var(--lyric-cover-dim)) var(--scan),
+                var(--lyric-cover-dim) calc(var(--scan) + 0.4em),
+                var(--lyric-cover-dim) 100%);
+        }
         @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
             .cover-lyric .lyric-seg {
                 background-image: none;
-                color: var(--text-primary);
+                color: var(--lyric-bright);
                 -webkit-text-fill-color: currentColor;
+            }
+        }
+
+        @supports not ((-webkit-mask-image: linear-gradient(#000, #000)) or (mask-image: linear-gradient(#000, #000))) {
+            .cover-lyric {
+                -webkit-mask-image: none;
+                mask-image: none;
+            }
+        }
+
+        .cover-lyric-scroll {
+            transition: filter 0.42s ease, opacity 0.42s ease;
+        }
+        .cover-lyric.has-line .cover-lyric-scroll {
+            filter: blur(0);
+            opacity: 1;
+        }
+        .cover-lyric:not(.has-line) .cover-lyric-scroll {
+            filter: blur(0.6px);
+            opacity: 0.55;
+        }
+        @supports not ((filter: blur(1px)) or (-webkit-filter: blur(1px))) {
+            .cover-lyric:not(.has-line) .cover-lyric-scroll {
+                filter: none;
             }
         }
 
@@ -3450,7 +3488,6 @@
         }
 
         .lyrics-line {
-
             padding: 18px 0;
             font-size: 19px;
             line-height: 1.7;
@@ -3461,28 +3498,28 @@
             z-index: 1;
             color: var(--text-muted);
 
-            transition: color 0.45s ease, opacity 0.45s ease, text-shadow 0.45s ease;
+            transition: color 0.35s ease, opacity 0.35s ease;
             width: 100%;
             font-weight: 300;
             letter-spacing: 0.3px;
             cursor: pointer;
 
-            transform: scale(1);
+            transform: scale(1) translate3d(0, 0, 0);
             transform-origin: left center;
+            backface-visibility: hidden;
+            will-change: transform;
         }
         .lyrics-line.active {
 
             color: var(--text-primary);
             font-weight: 500;
             opacity: 1;
-            text-shadow: 0 0 30px var(--lyric-glow);
 
-            transform: scale(1.06);
+            transform: scale(1.06) translate3d(0, 0, 0);
             z-index: 2;
 
-            transition: color 0.45s ease, opacity 0.45s ease,
-                        text-shadow 0.45s ease,
-                        transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: color 0.35s ease, opacity 0.35s ease,
+                        transform 0.42s cubic-bezier(0.34, 1.4, 0.64, 1);
         }
 
         .lyrics-line .lyric-trans {
@@ -3506,20 +3543,35 @@
             display: none;
         }
 
+        .lyrics-line .lyric-main,
+        .lyrics-line .lyric-trans {
+            pointer-events: none;
+        }
+
         .lyric-seg {
             --scan: 100%;
             background-image: linear-gradient(90deg,
-                var(--text-primary) 0, var(--text-primary) var(--scan),
-                var(--lyric-dim) var(--scan), var(--lyric-dim) 100%);
+                var(--lyric-active) 0,
+                var(--lyric-active) var(--scan),
+                var(--lyric-pending) var(--scan),
+                var(--lyric-pending) 100%);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            color: var(--lyric-dim);
+            color: var(--lyric-pending);
+        }
+        .lyric-seg.fading {
+            background-image: linear-gradient(90deg,
+                var(--lyric-active) 0,
+                var(--lyric-active) calc(var(--scan) - 0.4em),
+                color-mix(in srgb, var(--lyric-active) 45%, var(--lyric-pending)) var(--scan),
+                var(--lyric-pending) calc(var(--scan) + 0.4em),
+                var(--lyric-pending) 100%);
         }
         @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
             .lyric-seg {
                 background-image: none;
-                color: var(--text-primary);
+                color: var(--lyric-active);
                 -webkit-text-fill-color: currentColor;
             }
         }
@@ -4668,10 +4720,9 @@
 
             .fav-page,
             .playlist-page,
-            .search-results,
-            .about-page {
-
-                left: calc(var(--side-tab-width) + 1px);
+        .search-results,
+        .about-page {
+            left: calc(var(--side-tab-width) + 1px);
             }
         }
 </style>
@@ -5499,6 +5550,7 @@
             const barAddPlBtn = $('#bar-add-pl-btn');
             const albumCoverWrap = $('#album-cover-wrap');
             const coverLyricEl = $('#cover-lyric');
+            const coverLyricScroll = $('#cover-lyric-scroll');
             const coverLyricText = $('#cover-lyric-text');
             const progressBar = $('#progress-bar');
             const progress = $('#progress');
@@ -5980,6 +6032,7 @@
                             <i class="far fa-heart"></i>
                             <p>还没有收藏任何歌曲<br>点歌曲右侧的 <i class="far fa-heart"></i> 即可收藏</p>
                         </div>`;
+                    clearScrollOverscrollPad(favScroll);
                     return;
                 }
 
@@ -5989,6 +6042,7 @@
                             <i class="fas fa-search"></i>
                             <p>没有找到「${kw}」<br>换个关键词试试</p>
                         </div>`;
+                    clearScrollOverscrollPad(favScroll);
                     return;
                 }
 
@@ -6080,7 +6134,6 @@
             }
 
             function openFavPage() {
-
                 favKeyword = '';
                 if (favSearchInput) {
                     favSearchInput.value = '';
@@ -6103,7 +6156,6 @@
             }
 
             function closeFavPage() {
-
                 if (isSortMode()) exitSortMode(true);
                 favPage.classList.remove('active');
 
@@ -6637,7 +6689,6 @@
                 if (tab === 'mine') {
                     renderMinePage();
                 } else {
-
                     mineKeyword = '';
                     if (mineSearchInput) mineSearchInput.value = '';
                     if (mineSearchInputClear) mineSearchInputClear.classList.remove('show');
@@ -7561,7 +7612,6 @@
                     const song = shown[i];
 
                     rowEl.addEventListener('click', (e) => {
-
                         if (e.target.closest('.drag-handle')) return;
 
                         if (e.target.closest('.song-more-btn')) return;
@@ -9095,14 +9145,13 @@
                 if (coverLyricText) {
                     coverLyricText.textContent = text;
                     coverLyricText.style.setProperty('--scan', '0%');
+                    coverLyricText.classList.remove('fading');
                 }
 
                 coverLyricShownIdx = -1;
                 coverLyricShownPlaceholder = text;
-                if (coverLyricEl) {
-                    coverLyricEl.classList.remove('has-line');
-                    coverLyricEl.scrollLeft = 0;
-                }
+                if (coverLyricEl) coverLyricEl.classList.remove('has-line');
+                resetCoverLyricScroll();
                 activeLyricIdx = -1;
             }
 
@@ -9852,9 +9901,15 @@
                 if (lyricsTickRaf) return;
                 const loop = () => {
                     lyricsTickRaf = null;
-                    if (!isAnyLyricsVisible()) return;
+                    if (!isAnyLyricsVisible()) {
+                        lyricsTickRaf = requestAnimationFrame(loop);
+                        return;
+                    }
                     const t = getPlaybackTime();
-                    if (t < 0) return;
+                    if (t < 0) {
+                        lyricsTickRaf = requestAnimationFrame(loop);
+                        return;
+                    }
                     updateLyrics(t);
                     lyricsTickRaf = requestAnimationFrame(loop);
                 };
@@ -9892,6 +9947,7 @@
 
             let coverLyricShownIdx = -1;
             let coverLyricShownPlaceholder = '暂无歌词';
+            let coverLyricShownShift = 0;
 
             function syncCoverLyric(idx) {
                 if (!coverLyricText) return;
@@ -9899,19 +9955,22 @@
                 const text = line ? line.text : '';
                 if (coverLyricEl) coverLyricEl.classList.toggle('has-line', !!text);
 
-                if (line && coverLyricShownIdx === idx) return;
-
-                if (!text && coverLyricShownIdx < 0
+                if (line) {
+                    if (coverLyricShownIdx === idx && coverLyricMaxScroll >= 0) return;
+                } else if (coverLyricShownIdx < 0
                     && coverLyricShownPlaceholder === '暂无歌词') return;
 
-                if (line && lyricsHasTiming && line.chars && line.chars.length > 0) {
+                if (line && hasCharTiming(line)) {
+                    coverLyricText.classList.remove('fading');
                     coverLyricText.innerHTML = '';
                     line.chars.forEach(c => coverLyricText.appendChild(makeLyricSeg(c.c)));
                 } else {
                     coverLyricText.textContent = text || '暂无歌词';
                 }
                 coverLyricShownIdx = line ? idx : -1;
+                coverLyricShownPlaceholder = text || '暂无歌词';
                 coverLyricText.style.setProperty('--scan', '0%');
+                coverLyricText.classList.remove('fading');
                 resetCoverLyricScroll();
 
                 invalidateCoverLyricMetrics();
@@ -9919,11 +9978,26 @@
             }
 
             function resetCoverLyricScroll() {
-                if (coverLyricEl) coverLyricEl.scrollLeft = 0;
+                coverLyricShownShift = 0;
+                coverLyricFadeL = -1;
+                coverLyricFadeR = -1;
+                if (coverLyricScroll) coverLyricScroll.style.transform = 'translate3d(0, 0, 0)';
+                const el = coverLyricEl;
+                if (el) {
+                    el.style.webkitMaskImage = '';
+                    el.style.maskImage = '';
+                }
+            }
+
+            function hasCharTiming(row) {
+                if (!lyricsHasTiming || !row || !row.chars) return false;
+                if (row.chars.length < 2) return false;
+                const joined = row.chars.map(c => c.c).join('').trim();
+                return joined === (row.text || '').trim();
             }
 
             function coverLineProgress(row, idx, currentTime) {
-                if (lyricsHasTiming && row.chars && row.chars.length > 0) {
+                if (hasCharTiming(row)) {
                     let done = 0;
                     for (const c of row.chars) {
                         if (currentTime >= c.t + c.d) done += 1;
@@ -9959,32 +10033,45 @@
 
                     const node = coverLyricEl;
                     if (!node) return;
-                    coverLyricViewportW = node.clientWidth;
+                    const w = node.clientWidth;
+                    if (w <= 0) return;
+                    coverLyricViewportW = w;
                     coverLyricMaxScroll =
                         Math.max(0, node.scrollWidth - coverLyricViewportW);
+
+                    const fade = Math.round(Math.min(40, Math.max(18, w * 0.10)));
+                    coverLyricFadePx = fade;
+                    const val = fade + 'px';
+                    if (node.style.getPropertyValue('--cover-fade') !== val) {
+                        node.style.setProperty('--cover-fade', val);
+                    }
                 });
             }
 
             function updateCoverLyricScan(currentTime) {
                 if (!coverLyricText) return;
                 const idx = activeLyricIdx;
+                const line = (idx >= 0 && lyricsData[idx]) ? lyricsData[idx] : null;
+                let p = 0;
 
-                if (idx < 0 || !lyricsData[idx]) return;
-                const line = lyricsData[idx];
-
-                const p = coverLineProgress(line, idx, currentTime);
-
-                if (lyricsHasTiming && line.chars && line.chars.length > 0) {
-                    const segs = coverLyricText.querySelectorAll('.lyric-seg');
-                    if (segs.length === line.chars.length) {
-                        for (let i = 0; i < segs.length; i++) {
-                            const c = line.chars[i];
-                            setScan(segs[i], Math.max(0, Math.min(1,
-                                (currentTime - c.t) / Math.max(0.001, c.d))));
+                if (line) {
+                    p = coverLineProgress(line, idx, currentTime);
+                    if (hasCharTiming(line)) {
+                        const segs = coverLyricText.querySelectorAll('.lyric-seg');
+                        if (segs.length === line.chars.length) {
+                            for (let i = 0; i < segs.length; i++) {
+                                const c = line.chars[i];
+                                setScan(segs[i], Math.max(0, Math.min(1,
+                                    (currentTime - c.t) / Math.max(0.001, c.d))));
+                            }
+                        } else {
+                            setScan(coverLyricText, p);
                         }
+                    } else {
+                        setScan(coverLyricText, p);
                     }
-                } else {
-                    setScan(coverLyricText, p);
+                } else if (!coverLyricScroll) {
+                    return;
                 }
 
                 const el = coverLyricEl;
@@ -9994,25 +10081,63 @@
                     return;
                 }
                 const maxScroll = coverLyricMaxScroll;
-                if (maxScroll <= 1) return;
+                if (maxScroll <= 1) {
+                    if (coverLyricScroll && coverLyricShownShift !== 0) {
+                        coverLyricShownShift = 0;
+                        coverLyricScroll.style.transform = 'translate3d(0, 0, 0)';
+                    }
+                    setCoverLyricEdgeFade(0, 0);
+                    return;
+                }
 
                 const contentW = maxScroll + coverLyricViewportW;
                 const target = Math.max(0, Math.min(maxScroll,
                     contentW * p - coverLyricViewportW * 0.5));
 
-                if (Math.abs(target - el.scrollLeft) > 1) {
-                    el.scrollLeft = target;
+                if (Math.abs(target - coverLyricShownShift) > 0.5 && coverLyricScroll) {
+                    coverLyricShownShift = target;
+                    coverLyricScroll.style.transform =
+                        'translate3d(' + (-target).toFixed(2) + 'px, 0, 0)';
                 }
+
+                setCoverLyricEdgeFade(
+                    target > 0.5 ? coverLyricFadePx : 0,
+                    target < maxScroll - 0.5 ? coverLyricFadePx : 0);
+            }
+
+            let coverLyricFadePx = 34;
+            let coverLyricFadeL = -1;
+            let coverLyricFadeR = -1;
+
+            function applyCoverLyricFade(l, r) {
+                if (l === coverLyricFadeL && r === coverLyricFadeR) return;
+                coverLyricFadeL = l;
+                coverLyricFadeR = r;
+                const el = coverLyricEl;
+                if (!el) return;
+                const a = l > 0 ? 'transparent 0, #000 ' + l + 'px' : '#000 0';
+                const b = r > 0
+                    ? '#000 calc(100% - ' + r + 'px), transparent 100%'
+                    : '#000 100%';
+                const v = 'linear-gradient(to right, ' + a + ', ' + b + ')';
+                el.style.webkitMaskImage = v;
+                el.style.maskImage = v;
+            }
+
+            function setCoverLyricEdgeFade(l, r) {
+                applyCoverLyricFade(Math.round(l), Math.round(r));
             }
 
             function updateLyrics(currentTime) {
-                if (lyricsLines.length === 0) return;
-
-                const activeIdx = findLyricIndex(currentTime);
+                if (!isFinite(currentTime) || currentTime < 0) return;
 
                 const wantPage = lyricsPage.classList.contains('active');
                 const wantDesk = isDeskLyricsVisible();
                 const wantCover = isCoverLyricActive();
+
+                if (!wantPage && !wantDesk && !wantCover) return;
+
+                const activeIdx = findLyricIndex(currentTime);
 
                 if (activeIdx !== activeLyricIdx) {
 
@@ -10031,17 +10156,14 @@
 
                     activeLyricIdx = activeIdx;
 
-                    if (activeIdx >= 0) {
-
-                        if (wantPage) {
-                            const el = lyricsLines[activeIdx];
-                            if (el) {
-                                el.classList.add('active');
-                                splitLyricIntoSegments(el);
-                            }
-                            lyricsLayoutDirty = true;
-                            cacheLyricsOffsets();
+                    if (activeIdx >= 0 && wantPage && lyricsLines.length > 0) {
+                        const el = lyricsLines[activeIdx];
+                        if (el) {
+                            el.classList.add('active');
+                            splitLyricIntoSegments(el);
                         }
+                        lyricsLayoutDirty = true;
+                        cacheLyricsOffsets();
                     }
 
                     if (wantDesk) syncDeskLyricsHighlight(activeIdx);
@@ -10164,8 +10286,7 @@
                 const idx = parseInt(el.dataset.idx);
                 const row = lyricsData[idx];
 
-                if (lyricsHasTiming && row && row.chars
-                    && row.chars.length === segs.length) {
+                if (hasCharTiming(row) && row.chars.length === segs.length) {
                     for (let i = 0; i < segs.length; i++) {
                         const c = row.chars[i];
                         const p = Math.max(0, Math.min(1,
@@ -10190,6 +10311,11 @@
                 const val = (p * 100).toFixed(1) + '%';
                 if (el.style.getPropertyValue('--scan') !== val) {
                     el.style.setProperty('--scan', val);
+                }
+
+                const fading = p > 0 && p < 1;
+                if (el.classList.contains('fading') !== fading) {
+                    el.classList.toggle('fading', fading);
                 }
             }
 
@@ -10384,9 +10510,6 @@
                     progress.style.width = Math.min(100, pct) + '%';
                     currentTimeEl.textContent = formatTime(cur);
                     totalTimeEl.textContent = formatTime(dur);
-                    if (isAnyLyricsVisible()) updateLyrics(cur);
-
-                    else if (isCoverLyricActive()) syncActiveLyricOnly(cur);
 
                     if (++saveTick >= 15) {
                         saveTick = 0;
@@ -10952,9 +11075,11 @@
             function openFullPlayer() {
                 fullPlayer.classList.add('active');
 
+                invalidateCoverLyricMetrics();
+
                 requestAnimationFrame(() => {
-                    if (!isDeskLyricsVisible()) return;
-                    syncDeskLyricsHighlight(activeLyricIdx);
+                    primeCoverLyricMetrics();
+
                     const t = getPlaybackTime();
                     if (t >= 0) updateLyrics(t);
                     lyricsTick();
@@ -10963,6 +11088,8 @@
 
             function closeFullPlayer() {
                 fullPlayer.classList.remove('active');
+
+                invalidateCoverLyricMetrics();
 
                 if (!lyricsPage.classList.contains('active')) stopLyricsTick();
             }
@@ -11306,7 +11433,7 @@
             if (lyricsPlayBtn) lyricsPlayBtn.addEventListener('click', () => togglePlay());
 
             const OVERSCROLL_PAD_RATIO = 0.25;
-            const OVERSCROLL_PAD_OFF = [plScroll, historyScroll];
+            const OVERSCROLL_PAD_OFF = [favScroll, plScroll, historyScroll];
             function syncScrollOverscrollPad(container) {
                 if (!container) return;
                 const pads = container.querySelectorAll(':scope > .scroll-overscroll-pad');
@@ -11324,6 +11451,12 @@
                 const pad = Math.round(availH * OVERSCROLL_PAD_RATIO);
                 container.style.setProperty('--scroll-pad', pad + 'px');
                 pads.forEach(p => p.classList.add('pad-on'));
+            }
+
+            function clearScrollOverscrollPad(container) {
+                if (!container) return;
+                container.querySelectorAll(':scope > .scroll-overscroll-pad')
+                    .forEach(p => p.classList.remove('pad-on'));
             }
 
             function syncHeaderHeight() {
