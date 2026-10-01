@@ -13,6 +13,21 @@
     <script>
         (function () {
             'use strict';
+            let t;
+            try { t = localStorage.getItem('mky_theme'); } catch (_) {}
+            if (t !== 'light' && t !== 'dark') {
+                try {
+                    t = window.matchMedia
+                        && window.matchMedia('(prefers-color-scheme: light)').matches
+                        ? 'light' : 'dark';
+                } catch (_) { t = 'dark'; }
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+    <script>
+        (function () {
+            'use strict';
 
             const liveAudio = new Set();
 
@@ -447,7 +462,6 @@
             --lyric-cover-dim: rgba(255, 255, 255, 0.30);
             --lyric-active: #ffffff;
             --lyric-pending: rgba(255, 255, 255, 0.42);
-            --lyric-glow: rgba(255, 255, 255, 0.14);
             --text-control: rgba(255, 255, 255, 0.86);
 
             --text-on-media: rgba(255, 255, 255, 0.70);
@@ -542,7 +556,6 @@
             --lyric-cover-dim: rgba(0, 0, 0, 0.28);
             --lyric-active: #1c1c1e;
             --lyric-pending: rgba(0, 0, 0, 0.34);
-            --lyric-glow: rgba(233, 30, 99, 0.18);
             --text-control: rgba(0, 0, 0, 0.80);
             --text-on-media: rgba(255, 255, 255, 0.85);
             --cover-ph-bg: #f2f2f5;
@@ -2541,26 +2554,6 @@
             pointer-events: none;
         }
 
-        #rate-btn-desk,
-        #trans-btn-desk {
-            position: absolute;
-
-            top: -30px;
-            width: 32px;
-            height: 32px;
-            font-size: 15px;
-            border-radius: 50%;
-            color: var(--text-on-media);
-            z-index: 3;
-        }
-        #rate-btn-desk { right: 8px; }
-        #trans-btn-desk { right: 46px; }
-        #rate-btn-desk:hover,
-        #trans-btn-desk:hover {
-            color: #fff;
-            background: rgba(0, 0, 0, 0.28);
-        }
-
         #rate-btn-desk.active,
         #trans-btn-desk.active,
         #lyrics-trans-btn.active {
@@ -2569,7 +2562,13 @@
 
         #lyrics-page .player-header #lyrics-fav-btn,
         #lyrics-page .player-header #lyrics-fav-btn:hover,
-        #lyrics-page .player-header #lyrics-fav-btn:active {
+        #lyrics-page .player-header #lyrics-fav-btn:active,
+        #lyrics-page .player-header #lyrics-trans-btn,
+        #lyrics-page .player-header #lyrics-trans-btn:hover,
+        #lyrics-page .player-header #lyrics-trans-btn:active,
+        #lyrics-page .player-header #back-to-player-btn,
+        #lyrics-page .player-header #back-to-player-btn:hover,
+        #lyrics-page .player-header #back-to-player-btn:active {
             background: none;
             backdrop-filter: none;
             -webkit-backdrop-filter: none;
@@ -2762,7 +2761,7 @@
         .player-head-actions {
             display: flex;
             align-items: center;
-            gap: 2px;
+            gap: 6px;
             flex-shrink: 0;
         }
         .player-title {
@@ -4524,14 +4523,14 @@
                 justify-content: center;
                 gap: 48px;
                 padding: 12px 56px 56px;
-                overflow: hidden;
+                overflow: visible;
             }
             .player-left {
                 width: auto;
                 flex: 0 0 auto;
                 max-width: 420px;
 
-                margin-top: 28px;
+                margin-top: 0;
             }
 
             .album-cover-wrap {
@@ -4596,12 +4595,30 @@
             }
 
             #rate-sheet {
-                top: 96px;
-                transform: translateY(16px) scale(0.97);
+                left: auto;
+                right: 20px;
+                top: 64px;
+                bottom: auto;
                 width: min(300px, calc(100vw - 48px));
+                transform: translateY(-8px) scale(0.97);
+                transform-origin: top right;
             }
             #rate-sheet.active {
                 transform: translateY(0) scale(1);
+            }
+            #rate-sheet::after {
+                content: '';
+                position: absolute;
+                top: -6px;
+                right: 32px;
+                width: 12px;
+                height: 12px;
+                background: var(--popover-solid);
+                border-left: 1px solid var(--border-popover);
+                border-top: 1px solid var(--border-popover);
+                transform: rotate(45deg);
+                border-radius: 2px 0 0 0;
+                pointer-events: none;
             }
 
             .lyrics-controls {
@@ -4621,7 +4638,6 @@
                 color: var(--text-primary);
                 font-weight: 500;
                 opacity: 1;
-                text-shadow: 0 0 24px var(--lyric-glow);
             }
 
             #player-lyrics-inner .lyrics-line:not(.active) {
@@ -4882,6 +4898,19 @@
             </div>
             <!-- 右上角：倍速（手机端）+ 添加到歌单（手机端也在这里） -->
             <div class="player-head-actions">
+                <!-- 翻译开关（电脑端）：与手机端歌词页顶栏同一个"译"符号，
+                     两处保持同一个记号，用户不用重新认。
+                     仅当这首歌确实有翻译时才显示（见 syncTransBtn）。 -->
+                <button class="control-btn lc-trans" id="trans-btn-desk"
+                        aria-label="歌词翻译" title="歌词翻译" hidden>
+                    <span class="lc-trans-label">译</span>
+                </button>
+                <!-- 播放速度（电脑端）：数字作为右下角标 -->
+                <button class="control-btn rate-btn" id="rate-btn-desk"
+                        aria-label="播放速度" title="播放速度">
+                    <i class="fas fa-angles-right"></i>
+                    <span class="rate-tag" id="rate-tag-desk"></span>
+                </button>
                 <button class="control-btn rate-btn" id="rate-btn-mobile"
                         aria-label="播放速度" title="播放速度">
                     <i class="fas fa-angles-right"></i>
@@ -4901,20 +4930,6 @@
                         <img src="" alt="" class="album-cover-img" id="album-cover" />
                         <i class="fas fa-music album-cover-fallback" aria-hidden="true"></i>
                     </div>
-                    <!-- 翻译开关：贴在唱片右上角，排在倍速左边。
-                         仅当这首歌确实有翻译时才显示（见 syncTransBtn）。
-                         用"译"字而非图标：和手机端歌词页顶栏保持同一个符号，
-                         一眼就知道是"翻译"，比语言类图标直白。 -->
-                    <button class="rate-btn" id="trans-btn-desk"
-                            aria-label="歌词翻译" title="歌词翻译" hidden>
-                        <span class="lc-trans-label">译</span>
-                    </button>
-                    <!-- 播放速度：贴着唱片右上角，不占额外布局空间 -->
-                    <button class="rate-btn" id="rate-btn-desk"
-                            aria-label="播放速度" title="播放速度">
-                        <i class="fas fa-angles-right"></i>
-                        <span class="rate-tag" id="rate-tag-desk"></span>
-                    </button>
                 </div>
 
                 <!-- 唱片下方的当前歌词行：点一下进歌词详情页。
@@ -10522,6 +10537,11 @@
 
             let playStarting = false;
 
+            let staleUrlRetried = false;
+            let staleUrlRetrying = false;
+            let retryingSongId = '';
+            let playAttemptSeq = 0;
+
             let fallbackGuard = false;
 
             const FAIL_KEY = 'mky_playFail';
@@ -10594,6 +10614,12 @@
             }
 
             function failPlayback(song, why) {
+                if (staleUrlRetrying
+                    && String((song && song.id) || '') === String(retryingSongId)) {
+                    console.warn('地址重取中，忽略本次失败:', why, song && song.name);
+                    return;
+                }
+
                 console.warn('播放失败，回退上一首:', why, song && song.name);
 
                 if (song) song.url = '';
@@ -10652,6 +10678,9 @@
 
             async function playSong(index, seekTo, fromFallback) {
                 const myToken = ++playSongToken;
+                staleUrlRetried = false;
+                staleUrlRetrying = false;
+                retryingSongId = '';
 
                 let song;
                 if (index < 0 || index >= currentSongs.length) {
@@ -10826,9 +10855,11 @@
                 }
 
                 const myAudio = currentAudio;
+                const myAttempt = ++playAttemptSeq;
 
                 if (startPromise && typeof startPromise.catch === 'function') {
                     startPromise.catch((err) => {
+                        if (myAttempt !== playAttemptSeq) return;
                         if (myAudio !== currentAudio) return;
 
                         if (err && err.name === 'AbortError') return;
@@ -10861,9 +10892,51 @@
                     setTimeout(() => { if (currentAudio) playNext(); }, 300);
                 });
 
+                const retryFreshUrl = () => {
+                    if (myToken !== playSongToken) return false;
+                    if (staleUrlRetried) return false;
+                    if (!song.id) return false;
+                    staleUrlRetried = true;
+                    staleUrlRetrying = true;
+                    retryingSongId = String(song.id);
+                    playAttemptSeq++;
+
+                    song.url = '';
+
+                    if (myAudio === currentAudio) {
+                        currentAudio = null;
+                        try { myAudio.pause(); } catch (_) {}
+                    }
+                    try { myAudio.removeAttribute('src'); myAudio.load(); } catch (_) {}
+
+                    console.warn('旧地址已失效，重新取播放地址:', song.name);
+
+                    const bail = (why) => {
+                        if (myToken !== playSongToken) return;
+                        staleUrlRetrying = false;
+                        retryingSongId = '';
+                        failPlayback(song, why);
+                    };
+
+                    playUrlOf(song.id).then((got) => {
+                        if (myToken !== playSongToken) return;
+                        if (!got || !got.url) { bail('播放出错'); return; }
+                        song.url = got.url;
+                        song.br = got.br || 0;
+                        song.pay = '免费音乐';
+                        staleUrlRetrying = false;
+                        retryingSongId = '';
+                        const at = currentSongs.indexOf(song);
+                        if (at >= 0) playSong(at, seekTo);
+                        else { currentIndex = -1; playSong(-1, seekTo); }
+                    }).catch(() => bail('播放出错'));
+                    return true;
+                };
+
                 myAudio.addEventListener('error', () => {
                     if (myAudio !== currentAudio) return;
                     console.error('音频元素出错:', myAudio.error && myAudio.error.code);
+                    if (retryFreshUrl()) return;
                     failPlayback(song, '播放出错');
                 });
 
@@ -10892,6 +10965,7 @@
                         console.warn('起播超时：长时间未出声',
                                      'readyState=' + myAudio.readyState,
                                      'duration=' + audioDuration(myAudio));
+                        if (retryFreshUrl()) return;
                         failPlayback(song, '起播超时');
                     }, STARTUP_TIMEOUT);
                 };
