@@ -8800,6 +8800,8 @@
                     });
                 } catch (_) {}
 
+                restoreLiveCovers();
+
                 if (currentSongs && currentSongs.length) {
                     try { hydrateCovers(songList, currentSongs, currentSongs.length); } catch (_) {}
                 }
@@ -8807,6 +8809,24 @@
                     try { renderPlaylistDetail(); } catch (_) {}
                 }
                 try { syncPickerCovers(); } catch (_) {}
+                try { renderMinePage(); } catch (_) {}
+                try {
+                    if (favPage && favPage.classList.contains('active')) renderFavorites();
+                } catch (_) {}
+                try {
+                    if (historyPage && historyPage.classList.contains('active')) {
+                        renderPlayHistoryPage();
+                    }
+                } catch (_) {}
+            }
+
+            function restoreLiveCovers() {
+                if (!currentSong) return;
+                const pic = currentSong.picurl || knownPicurlOf(currentSong.id) || '';
+                if (!pic) return;
+
+                try { setCoverSrc(miniCoverWrap, miniCover, pic); } catch (_) {}
+                try { setCoverSrc(albumCoverBox, albumCover, pic); } catch (_) {}
             }
 
             function clearLyrics() {
