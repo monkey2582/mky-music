@@ -538,6 +538,7 @@
                 rgba(255, 255, 255, 0) 100%);
 
             --lyrics-veil: rgba(11, 11, 14, 0.92);
+            --player-veil: rgba(11, 11, 14, 0.92);
 
             --mdui-color-theme: var(--primary);
             --mdui-color-theme-accent: #f0346f;
@@ -636,6 +637,7 @@
                 rgba(255, 255, 255, 0) 100%);
 
             --lyrics-veil: rgba(245, 245, 247, 0.92);
+            --player-veil: rgba(255, 255, 255, 0.92);
         }
 
         * {
@@ -723,6 +725,7 @@
             background: var(--bg-body);
             color: var(--text-primary);
             height: 100vh;
+            height: 100dvh;
 
             overflow: hidden;
 
@@ -1023,6 +1026,7 @@
             background: var(--surface-input);
             border: 1px solid var(--border-subtle);
             border-radius: 16px;
+            overflow: hidden;
         }
         .settings-group-title {
             font-size: 12px;
@@ -1786,12 +1790,12 @@
             min-height: 0;
             overflow-y: auto;
 
-            padding-bottom: calc(var(--tab-height) + 12px);
+            padding-bottom: calc(var(--tab-height) + env(safe-area-inset-bottom, 0px) + 12px);
             transition: opacity 0.3s, padding-bottom 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         body.has-mini-player .main-content {
-            padding-bottom: calc(var(--tab-height) + var(--mini-height) + 12px);
+            padding-bottom: calc(var(--tab-height) + env(safe-area-inset-bottom, 0px) + var(--mini-height) + 12px);
         }
         .main-content.hidden {
             opacity: 0;
@@ -2691,7 +2695,7 @@
         .mini-player {
             position: fixed;
 
-            bottom: var(--tab-height);
+            bottom: calc(var(--tab-height) + env(safe-area-inset-bottom, 0px));
             left: 0;
             right: 0;
             height: var(--mini-height);
@@ -3097,6 +3101,10 @@
             overflow: hidden;
 
             position: relative;
+            -webkit-mask-image: linear-gradient(to bottom,
+                transparent 0, #000 56px, #000 calc(100% - 56px), transparent 100%);
+            mask-image: linear-gradient(to bottom,
+                transparent 0, #000 56px, #000 calc(100% - 56px), transparent 100%);
         }
         .player-lyrics-inner {
             height: 100%;
@@ -3118,14 +3126,15 @@
             position: absolute;
             left: 0;
             right: 0;
-            height: 56px;
+            height: 72px;
             pointer-events: none;
             z-index: 6;
             --veil-dir: to bottom;
             background: linear-gradient(var(--veil-dir),
-                var(--lyrics-veil) 0%,
-                color-mix(in srgb, var(--lyrics-veil) 62%, transparent) 38%,
-                transparent 92%);
+                var(--player-veil) 0%,
+                color-mix(in srgb, var(--player-veil) 55%, transparent) 34%,
+                color-mix(in srgb, var(--player-veil) 18%, transparent) 62%,
+                transparent 100%);
         }
         .player-lyrics::before { top: 0; }
         .player-lyrics::after {
@@ -3137,7 +3146,7 @@
             position: absolute;
             left: 0;
             right: 0;
-            height: 56px;
+            height: 72px;
             pointer-events: none;
             z-index: 5;
             --veil-dir: to bottom;
@@ -3149,15 +3158,15 @@
         }
         .desk-veil-blur-1 {
             background: linear-gradient(var(--veil-dir),
-                var(--bg-overlay) 0%,
-                color-mix(in srgb, var(--bg-overlay) 62%, transparent) 40%,
-                color-mix(in srgb, var(--bg-overlay) 20%, transparent) 70%,
+                var(--player-veil) 0%,
+                color-mix(in srgb, var(--player-veil) 62%, transparent) 40%,
+                color-mix(in srgb, var(--player-veil) 20%, transparent) 70%,
                 transparent 100%);
         }
         .desk-veil-blur-2 {
             background: linear-gradient(var(--veil-dir),
-                var(--bg-overlay) 0%,
-                color-mix(in srgb, var(--bg-overlay) 42%, transparent) 18%,
+                var(--player-veil) 0%,
+                color-mix(in srgb, var(--player-veil) 42%, transparent) 18%,
                 transparent 42%);
         }
         @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
@@ -4043,11 +4052,11 @@
         }
 
         .loading svg .ring-track {
-            stroke: var(--surface-control-strong);
+            stroke: rgba(0, 0, 0, 0.18);
         }
 
         .loading svg .ring-arc {
-            stroke: var(--text-control);
+            stroke: rgba(0, 0, 0, 0.48);
 
             stroke-dasharray: 16 56.5;
             stroke-dashoffset: 0;
@@ -4979,7 +4988,7 @@
                 align-items: center;
                 justify-content: center;
                 gap: 48px;
-                padding: 12px 56px 56px;
+                padding: 0 56px;
                 overflow: visible;
             }
             .player-swipe-layer {
@@ -5001,6 +5010,7 @@
 
             .album-cover-wrap {
                 width: min(100%, 260px);
+                margin-top: calc(6px + var(--disc-lift, -80px));
             }
 
             .progress-container {
@@ -5876,7 +5886,7 @@
             <span id="select-all-label">全选</span>
         </button>
         <button class="menu-item" id="select-add" disabled>
-            <i class="fas fa-plus-circle"></i>
+            <i class="fas fa-plus"></i>
             <span>加入歌单</span>
         </button>
         <button class="menu-item" id="select-fav" disabled>
@@ -8455,7 +8465,7 @@
                     </div>` : ''}
                     ${showPlActions ? `
                     <div class="menu-item" data-act="to-playlist">
-                        <i class="fas fa-plus-circle"></i>
+                        <i class="fas fa-plus"></i>
                         <span>加入歌单</span>
                     </div>` : ''}
                     <div class="menu-item" data-act="select">
