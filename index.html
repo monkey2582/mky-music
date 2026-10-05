@@ -4838,22 +4838,6 @@
         }
         .sheet-new:hover { background: rgba(233, 30, 99, 0.10); }
 
-        .pl-pick-empty {
-            text-align: center;
-            padding: 24px 16px 14px;
-            color: var(--text-secondary);
-        }
-        .pl-pick-empty i {
-            font-size: 34px;
-            opacity: 0.32;
-            display: block;
-            margin-bottom: 12px;
-        }
-        .pl-pick-empty p {
-            font-size: 13px;
-            line-height: 1.7;
-        }
-
         .rate-body {
             padding: 16px 16px 12px;
         }
@@ -5836,7 +5820,7 @@
         <div class="about-body">
             <div class="about-logo" id="about-logo" role="button" tabindex="0" aria-label="MKY音乐"><svg class="brand-disc" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="bdisc-about" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3d77"/><stop offset="1" stop-color="#c2185b"/></linearGradient><linearGradient id="bdisc-sheen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.34" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.46" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.54" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.66" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient><clipPath id="bdisc-clip"><circle cx="32" cy="32" r="30"/></clipPath></defs><g class="disc-spin"><circle cx="32" cy="32" r="30" fill="#141418"/><circle cx="32" cy="32" r="30" fill="none" stroke="#ffffff" stroke-opacity=".14" stroke-width="2.6"/><circle cx="32" cy="32" r="21" fill="none" stroke="#ffffff" stroke-opacity=".10" stroke-width="1.5"/><circle cx="32" cy="32" r="14" fill="none" stroke="#ffffff" stroke-opacity=".08" stroke-width="1.5"/><circle cx="32" cy="32" r="12" fill="url(#bdisc-about)"/><circle cx="32" cy="32" r="3.4" fill="#141418"/><g clip-path="url(#bdisc-clip)"><rect class="disc-sheen" x="-16" y="-16" width="96" height="96" fill="url(#bdisc-sheen)"/></g></g></svg></div>
             <div class="about-name">MKY音乐</div>
-            <div class="about-version">版本 1.6</div>
+            <div class="about-version">版本 1.7</div>
             <div class="about-slogan">把每一处细节听懂<br>把听歌这件事做好</div>
 
             <div class="about-links">
@@ -10295,13 +10279,10 @@
                 const favRowHtml = favPickerRowHtml(favAllIn);
                 const hisAllIn = songs.length > 0 && songs.every(s => isInPlayHistory(s.id));
                 const hisRowHtml = historyPickerRowHtml(hisAllIn);
-                const emptyHtml = playlists.length === 0
-                    ? '<div class="pl-pick-empty"><i class="fas fa-folder-open"></i><p>点下方「新建歌单」创建</p></div>'
-                    : '';
                 plPickerBody.innerHTML = favRowHtml + hisRowHtml + playlists.map(pl => {
                     const on = songs.every(s => isSongInPlaylist(pl, s));
                     return playlistPickerRowHtml(pl, on);
-                }).join('') + emptyHtml;
+                }).join('');
                 plPickerBody.querySelectorAll('.pl-pick-row').forEach(rowEl => {
                     rowEl.addEventListener('click', () => {
                         const plId = rowEl.dataset.plId;
