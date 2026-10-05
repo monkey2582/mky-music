@@ -23,6 +23,11 @@
                 } catch (_) { t = 'dark'; }
             }
             document.documentElement.setAttribute('data-theme', t);
+
+            try {
+                localStorage.removeItem('mky_glass');
+                document.documentElement.removeAttribute('data-glass');
+            } catch (_) {}
         })();
     </script>
     <script>
@@ -526,11 +531,15 @@
             --glass-blur-strong: 34px;
             --glass-blur-soft: 22px;
             --glass-saturate: 175%;
-            --glass-brightness: 116%;
+            --glass-brightness: 110%;
 
             --glass-panel: rgba(18, 18, 24, 0.55);
             --glass-panel-strong: rgba(16, 16, 22, 0.62);
             --glass-edge: rgba(255, 255, 255, 0.09);
+
+            --glass-blur-heavy: 48px;
+            --glass-panel-heavy: rgba(18, 18, 25, 0.40);
+            --glass-edge-heavy: rgba(255, 255, 255, 0.14);
 
             --glass-sheen: linear-gradient(180deg,
                 rgba(255, 255, 255, 0.055) 0%,
@@ -538,7 +547,10 @@
                 rgba(255, 255, 255, 0) 100%);
 
             --lyrics-veil: rgba(11, 11, 14, 0.92);
-            --player-veil: rgba(11, 11, 14, 0.92);
+
+            --veil-solid: color-mix(in srgb, rgb(16, 18, 26) 44%, transparent);
+
+            --veil-hold: 0px;
 
             --mdui-color-theme: var(--primary);
             --mdui-color-theme-accent: #f0346f;
@@ -551,6 +563,21 @@
             --mdui-color-theme-700: #c2185b;
             --mdui-color-theme-800: #ad1457;
             --mdui-color-theme-900: #880e4f;
+        }
+
+        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+            :root,
+            :root[data-theme="light"] {
+                --veil-solid: var(--lyrics-veil);
+            }
+        }
+
+
+        :root {
+            --veil-stops: color-mix(in srgb, var(--veil-solid) 68%, transparent) 30%,
+                          color-mix(in srgb, var(--veil-solid) 30%, transparent) 58%,
+                          color-mix(in srgb, var(--veil-solid) 9%, transparent) 80%,
+                          transparent 100%;
         }
 
         :root[data-theme="light"] {
@@ -625,19 +652,26 @@
             --glass-border: rgba(0, 0, 0, 0.06);
             --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
 
-            --glass-brightness: 100%;
-            --glass-saturate: 150%;
+            --glass-brightness: 110%;
+            --glass-saturate: 175%;
 
             --glass-panel: rgba(255, 255, 255, 0.72);
             --glass-panel-strong: rgba(255, 255, 255, 0.80);
             --glass-edge: rgba(0, 0, 0, 0.06);
+
+            --glass-blur-heavy: 48px;
+            --glass-panel-heavy: rgba(255, 255, 255, 0.55);
+            --glass-edge-heavy: rgba(0, 0, 0, 0.09);
             --glass-sheen: linear-gradient(180deg,
                 rgba(255, 255, 255, 0.60) 0%,
                 rgba(255, 255, 255, 0.20) 42%,
                 rgba(255, 255, 255, 0) 100%);
 
             --lyrics-veil: rgba(245, 245, 247, 0.92);
-            --player-veil: rgba(255, 255, 255, 0.92);
+
+            --veil-solid: color-mix(in srgb, rgb(252, 252, 254) 64%, transparent);
+
+            --veil-hold: 0px;
         }
 
         * {
@@ -1056,6 +1090,16 @@
             font-size: 15px;
             color: var(--text-primary);
         }
+        .settings-value {
+            margin-left: auto;
+            font-size: 13px;
+            color: var(--text-muted);
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+        .settings-value:empty {
+            display: none;
+        }
         .settings-arrow {
             font-size: 13px;
             color: var(--text-muted);
@@ -1150,7 +1194,7 @@
             height: 16px;
             border-radius: 50%;
             background: #fff;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.42), 0 0 0 1px rgba(0, 0, 0, 0.06);
             border: none;
             cursor: pointer;
         }
@@ -1159,7 +1203,7 @@
             height: 16px;
             border-radius: 50%;
             background: #fff;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.42), 0 0 0 1px rgba(0, 0, 0, 0.06);
             border: none;
             cursor: pointer;
         }
@@ -2217,7 +2261,9 @@
         }
 
         #history-page {
-            background: var(--bg-overlay);
+            background: var(--glass-panel-heavy);
+            -webkit-backdrop-filter: blur(var(--glass-blur-heavy)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+            backdrop-filter: blur(var(--glass-blur-heavy)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
             z-index: 735;
         }
 
@@ -2259,11 +2305,26 @@
 
         #history-page .fav-scroll { position: relative; z-index: 1; }
 
-        .mode-toggle-btn i {
+        .mode-toggle-btn i,
+        .mode-toggle-btn svg {
             transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .mode-toggle-btn:active i {
+        .mode-toggle-btn:active i,
+        .mode-toggle-btn:active svg {
             transform: scale(0.82);
+        }
+
+        .mode-icon-svg {
+            width: 1.16em;
+            height: 1.16em;
+            display: block;
+            fill: none;
+            stroke: currentColor;
+        }
+
+        .mode-icon-svg[data-mode="shuffle"] {
+            width: 1.02em;
+            height: 1.02em;
         }
 
         .drag-handle {
@@ -2322,6 +2383,8 @@
         @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
             .fav-item.dragging { background: var(--bg-body); opacity: 0.96; }
             .fav-item.dragging::before { display: none; }
+            #history-page { background: var(--bg-overlay); }
+            .about-page { background: var(--bg-overlay); }
         }
 
         .fav-list.dragging-active {
@@ -2559,8 +2622,10 @@
             right: 12px;
             bottom: calc(var(--tab-height) + var(--bottom-stack) + 12px);
             z-index: 2400;
-            background: var(--popover-solid);
-            border: 1px solid var(--border-popover);
+            background: var(--glass-panel-heavy);
+            -webkit-backdrop-filter: blur(var(--glass-blur-heavy)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+            backdrop-filter: blur(var(--glass-blur-heavy)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+            border: 1px solid var(--glass-edge-heavy);
             border-radius: 20px;
             box-shadow: var(--shadow-popover),
                         var(--inset-highlight);
@@ -2647,22 +2712,6 @@
         .select-bar .menu-item:active:not(:disabled):not(.danger) i {
             color: #fff;
         }
-
-        .batch-picker-done {
-            width: 100%;
-            margin-top: 10px;
-            padding: 11px;
-            border: none;
-            border-radius: 14px;
-            background: var(--primary);
-            color: #fff;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: opacity 0.2s, transform 0.15s;
-        }
-        .batch-picker-done:hover { opacity: 0.88; }
-        .batch-picker-done:active { transform: scale(0.97); }
 
         .toast {
             position: fixed;
@@ -3003,7 +3052,7 @@
             flex-shrink: 0;
             z-index: 20;
 
-            background: var(--bg-overlay);
+            background: transparent;
         }
 
         .player-head-actions {
@@ -3118,7 +3167,10 @@
             scroll-behavior: auto;
             overflow-anchor: none;
 
+            scrollbar-width: none;
+            -ms-overflow-style: none;
         }
+        .player-lyrics-inner::-webkit-scrollbar { display: none; }
 
         .player-lyrics::before,
         .player-lyrics::after {
@@ -3126,14 +3178,14 @@
             position: absolute;
             left: 0;
             right: 0;
-            height: 72px;
+            height: 56px;
             pointer-events: none;
             z-index: 6;
             --veil-dir: to bottom;
             background: linear-gradient(var(--veil-dir),
-                var(--player-veil) 0%,
-                color-mix(in srgb, var(--player-veil) 55%, transparent) 34%,
-                color-mix(in srgb, var(--player-veil) 18%, transparent) 62%,
+                var(--veil-solid) 0%,
+                color-mix(in srgb, var(--veil-solid) 58%, transparent) 36%,
+                color-mix(in srgb, var(--veil-solid) 20%, transparent) 66%,
                 transparent 100%);
         }
         .player-lyrics::before { top: 0; }
@@ -3146,7 +3198,7 @@
             position: absolute;
             left: 0;
             right: 0;
-            height: 72px;
+            height: 56px;
             pointer-events: none;
             z-index: 5;
             --veil-dir: to bottom;
@@ -3158,16 +3210,16 @@
         }
         .desk-veil-blur-1 {
             background: linear-gradient(var(--veil-dir),
-                var(--player-veil) 0%,
-                color-mix(in srgb, var(--player-veil) 62%, transparent) 40%,
-                color-mix(in srgb, var(--player-veil) 20%, transparent) 70%,
+                var(--veil-solid) 0%,
+                color-mix(in srgb, var(--veil-solid) 62%, transparent) 40%,
+                color-mix(in srgb, var(--veil-solid) 20%, transparent) 70%,
                 transparent 100%);
         }
         .desk-veil-blur-2 {
             background: linear-gradient(var(--veil-dir),
-                var(--player-veil) 0%,
-                color-mix(in srgb, var(--player-veil) 42%, transparent) 18%,
-                transparent 42%);
+                var(--veil-solid) 0%,
+                color-mix(in srgb, var(--veil-solid) 42%, transparent) 18%,
+                transparent 62%);
         }
         @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
             .desk-veil-blur { display: none; }
@@ -3202,10 +3254,10 @@
             inset: -30px;
             border-radius: 50%;
             background: conic-gradient(from 0deg,
-                rgba(233, 30, 99, 0.00),
-                rgba(233, 30, 99, 0.50),
-                rgba(156, 39, 176, 0.34),
-                rgba(233, 30, 99, 0.00));
+                var(--disc-glow-a, rgba(233, 30, 99, 0.00)),
+                var(--disc-glow-b, rgba(233, 30, 99, 0.50)),
+                var(--disc-glow-c, rgba(156, 39, 176, 0.34)),
+                var(--disc-glow-a, rgba(233, 30, 99, 0.00)));
             filter: blur(26px);
             opacity: 0.8;
             z-index: 0;
@@ -3213,6 +3265,8 @@
 
             animation: haloSpin 19s linear infinite;
             animation-play-state: paused;
+
+            transition: background 0.5s ease;
         }
 
         .album-cover-wrap.spinning::before {
@@ -3242,6 +3296,7 @@
             z-index: 2;
             width: calc(100% - 34px);
             height: calc(100% - 34px);
+            aspect-ratio: 1 / 1;
             border-radius: 50%;
             border: 5px solid var(--album-ring);
             box-shadow: var(--shadow-cover),
@@ -3254,7 +3309,9 @@
         .album-cover-img {
             width: 100%;
             height: 100%;
+            aspect-ratio: 1 / 1;
             object-fit: cover;
+            object-position: center;
             display: block;
 
             border-radius: inherit;
@@ -3466,9 +3523,9 @@
             width: 14px;
             height: 14px;
 
-            background: var(--text-primary);
+            background: #fff;
             border-radius: 50%;
-            box-shadow: var(--shadow-thumb);
+            box-shadow: var(--shadow-thumb), 0 0 0 1px rgba(0, 0, 0, 0.06);
             cursor: grab;
             transition: transform 0.2s ease;
         }
@@ -3627,7 +3684,7 @@
         #lyrics-page .lyrics-veil-top {
 
             top: 0;
-            height: calc(var(--lyrics-header-h, 64px) + var(--lyrics-veil-h, 78px));
+            height: calc(var(--lyrics-header-h, 64px) + var(--lyrics-veil-h, 64px));
         }
 
         #lyrics-page .player-header {
@@ -3658,7 +3715,7 @@
 
         @media (min-width: 640px) and (max-height: 500px) {
             #lyrics-page .lyrics-veil-top {
-                height: calc(var(--lyrics-header-h, 48px) + var(--lyrics-veil-h, 60px));
+                height: calc(var(--lyrics-header-h, 48px) + var(--lyrics-veil-h, 52px));
             }
         }
 
@@ -3666,7 +3723,7 @@
             position: absolute;
             left: 0;
             right: 0;
-            height: var(--lyrics-veil-h, 78px);
+            height: var(--lyrics-veil-h, 64px);
             pointer-events: none;
             z-index: 5;
         }
@@ -3715,27 +3772,27 @@
 
         .lyrics-veil-top .lyrics-veil-blur-1 {
             -webkit-mask-image: linear-gradient(var(--veil-dir),
-                rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.55) 52%,
-                rgba(0,0,0,0.18) 78%, transparent 100%);
+                rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.55) calc(var(--veil-hold, 0px) + 22%),
+                rgba(0,0,0,0.18) calc(var(--veil-hold, 0px) + 50%), transparent 88%);
             mask-image: linear-gradient(var(--veil-dir),
-                rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.55) 52%,
-                rgba(0,0,0,0.18) 78%, transparent 100%);
+                rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.55) calc(var(--veil-hold, 0px) + 22%),
+                rgba(0,0,0,0.18) calc(var(--veil-hold, 0px) + 50%), transparent 88%);
         }
         .lyrics-veil-top .lyrics-veil-blur-2 {
             -webkit-mask-image: linear-gradient(var(--veil-dir),
-                rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.40) 36%,
-                rgba(0,0,0,0.10) 60%, transparent 84%);
+                rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.40) calc(var(--veil-hold, 0px) + 18%),
+                rgba(0,0,0,0.10) calc(var(--veil-hold, 0px) + 44%), transparent 82%);
             mask-image: linear-gradient(var(--veil-dir),
-                rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.40) 36%,
-                rgba(0,0,0,0.10) 60%, transparent 84%);
+                rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.40) calc(var(--veil-hold, 0px) + 18%),
+                rgba(0,0,0,0.10) calc(var(--veil-hold, 0px) + 44%), transparent 82%);
         }
         .lyrics-veil-top .lyrics-veil-blur-3 {
             -webkit-mask-image: linear-gradient(var(--veil-dir),
-                rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.32) 18%,
-                transparent 38%);
+                rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.32) calc(var(--veil-hold, 0px) + 8%),
+                transparent 74%);
             mask-image: linear-gradient(var(--veil-dir),
-                rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.32) 18%,
-                transparent 38%);
+                rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.32) calc(var(--veil-hold, 0px) + 8%),
+                transparent 74%);
         }
 
         .lyrics-veil-tint {
@@ -3744,19 +3801,19 @@
             pointer-events: none;
             --veil-dir: to bottom;
             background: linear-gradient(var(--veil-dir),
-                var(--lyrics-veil) 0%,
-                color-mix(in srgb, var(--lyrics-veil) 72%, transparent) 28%,
-                color-mix(in srgb, var(--lyrics-veil) 30%, transparent) 58%,
-                transparent 88%);
+                var(--veil-solid) 0%,
+                var(--veil-stops));
         }
         .lyrics-veil-bottom .lyrics-veil-tint { --veil-dir: to top; }
 
         .lyrics-veil-top .lyrics-veil-tint {
             background: linear-gradient(var(--veil-dir),
-                var(--lyrics-veil) calc(var(--lyrics-header-h, 64px) + 6%),
-                color-mix(in srgb, var(--lyrics-veil) 66%, transparent) 62%,
-                color-mix(in srgb, var(--lyrics-veil) 26%, transparent) 82%,
-                transparent 100%);
+                var(--veil-solid) 0,
+                var(--veil-solid) var(--veil-hold, 0px),
+                color-mix(in srgb, var(--veil-solid) 68%, transparent) calc(var(--veil-hold, 0px) + 9%),
+                color-mix(in srgb, var(--veil-solid) 30%, transparent) calc(var(--veil-hold, 0px) + 26%),
+                color-mix(in srgb, var(--veil-solid) 9%, transparent) calc(var(--veil-hold, 0px) + 42%),
+                transparent 72%);
         }
 
         @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
@@ -3778,7 +3835,13 @@
 
             scroll-behavior: auto;
             overflow-anchor: none;
+
+            contain: layout paint;
+
+            scrollbar-width: none;
+            -ms-overflow-style: none;
         }
+        .lyrics-container::-webkit-scrollbar { display: none; }
 
         .lyrics-line {
             padding: 18px 0;
@@ -3800,7 +3863,6 @@
             transform: scale(1) translate3d(0, 0, 0);
             transform-origin: left center;
             backface-visibility: hidden;
-            will-change: transform;
         }
         .lyrics-line.active {
 
@@ -3810,6 +3872,8 @@
 
             transform: scale(1.06) translate3d(0, 0, 0);
             z-index: 2;
+
+            will-change: transform;
 
             transition: color 0.35s ease, opacity 0.35s ease,
                         transform 0.42s cubic-bezier(0.34, 1.4, 0.64, 1);
@@ -4052,11 +4116,11 @@
         }
 
         .loading svg .ring-track {
-            stroke: rgba(0, 0, 0, 0.18);
+            stroke: var(--border-strong);
         }
 
         .loading svg .ring-arc {
-            stroke: rgba(0, 0, 0, 0.48);
+            stroke: var(--text-secondary);
 
             stroke-dasharray: 16 56.5;
             stroke-dashoffset: 0;
@@ -4277,6 +4341,11 @@
                         opacity 0.32s ease,
                         visibility 0s linear 0.42s;
         }
+        .about-page {
+            background: var(--glass-panel-heavy);
+            -webkit-backdrop-filter: blur(var(--glass-blur-heavy)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+            backdrop-filter: blur(var(--glass-blur-heavy)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+        }
         .playlist-page.active,
         .about-page.active {
             opacity: 1;
@@ -4315,6 +4384,7 @@
             color: var(--text-secondary);
             padding: 0 4px 4px;
         }
+
         .cache-item {
             display: flex;
             align-items: center;
@@ -4597,8 +4667,10 @@
             left: 12px;
             right: 12px;
             bottom: calc(var(--tab-height) + var(--bottom-stack) + 12px);
-            background: var(--popover-solid);
-            border: 1px solid var(--border-popover);
+            background: var(--glass-panel-heavy);
+            -webkit-backdrop-filter: blur(var(--glass-blur-heavy)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+            backdrop-filter: blur(var(--glass-blur-heavy)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+            border: 1px solid var(--glass-edge-heavy);
             border-radius: 20px;
             box-shadow: var(--shadow-popover),
                         var(--inset-highlight);
@@ -4616,7 +4688,10 @@
             transform: translateY(0) scale(1);
             pointer-events: all;
         }
-        .sheet .menu-item {
+        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+            .sheet,
+            .select-bar { background: var(--popover-solid); }
+        }        .sheet .menu-item {
             display: flex;
             align-items: center;
             gap: 12px;
@@ -4811,7 +4886,7 @@
 
             background: #fff;
             border: none;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 0, 0, 0.06);
             cursor: pointer;
             transition: transform 0.15s;
         }
@@ -4824,7 +4899,7 @@
             border-radius: 50%;
             background: #fff;
             border: none;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 0, 0, 0.06);
             cursor: pointer;
         }
 
@@ -5235,7 +5310,6 @@
         .about-page {
             left: calc(var(--side-tab-width) + 1px);
             }
-
             .about-page {
                 display: none;
             }
@@ -5365,6 +5439,7 @@
                     <div class="settings-group-title">存储</div>
                     <div class="settings-row settings-row-link" id="settings-clear-cache">
                         <div class="settings-label">清除缓存</div>
+                        <span class="settings-value" id="settings-cache-size"></span>
                         <i class="fas fa-chevron-right settings-arrow"></i>
                     </div>
                 </div>
@@ -5387,7 +5462,7 @@
     <nav class="tab-bar" id="tab-bar">
         <button class="tab-brand" id="tab-brand" type="button"
                 title="刷新页面" aria-label="MKY音乐，点击刷新页面">
-            <span class="tab-brand-logo"><svg class="brand-disc" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="bdisc-tab" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3d77"/><stop offset="1" stop-color="#c2185b"/></linearGradient><linearGradient id="bdisc-tab-sheen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.34" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.46" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.54" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.66" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient><clipPath id="bdisc-tab-clip"><circle cx="32" cy="32" r="30"/></clipPath></defs><circle cx="32" cy="32" r="30" fill="#141418"/><circle cx="32" cy="32" r="30" fill="none" stroke="#ffffff" stroke-opacity=".14" stroke-width="2"/><circle cx="32" cy="32" r="21" fill="none" stroke="#ffffff" stroke-opacity=".10" stroke-width="1.5"/><circle cx="32" cy="32" r="14" fill="none" stroke="#ffffff" stroke-opacity=".08" stroke-width="1.5"/><circle cx="32" cy="32" r="12" fill="url(#bdisc-tab)"/><circle cx="32" cy="32" r="3.4" fill="#141418"/><g clip-path="url(#bdisc-tab-clip)"><rect x="-16" y="-16" width="96" height="96" fill="url(#bdisc-tab-sheen)"/></g></svg></span>
+            <span class="tab-brand-logo"><svg class="brand-disc" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="bdisc-tab" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3d77"/><stop offset="1" stop-color="#c2185b"/></linearGradient><linearGradient id="bdisc-tab-sheen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.34" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.46" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.54" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.66" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient><clipPath id="bdisc-tab-clip"><circle cx="32" cy="32" r="30"/></clipPath></defs><circle cx="32" cy="32" r="30" fill="#141418"/><circle cx="32" cy="32" r="30" fill="none" stroke="#ffffff" stroke-opacity=".14" stroke-width="2.6"/><circle cx="32" cy="32" r="21" fill="none" stroke="#ffffff" stroke-opacity=".10" stroke-width="1.5"/><circle cx="32" cy="32" r="14" fill="none" stroke="#ffffff" stroke-opacity=".08" stroke-width="1.5"/><circle cx="32" cy="32" r="12" fill="url(#bdisc-tab)"/><circle cx="32" cy="32" r="3.4" fill="#141418"/><g clip-path="url(#bdisc-tab-clip)"><rect x="-16" y="-16" width="96" height="96" fill="url(#bdisc-tab-sheen)"/></g></svg></span>
             <span class="tab-brand-name">MKY音乐</span>
         </button>
         <div class="tab-items" id="tab-items">
@@ -5605,7 +5680,7 @@
                 <div class="fav-title">我的收藏</div>
                 <button class="fav-icon-btn mode-toggle-btn" id="fav-mode-btn"
                         aria-label="播放模式" title="播放模式">
-                    <i class="fas fa-arrow-right"></i>
+                    <svg class="mode-icon-svg" viewBox="0 0 24 24" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>
                 </button>
                 <button class="fav-icon-btn fav-play-btn" id="fav-header-play" aria-label="播放全部" title="播放全部">
                     <i class="fas fa-play"></i>
@@ -5653,7 +5728,7 @@
                 <div class="fav-title" id="pl-page-title">歌单</div>
                 <button class="fav-icon-btn mode-toggle-btn" id="pl-mode-btn"
                         aria-label="播放模式" title="播放模式">
-                    <i class="fas fa-arrow-right"></i>
+                    <svg class="mode-icon-svg" viewBox="0 0 24 24" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>
                 </button>
                 <button class="fav-icon-btn fav-play-btn" id="pl-header-play" aria-label="播放全部" title="播放全部">
                     <i class="fas fa-play"></i>
@@ -5704,7 +5779,7 @@
                 <div class="fav-title">播放历史</div>
                 <button class="fav-icon-btn mode-toggle-btn" id="history-mode-btn"
                         aria-label="播放模式" title="播放模式">
-                    <i class="fas fa-arrow-right"></i>
+                    <svg class="mode-icon-svg" viewBox="0 0 24 24" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>
                 </button>
                 <button class="fav-icon-btn fav-play-btn" id="history-header-play"
                         aria-label="播放全部" title="播放全部">
@@ -5759,9 +5834,9 @@
             </div>
         </div>
         <div class="about-body">
-            <div class="about-logo" id="about-logo" role="button" tabindex="0" aria-label="MKY音乐"><svg class="brand-disc" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="bdisc-about" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3d77"/><stop offset="1" stop-color="#c2185b"/></linearGradient><linearGradient id="bdisc-sheen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.34" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.46" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.54" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.66" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient><clipPath id="bdisc-clip"><circle cx="32" cy="32" r="30"/></clipPath></defs><g class="disc-spin"><circle cx="32" cy="32" r="30" fill="#141418"/><circle cx="32" cy="32" r="30" fill="none" stroke="#ffffff" stroke-opacity=".14" stroke-width="2"/><circle cx="32" cy="32" r="21" fill="none" stroke="#ffffff" stroke-opacity=".10" stroke-width="1.5"/><circle cx="32" cy="32" r="14" fill="none" stroke="#ffffff" stroke-opacity=".08" stroke-width="1.5"/><circle cx="32" cy="32" r="12" fill="url(#bdisc-about)"/><circle cx="32" cy="32" r="3.4" fill="#141418"/><g clip-path="url(#bdisc-clip)"><rect class="disc-sheen" x="-16" y="-16" width="96" height="96" fill="url(#bdisc-sheen)"/></g></g></svg></div>
+            <div class="about-logo" id="about-logo" role="button" tabindex="0" aria-label="MKY音乐"><svg class="brand-disc" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="bdisc-about" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3d77"/><stop offset="1" stop-color="#c2185b"/></linearGradient><linearGradient id="bdisc-sheen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.34" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.46" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.54" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.66" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient><clipPath id="bdisc-clip"><circle cx="32" cy="32" r="30"/></clipPath></defs><g class="disc-spin"><circle cx="32" cy="32" r="30" fill="#141418"/><circle cx="32" cy="32" r="30" fill="none" stroke="#ffffff" stroke-opacity=".14" stroke-width="2.6"/><circle cx="32" cy="32" r="21" fill="none" stroke="#ffffff" stroke-opacity=".10" stroke-width="1.5"/><circle cx="32" cy="32" r="14" fill="none" stroke="#ffffff" stroke-opacity=".08" stroke-width="1.5"/><circle cx="32" cy="32" r="12" fill="url(#bdisc-about)"/><circle cx="32" cy="32" r="3.4" fill="#141418"/><g clip-path="url(#bdisc-clip)"><rect class="disc-sheen" x="-16" y="-16" width="96" height="96" fill="url(#bdisc-sheen)"/></g></g></svg></div>
             <div class="about-name">MKY音乐</div>
-            <div class="about-version">版本 1.5</div>
+            <div class="about-version">版本 1.6</div>
             <div class="about-slogan">把每一处细节听懂<br>把听歌这件事做好</div>
 
             <div class="about-links">
@@ -5851,7 +5926,6 @@
     <div class="sheet" id="song-more-menu"></div>
 
     <div class="sheet" id="entry-more-menu"></div>
-
 
     <div class="sort-actions" id="sort-actions">
         <button class="sort-text-btn" id="sort-cancel" type="button">取消</button>
@@ -6373,10 +6447,16 @@
                 syncPlayModeUI();
             }
 
+            const MODE_ICONS = {
+                repeat: `<svg class="mode-icon-svg" viewBox="0 0 24 24" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>`,
+                repeat1: `<svg class="mode-icon-svg" viewBox="0 0 24 24" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/><path d="M11 10h1v4"/></svg>`,
+                shuffle: `<svg class="mode-icon-svg" data-mode="shuffle" viewBox="0 0 24 24" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 14 4 4-4 4"/><path d="m18 2 4 4-4 4"/><path d="M2 18h1.973a4 4 0 0 0 3.3-1.7l5.454-8.6a4 4 0 0 1 3.3-1.7H22"/><path d="M2 6h1.972a4 4 0 0 1 3.6 2.2"/><path d="M22 18h-6.041a4 4 0 0 1-3.3-1.8l-.359-.45"/></svg>`
+            };
+
             const PLAY_MODE_META = {
-                order:   { icon: 'fa-arrow-right', label: '顺序播放' },
-                shuffle: { icon: 'fa-shuffle',     label: '随机播放' },
-                single:  { icon: 'fa-repeat',      label: '单曲循环' }
+                order:   { icon: MODE_ICONS.repeat,  label: '顺序播放' },
+                shuffle: { icon: MODE_ICONS.shuffle, label: '随机播放' },
+                single:  { icon: MODE_ICONS.repeat1, label: '单曲循环' }
             };
             const PLAY_MODE_CYCLE = ['order', 'shuffle', 'single'];
 
@@ -6386,8 +6466,8 @@
                 $$('.mode-toggle-btn').forEach(btn => {
 
                     btn.classList.remove('active');
-                    const i = btn.querySelector('i');
-                    if (i) i.className = 'fas ' + meta.icon;
+                    const i = btn.querySelector('i, svg.mode-icon-svg');
+                    if (i) i.outerHTML = meta.icon;
                     btn.title = '播放模式：' + meta.label;
                 });
             }
@@ -6434,6 +6514,7 @@
                 const m = (mode === 'light' || mode === 'dark' || mode === 'system')
                     ? mode : 'system';
                 const t = resolveTheme(m);
+
                 document.documentElement.setAttribute('data-theme', t);
                 try { localStorage.setItem(THEME_MODE_KEY, m); } catch (_) {}
                 syncThemeChips();
@@ -7678,7 +7759,7 @@
                 for (let k = 0; k < list.length; k++) {
                     const item = fromEnd ? list[list.length - 1 - k] : list[k];
                     const p = item && item.picurl;
-                    if (p) return p;
+                    if (p) return normalizeCoverUrl(p);
                 }
                 return '';
             }
@@ -7687,6 +7768,7 @@
 
             function setCoverSrc(box, img, url) {
                 if (!box || !img) return;
+                url = normalizeCoverUrl(url);
 
                 if (!url) {
                     img.removeAttribute('src');
@@ -7705,19 +7787,24 @@
                 box.classList.remove('no-cover');
             }
 
-            const MKY_DISC_COVER = 'data:image/svg+xml,' + encodeURIComponent(
-                '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">' +
-                '<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">' +
-                '<stop offset="0" stop-color="#ff3d77"/><stop offset="1" stop-color="#c2185b"/>' +
-                '</linearGradient></defs>' +
-                '<circle cx="32" cy="32" r="30" fill="#141418"/>' +
-                '<circle cx="32" cy="32" r="30" fill="none" stroke="#ffffff" stroke-opacity="0.14" stroke-width="2"/>' +
-                '<circle cx="32" cy="32" r="21" fill="none" stroke="#ffffff" stroke-opacity="0.10" stroke-width="1.5"/>' +
-                '<circle cx="32" cy="32" r="14" fill="none" stroke="#ffffff" stroke-opacity="0.08" stroke-width="1.5"/>' +
-                '<circle cx="32" cy="32" r="12" fill="url(#g)"/>' +
-                '<circle cx="32" cy="32" r="3.4" fill="#141418"/>' +
-                '</svg>'
-            );
+            const MS_FALLBACK_COVER = (function () {
+                const toDataUri = (svg) =>
+                    'data:image/svg+xml,' + encodeURIComponent(svg);
+
+                const noteSvg =
+                    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">' +
+                    '<rect width="300" height="300" rx="63" ry="63" fill="#1a1a1c"/>' +
+                    '<g fill="#3d3d3f">' +
+                    '<ellipse cx="116" cy="182" rx="17" ry="13" transform="rotate(-18 116 182)"/>' +
+                    '<ellipse cx="180" cy="168" rx="17" ry="13" transform="rotate(-18 180 168)"/>' +
+                    '<rect x="129" y="108" width="8" height="76" rx="2"/>' +
+                    '<rect x="193" y="94" width="8" height="76" rx="2"/>' +
+                    '<path d="M129 108 L201 94 L201 113 L129 127 Z"/>' +
+                    '</g>' +
+                    '</svg>';
+
+                return toDataUri(noteSvg);
+            })();
 
             function coverOrFavDefault(url) {
                 return url || '';
@@ -7764,10 +7851,6 @@
             }
 
             const HISTORY_ICON_SVG = '<svg class="history-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4.2" width="14" height="2.4" rx="1.2" fill="currentColor"/><rect x="2.5" y="10.2" width="10.5" height="2.4" rx="1.2" fill="currentColor"/><rect x="2.5" y="16.2" width="7" height="2.4" rx="1.2" fill="currentColor"/><path d="M15.6 12.6c0-.8.87-1.28 1.53-.85l5.2 3.4c.62.4.62 1.3 0 1.7l-5.2 3.4c-.66.43-1.53-.05-1.53-.85z" fill="currentColor"/></svg>';
-
-
-
-
 
             function historyPickerRowHtml(on) {
                 return pickerRowHtml({
@@ -8012,6 +8095,7 @@
                     }
                     paintVolumeTrack();
                     if (settingsFade) settingsFade.checked = getFadeEnabled();
+                    refreshCacheUsage();
                 }
 
                 if (prevTab !== tab) restoreOverlays(tab);
@@ -8596,19 +8680,10 @@
                 const hisOn = pickerSong ? isInPlayHistory(pickerSong.id) : false;
                 const hisRowHtml = historyPickerRowHtml(hisOn);
 
-                if (playlists.length === 0) {
-
-                    plPickerBody.innerHTML = favRowHtml + hisRowHtml + `
-                        <div class="pl-pick-empty">
-                            <i class="fas fa-folder-open"></i>
-                            <p>还没有歌单<br>新建一个就能存歌了</p>
-                        </div>`;
-                } else {
-                    plPickerBody.innerHTML = favRowHtml + hisRowHtml + playlists.map(pl => {
-                        const on = pickerSong ? isSongInPlaylist(pl, pickerSong) : false;
-                        return playlistPickerRowHtml(pl, on);
-                    }).join('');
-                }
+                plPickerBody.innerHTML = favRowHtml + hisRowHtml + playlists.map(pl => {
+                    const on = pickerSong ? isSongInPlaylist(pl, pickerSong) : false;
+                    return playlistPickerRowHtml(pl, on);
+                }).join('');
 
                 plPickerBody.querySelectorAll('.pl-pick-row').forEach(rowEl => {
                     rowEl.addEventListener('click', () => {
@@ -8750,6 +8825,7 @@
             function openCachePage() {
                 if (!cachePage) return;
                 syncCachePage();
+                refreshCacheUsage();
                 cachePage.classList.add('active');
                 if (fabStack) fabStack.classList.remove('show');
                 syncHeaderHeight();
@@ -8782,6 +8858,87 @@
             function setCacheSub(key, text) {
                 const el = document.getElementById('cache-sub-' + key);
                 if (el && text) el.textContent = text;
+            }
+
+            function formatBytes(n) {
+                if (!n || n <= 0) return '';
+                if (n < 1024) return n + ' B';
+                if (n < 1024 * 1024) return (n / 1024).toFixed(1) + ' KB';
+                return (n / 1024 / 1024).toFixed(2) + ' MB';
+            }
+
+            function lsBytes(keys) {
+                let total = 0;
+                keys.forEach(k => {
+                    try {
+                        const v = localStorage.getItem(k);
+                        if (v == null) return;
+                        total += (k.length + v.length) * 2;
+                    } catch (_) {}
+                });
+                return total;
+            }
+
+            function lsCount(key) {
+                try {
+                    const arr = JSON.parse(localStorage.getItem(key) || '[]');
+                    return Array.isArray(arr) ? arr.length : 0;
+                } catch (_) { return 0; }
+            }
+
+            function refreshCacheUsage() {
+                const tipMain = document.querySelector('.cache-tip');
+
+                let coverN = 0;
+                try { coverN = coverState.size; } catch (_) {}
+                let lyricN = 0;
+                try { lyricN = lyricCache.size; } catch (_) {}
+
+                setCacheSub('covers', coverN > 0
+                    ? coverN + ' 张封面（本次会话）'
+                    : '已缓存的专辑与歌曲封面');
+
+                setCacheSub('lyrics', lyricN > 0
+                    ? lyricN + ' 首歌词（本次会话）'
+                    : '已缓存的歌曲歌词');
+
+                const failN = lsCount(FAIL_KEY);
+                setCacheSub('fails', failN > 0
+                    ? failN + ' 条记录 · ' + (formatBytes(lsBytes([FAIL_KEY])) || '0 B')
+                    : '被跳过的失效歌曲记录');
+
+                const searchN = lsCount('searchHistory');
+                setCacheSub('search', searchN > 0
+                    ? searchN + ' 条词条 · ' + (formatBytes(lsBytes(['searchHistory'])) || '0 B')
+                    : '搜索框下拉里的历史词条');
+
+                const resumeRaw = (() => {
+                    try { return localStorage.getItem(LAST_KEY); } catch (_) { return null; }
+                })();
+                setCacheSub('resume', resumeRaw
+                    ? '已记录 · ' + (formatBytes(lsBytes([LAST_KEY])) || '0 B')
+                    : '下次打开时恢复的歌曲与进度');
+
+                const histN = lsCount(HISTORY_KEY);
+                setCacheSub('history', histN > 0
+                    ? histN + ' 首 · ' + (formatBytes(lsBytes([HISTORY_KEY])) || '0 B')
+                    : '播放历史页里的全部记录');
+
+                const total = lsBytes([
+                    FAV_KEY, PL_KEY, HISTORY_KEY, FAIL_KEY,
+                    'searchHistory', LAST_KEY, THEME_KEY, THEME_MODE_KEY,
+                    VOLUME_KEY, FADE_KEY, AWAKE_KEY, TRANS_KEY, PLAY_MODE_KEY
+                ]);
+                const t = total >= 1024 ? formatBytes(total) : '';
+
+                if (tipMain) {
+                    tipMain.textContent = t
+                        ? '选择要清除的内容，清除后无法恢复。本地存储占用约 ' + t + '。'
+                        : '选择要清除的内容，清除后无法恢复。';
+                }
+
+                const sizeEl = document.getElementById('settings-cache-size');
+                if (sizeEl) sizeEl.textContent = t || '';
             }
 
             function clearCovers() {
@@ -8836,6 +8993,7 @@
 
                 try { setCoverSrc(miniCoverWrap, miniCover, pic); } catch (_) {}
                 try { setCoverSrc(albumCoverBox, albumCover, pic); } catch (_) {}
+                updateDiscGlow(pic);
             }
 
             function clearLyrics() {
@@ -8908,6 +9066,7 @@
                 list.forEach(c => { c.checked = false; });
 
                 syncCachePage();
+                refreshCacheUsage();
                 showToast('已清除 ' + names.length + ' 项缓存');
             }
 
@@ -9246,7 +9405,7 @@
 
                 const songs = (ctx.getSongs && ctx.getSongs()) || [];
                 sortSnapshot = songs.map(s => String(s.id));
-                sortCtx = { from, ...ctx };
+                sortCtx = { ...ctx, from };
 
                 mountSortActions();
                 document.body.classList.add('sort-mode');
@@ -9496,6 +9655,7 @@
             }
 
             if (historyBackBtn) historyBackBtn.addEventListener('click', closeHistoryPage);
+
             if (historyHeaderPlay) {
                 historyHeaderPlay.addEventListener('click', () => playHistoryAsQueue(0));
             }
@@ -9998,6 +10158,11 @@
                         }
                     }
                 }
+
+                const fromChart = selectCtx.from === 'chart' || selectCtx.from === 'search';
+                if (selectDelBtn) {
+                    selectDelBtn.style.display = fromChart ? 'none' : '';
+                }
             }
 
             function bindLongPress(el, onLongPress, shouldStart) {
@@ -10057,18 +10222,6 @@
                     const songs = getSelectedSongs();
                     if (songs.length === 0) return;
                     loadPlaylists();
-                    if (playlists.length === 0) {
-
-                        openNameDialog('新建歌单', '', (val) => {
-                            const pl = createPlaylist(val);
-                            const notice = renameNotice(val, pl.name);
-                            songs.forEach(s => addSongToPlaylist(pl.id, s));
-                            showToast('已把 ' + songs.length + ' 首加入「' + pl.name + '」' + notice);
-                            if (activeTab === 'mine') renderMinePage();
-                            exitSelectMode();
-                        });
-                        return;
-                    }
                     openBatchPicker(songs);
                 });
             }
@@ -10142,10 +10295,13 @@
                 const favRowHtml = favPickerRowHtml(favAllIn);
                 const hisAllIn = songs.length > 0 && songs.every(s => isInPlayHistory(s.id));
                 const hisRowHtml = historyPickerRowHtml(hisAllIn);
+                const emptyHtml = playlists.length === 0
+                    ? '<div class="pl-pick-empty"><i class="fas fa-folder-open"></i><p>点下方「新建歌单」创建</p></div>'
+                    : '';
                 plPickerBody.innerHTML = favRowHtml + hisRowHtml + playlists.map(pl => {
                     const on = songs.every(s => isSongInPlaylist(pl, s));
                     return playlistPickerRowHtml(pl, on);
-                }).join('');
+                }).join('') + emptyHtml;
                 plPickerBody.querySelectorAll('.pl-pick-row').forEach(rowEl => {
                     rowEl.addEventListener('click', () => {
                         const plId = rowEl.dataset.plId;
@@ -10206,18 +10362,6 @@
                     });
                 });
                 openSheet(plPickerSheet);
-
-                let doneBtn = plPickerSheet.querySelector('.batch-picker-done');
-                if (!doneBtn) {
-                    doneBtn = document.createElement('button');
-                    doneBtn.className = 'batch-picker-done';
-                    doneBtn.textContent = '完成';
-                    doneBtn.addEventListener('click', () => {
-                        closeSheet(plPickerSheet);
-                        exitSelectMode();
-                    });
-                    plPickerSheet.appendChild(doneBtn);
-                }
             }
 
             const coverQueue = [];
@@ -10227,13 +10371,151 @@
 
             const coverState = new Map();
 
+            const DISC_GLOW_DEFAULT = {
+                a: 'rgba(233, 30, 99, 0.00)',
+                b: 'rgba(233, 30, 99, 0.50)',
+                c: 'rgba(156, 39, 176, 0.34)'
+            };
+
+            const discTintCache = new Map();
+
+            function rgbToHsl(r, g, b) {
+                r /= 255; g /= 255; b /= 255;
+                const max = Math.max(r, g, b), min = Math.min(r, g, b);
+                const l = (max + min) / 2;
+                let h = 0, s = 0;
+                if (max !== min) {
+                    const d = max - min;
+                    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                    if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
+                    else if (max === g) h = (b - r) / d + 2;
+                    else h = (r - g) / d + 4;
+                    h /= 6;
+                }
+                return [h, s, l];
+            }
+
+            function extractDominantTint(img) {
+                const N = 24;
+                const cv = document.createElement('canvas');
+                cv.width = N; cv.height = N;
+                const cx = cv.getContext('2d', { willReadFrequently: true });
+                if (!cx) return null;
+                try { cx.drawImage(img, 0, 0, N, N); } catch (_) { return null; }
+
+                let data;
+                try { data = cx.getImageData(0, 0, N, N).data; } catch (_) { return null; }
+
+                let sr = 0, sg = 0, sb = 0, wsum = 0;
+                const buckets = new Map();
+
+                for (let i = 0; i < data.length; i += 4) {
+                    if (data[i + 3] < 128) continue;
+                    const r = data[i], g = data[i + 1], b = data[i + 2];
+                    const [h, s, l] = rgbToHsl(r, g, b);
+
+                    if (s < 0.15 || l < 0.10 || l > 0.94) continue;
+
+                    const w = s * (1 - Math.abs(l - 0.5) * 1.4);
+                    if (w <= 0) continue;
+
+                    sr += r * w; sg += g * w; sb += b * w; wsum += w;
+
+                    const key = Math.round(h * 12);
+                    buckets.set(key, (buckets.get(key) || 0) + w);
+                }
+
+                if (wsum < 1) return null;
+
+                let br = sr / wsum, bg = sg / wsum, bb = sb / wsum;
+
+                let topH = -1, topW = 0;
+                buckets.forEach((w, k) => { if (w > topW) { topW = w; topH = k; } });
+
+                if (topH >= 0) {
+                    let tr = 0, tg = 0, tb = 0, tw = 0;
+                    for (let i = 0; i < data.length; i += 4) {
+                        if (data[i + 3] < 128) continue;
+                        const r = data[i], g = data[i + 1], b = data[i + 2];
+                        const [h, s, l] = rgbToHsl(r, g, b);
+                        if (s < 0.15 || l < 0.10 || l > 0.94) continue;
+                        if (Math.round(h * 12) !== topH) continue;
+                        const w = s * (1 - Math.abs(l - 0.5) * 1.4);
+                        if (w <= 0) continue;
+                        tr += r * w; tg += g * w; tb += b * w; tw += w;
+                    }
+                    if (tw > 0) { br = tr / tw; bg = tg / tw; bb = tb / tw; }
+                }
+
+                let [h, s, l] = rgbToHsl(br, bg, bb);
+                s = Math.min(1, s * 1.15 + 0.10);
+                l = Math.min(0.72, Math.max(0.52, l));
+
+                const toRgb = (hue, sat, lum) => {
+                    const f = (n) => {
+                        const k = (n + hue * 12) % 12;
+                        const a = sat * Math.min(lum, 1 - lum);
+                        return Math.round(255 * (lum - a * Math.max(-1, Math.min(k - 3, 9 - k, 1))));
+                    };
+                    return [f(0), f(8), f(4)];
+                };
+
+                const [r1, g1, b1] = toRgb(h, s, l);
+                const [r2, g2, b2] = toRgb((h + 0.12) % 1, s, l);
+
+                return {
+                    a: 'rgba(' + r1 + ',' + g1 + ',' + b1 + ',0)',
+                    b: 'rgba(' + r1 + ',' + g1 + ',' + b1 + ',0.55)',
+                    c: 'rgba(' + r2 + ',' + g2 + ',' + b2 + ',0.38)'
+                };
+            }
+
+            function applyDiscTint(el, tint) {
+                if (!el) return;
+                const t = tint || DISC_GLOW_DEFAULT;
+                el.style.setProperty('--disc-glow-a', t.a);
+                el.style.setProperty('--disc-glow-b', t.b);
+                el.style.setProperty('--disc-glow-c', t.c);
+            }
+
+            function updateDiscGlow(picurl) {
+                const wrap = document.getElementById('album-cover-wrap');
+                if (!wrap) return;
+
+                if (!picurl) {
+                    applyDiscTint(wrap, null);
+                    return;
+                }
+
+                const cached = discTintCache.get(picurl);
+                if (cached !== undefined) {
+                    applyDiscTint(wrap, cached);
+                    return;
+                }
+
+                const im = new Image();
+                if (!/^data:/i.test(picurl)) im.crossOrigin = 'anonymous';
+                im.onload = () => {
+                    const tint = (im.naturalWidth > 0) ? extractDominantTint(im) : null;
+                    if (discTintCache.size > 120) discTintCache.clear();
+                    discTintCache.set(picurl, tint);
+                    applyDiscTint(wrap, tint);
+                };
+                im.onerror = () => {
+                    discTintCache.set(picurl, null);
+                    applyDiscTint(wrap, null);
+                };
+                im.src = picurl;
+            }
+
             function applyCoverToEl(song, imgEl) {
                 if (!song || !song.picurl || !imgEl) return;
+                const src = normalizeCoverUrl(song.picurl);
                 const reveal = () => {
                     imgEl.classList.add('loaded');
                 };
 
-                if (imgEl.src === song.picurl || imgEl.getAttribute('src') === song.picurl) {
+                if (imgEl.src === src || imgEl.getAttribute('src') === src) {
                     if (imgEl.complete && imgEl.naturalWidth > 0) {
                         reveal();
                         return;
@@ -10248,7 +10530,7 @@
                         ?.classList.add('no-cover');
                     retryCoverWithFallback(song, imgEl);
                 }, { once: true });
-                imgEl.src = song.picurl;
+                imgEl.src = src;
             }
 
             const triedCoverSrcs = new Map();
@@ -10269,39 +10551,6 @@
 
                 if (tried.size >= COVER_FALLBACK_LIMIT) return;
 
-                const candidates = [];
-
-                const picKey = song.picId || song.id;
-                if (picKey) {
-                    candidates.push(GD_BASE + '?types=pic&source=netease&id=' +
-                        encodeURIComponent(picKey) + '&size=300');
-                }
-
-                candidates.push(XFABE_BASE + '/music?type=json&id=' +
-                    encodeURIComponent(song.id));
-
-                const fresh = candidates.filter(u => u && !tried.has(u));
-                if (!fresh.length) return;
-
-                let idx = 0;
-                const tryNext = () => {
-                    if (idx >= fresh.length) return;
-                    const url = fresh[idx++];
-                    markCoverTried(key, url);
-
-                    if (url.indexOf(XFABE_BASE + '/music') === 0) {
-                        xfabeGet(url).then(d => {
-                            const real = d && d.data && d.data.picurl;
-                            if (!real) { tryNext(); return; }
-                            if (tried.has(real)) { tryNext(); return; }
-                            markCoverTried(key, real);
-                            loadIntoEl(real, tryNext);
-                        }).catch(() => tryNext());
-                        return;
-                    }
-                    loadIntoEl(url, tryNext);
-                };
-
                 const loadIntoEl = (url, onFail) => {
                     const onLoad = () => {
                         imgEl.removeEventListener('error', onErr);
@@ -10320,7 +10569,54 @@
                     imgEl.src = url;
                 };
 
-                tryNext();
+                const tasks = [];
+
+                const detail = coverDetailUrl(song.id);
+                if (!tried.has(detail)) {
+                    tasks.push(() => {
+                        markCoverTried(key, detail);
+                        neteaseCoverTask(song.id).then(r => {
+                            if (song && r.picId) song.picId = String(r.picId);
+                            if (tried.has(r.url)) throw new Error('重复封面');
+                            markCoverTried(key, r.url);
+                            return r.url;
+                        }).then(u => loadIntoEl(u, next), () => next());
+                    });
+                }
+
+                if (song.picId) {
+                    const gd = GD_BASE + '?types=pic&source=netease&id=' +
+                        encodeURIComponent(song.picId) + '&size=300';
+                    if (!tried.has(gd)) {
+                        tasks.push(() => {
+                            markCoverTried(key, gd);
+                            loadIntoEl(normalizeCoverUrl(gd), next);
+                        });
+                    }
+                }
+
+                const xf = XFABE_BASE + '/music?type=json&id=' +
+                    encodeURIComponent(song.id);
+                if (!tried.has(xf)) {
+                    tasks.push(() => {
+                        markCoverTried(key, xf);
+                        xfabeGet(xf).then(d => {
+                            const raw = d && d.data && d.data.picurl;
+                            if (!raw) { next(); return; }
+                            const real = normalizeCoverUrl(raw);
+                            if (tried.has(real)) { next(); return; }
+                            markCoverTried(key, real);
+                            loadIntoEl(real, next);
+                        }).catch(() => next());
+                    });
+                }
+
+                let idx = 0;
+                function next() {
+                    if (idx >= tasks.length) return;
+                    tasks[idx++]();
+                }
+                next();
             }
 
             function waitCoverThen(song, imgEl) {
@@ -10370,6 +10666,7 @@
 
             function broadcastCover(id, picurl) {
                 if (!id || !picurl) return;
+                picurl = normalizeCoverUrl(picurl);
                 const key = String(id);
 
                 syncSongCoverEverywhere(id, picurl);
@@ -10379,6 +10676,9 @@
 
                     setCoverSrc(miniCoverWrap, miniCover, picurl);
                     setCoverSrc(albumCoverBox, albumCover, picurl);
+                    updateDiscGlow(picurl);
+
+                    updateMediaMetadata(currentSong);
                 }
 
                 $$('[data-song-id="' + id + '"]').forEach(node => {
@@ -10451,7 +10751,7 @@
                     coverWorkers++;
                     const key = String(job.song.id);
 
-                    coverOf(job.song.id)
+                    coverOf(job.song.id, job.song.picId, job.song)
                         .then(got => {
                             const src = got && got.url;
                             if (!src) throw new Error('无封面地址');
@@ -10938,6 +11238,97 @@
             const XFABE_BASE = 'https://node.api.xfabe.com/api/wangyi';
             const GD_BASE = 'https://music-api.gdstudio.xyz/api.php';
 
+            const NETEASE_SEARCH = 'https://music.163.com/api/search/get?s=';
+
+            function exactPicIdsFrom(raw) {
+                const out = [];
+                const re = /"picId":(\d{6,})/g;
+                let m;
+                while ((m = re.exec(raw)) !== null) out.push(m[1]);
+                return out;
+            }
+
+            async function fetchRawText(target, opts) {
+                opts = opts || {};
+                const viaDirect = () => fetchOneRaw(u => u, target,
+                    opts.directTimeout || DIRECT_TIMEOUT);
+                const viaProxy = () => fetchOneRaw(
+                    u => CF_PROXY + '?key=' + encodeURIComponent(CF_PROXY_KEY) +
+                         '&url=' + encodeURIComponent(u),
+                    target, opts.timeout || FETCH_TIMEOUT);
+                return await new Promise((resolve, reject) => {
+                    let pending = 2;
+                    let lastErr = null;
+                    const fail = (err) => {
+                        lastErr = err || lastErr;
+                        if (--pending === 0) reject(lastErr || new Error('请求失败'));
+                    };
+                    viaDirect().then(resolve, fail);
+                    viaProxy().then(resolve, fail);
+                });
+            }
+
+            async function fetchOneRaw(buildUrl, target, timeoutMs) {
+                const ctrl = new AbortController();
+                const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+                try {
+                    const res = await fetch(buildUrl(target), { signal: ctrl.signal });
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    return await res.text();
+                } catch (e) {
+                    const reason = e.name === 'AbortError'
+                        ? '超时 ' + timeoutMs + 'ms' : e.message;
+                    throw new Error(reason);
+                } finally {
+                    clearTimeout(timer);
+                }
+            }
+
+            async function neteaseSearch(q, limit) {
+                const raw = await fetchRawText(
+                    NETEASE_SEARCH + encodeURIComponent(q) +
+                    '&type=1&limit=' + (limit || 5),
+                    { timeout: RACE_TIMEOUT });
+                let parsed;
+                try { parsed = JSON.parse(raw); } catch (_) {
+                    throw new Error('网易云搜索返回非 JSON');
+                }
+                const list = (parsed.result && parsed.result.songs) || [];
+                const picIds = exactPicIdsFrom(raw);
+                return list.map((s, i) => ({
+                    id: s.id,
+                    name: s.name,
+                    artist: (s.artists || []).map(a => a.name).join(','),
+                    album: (s.album && s.album.name) || '',
+                    picId: picIds[i] || ''
+                }));
+            }
+
+            const normKey = s => String(s || '')
+                .replace(/[\s·・,，、/／&＆\-—_()（）\[\]【】「」"'’“”!！?？.。]/g, '')
+                .toLowerCase();
+
+            function pickBestMatch(list, name, artist) {
+                const nk = normKey(name);
+                const ak = normKey(String(artist || '').split(/[,，、/／&]/)[0]);
+                let best = null;
+                let bestScore = -1;
+                for (const item of list) {
+                    if (!item.picId) continue;
+                    let score = 0;
+                    const inName = normKey(item.name);
+                    if (inName === nk) score += 100;
+                    else if (inName.indexOf(nk) === 0 || nk.indexOf(inName) === 0) score += 60;
+                    else if (inName.indexOf(nk) >= 0) score += 30;
+                    if (ak) {
+                        const ia = normKey(item.artist);
+                        if (ia.indexOf(ak) >= 0) score += 50;
+                    }
+                    if (score > bestScore) { bestScore = score; best = item; }
+                }
+                return bestScore > 0 ? best : (list.find(x => x.picId) || null);
+            }
+
             async function xfabeGet(path) {
                 const data = await fetchDirectOrProxy(path, { timeout: RACE_TIMEOUT });
                 if (!data || data.code !== 200) {
@@ -10995,19 +11386,43 @@
                         album: s.album || '',
                         duration: Math.round((s.duration || 0) * 1000),
                         picurl: '',
-                        picId: s.pic_id || s.id
+                        picId: s.pic_id || '',
+                        picIdExact: !!s.pic_id
                     }));
                     if (!songs.length) throw new Error('gdstudio 搜索无结果');
                     return songs;
                 };
             }
 
+            async function enrichPicIds(songs) {
+                const targets = songs.filter(s => s && s.name && !s.picIdExact);
+                if (!targets.length) return false;
+                const picked = targets.slice(0, 12);
+                const results = await Promise.all(picked.map(async s => {
+                    try {
+                        const q = s.name + (s.artistsname
+                            ? ' ' + String(s.artistsname).split(/[,，、/／&]/)[0] : '');
+                        const list = await neteaseSearch(q, 5);
+                        const hit = pickBestMatch(list, s.name, s.artistsname);
+                        return hit ? { s, picId: hit.picId } : null;
+                    } catch (_) { return null; }
+                }));
+                let changed = false;
+                results.forEach(r => {
+                    if (!r) return;
+                    r.s.picId = r.picId;
+                    r.s.picIdExact = true;
+                    changed = true;
+                });
+                return changed;
+            }
+
             async function searchSongs(q) {
-                const primary = async () => {
+                const xfabeTask = async () => {
                     const d = await xfabeGet(XFABE_BASE + '/search?search=' +
                         encodeURIComponent(q) + '&limit=30');
                     const list = (d.data && d.data.songs) || [];
-                    const songs = list.map(s => ({
+                    const rows = list.map(s => ({
                         id: s.id,
                         name: s.name,
                         artistsname: s.artistsname || s.artists || '',
@@ -11015,12 +11430,26 @@
                         duration: s.duration || 0,
                         picurl: s.picurl || '',
 
-                        picId: s.pic_id || s.picId || ''
+                        picId: s.pic_id || s.picId || '',
+                        picIdExact: !!(s.pic_id || s.picId)
                     }));
-                    if (!songs.length) throw new Error('xfabe 搜索无结果');
-                    return songs;
+                    if (!rows.length) throw new Error('xfabe 搜索无结果');
+                    return rows;
                 };
-                return primaryThenRace(primary, [gdSearchTask(q)], '搜索');
+
+                const songs = await (async () => {
+                    try {
+                        const rows = await gdSearchTask(q)();
+                        if (rows.some(s => s.picIdExact)) return rows;
+                        return await xfabeTask();
+                    } catch (e) {
+                        console.warn('搜索 gdstudio 失败，转 xfabe：', e && e.message);
+                        return xfabeTask();
+                    }
+                })();
+
+                try { await enrichPicIds(songs); } catch (_) {}
+                return songs;
             }
 
             function metingTask(id) {
@@ -11119,6 +11548,11 @@
                 return true;
             }
 
+            function isKnownStaleCover(u) {
+                if (!u || typeof u !== 'string') return true;
+                return /\/\d{5,12}\.jpg\?param=/i.test(u);
+            }
+
             const URL_WAIT_MS = 9000;
 
             function withTimeout(promise, ms, label) {
@@ -11163,26 +11597,135 @@
                 return primaryThenRace(primary, [backup], '播放地址');
             }
 
-            function gdCoverTask(id) {
-                return async () => {
-                    const d = await fetchDirectOrProxy(
-                        GD_BASE + '?types=pic&source=netease&id=' +
-                        encodeURIComponent(id) + '&size=300',
-                        { timeout: RACE_TIMEOUT });
-                    if (!d || !d.url) throw new Error('gdstudio 未返回封面');
-                    return { url: d.url };
+            async function gdCoverTask(id, picId) {
+                const d = await fetchDirectOrProxy(
+                    GD_BASE + '?types=pic&source=netease&id=' +
+                    encodeURIComponent(picId) + '&size=300',
+                    { timeout: RACE_TIMEOUT });
+                if (!d || !d.url) throw new Error('gdstudio 未返回封面');
+                if (isKnownStaleCover(d.url)) throw new Error('gdstudio 封面地址无效');
+                return { url: d.url };
+            }
+
+            function coverDetailUrl(id) {
+                const sid = encodeURIComponent(id);
+                return 'https://music.163.com/api/song/detail/?id=' + sid +
+                       '&ids=%5B' + sid + '%5D';
+            }
+
+            async function neteaseCoverTask(id) {
+                const d = await fetchDirectOrProxy(coverDetailUrl(id), {
+                    timeout: RACE_TIMEOUT,
+                    directTimeout: DIRECT_TIMEOUT
+                });
+                const row = d && d.songs && d.songs[0];
+                if (!row) throw new Error('网易云未返回歌曲详情');
+                const album = row.album || {};
+                const url = album.picUrl || '';
+                if (!url) throw new Error('网易云未返回专辑封面');
+                return {
+                    url: normalizeCoverUrl(url),
+                    picId: album.pic,
+                    duration: neteaseRowDuration(row)
                 };
             }
 
-            async function coverOf(id) {
-                const primary = async () => {
+            function neteaseRowDuration(row) {
+                const ms = (row && (row.duration || row.dt)) || 0;
+                return ms > 0 ? Math.round(ms) : 0;
+            }
+
+            const detailMemo = new Map();
+
+            async function fetchNeteaseDetail(id) {
+                const key = String(id);
+                if (detailMemo.has(key)) return detailMemo.get(key);
+                let row = null;
+                try {
+                    const d = await fetchDirectOrProxy(coverDetailUrl(id), {
+                        timeout: RACE_TIMEOUT,
+                        directTimeout: DIRECT_TIMEOUT
+                    });
+                    row = (d && d.songs && d.songs[0]) || null;
+                } catch (_) {
+                    row = null;
+                }
+                detailMemo.set(key, row);
+                return row;
+            }
+
+            async function fillDurationFor(song) {
+                if (!song || !song.id) return false;
+                const cur = Number(song.duration) || 0;
+                if (cur > 0) return false;
+                const row = await fetchNeteaseDetail(song.id);
+                const ms = neteaseRowDuration(row);
+                if (ms <= 0) return false;
+                song.duration = ms;
+                const idx = currentSongs.findIndex(
+                    s => String(s.id) === String(song.id));
+                if (idx >= 0 && !(Number(currentSongs[idx].duration) > 0)) {
+                    currentSongs[idx].duration = ms;
+                }
+                return true;
+            }
+
+            const picIdMemo = new Map();
+
+            async function resolvePicId(song) {
+                if (!song) return '';
+                if (song.picIdExact && song.picId) return String(song.picId);
+                const key = normKey(song.name) + '|' +
+                            normKey(String(song.artistsname || '').split(/[,，、/／&]/)[0]);
+                if (picIdMemo.has(key)) return picIdMemo.get(key);
+                let found = '';
+                try {
+                    const q = song.name + (song.artistsname
+                        ? ' ' + String(song.artistsname).split(/[,，、/／&]/)[0] : '');
+                    const list = await neteaseSearch(q, 5);
+                    const hit = pickBestMatch(list, song.name, song.artistsname);
+                    if (hit) {
+                        found = hit.picId;
+                        song.picId = found;
+                        song.picIdExact = true;
+                    }
+                } catch (_) {}
+                picIdMemo.set(key, found);
+                return found;
+            }
+
+            function normalizeCoverUrl(u) {
+                if (!u || typeof u !== 'string') return u;
+                if (!/music\.126\.net\//i.test(u)) return u;
+                const base = u.split('?')[0];
+                return base + '?param=300y300';
+            }
+
+            async function coverOf(id, picId, song) {
+                const byNetease = async () => {
+                    const r = await neteaseCoverTask(id);
+                    if (song && r.picId) {
+                        song.picId = String(r.picId);
+                        song.picIdExact = true;
+                    }
+                    return { url: r.url };
+                };
+                const byXfabe = async () => {
                     const d = await xfabeGet(XFABE_BASE + '/music?type=json&id=' +
                         encodeURIComponent(id));
                     const src = d.data && d.data.picurl;
                     if (!src) throw new Error('xfabe 未返回封面');
-                    return { url: src };
+                    return { url: normalizeCoverUrl(src) };
                 };
-                return primaryThenRace(primary, [gdCoverTask(id)], '封面');
+                const byGd = async () => {
+                    const pid = (song && song.picIdExact && song.picId)
+                        ? song.picId
+                        : (song && await resolvePicId(song));
+                    if (!pid) throw new Error('未取到 pic_id');
+                    const r = await gdCoverTask(id, pid);
+                    return { url: normalizeCoverUrl(r.url) };
+                };
+                return primaryThenRace(byNetease, [byXfabe, byGd], '封面');
             }
 
             function gdLrcTask(id) {
@@ -11520,6 +12063,8 @@
             const LYRIC_ANCHOR_DESK = 0.35;
             const LYRIC_ANCHOR_MOBILE = 0.25;
 
+            const LYRICS_RESUME_DELAY = 2600;
+
             function lyricAnchorRatio() {
                 return isDeskLyricsVisible() ? LYRIC_ANCHOR_DESK : LYRIC_ANCHOR_MOBILE;
             }
@@ -11551,7 +12096,7 @@
 
             function applyLyricsVeilHeight(viewportH) {
                 if (!lyricsScrollWrap) return;
-                const h = Math.min(92, Math.round(viewportH * 0.13));
+                const h = Math.min(68, Math.round(viewportH * 0.095));
                 const val = h + 'px';
 
                 if (lyricsScrollWrap.style.getPropertyValue('--lyrics-veil-h') !== val) {
@@ -11566,6 +12111,11 @@
                     }
                     if (lyricsPage.style.getPropertyValue('--lyrics-veil-h') !== val) {
                         lyricsPage.style.setProperty('--lyrics-veil-h', val);
+                    }
+
+                    const holdVal = Math.round(hh) + 'px';
+                    if (lyricsPage.style.getPropertyValue('--veil-hold') !== holdVal) {
+                        lyricsPage.style.setProperty('--veil-hold', holdVal);
                     }
                 }
             }
@@ -11648,7 +12198,7 @@
                     lyricsLines[idx].classList.add('active');
                     lyricsLayoutDirty = true;
                 }
-                if (wantDesk) syncDeskLyricsHighlight(activeIdx);
+                if (wantDesk) syncDeskLyricsHighlight(idx);
 
                 syncCoverLyric(idx);
 
@@ -12520,6 +13070,7 @@
                 }
 
                 playStarting = true;
+                resumeSaveMuted = false;
 
                 if (currentSong && String(currentSong.id) !== String(song.id)) {
                     lastSong = currentSong;
@@ -12551,7 +13102,6 @@
                 currentSong = song;
                 if (keepPaused) pendingPauseAfterSeek = true;
 
-
                 if (typeof seekTo !== 'number' && restoreSeekTime > 0
                     && restoredSongId !== null && restoredSongId === String(song.id)) {
                     seekTo = restoreSeekTime;
@@ -12569,6 +13119,7 @@
                 miniSongTitle.textContent = song.name || '未知歌曲';
                 miniSongArtist.textContent = song.artistsname || '未知歌手';
                 setCoverSrc(albumCoverBox, albumCover, song.picurl);
+                updateDiscGlow(song.picurl);
 
                 if (!song.picurl) backfillCoverFor(song);
                 fullSongName.textContent = song.name || '未知歌曲';
@@ -12821,6 +13372,7 @@
 
                 myAudio.addEventListener('error', () => {
                     if (myAudio !== currentAudio) return;
+
                     console.error('音频元素出错:', myAudio.error && myAudio.error.code);
                     if (retryFreshUrl()) return;
                     failPlayback(song, '播放出错');
@@ -13243,7 +13795,17 @@
                     const art = [];
 
                     const pic = song.picurl || knownPicurlOf(song.id);
-                    art.push({ src: pic || MKY_DISC_COVER, sizes: '300x300', type: 'image/png' });
+
+                    if (pic && !/^data:/i.test(pic)) {
+                        art.push({ src: pic, sizes: '300x300', type: 'image/jpeg' });
+                        art.push({ src: pic, sizes: '512x512', type: 'image/jpeg' });
+                    }
+
+                    art.push({
+                        src: song.__msFallback || MS_FALLBACK_COVER,
+                        sizes: '300x300',
+                        type: 'image/png'
+                    });
 
                     navigator.mediaSession.metadata = new window.MediaMetadata({
                         title: song.name || '未知歌曲',
@@ -13268,7 +13830,6 @@
                 if (mediaSessionBound) return;
                 const ms = navigator.mediaSession;
                 mediaSessionBound = true;
-
 
                 const safe = (fn) => {
                     try { fn(); } catch (_) {}
@@ -13589,6 +14150,8 @@
                 lyricsLayoutDirty = true;
                 activeLyricIdx = -1;
                 isLyricsScrolling = true;
+                lyricsDownTarget = null;
+                clearTimeout(scrollTimeout);
                 stopLyricsTick();
 
                 updatePlayButtons();
@@ -14089,6 +14652,44 @@
                 renderFavorites('');
             }
 
+            let lyricsDownTarget = null;
+
+            function isTouchDragging(el) {
+                return lyricsDownTarget === el;
+            }
+
+            function bindLyricsPressTracking(el, armFn) {
+                const down = () => { lyricsDownTarget = el; };
+                const up = () => {
+                    if (lyricsDownTarget !== el) return;
+                    lyricsDownTarget = null;
+                    armFn(el);
+                };
+                el.addEventListener('touchstart', down, { passive: true });
+                el.addEventListener('touchend', up, { passive: true });
+                el.addEventListener('touchcancel', up, { passive: true });
+                el.addEventListener('mousedown', down);
+                window.addEventListener('mouseup', up);
+            }
+
+            function armLyricsResume(el) {
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                    if (lyricsDownTarget === el) return;
+                    isLyricsScrolling = true;
+
+                    if (el === lyricsContainer) {
+                        if (lyricsPage.classList.contains('active')) {
+                            lyricsLayoutDirty = true;
+                            lyricsTick();
+                        }
+                    } else if (isDeskLyricsVisible()) {
+                        lyricsLayoutDirty = true;
+                        lyricsTick();
+                    }
+                }, LYRICS_RESUME_DELAY);
+            }
+
             lyricsContainer.addEventListener('scroll', () => {
 
                 if (isProgrammaticScroll) return;
@@ -14096,15 +14697,10 @@
                 isLyricsScrolling = false;
 
                 mainSpring.stop();
-                clearTimeout(scrollTimeout);
-                scrollTimeout = setTimeout(() => {
-                    isLyricsScrolling = true;
 
-                    if (lyricsPage.classList.contains('active')) {
-                        lyricsLayoutDirty = true;
-                        lyricsTick();
-                    }
-                }, 1200);
+                if (isTouchDragging(lyricsContainer)) return;
+
+                armLyricsResume(lyricsContainer);
             }, { passive: true });
 
             lyricsContainer.addEventListener('click', (e) => {
@@ -14117,16 +14713,11 @@
                 playerLyricsInner.addEventListener('scroll', () => {
                     if (deskLyricsProgrammatic) return;
                     isLyricsScrolling = false;
-
                     deskSpring.stop();
-                    clearTimeout(scrollTimeout);
-                    scrollTimeout = setTimeout(() => {
-                        isLyricsScrolling = true;
-                        if (isDeskLyricsVisible()) {
-                            lyricsLayoutDirty = true;
-                            lyricsTick();
-                        }
-                    }, 1200);
+
+                    if (isTouchDragging(playerLyricsInner)) return;
+
+                    armLyricsResume(playerLyricsInner);
                 }, { passive: true });
 
                 playerLyricsInner.addEventListener('click', (e) => {
@@ -14134,6 +14725,11 @@
                     if (!line || !line.dataset.time) return;
                     seekToLyricTime(parseFloat(line.dataset.time));
                 });
+            }
+
+            bindLyricsPressTracking(lyricsContainer, armLyricsResume);
+            if (playerLyricsInner) {
+                bindLyricsPressTracking(playerLyricsInner, armLyricsResume);
             }
 
             document.addEventListener('visibilitychange', () => {
@@ -14210,6 +14806,7 @@
                 miniSongArtist.textContent = 'MKY音乐';
 
                 setCoverSrc(albumCoverBox, albumCover, '');
+                updateDiscGlow('');
                 fullSongName.textContent = 'MKY音乐';
                 fullArtistName.textContent = 'MKY音乐';
                 lyricsSongName.textContent = 'MKY音乐';
@@ -14266,6 +14863,7 @@
                 miniSongTitle.textContent = target.name || '未知歌曲';
                 miniSongArtist.textContent = target.artistsname || '未知歌手';
                 setCoverSrc(albumCoverBox, albumCover, target.picurl);
+                updateDiscGlow(target.picurl);
                 fullSongName.textContent = target.name || '未知歌曲';
                 fullArtistName.textContent = target.artistsname || '未知歌手';
                 lyricsSongName.textContent = target.name || '未知歌曲';
@@ -14279,6 +14877,8 @@
                 currentTimeEl.textContent = formatTime(t);
                 if (dur > 0) totalTimeEl.textContent = formatTime(dur);
 
+                if (dur <= 0) refreshRestoredDuration(target);
+
                 restoreSeekTime = t;
                 restoredSongId = String(target.id);
 
@@ -14291,6 +14891,21 @@
                 loadLyrics(target.id);
 
                 showMiniPlayer();
+            }
+
+            function refreshRestoredDuration(song) {
+                fillDurationFor(song).then(ok => {
+                    if (!ok) return;
+                    if (currentAudio) return;
+                    if (!currentSong || String(currentSong.id) !== String(song.id)) return;
+                    const total = (Number(song.duration) || 0) / 1000;
+                    if (total <= 0) return;
+                    totalTimeEl.textContent = formatTime(total);
+                    const cur = restoredTime || 0;
+                    progress.style.width =
+                        Math.min(100, (cur / total) * 100) + '%';
+                    renderSongListDebounced();
+                }).catch(() => {});
             }
 
             function adoptRestoredIntoQueue() {
@@ -14399,7 +15014,8 @@
                     get playlists() { return playlists; },
                     get activeTab() { return activeTab; },
                     get activeChart() { return activeChart; },
-                    setLyrics(data) {                        lyricsData = data || [];
+                    setLyrics(data) {
+                        lyricsData = data || [];
                         renderLyrics();
                         cacheLyricsOffsets();
                     },
