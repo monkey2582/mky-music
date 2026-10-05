@@ -400,9 +400,7 @@
             transform: none;
             -webkit-transform: none;
         }
-        .mdui-dialog-prompt .mdui-textfield-input,
-        .mdui-dialog-prompt .mdui-textfield-input:not([disabled]):hover,
-        .mdui-dialog-prompt .mdui-textfield-input:focus {
+        .mdui-dialog-prompt .mdui-textfield-input {
             display: block;
             width: calc(100% - 44px);
             height: 44px;
@@ -422,8 +420,20 @@
             outline: none;
             transition: border-color 0.18s, background-color 0.18s;
         }
-        .mdui-dialog-prompt .mdui-textfield-input:focus {
+        .mdui-dialog-prompt .mdui-textfield-input:hover {
+            border-color: var(--border-popover);
+        }
+        .mdui-dialog-prompt .mdui-textfield.mdui-textfield-focus .mdui-textfield-input {
             border-color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        .mdui-dialog-prompt .mdui-textfield .mdui-textfield-input,
+        .mdui-dialog-prompt .mdui-textfield .mdui-textfield-input:hover,
+        .mdui-dialog-prompt .mdui-textfield .mdui-textfield-input:focus,
+        .mdui-dialog-prompt .mdui-textfield.mdui-textfield-focus .mdui-textfield-input,
+        .mdui-dialog-prompt .mdui-textfield.mdui-textfield-focus .mdui-textfield-input:hover {
+            -webkit-box-shadow: none !important;
+            box-shadow: none !important;
         }
         .mdui-dialog-prompt .mdui-textfield-input::placeholder {
             color: var(--text-secondary);
@@ -5820,7 +5830,7 @@
         <div class="about-body">
             <div class="about-logo" id="about-logo" role="button" tabindex="0" aria-label="MKY音乐"><svg class="brand-disc" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="bdisc-about" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3d77"/><stop offset="1" stop-color="#c2185b"/></linearGradient><linearGradient id="bdisc-sheen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.34" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.46" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.54" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.66" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient><clipPath id="bdisc-clip"><circle cx="32" cy="32" r="30"/></clipPath></defs><g class="disc-spin"><circle cx="32" cy="32" r="30" fill="#141418"/><circle cx="32" cy="32" r="30" fill="none" stroke="#ffffff" stroke-opacity=".14" stroke-width="2.6"/><circle cx="32" cy="32" r="21" fill="none" stroke="#ffffff" stroke-opacity=".10" stroke-width="1.5"/><circle cx="32" cy="32" r="14" fill="none" stroke="#ffffff" stroke-opacity=".08" stroke-width="1.5"/><circle cx="32" cy="32" r="12" fill="url(#bdisc-about)"/><circle cx="32" cy="32" r="3.4" fill="#141418"/><g clip-path="url(#bdisc-clip)"><rect class="disc-sheen" x="-16" y="-16" width="96" height="96" fill="url(#bdisc-sheen)"/></g></g></svg></div>
             <div class="about-name">MKY音乐</div>
-            <div class="about-version">版本 1.7</div>
+            <div class="about-version">版本 1.6</div>
             <div class="about-slogan">把每一处细节听懂<br>把听歌这件事做好</div>
 
             <div class="about-links">
