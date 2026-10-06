@@ -5830,7 +5830,7 @@
         <div class="about-body">
             <div class="about-logo" id="about-logo" role="button" tabindex="0" aria-label="MKY音乐"><svg class="brand-disc" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="bdisc-about" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3d77"/><stop offset="1" stop-color="#c2185b"/></linearGradient><linearGradient id="bdisc-sheen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.34" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.46" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.54" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.66" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient><clipPath id="bdisc-clip"><circle cx="32" cy="32" r="30"/></clipPath></defs><g class="disc-spin"><circle cx="32" cy="32" r="30" fill="#141418"/><circle cx="32" cy="32" r="30" fill="none" stroke="#ffffff" stroke-opacity=".14" stroke-width="2.6"/><circle cx="32" cy="32" r="21" fill="none" stroke="#ffffff" stroke-opacity=".10" stroke-width="1.5"/><circle cx="32" cy="32" r="14" fill="none" stroke="#ffffff" stroke-opacity=".08" stroke-width="1.5"/><circle cx="32" cy="32" r="12" fill="url(#bdisc-about)"/><circle cx="32" cy="32" r="3.4" fill="#141418"/><g clip-path="url(#bdisc-clip)"><rect class="disc-sheen" x="-16" y="-16" width="96" height="96" fill="url(#bdisc-sheen)"/></g></g></svg></div>
             <div class="about-name">MKY音乐</div>
-            <div class="about-version">版本 1.6</div>
+            <div class="about-version">版本 1.8</div>
             <div class="about-slogan">把每一处细节听懂<br>把听歌这件事做好</div>
 
             <div class="about-links">
@@ -11145,7 +11145,7 @@
                 activeLyricIdx = -1;
             }
 
-            const YRC_ORIGIN = 'https://music.163.com/api/song/lyric?os=pc&lv=-1&yv=-1&ytv=-1&id=';
+            const YRC_ORIGIN = 'https://music.163.com/api/song/lyric?os=pc&lv=-1&tv=-1&rv=-1&yv=-1&ytv=-1&id=';
 
             const CF_PROXY = 'https://mky-proxy.pages.dev/api';
 
@@ -11719,37 +11719,29 @@
                 return primaryThenRace(byNetease, [byXfabe, byGd], '封面');
             }
 
-            function gdLrcTask(id) {
-                return async () => {
-                    const d = await fetchDirectOrProxy(
-                        GD_BASE + '?types=lyric&source=netease&id=' +
-                        encodeURIComponent(id),
-                        { timeout: RACE_TIMEOUT });
-                    if (!d || !d.lyric) throw new Error('gdstudio 未返回歌词');
-                    const rows = parseLyrics(d.lyric);
-                    if (!rows.length) throw new Error('歌词解析为空');
-                    const trans = d.tlyric
-                        ? alignTranslation(parseLyrics(d.tlyric), rows) : [];
-                    return { rows, trans };
-                };
+            async function fetchGdLrc(id) {
+                const d = await fetchDirectOrProxy(
+                    GD_BASE + '?types=lyric&source=netease&id=' +
+                    encodeURIComponent(id),
+                    { timeout: RACE_TIMEOUT });
+                if (!d || !d.lyric) throw new Error('gdstudio 未返回歌词');
+                const rows = parseLyrics(d.lyric);
+                if (!rows.length) throw new Error('歌词解析为空');
+                const rawTrans = pickTransRaw(d);
+                const trans = transRowsOf(rawTrans, rows);
+                return { rows, trans };
             }
 
-            async function lrcOf(id) {
-                const primary = async () => {
-                    const d = await xfabeGet(XFABE_BASE + '/lyrics?id=' +
-                        encodeURIComponent(id));
-                    const raw = d.data && d.data.lyric;
-                    if (!raw) throw new Error('xfabe 未返回歌词');
-                    const rows = parseLyrics(raw);
-                    if (!rows.length) throw new Error('歌词解析为空');
-
-                    const rawTrans = d.data.tlyric || d.data.translation ||
-                                     d.data.trans || null;
-                    const trans = rawTrans
-                        ? alignTranslation(parseLyrics(rawTrans), rows) : [];
-                    return { rows, trans };
-                };
-                return primaryThenRace(primary, [gdLrcTask(id)], '歌词');
+            async function fetchXfabeLrc(id) {
+                const d = await xfabeGet(XFABE_BASE + '/lyrics?id=' +
+                    encodeURIComponent(id));
+                const raw = d.data && d.data.lyric;
+                if (!raw) throw new Error('xfabe 未返回歌词');
+                const rows = parseLyrics(raw);
+                if (!rows.length) throw new Error('歌词解析为空');
+                const rawTrans = pickTransRaw(d.data) || pickTransRaw(d);
+                const trans = transRowsOf(rawTrans, rows);
+                return { rows, trans };
             }
 
             function parseYRC(raw) {
@@ -11781,40 +11773,110 @@
                 return rows;
             }
 
+            const TRANS_MATCH_TOL = 0.9;
+
             function alignTranslation(transRows, rows) {
                 if (!transRows || transRows.length === 0 || rows.length === 0) return [];
                 const out = new Array(rows.length).fill('');
+
                 let ti = 0;
                 for (let i = 0; i < rows.length; i++) {
                     const t = rows[i].time;
-
-                    while (ti < transRows.length && transRows[ti].time < t - 0.35) ti++;
+                    while (ti < transRows.length &&
+                           transRows[ti].time < t - TRANS_MATCH_TOL) ti++;
                     if (ti < transRows.length &&
-                        Math.abs(transRows[ti].time - t) <= 0.35) {
+                        Math.abs(transRows[ti].time - t) <= TRANS_MATCH_TOL) {
                         out[i] = transRows[ti].text;
                     }
+                }
+
+                const hit = out.filter(t => !!t).length;
+                if (hit === 0 || hit / rows.length < 0.3) {
+                    const byIndex = new Array(rows.length).fill('');
+                    let ok = 0;
+                    for (let i = 0; i < rows.length && i < transRows.length; i++) {
+                        const txt = transRows[i].text;
+                        if (!txt) continue;
+                        byIndex[i] = txt;
+                        ok++;
+                    }
+                    if (ok > hit) return byIndex;
                 }
                 return out;
             }
 
-            async function fetchYRC(id) {
-                const data = await fetchDirectOrProxy(
-                    YRC_ORIGIN + encodeURIComponent(id),
-                    { forceProxy: true }
-                );
-                if (data.code !== 200) throw new Error(data.msg || '接口返回异常');
-                const raw = data.yrc && data.yrc.lyric;
-                if (!raw) throw new Error('该曲无逐字歌词');
-                const rows = parseYRC(raw);
-                if (rows.length === 0) throw new Error('逐字歌词解析为空');
-                const transRaw = data.ytlrc && data.ytlrc.lyric;
-                const trans = transRaw ? alignTranslation(parseLyrics(transRaw), rows) : [];
-                return { rows, trans };
+            function pickTransRaw(d) {
+                if (!d || typeof d !== 'object') return null;
+                const direct = d.tlyric || d.translation || d.trans ||
+                               d.translate || d.tlyricText;
+                if (typeof direct === 'string' && direct.trim()) return direct;
+                const nests = [d.data, d.lyric, d.result, d.song];
+                for (const box of nests) {
+                    if (!box || typeof box !== 'object') continue;
+                    const v = box.tlyric || box.translation || box.trans ||
+                              box.translate;
+                    if (typeof v === 'string' && v.trim()) return v;
+                }
+                return null;
             }
 
-            async function fetchLRC(id) {
+            function transRowsOf(raw, rows) {
+                if (!raw || typeof raw !== 'string' || !raw.trim()) return [];
+                const parsed = parseLyrics(raw);
+                if (parsed.length > 0) return alignTranslation(parsed, rows);
+                const plain = raw.split('\n').map(t => t.trim()).filter(Boolean);
+                if (plain.length === 0) return [];
+                const fake = plain.map((text, i) => ({
+                    time: rows[Math.min(i, rows.length - 1)].time,
+                    text
+                }));
+                return alignTranslation(fake, rows);
+            }
 
-                return await lrcOf(id);
+            let neteaseLyricMemo = new Map();
+
+            function neteaseLyric(id) {
+                const key = String(id);
+                if (neteaseLyricMemo.has(key)) return neteaseLyricMemo.get(key);
+                const p = fetchDirectOrProxy(
+                    YRC_ORIGIN + encodeURIComponent(id),
+                    { forceProxy: true }
+                ).then(d => {
+                    if (!d || d.code !== 200) {
+                        throw new Error((d && d.msg) || '接口返回异常');
+                    }
+                    return d;
+                }).catch(e => {
+                    neteaseLyricMemo.delete(key);
+                    throw e;
+                });
+                neteaseLyricMemo.set(key, p);
+                return p;
+            }
+
+            async function fetchYRC(id) {
+                const data = await neteaseLyric(id);
+                const transRaw = (data.ytlrc && data.ytlrc.lyric) ||
+                                 pickTransRaw(data);
+                const rawYrc = data.yrc && data.yrc.lyric;
+                if (!rawYrc) throw new Error('该曲无逐字歌词');
+                const rows = parseYRC(rawYrc);
+                if (rows.length === 0) throw new Error('逐字歌词解析为空');
+                const trans = transRowsOf(transRaw, rows);
+                return { rows, trans, timed: true };
+            }
+
+            async function fetchNeteaseLrc(id) {
+                const data = await neteaseLyric(id);
+                const raw = data.lrc && data.lrc.lyric;
+                if (!raw) throw new Error('网易云未返回歌词');
+                const rows = parseLyrics(raw);
+                if (rows.length === 0) throw new Error('歌词解析为空');
+                const transRaw = (data.tlyric && data.tlyric.lyric) ||
+                                 (data.rlyric && data.rlyric.lyric) ||
+                                 pickTransRaw(data);
+                const trans = transRowsOf(transRaw, rows);
+                return { rows, trans, timed: false };
             }
 
             const lyricCache = new Map();
@@ -11846,71 +11908,52 @@
                 if (hit) {
                     lyricsData = hit.rows;
                     lyricsTrans = hit.trans || [];
-                    lyricsHasTiming = true;
+                    lyricsHasTiming = hit.timed !== false;
                     renderLyrics();
                     syncTransButtons();
                     return;
                 }
 
-                let firstShown = false;
-                let yrcDone = false;
-                let lrcTrans = [];
-                let yrcTrans = null;
+                const hasAnyTrans = arr => !!(arr && arr.some(t => !!t));
 
-                const pickTrans = () => {
-                    const y = yrcTrans && yrcTrans.length ? yrcTrans : null;
-                    if (y) return y;
-                    return lrcTrans && lrcTrans.length ? lrcTrans : [];
+                const show = (picked) => {
+                    if (lyricsId !== id) return false;
+                    lyricsData = picked.rows;
+                    lyricsTrans = picked.trans || [];
+                    lyricsHasTiming = picked.timed !== false;
+                    renderLyrics();
+                    syncTransButtons();
+                    return true;
                 };
 
-                const lrcTask = fetchLRC(id).then(({ rows, trans }) => {
+                const tasks = [
+                    () => fetchYRC(id),
+                    () => fetchNeteaseLrc(id),
+                    () => fetchXfabeLrc(id),
+                    () => fetchGdLrc(id)
+                ];
+
+                for (const run of tasks) {
                     if (lyricsId !== id) return;
-                    lrcTrans = trans || [];
-                    if (yrcDone) {
-                        const hadTrans = lyricsTrans.some(t => !!t);
-                        const merged = pickTrans();
-                        if (!hadTrans && merged.some(t => !!t)) {
-                            lyricsTrans = merged;
-                            renderLyrics();
-                            syncTransButtons();
+                    try {
+                        const picked = await run();
+                        if (!picked || !picked.rows || picked.rows.length === 0) {
+                            continue;
+                        }
+                        if (show(picked)) {
+                            cacheLyrics(id, {
+                                rows: picked.rows,
+                                trans: picked.trans || [],
+                                timed: picked.timed !== false
+                            });
+                            return;
                         }
                         return;
+                    } catch (_) {
                     }
-                    firstShown = true;
-                    lyricsData = rows;
-                    lyricsTrans = pickTrans();
-                    lyricsHasTiming = false;
-                    renderLyrics();
-                    syncTransButtons();
-                }).catch(() => {
+                }
 
-                });
-
-                const yrcTask = fetchYRC(id).then(({ rows, trans }) => {
-                    if (lyricsId !== id) return;
-                    yrcDone = true;
-                    yrcTrans = trans || [];
-                    lyricsData = rows;
-                    lyricsTrans = pickTrans();
-                    lyricsHasTiming = true;
-                    renderLyrics();
-                    syncTransButtons();
-                }).catch(e => {
-
-                    console.warn('逐字歌词不可用:', e.message);
-                });
-
-                await Promise.allSettled([lrcTask, yrcTask]);
                 if (lyricsId !== id) return;
-
-                if (yrcDone) {
-                    cacheLyrics(id, { rows: lyricsData, trans: pickTrans() });
-                    return;
-                }
-                if (firstShown) {
-                    cacheLyrics(id, { rows: lyricsData, trans: pickTrans() });
-                    return;
-                }
                 setLyricsPlaceholder('暂无歌词', true);
             }
 
