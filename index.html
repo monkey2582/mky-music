@@ -11775,6 +11775,12 @@
 
             const TRANS_MATCH_TOL = 0.9;
 
+            const CREDIT_PREFIX = /^\s*(作词|作曲|编曲|制作人|监制|出品|出品人|录音|录音室|录音师|人声录音|混音|母带|吉他|贝斯|鼓|键盘|钢琴|弦乐|和声|合声|配唱|program|producer|lyricist|composer|arranger|mixing|mastering|recording|guitar|bass|drums|piano|strings|vocal|chorus|op|sp|词版权|曲版权|词曲版权)\s*[:：]/i;
+
+            function isCreditLine(text) {
+                return !!text && CREDIT_PREFIX.test(text);
+            }
+
             function alignTranslation(transRows, rows) {
                 if (!transRows || transRows.length === 0 || rows.length === 0) return [];
                 const out = new Array(rows.length).fill('');
@@ -11786,7 +11792,7 @@
                            transRows[ti].time < t - TRANS_MATCH_TOL) ti++;
                     if (ti < transRows.length &&
                         Math.abs(transRows[ti].time - t) <= TRANS_MATCH_TOL) {
-                        out[i] = transRows[ti].text;
+                        if (!isCreditLine(rows[i].text)) out[i] = transRows[ti].text;
                     }
                 }
 
@@ -11794,8 +11800,11 @@
                 if (hit === 0 || hit / rows.length < 0.3) {
                     const byIndex = new Array(rows.length).fill('');
                     let ok = 0;
-                    for (let i = 0; i < rows.length && i < transRows.length; i++) {
-                        const txt = transRows[i].text;
+                    for (let i = 0, k = 0; i < rows.length; i++) {
+                        if (isCreditLine(rows[i].text)) continue;
+                        if (k >= transRows.length) break;
+                        const txt = transRows[k].text;
+                        k++;
                         if (!txt) continue;
                         byIndex[i] = txt;
                         ok++;
@@ -11826,8 +11835,10 @@
                 if (parsed.length > 0) return alignTranslation(parsed, rows);
                 const plain = raw.split('\n').map(t => t.trim()).filter(Boolean);
                 if (plain.length === 0) return [];
+                const lyricRows = rows.filter(r => !isCreditLine(r.text));
+                if (lyricRows.length === 0) return [];
                 const fake = plain.map((text, i) => ({
-                    time: rows[Math.min(i, rows.length - 1)].time,
+                    time: lyricRows[Math.min(i, lyricRows.length - 1)].time,
                     text
                 }));
                 return alignTranslation(fake, rows);
