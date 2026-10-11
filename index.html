@@ -11,7 +11,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="MKY音乐" />
     <script>
-    (function () {
+        (function () {
             'use strict';
             let t;
             try { t = localStorage.getItem('mky_theme'); } catch (_) {}
@@ -29,8 +29,9 @@
             } catch (_) {}
         })();
     </script>
+
     <script>
-    (function () {
+        (function () {
             'use strict';
             const liveAudio = new Set();
             const audioState = new WeakMap();
@@ -234,6 +235,7 @@
             };
         })();
     </script>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/mdui@0.4.3/dist/css/mdui.min.css" />
     <script src="https://fastly.jsdelivr.net/npm/mdui@0.4.3/dist/js/mdui.min.js"></script>
@@ -307,7 +309,7 @@ body.tab-bar-hidden .tab-bar { transform:translateY(100%);opacity:0;pointer-even
 .chart-chip[data-chart=\65b0\6b4c\699c] { --chip-color:#22c55e;--chip-glow:rgba(34, 197, 94, 0.35); }
 .chart-chip[data-chart=\98d9\5347\699c] { --chip-color:#a855f7;--chip-glow:rgba(168, 85, 247, 0.35); }
 .chart-chip[data-chart=\539f\521b\699c] { --chip-color:#38bdf8;--chip-glow:rgba(56, 189, 248, 0.35); }
-.chart-chip { flex-shrink:0;border:1px solid var(--border);background:var(--surface-card);color:var(--text-secondary);font-size:13px;padding:7px 16px;border-radius:999px;cursor:pointer;transition:all 0.24s cubic-bezier(0.25,0.46,0.45,0.94);white-space:nowrap; }
+.chart-chip { flex-shrink:0;border:1px solid var(--border);background:var(--surface-card);color:var(--text-secondary);font-size:13px;padding:7px 16px;border-radius:999px;cursor:pointer;transition:background 0.24s cubic-bezier(0.25,0.46,0.45,0.94),color 0.24s,border-color 0.24s;white-space:nowrap; }
 .chart-chip:hover { background:var(--surface-hover-strong);color:var(--text-primary); }
 .chart-chip.active { background:var(--chip-color, var(--primary));border-color:var(--chip-color, var(--primary));color:#fff;font-weight:600;text-shadow:0 1px 2px rgba(0,0,0,0.28); }
 .mine-list { display:flex;flex-direction:column;gap:8px;margin-bottom:16px; }
@@ -401,7 +403,7 @@ body.mine-tab .fab-stack.show { opacity:1;transform:scale(1);pointer-events:all;
 .input-clear.show { opacity:1;pointer-events:all;transform:translateY(-50%) scale(1); }
 @media (hover:hover)and (pointer:fine) { .input-clear.show:hover { background:rgba(233,30,99,0.9);color:#fff; } }
 .input-clear.show:active { background:rgba(233,30,99,0.9);color:#fff;transform:translateY(-50%) scale(0.86); }
-.search-input { flex:1;background:var(--glass-panel);-webkit-backdrop-filter:blur(var(--glass-blur-soft)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-soft)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));border:1px solid var(--glass-edge);border-radius:60px;padding:12px 22px;color:var(--text-primary);font-size:15px;outline:none;transition:all var(--transition); }
+.search-input { flex:1;background:var(--glass-panel);-webkit-backdrop-filter:blur(var(--glass-blur-soft)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-soft)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));border:1px solid var(--glass-edge);border-radius:60px;padding:12px 22px;color:var(--text-primary);font-size:15px;outline:none;transition:border-color 0.22s,box-shadow 0.22s; }
 .search-input:focus { background:var(--surface-input-focus);border-color:rgba(233,30,99,0.30);box-shadow:0 0 0 3px rgba(233,30,99,0.08); }
 .search-input::placeholder { color:var(--text-faint); }
 .search-btn { background:var(--primary);border:none;border-radius:60px;width:46px;height:46px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;flex-shrink:0;box-shadow:0 4px 16px rgba(233,30,99,0.25); }
@@ -411,11 +413,20 @@ body.mine-tab .fab-stack.show { opacity:1;transform:scale(1);pointer-events:all;
 .fav-entry-btn:hover { transform:scale(1.05);background:var(--surface-control);box-shadow:0 4px 20px rgba(233,30,99,0.25); }
 .fav-entry-btn:active { transform:scale(0.95); }
 .fav-entry-btn i { font-size:16px; }
-.search-history { position:absolute;top:calc(100% + 8px);left:0;right:0;background:var(--glass-panel-strong);-webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));border:1px solid var(--glass-edge);border-radius:16px;max-height:340px;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none;overscroll-behavior:contain;box-shadow:var(--shadow-dropdown);z-index:1100;display:none;opacity:0;transition:opacity 0.2s; }
+html:not(.no-glass).theme-switch,html:not(.no-glass).theme-switch *,html:not(.no-glass).theme-switch *::before,html:not(.no-glass).theme-switch *::after { transition:none!important; }
+html.no-glass,html.no-glass *,html.no-glass *::before,html.no-glass *::after { -webkit-backdrop-filter:none!important;backdrop-filter:none!important; }
+html.no-glass,html.no-glass[data-theme=dark] { --glass-panel:rgba(22,22,28,0.96);--glass-panel-strong:rgba(19,19,25,0.97);--glass-panel-heavy:rgba(20,20,26,0.95);--glass-blur:0px;--glass-blur-soft:0px;--glass-blur-bar:0px;--glass-blur-strong:0px;--glass-blur-heavy:0px; }
+html.no-glass[data-theme=light] { --glass-panel:rgba(255,255,255,0.97);--glass-panel-strong:rgba(255,255,255,0.98);--glass-panel-heavy:rgba(255,255,255,0.96);--glass-blur:0px;--glass-blur-soft:0px;--glass-blur-bar:0px;--glass-blur-strong:0px;--glass-blur-heavy:0px; }
+html.no-glass .chart-chip { transition:all 0.24s cubic-bezier(0.25,0.46,0.45,0.94); }
+html.no-glass .search-input { transition:all var(--transition); }
+html.no-glass .sh-del { transition:all 0.2s; }
+html.no-glass .song-fav-btn { transition:all 0.2s; }
+html.no-glass .pl-pick-check { transition:all 0.2s; }
+.search-history { position:absolute;top:calc(100% + 8px);left:0;right:0;background:var(--glass-panel-strong);-webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));border:1px solid var(--glass-edge);border-radius:16px;max-height:340px;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none;overscroll-behavior:contain;box-shadow:var(--shadow-dropdown);z-index:1100;display:block;visibility:hidden;opacity:0;pointer-events:none;transition:opacity 0.2s,visibility 0s linear 0.2s; }
 .search-history::-webkit-scrollbar { display:none;width:0;height:0; }
-.search-history.active { display:block;opacity:1; }
+.search-history.active { visibility:visible;opacity:1;pointer-events:auto;transition:opacity 0.2s,visibility 0s; }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .search-history { background:var(--bg-popover); } }
-.history-header { padding:9px 18px;font-size:13px;color:var(--text-secondary);display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-subtle);position:sticky;top:0;background:var(--popover-solid);z-index:2;border-radius:16px 16px 0 0; }
+.history-header { padding:9px 18px;min-height:40px;box-sizing:border-box;font-size:13px;color:var(--text-secondary);display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-subtle);position:sticky;top:0;background:var(--popover-solid);z-index:2;border-radius:16px 16px 0 0; }
 .clear-history { width:22px;height:22px;flex-shrink:0;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;line-height:1;color:var(--text-secondary);opacity:0.6;cursor:pointer;background:transparent;border:none;padding:0;user-select:none;transition:color 0.2s,opacity 0.2s,background 0.2s; }
 .clear-history:hover { opacity:1;color:#ff4d6d; }
 .clear-history:active { transform:scale(0.92); }
@@ -423,7 +434,7 @@ body.mine-tab .fab-stack.show { opacity:1;transform:scale(1);pointer-events:all;
 .search-history-item:hover { background:var(--surface-card); }
 .search-history-item .sh-icon { font-size:11px;opacity:0.45;flex-shrink:0; }
 .search-history-item .sh-text { flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
-.sh-del { flex-shrink:0;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;color:var(--text-secondary);opacity:0.45;background:transparent;border:none;cursor:pointer;transition:all 0.2s; }
+.sh-del { flex-shrink:0;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;color:var(--text-secondary);opacity:0.45;background:transparent;border:none;cursor:pointer;transition:color 0.2s,opacity 0.2s; }
 .sh-del:hover { opacity:1;color:#fff;background:rgba(233,30,99,0.90); }
 .sh-del:active { transform:scale(0.88); }
 .suggest-item .sh-text em { font-style:normal;font-weight:600;color:var(--primary); }
@@ -446,7 +457,7 @@ body.has-mini-player .main-content { padding-bottom:calc(var(--tab-height) + env
 .song-title { font-size:16px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px; }
 .song-artist { font-size:13px;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
 .song-duration { color:var(--text-secondary);font-size:13px;opacity:0.6;margin-left:12px;flex-shrink:0; }
-.song-fav-btn { flex-shrink:0;width:34px;height:34px;margin-left:6px;border:none;background:transparent;color:var(--text-secondary);font-size:15px;border-radius:50%;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;opacity:0.5;transition:all 0.2s; }
+.song-fav-btn { flex-shrink:0;width:34px;height:34px;margin-left:6px;border:none;background:transparent;color:var(--text-secondary);font-size:15px;border-radius:50%;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;opacity:0.5;transition:color 0.2s,opacity 0.2s; }
 .song-fav-btn:hover { opacity:1;background:rgba(233,30,99,0.15);color:var(--primary); }
 .song-fav-btn.active { opacity:1;color:var(--primary); }
 .song-fav-btn.beat { animation:favBeat 0.45s cubic-bezier(0.22,1,0.36,1); }
@@ -491,7 +502,7 @@ body.has-mini-player .main-content { padding-bottom:calc(var(--tab-height) + env
 .fav-item.playing { background:rgba(233,30,99,0.10);border-color:rgba(233,30,99,0.28); }
 .fav-item.playing .fav-item-title { color:var(--primary); }
 #history-page { background:var(--bg-overlay);z-index:735; }
-#history-page .fav-header { flex-shrink:0;padding:8px 16px 8px; }
+#history-page .fav-header { flex-shrink:0;padding:14px 16px; }
 #history-page .fav-scroll { padding-top:calc(var(--fav-header-h, 58px) + 8px); }
 #history-page .pl-summary { padding:2px 16px 10px;gap:12px; }
 #history-page .pl-summary-cover { width:58px;height:58px;border-radius:12px; }
@@ -512,7 +523,7 @@ body.has-mini-player .main-content { padding-bottom:calc(var(--tab-height) + env
 .fav-item.dragging .drag-handle { color:#fff;opacity:1; }
 .fav-item.dragging { position:relative;z-index:30;border-radius:12px;box-shadow:var(--shadow-float);transition:none;pointer-events:none;will-change:transform;contain:layout paint;background:transparent; }
 .fav-item.dragging::before { content:"";position:absolute;inset:0;border-radius:inherit;z-index:-1;background:var(--glass-panel-strong);-webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness)); }
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .fav-item.dragging { background:var(--bg-body);opacity:0.96; } .fav-item.dragging::before { display:none; } .about-page { background:var(--bg-overlay); } }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .fav-item.dragging { background:var(--bg-body);opacity:0.96; } .fav-item.dragging::before { display:none; } .about-page { background:#000; } }
 .fav-list.dragging-active { position:relative;user-select:none; }
 .drag-handle { display:none; }
 .sort-mode .drag-handle { display:flex; }
@@ -550,7 +561,7 @@ body.placeholder-mode #mini-fav-btn,body.placeholder-mode #full-fav-btn,body.pla
 .select-mode .song-fav-btn,.select-mode .fav-item-remove { pointer-events:none;opacity:0.30; }
 .select-mode .song-more-btn { opacity:0.45; }
 .select-mode .song-more-btn:hover { opacity:0.9; }
-.select-bar { position:fixed;left:12px;right:12px;bottom:calc(var(--tab-height) + var(--bottom-stack) + 12px);z-index:2400;background:var(--glass-panel-heavy);-webkit-backdrop-filter:blur(var(--glass-blur-bar)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-bar)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));border:1px solid var(--glass-edge-heavy);border-radius:20px;box-shadow:var(--shadow-popover),var(--inset-highlight);padding:8px;opacity:0;transform:translateY(16px) scale(0.97);pointer-events:none;transition:all 0.28s cubic-bezier(0.25,0.46,0.45,0.94);max-height:62vh;overflow-y:auto; }
+.select-bar { position:fixed;left:12px;right:12px;bottom:calc(var(--tab-height) + var(--bottom-stack) + 12px);z-index:2400;background:var(--glass-panel-heavy);-webkit-backdrop-filter:blur(var(--glass-blur-bar)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-bar)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));border:1px solid var(--glass-edge-heavy);border-radius:20px;box-shadow:var(--shadow-popover),var(--inset-highlight);padding:8px;opacity:0;transform:translateY(16px) scale(0.97);pointer-events:none;transition:opacity 0.28s cubic-bezier(0.25,0.46,0.45,0.94),transform 0.28s cubic-bezier(0.25,0.46,0.45,0.94);max-height:62vh;overflow-y:auto; }
 .select-bar.active { opacity:1;transform:translateY(0) scale(1);pointer-events:all; }
 @media (min-width:900px),(min-width:640px)and (max-height:500px) { .select-bar { left:50%;right:auto;width:min(520px,calc(100vw - 48px));transform:translate(-50%,16px) scale(0.97); } .select-bar.active { transform:translate(-50%,0) scale(1); } }
 .select-head { padding:10px 14px 8px;border-bottom:1px solid var(--border);margin-bottom:6px; }
@@ -742,6 +753,9 @@ body.tab-bar-hidden .mini-player { bottom:0; }
 .lyrics-veil-top .lyrics-veil-blur-1 { -webkit-mask-image:linear-gradient(var(--veil-dir),rgba(0,0,0,0.85) 0%,rgba(0,0,0,0.55) calc(var(--veil-hold, 0px) + 22%),rgba(0,0,0,0.18) calc(var(--veil-hold, 0px) + 50%),transparent 88%);mask-image:linear-gradient(var(--veil-dir),rgba(0,0,0,0.85) 0%,rgba(0,0,0,0.55) calc(var(--veil-hold, 0px) + 22%),rgba(0,0,0,0.18) calc(var(--veil-hold, 0px) + 50%),transparent 88%); }
 .lyrics-veil-top .lyrics-veil-blur-2 { -webkit-mask-image:linear-gradient(var(--veil-dir),rgba(0,0,0,0.75) 0%,rgba(0,0,0,0.40) calc(var(--veil-hold, 0px) + 18%),rgba(0,0,0,0.10) calc(var(--veil-hold, 0px) + 44%),transparent 82%);mask-image:linear-gradient(var(--veil-dir),rgba(0,0,0,0.75) 0%,rgba(0,0,0,0.40) calc(var(--veil-hold, 0px) + 18%),rgba(0,0,0,0.10) calc(var(--veil-hold, 0px) + 44%),transparent 82%); }
 .lyrics-veil-top .lyrics-veil-blur-3 { -webkit-mask-image:linear-gradient(var(--veil-dir),rgba(0,0,0,0.70) 0%,rgba(0,0,0,0.32) calc(var(--veil-hold, 0px) + 8%),transparent 74%);mask-image:linear-gradient(var(--veil-dir),rgba(0,0,0,0.70) 0%,rgba(0,0,0,0.32) calc(var(--veil-hold, 0px) + 8%),transparent 74%); }
+html.no-glass .lyrics-veil-blur-1 { -webkit-backdrop-filter:blur(4px) saturate(140%)!important;backdrop-filter:blur(4px) saturate(140%)!important; }
+html.no-glass .lyrics-veil-blur-2 { -webkit-backdrop-filter:blur(10px) saturate(140%)!important;backdrop-filter:blur(10px) saturate(140%)!important; }
+html.no-glass .lyrics-veil-blur-3 { -webkit-backdrop-filter:blur(18px) saturate(140%)!important;backdrop-filter:blur(18px) saturate(140%)!important; }
 .lyrics-veil-tint { position:absolute;inset:0;pointer-events:none;--veil-dir:to bottom;background:linear-gradient(var(--veil-dir),var(--veil-solid) 0%,var(--veil-stops)); }
 .lyrics-veil-bottom .lyrics-veil-tint { --veil-dir:to top; }
 .lyrics-veil-top .lyrics-veil-tint { background:linear-gradient(var(--veil-dir),var(--veil-solid) 0,var(--veil-solid) var(--veil-hold, 0px),color-mix(in srgb,var(--veil-solid) 68%,transparent) calc(var(--veil-hold, 0px) + 9%),color-mix(in srgb,var(--veil-solid) 30%,transparent) calc(var(--veil-hold, 0px) + 26%),color-mix(in srgb,var(--veil-solid) 9%,transparent) calc(var(--veil-hold, 0px) + 42%),transparent 72%); }
@@ -801,11 +815,13 @@ body.tab-bar-hidden .mini-player { bottom:0; }
 .result-cover:has(img:not([src])) .result-cover-fallback { opacity:0.45; }
 .result-cover img.loaded~.result-cover-fallback { display:none; }
 .playlist-page,.about-page { position:fixed;inset:0;bottom:0;background:var(--bg-overlay);z-index:700;display:flex;flex-direction:column;opacity:0;pointer-events:none;transform:translateY(20px);visibility:hidden;transition:transform 0.42s cubic-bezier(0.22,1,0.36,1),bottom 0.4s cubic-bezier(0.25,0.46,0.45,0.94),opacity 0.32s ease,visibility 0s linear 0.42s; }
-.about-page { background:var(--glass-panel-heavy);-webkit-backdrop-filter:blur(var(--glass-blur-heavy)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-heavy)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness)); }
+.about-page { background:#000; }
+.about-page { background:#000; }
 .playlist-page.active,.about-page.active { opacity:1;pointer-events:all;transform:translateY(0);visibility:visible;transition:transform 0.42s cubic-bezier(0.22,1,0.36,1),bottom 0.4s cubic-bezier(0.25,0.46,0.45,0.94),opacity 0.32s ease,visibility 0s; }
 .playlist-page.has-player,.about-page.has-player { bottom:var(--mini-height); }
 .fav-page.no-anim,.playlist-page.no-anim,.about-page.no-anim,.search-results.no-anim,.sheet.no-anim { transition:none!important; }
-.cache-body { flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(var(--fav-header-h, 62px) + 14px) 16px calc(96px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:10px; }
+.cache-body { flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(var(--fav-header-h, 62px) + 14px) 16px calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:10px; }
+.cache-body>* { flex-shrink:0; }
 .cache-tip { font-size:12.5px;color:var(--text-secondary);padding:0 4px 4px; }
 .cache-item { display:flex;align-items:center;gap:12px;padding:14px 14px;border-radius:14px;background:var(--surface-input);border:1px solid var(--border-popover);cursor:pointer;transition:background 0.18s ease,border-color 0.18s ease; }
 .cache-item:active { background:var(--surface-input-focus); }
@@ -815,10 +831,32 @@ body.tab-bar-hidden .mini-player { bottom:0; }
 .cache-item-info { display:flex;flex-direction:column;gap:3px;min-width:0; }
 .cache-item-title { font-size:14px;color:var(--text-primary); }
 .cache-item-sub { font-size:11.5px;color:var(--text-secondary); }
-.cache-footer { position:absolute;left:0;right:0;bottom:0;padding:0 16px calc(18px + env(safe-area-inset-bottom,0px));pointer-events:none;z-index:3; }
-.cache-clear-btn { width:100%;height:46px;border:none;border-radius:14px;background:var(--primary);color:#fff;font-size:15px;font-weight:600;cursor:pointer;pointer-events:auto;box-shadow:0 6px 20px rgba(0,0,0,0.16);transition:transform 0.16s ease,opacity 0.16s ease,box-shadow 0.16s ease; }
+.cache-clear-btn { width:100%;height:46px;margin-top:6px;border:none;border-radius:14px;background:var(--primary);color:#fff;font-size:15px;font-weight:600;cursor:pointer;pointer-events:auto;box-shadow:0 6px 20px rgba(0,0,0,0.16);transition:transform 0.16s ease,opacity 0.16s ease,box-shadow 0.16s ease; }
 .cache-clear-btn:active { transform:scale(0.975); }
 .cache-clear-btn:disabled { opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none; }
+.sleep-page { background:#000; }
+.sleep-body { flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(var(--fav-header-h, 62px) + 14px) 16px calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:10px; }
+.sleep-body>* { flex-shrink:0; }
+.sleep-status { display:flex;flex-direction:column;align-items:center;gap:8px;padding:26px 18px 22px;margin-bottom:4px;border-radius:16px;background:var(--surface-input);border:1px solid var(--border-popover); }
+.sleep-clock { font-size:34px;font-weight:700;letter-spacing:-0.6px;color:var(--text-primary);font-variant-numeric:tabular-nums;line-height:1.15; }
+.sleep-clock.on { color:var(--primary); }
+.sleep-status-sub { font-size:12.5px;color:var(--text-secondary);text-align:center; }
+.sleep-list { display:flex;flex-direction:column;gap:8px; }
+.sleep-row { display:flex;align-items:center;gap:12px;min-height:48px;padding:14px;border-radius:14px;background:var(--surface-input);border:1px solid var(--border-popover);font-size:14.5px;color:var(--text-primary);cursor:pointer;transition:background 0.18s ease,border-color 0.18s ease; }
+.sleep-row:hover { background:var(--surface-input-focus); }
+.sleep-row > span:first-child { flex:1;min-width:0; }
+.sleep-row > i { font-size:12px;color:var(--primary);opacity:0;flex-shrink:0;transition:opacity 0.18s; }
+.sleep-row.on { border-color:var(--border-popover);background:var(--surface-input); }
+.sleep-row.on > i { opacity:1; }
+.sleep-row-custom { padding-top:9px;padding-bottom:9px;gap:8px; }
+.sleep-row-custom > span:first-child { flex:0 0 auto; }
+.sleep-custom { flex:1;display:flex;align-items:center;justify-content:flex-end;gap:5px; }
+.sleep-custom-unit { font-size:12.5px;color:var(--text-muted);flex-shrink:0; }
+#sleep-custom-hour,#sleep-custom-input,#sleep-custom-sec { width:50px;height:28px;padding:0 6px;border-radius:8px;border:1px solid var(--border-control);background:var(--surface-card);color:var(--text-primary);font-size:12.5px;line-height:26px;text-align:center;outline:none;-moz-appearance:textfield;appearance:textfield; }
+#sleep-custom-hour::-webkit-outer-spin-button,#sleep-custom-hour::-webkit-inner-spin-button,#sleep-custom-input::-webkit-outer-spin-button,#sleep-custom-input::-webkit-inner-spin-button,#sleep-custom-sec::-webkit-outer-spin-button,#sleep-custom-sec::-webkit-inner-spin-button { -webkit-appearance:none;margin:0; }
+#sleep-custom-hour:focus,#sleep-custom-input:focus,#sleep-custom-sec:focus { border-color:var(--primary);background:var(--surface-input-focus); }
+#sleep-custom-hour::placeholder,#sleep-custom-input::placeholder,#sleep-custom-sec::placeholder { color:var(--text-faint); }
+.sleep-row-off { color:var(--text-secondary); }
 .about-body { flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:calc(var(--fav-header-h, 62px) + 24px) 32px 28vh;text-align:center; }
 .about-logo { width:82px;height:82px;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 14px 40px var(--primary-glow));margin-bottom:22px;cursor:pointer;-webkit-tap-highlight-color:transparent; }
 .about-logo .brand-disc { width:100%;height:100%;display:block; }
@@ -853,7 +891,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
 .pl-play-all i { margin-left:2px; }
 .pl-play-all:hover { background:var(--primary);color:#fff; }
 .pl-play-all:active { transform:scale(0.92); }
-.sheet { position:fixed;left:12px;right:12px;bottom:calc(var(--tab-height) + var(--bottom-stack) + 12px);background:var(--glass-panel-heavy);-webkit-backdrop-filter:blur(var(--glass-blur-bar)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-bar)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));border:1px solid var(--glass-edge-heavy);border-radius:20px;box-shadow:var(--shadow-popover),var(--inset-highlight);z-index:3200;padding:8px;opacity:0;transform:translateY(16px) scale(0.97);pointer-events:none;transition:all 0.28s cubic-bezier(0.25,0.46,0.45,0.94);max-height:62vh;overflow-y:auto; }
+.sheet { position:fixed;left:12px;right:12px;bottom:calc(var(--tab-height) + var(--bottom-stack) + 12px);background:var(--glass-panel-heavy);-webkit-backdrop-filter:blur(var(--glass-blur-bar)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-bar)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));border:1px solid var(--glass-edge-heavy);border-radius:20px;box-shadow:var(--shadow-popover),var(--inset-highlight);z-index:3200;padding:8px;opacity:0;transform:translateY(16px) scale(0.97);pointer-events:none;transition:opacity 0.28s cubic-bezier(0.25,0.46,0.45,0.94),transform 0.28s cubic-bezier(0.25,0.46,0.45,0.94);max-height:62vh;overflow-y:auto; }
 .sheet.active { opacity:1;transform:translateY(0) scale(1);pointer-events:all; }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .sheet,.select-bar { background:var(--popover-solid); } }
 .sheet .menu-item { display:flex;align-items:center;gap:12px;padding:14px 14px;border-radius:13px;font-size:14.5px;color:var(--text-primary);cursor:pointer;transition:background 0.18s; }
@@ -878,7 +916,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
 .pl-pick-info { flex:1;min-width:0;display:flex;flex-direction:column;gap:2px; }
 .pl-pick-label { font-size:14px;font-weight:500;color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:color 0.18s; }
 .pl-pick-meta { font-size:11.5px;color:var(--text-secondary); }
-.pl-pick-check { width:20px;height:20px;flex-shrink:0;border-radius:50%;border:1.5px solid var(--border-check);display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:transparent;background:transparent;transition:all 0.2s; }
+.pl-pick-check { width:20px;height:20px;flex-shrink:0;border-radius:50%;border:1.5px solid var(--border-check);display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:transparent;background:transparent;transition:background 0.2s,border-color 0.2s,color 0.2s; }
 .pl-pick-row.on .pl-pick-check { background:var(--primary);border-color:var(--primary);color:#fff; }
 .pl-pick-row.on .pl-pick-label { color:var(--primary); }
 .sheet-new { width:calc(100% - 8px);margin:6px 4px 4px;border:1px dashed var(--border-control);background:transparent;color:var(--primary);font-size:14px;padding:12px;border-radius:13px;cursor:pointer;transition:background 0.2s; }
@@ -1009,6 +1047,13 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                             </button>
                         </div>
                     </div>
+                    <div class="settings-row">
+                        <div class="settings-label">毛玻璃效果</div>
+                        <label class="settings-switch">
+                            <input type="checkbox" id="settings-glass" />
+                            <span class="settings-switch-track"><span class="settings-switch-dot"></span></span>
+                        </label>
+                    </div>
                 </div>
                 <div class="settings-group">
                     <div class="settings-group-title">播放</div>
@@ -1033,6 +1078,11 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                             <input type="checkbox" id="settings-awake" />
                             <span class="settings-switch-track"><span class="settings-switch-dot"></span></span>
                         </label>
+                    </div>
+                    <div class="settings-row settings-row-link" id="settings-sleep-timer">
+                        <div class="settings-label">定时暂停</div>
+                        <span class="settings-value" id="settings-sleep-value">未设置</span>
+                        <i class="fas fa-chevron-right settings-arrow"></i>
                     </div>
                 </div>
                 <div class="settings-group">
@@ -1419,7 +1469,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
         <div class="about-body">
             <div class="about-logo" id="about-logo" role="button" tabindex="0" aria-label="MKY音乐"><svg class="brand-disc" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="bdisc-about" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3d77"/><stop offset="1" stop-color="#c2185b"/></linearGradient><linearGradient id="bdisc-sheen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.34" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.46" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.54" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.66" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient><clipPath id="bdisc-clip"><circle cx="32" cy="32" r="30"/></clipPath></defs><g class="disc-spin"><circle cx="32" cy="32" r="30" fill="#141418"/><circle cx="32" cy="32" r="30" fill="none" stroke="#ffffff" stroke-opacity=".14" stroke-width="2.6"/><circle cx="32" cy="32" r="21" fill="none" stroke="#ffffff" stroke-opacity=".10" stroke-width="1.5"/><circle cx="32" cy="32" r="14" fill="none" stroke="#ffffff" stroke-opacity=".08" stroke-width="1.5"/><circle cx="32" cy="32" r="12" fill="url(#bdisc-about)"/><circle cx="32" cy="32" r="3.4" fill="#141418"/><g clip-path="url(#bdisc-clip)"><rect class="disc-sheen" x="-16" y="-16" width="96" height="96" fill="url(#bdisc-sheen)"/></g></g></svg></div>
             <div class="about-name">MKY音乐</div>
-            <div class="about-version">版本 2.2</div>
+            <div class="about-version">版本 2.3</div>
             <div class="about-slogan">把每一处细节听懂<br>把听歌这件事做好</div>
             <div class="about-links">
                 <div class="about-legal">
@@ -1513,8 +1563,6 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                     <span class="cache-item-sub" id="cache-sub-playlists">自建歌单及其中歌曲</span>
                 </span>
             </label>
-        </div>
-        <div class="cache-footer">
             <button class="cache-clear-btn" id="cache-clear-btn" type="button">清除缓存</button>
         </div>
     </div>
@@ -1540,6 +1588,42 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                    min="0.5" max="3" step="0.1" value="1" aria-label="播放速度" />
             <div class="rate-ticks" id="rate-ticks"></div>
             <button class="rate-reset" id="rate-reset">恢复原速</button>
+        </div>
+    </div>
+    <div class="about-page sleep-page" id="sleep-page">
+        <div class="fav-header">
+            <div class="fav-header-row">
+                <button class="back-btn" id="sleep-back-btn" aria-label="返回">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div class="fav-title">定时暂停</div>
+            </div>
+        </div>
+        <div class="sleep-body" id="sleep-body">
+            <div class="sleep-status" id="sleep-status">
+                <div class="sleep-clock" id="sleep-clock">未设置</div>
+                <div class="sleep-status-sub" id="sleep-status-sub">选择一个时长，到点自动暂停播放</div>
+            </div>
+            <div class="sleep-list">
+                <div class="sleep-row" data-min="15"><span>15 分钟</span><i class="fas fa-check"></i></div>
+                <div class="sleep-row" data-min="30"><span>30 分钟</span><i class="fas fa-check"></i></div>
+                <div class="sleep-row" data-min="45"><span>45 分钟</span><i class="fas fa-check"></i></div>
+                <div class="sleep-row" data-min="60"><span>1 小时</span><i class="fas fa-check"></i></div>
+                <div class="sleep-row" data-min="90"><span>1 小时 30 分</span><i class="fas fa-check"></i></div>
+                <div class="sleep-row sleep-row-custom" data-min="-1">
+                    <span>自定义</span>
+                    <span class="sleep-custom">
+                        <input type="number" id="sleep-custom-hour" min="0" max="12" step="1" placeholder="时" aria-label="自定义小时" />
+                        <span class="sleep-custom-unit">时</span>
+                        <input type="number" id="sleep-custom-input" min="0" max="59" step="1" placeholder="分" aria-label="自定义分钟" />
+                        <span class="sleep-custom-unit">分</span>
+                        <input type="number" id="sleep-custom-sec" min="0" max="59" step="1" placeholder="秒" aria-label="自定义秒数" />
+                        <span class="sleep-custom-unit">秒</span>
+                    </span>
+                    <i class="fas fa-check"></i>
+                </div>
+                <div class="sleep-row sleep-row-off" data-min="0"><span>关闭定时</span><i class="fas fa-check"></i></div>
+            </div>
         </div>
     </div>
     <div class="select-topbar" id="select-topbar">
@@ -1599,7 +1683,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
         </div>
     </div>
     <script>
-    (function() {
+        (function() {
             'use strict';
             const {
                 create: createAudio,
@@ -1667,6 +1751,17 @@ body.tab-bar-hidden .mini-player { bottom:0; }
             const settingsVolumeNum = $('#settings-volume-num');
             const settingsFade = $('#settings-fade');
             const settingsAwake = $('#settings-awake');
+            const settingsGlass = $('#settings-glass');
+            const settingsSleepTimer = $('#settings-sleep-timer');
+            const settingsSleepValue = $('#settings-sleep-value');
+            const sleepPage = $('#sleep-page');
+            const sleepBackBtn = $('#sleep-back-btn');
+            const sleepClock = $('#sleep-clock');
+            const sleepStatusSub = $('#sleep-status-sub');
+            const sleepBody = $('#sleep-body');
+            const sleepCustomHour = $('#sleep-custom-hour');
+            const sleepCustomInput = $('#sleep-custom-input');
+            const sleepCustomSec = $('#sleep-custom-sec');
             const settingsClearCache = $('#settings-clear-cache');
             const settingsAbout = $('#settings-about');
             const mineSearchInput = $('#mine-search-input');
@@ -2044,13 +2139,23 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                 return document.documentElement.getAttribute('data-theme') === 'light'
                     ? 'light' : 'dark';
             }
+            let themeSwitchTimer = 0;
             function applyTheme(mode) {
                 const m = (mode === 'light' || mode === 'dark' || mode === 'system')
                     ? mode : 'system';
                 const t = resolveTheme(m);
-                document.documentElement.setAttribute('data-theme', t);
+                const root = document.documentElement;
+                const glassOn = !root.classList.contains('no-glass');
+                if (glassOn) root.classList.add('theme-switch');
+                root.setAttribute('data-theme', t);
                 try { localStorage.setItem(THEME_MODE_KEY, m); } catch (_) {}
                 syncThemeChips();
+                if (!glassOn) return;
+                if (themeSwitchTimer) clearTimeout(themeSwitchTimer);
+                themeSwitchTimer = setTimeout(() => {
+                    themeSwitchTimer = 0;
+                    root.classList.remove('theme-switch');
+                }, 140);
             }
             function setThemeMode(mode) {
                 applyTheme(mode);
@@ -2327,6 +2432,320 @@ body.tab-bar-hidden .mini-player { bottom:0; }
             function setFadeEnabled(on) {
                 try { localStorage.setItem(FADE_KEY, on ? '1' : '0'); } catch (_) {}
             }
+            const GLASS_KEY = 'mky_glass';
+            function getGlassEnabled() {
+                try {
+                    return localStorage.getItem(GLASS_KEY) === '1';
+                } catch (_) {}
+                return false;
+            }
+            function setGlassEnabled(on) {
+                try { localStorage.setItem(GLASS_KEY, on ? '1' : '0'); } catch (_) {}
+            }
+            function applyGlass(on) {
+                document.documentElement.classList.toggle('no-glass', !on);
+            }
+            const SLEEP_KEY = 'mky_sleep_seconds';
+            const SLEEP_DRAFT_KEY = 'mky_sleep_draft';
+            const SLEEP_MAX_SEC = 12 * 3600;
+            const SLEEP_MAX_MIN = 59;
+            const SLEEP_MAX_SECOND = 59;
+            let sleepTimer = null;
+            let sleepEndAt = 0;
+            let sleepInputs = [];
+            function getSleepSeconds() {
+                try {
+                    const v = parseInt(localStorage.getItem(SLEEP_KEY) || '0', 10);
+                    if (isFinite(v) && v > 0) return Math.min(SLEEP_MAX_SEC, v);
+                    if (v === 0) return 0;
+                } catch (_) {}
+                return 0;
+            }
+            const SLEEP_SOURCE_KEY = 'mky_sleep_source';
+            function getSleepSource() {
+                try {
+                    const v = localStorage.getItem(SLEEP_SOURCE_KEY);
+                    return v === 'custom' ? 'custom' : 'preset';
+                } catch (_) {}
+                return 'preset';
+            }
+            function setSleepSource(src) {
+                try { localStorage.setItem(SLEEP_SOURCE_KEY, src); } catch (_) {}
+            }
+            function setSleepSeconds(sec) {
+                try {
+                    localStorage.setItem(SLEEP_KEY,
+                        String(Math.max(0, Math.min(SLEEP_MAX_SEC, Math.round(sec)))));
+                } catch (_) {}
+            }
+            function getSleepDraft() {
+                try {
+                    const v = JSON.parse(localStorage.getItem(SLEEP_DRAFT_KEY) || 'null');
+                    if (v && typeof v === 'object') return v;
+                } catch (_) {}
+                return null;
+            }
+            function setSleepDraft(h, m, sec) {
+                try {
+                    localStorage.setItem(SLEEP_DRAFT_KEY,
+                        JSON.stringify({ h: h, m: m, s: sec }));
+                } catch (_) {}
+            }
+            function clampInt(raw, max) {
+                if (raw == null) return null;
+                const t = String(raw).trim();
+                if (t === '') return null;
+                let n = parseInt(t, 10);
+                if (!isFinite(n) || n < 0) return 0;
+                if (n > max) n = max;
+                return n;
+            }
+            function pad2(n) {
+                return n < 10 ? ('0' + n) : String(n);
+            }
+            function sleepRemainMs() {
+                return sleepEndAt > Date.now() ? sleepEndAt - Date.now() : 0;
+            }
+            function sleepSplit(ms) {
+                const total = Math.max(0, Math.ceil(ms / 1000));
+                return {
+                    h: Math.floor(total / 3600),
+                    m: Math.floor((total % 3600) / 60),
+                    s: total % 60
+                };
+            }
+            function sleepClockText(ms) {
+                const t = sleepSplit(ms);
+                if (t.h > 0) return t.h + ':' + pad2(t.m) + ':' + pad2(t.s);
+                return pad2(t.m) + ':' + pad2(t.s);
+            }
+            function sleepText(ms) {
+                const t = sleepSplit(ms);
+                const seg = [];
+                if (t.h > 0) seg.push(t.h + ' 小时');
+                if (t.m > 0) seg.push(t.m + ' 分');
+                if (t.s > 0 || seg.length === 0) seg.push(t.s + ' 秒');
+                return seg.join(' ');
+            }
+            function renderSleepState() {
+                const ms = sleepRemainMs();
+                const active = ms > 0;
+                if (settingsSleepValue) {
+                    settingsSleepValue.textContent = active ? (sleepText(ms) + '后暂停') : '未设置';
+                }
+                if (sleepClock) {
+                    sleepClock.textContent = active ? sleepClockText(ms) : '未设置';
+                    sleepClock.classList.toggle('on', active);
+                }
+                if (sleepStatusSub) {
+                    sleepStatusSub.textContent = active
+                        ? ('将在 ' + sleepClockText(ms) + ' 后自动暂停播放')
+                        : '选择一个时长，到点自动暂停播放';
+                }
+                if (sleepBody) {
+                    const cur = getSleepSeconds();
+                    const from = getSleepSource();
+                    $$('.sleep-row[data-min]').forEach((row) => {
+                        const min = parseInt(row.dataset.min || '0', 10);
+                        let on = false;
+                        if (min === -1) on = active && from === 'custom';
+                        else if (min === 0) on = !active;
+                        else on = active && from === 'preset' && cur === min * 60;
+                        row.classList.toggle('on', on);
+                    });
+                }
+                return ms;
+            }
+            function stopSleepTimer() {
+                if (sleepTimer) {
+                    clearInterval(sleepTimer);
+                    sleepTimer = null;
+                }
+            }
+            function clearSleep() {
+                setSleepSeconds(0);
+                setSleepSource('preset');
+                sleepEndAt = 0;
+                stopSleepTimer();
+                renderSleepState();
+            }
+            function doSleepPause() {
+                clearSleep();
+                if (currentAudio && !currentAudio.paused) {
+                    pauseAudioFaded(currentAudio, FADE_PAUSE_MS);
+                }
+                isPlaying = false;
+                updatePlayButtons();
+                setCoverSpin(false);
+                showToast('定时暂停已到');
+            }
+            function startSleepClock(sec, src) {
+                stopSleepTimer();
+                if (!(sec > 0)) {
+                    clearSleep();
+                    setSleepSource('preset');
+                    return;
+                }
+                const total = Math.min(SLEEP_MAX_SEC, Math.round(sec));
+                sleepEndAt = Date.now() + total * 1000;
+                setSleepSeconds(total);
+                setSleepSource(src || 'preset');
+                renderSleepState();
+                sleepTimer = setInterval(() => {
+                    if (sleepRemainMs() <= 0) doSleepPause();
+                    else renderSleepState();
+                }, 1000);
+            }
+            function openSleepPage() {
+                if (!sleepPage) return;
+                restoreSleepDraft();
+                if (!sleepRemainMs()) {
+                    const saved = getSleepSeconds();
+                    if (saved > 0) startSleepClock(saved, getSleepSource());
+                }
+                renderSleepState();
+                sleepPage.classList.add('active');
+                if (fabStack) fabStack.classList.remove('show');
+                syncHeaderHeight();
+                syncFavPageOffset();
+            }
+            function closeSleepPage() {
+                if (!sleepPage) return;
+                saveSleepDraft();
+                sleepPage.classList.remove('active');
+                if (fabStack && activeTab === 'mine' && !(mineKeyword || '').trim()
+                    && !plSelectMode && !anyOverlayOpen()) {
+                    fabStack.classList.add('show');
+                }
+                syncFavPageOffset();
+            }
+            function readSleepInputs() {
+                const h = clampInt(sleepCustomHour ? sleepCustomHour.value : '', 12);
+                const m = clampInt(sleepCustomInput ? sleepCustomInput.value : '', SLEEP_MAX_MIN);
+                const s = clampInt(sleepCustomSec ? sleepCustomSec.value : '', SLEEP_MAX_SECOND);
+                return { h: h, m: m, s: s };
+            }
+            function saveSleepDraft() {
+                if (!sleepCustomHour) return;
+                setSleepDraft(sleepCustomHour.value.trim(), sleepCustomInput.value.trim(),
+                    sleepCustomSec.value.trim());
+            }
+            function restoreSleepDraft() {
+                if (!sleepCustomHour) return;
+                const d = getSleepDraft();
+                if (!d) return;
+                sleepCustomHour.value = d.h != null ? String(d.h) : '';
+                sleepCustomInput.value = d.m != null ? String(d.m) : '';
+                sleepCustomSec.value = d.s != null ? String(d.s) : '';
+            }
+            function sleepCustomTotal() {
+                const v = readSleepInputs();
+                return (v.h == null ? 0 : v.h) * 3600
+                    + (v.m == null ? 0 : v.m) * 60
+                    + (v.s == null ? 0 : v.s);
+            }
+            function sleepCustomActive() {
+                const row = $('.sleep-row-custom');
+                return !!(row && row.classList.contains('on'));
+            }
+            function clampSleepInputs(silent) {
+                if (!sleepCustomHour) return;
+                const hv = clampInt(sleepCustomHour.value, 12);
+                const mv = clampInt(sleepCustomInput.value, SLEEP_MAX_MIN);
+                const sv = clampInt(sleepCustomSec.value, SLEEP_MAX_SECOND);
+                let h = hv == null ? 0 : hv;
+                let m = mv == null ? 0 : mv;
+                let s = sv == null ? 0 : sv;
+                let over = false;
+                if (h > 12) { h = 12; over = true; }
+                if (m > SLEEP_MAX_MIN) { m = SLEEP_MAX_MIN; over = true; }
+                if (s > SLEEP_MAX_SECOND) { s = SLEEP_MAX_SECOND; over = true; }
+                let total = h * 3600 + m * 60 + s;
+                if (total > SLEEP_MAX_SEC) {
+                    over = true;
+                    let rest = Math.max(0, SLEEP_MAX_SEC - h * 3600);
+                    if (m * 60 + s > rest) {
+                        m = Math.floor(rest / 60);
+                        s = rest - m * 60;
+                    } else {
+                        m = 0;
+                        s = 0;
+                    }
+                    total = h * 3600 + m * 60 + s;
+                }
+                if (hv != null) sleepCustomHour.value = String(h);
+                if (mv != null) sleepCustomInput.value = pad2(m);
+                if (sv != null) sleepCustomSec.value = pad2(s);
+                if (over && !silent) showToast('最长支持 12 小时');
+                saveSleepDraft();
+            }
+            function applyCustomSleep() {
+                if (!sleepCustomHour) return;
+                const v = readSleepInputs();
+                if (v.h == null && v.m == null && v.s == null) {
+                    showToast('请输入时、分或秒');
+                    return;
+                }
+                const h = v.h == null ? 0 : v.h;
+                const m = v.m == null ? 0 : v.m;
+                const s = v.s == null ? 0 : v.s;
+                const total = h * 3600 + m * 60 + s;
+                if (total <= 0) {
+                    showToast('请输入时、分或秒');
+                    return;
+                }
+                const capped = Math.min(SLEEP_MAX_SEC, total);
+                if (capped !== total) showToast('最长支持 12 小时');
+                startSleepClock(capped, 'custom');
+                showToast(sleepText(capped * 1000) + '后暂停');
+            }
+            function initSleepTimer() {
+                sleepInputs = [sleepCustomHour, sleepCustomInput, sleepCustomSec]
+                    .filter(Boolean);
+                restoreSleepDraft();
+                const saved = getSleepSeconds();
+                if (saved > 0) startSleepClock(saved, getSleepSource());
+                else renderSleepState();
+                if (settingsSleepTimer) {
+                    settingsSleepTimer.addEventListener('click', openSleepPage);
+                }
+                if (sleepBackBtn) {
+                    sleepBackBtn.addEventListener('click', closeSleepPage);
+                }
+                if (sleepBody) {
+                    sleepBody.addEventListener('click', (e) => {
+                        const row = e.target.closest('.sleep-row[data-min]');
+                        if (!row) return;
+                        const min = parseInt(row.dataset.min || '0', 10);
+                        if (min === -1) {
+                            saveSleepDraft();
+                            applyCustomSleep();
+                            return;
+                        }
+                        if (min <= 0) {
+                            clearSleep();
+                            showToast('已关闭定时暂停');
+                            return;
+                        }
+                        startSleepClock(min * 60, 'preset');
+                        showToast(sleepText(min * 60000) + '后暂停');
+                    });
+                }
+                sleepInputs.forEach((inp) => {
+                    inp.addEventListener('click', (e) => e.stopPropagation());
+                    inp.addEventListener('keydown', (e) => {
+                        if (e.key !== 'Enter') return;
+                        e.preventDefault();
+                        saveSleepDraft();
+                        applyCustomSleep();
+                    });
+                    inp.addEventListener('input', () => clampSleepInputs());
+                    inp.addEventListener('blur', () => {
+                        clampSleepInputs('silent');
+                        if (sleepCustomActive()) applyCustomSleep();
+                    });
+                });
+            }
             const AWAKE_KEY = 'mky_awake';
             let noSleep = null;
             let awakeWanted = false;
@@ -2482,6 +2901,16 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                         setVolume(parseFloat(settingsVolume.value) / 100);
                     });
                 }
+                if (settingsGlass) {
+                    settingsGlass.checked = getGlassEnabled();
+                    settingsGlass.addEventListener('change', () => {
+                        clearSwitchDotOffset(settingsGlass);
+                        setGlassEnabled(settingsGlass.checked);
+                        applyGlass(settingsGlass.checked);
+                        showToast(settingsGlass.checked ? '已开启毛玻璃' : '已关闭毛玻璃');
+                    });
+                    bindSwitchDrag(settingsGlass);
+                }
                 if (settingsFade) {
                     settingsFade.checked = getFadeEnabled();
                     settingsFade.addEventListener('change', () => {
@@ -2505,6 +2934,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                 if (settingsClearCache) {
                     settingsClearCache.addEventListener('click', openCachePage);
                 }
+                initSleepTimer();
                 if (settingsAbout) {
                     settingsAbout.addEventListener('click', openAboutPage);
                 }
@@ -2547,7 +2977,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                     mdui.dialog({
                         title: esc(title || ''),
                         content: esc(content),
-                        buttons: [{ text: '好', bold: true, close: true }],
+                        buttons: [{ text: '确定', bold: true, close: true }],
                         cssClass: 'mky-dialog',
                         history: false,
                         onClosed: resolve
@@ -2891,6 +3321,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                     (historyPage && historyPage.classList.contains('active')) ||
                     (searchResults && searchResults.classList.contains('active')) ||
                     (cachePage && cachePage.classList.contains('active')) ||
+                    (sleepPage && sleepPage.classList.contains('active')) ||
                     (aboutPage && aboutPage.classList.contains('active'));
             }
             function syncFavPageOffset() {
@@ -2901,6 +3332,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                 if (searchResults) searchResults.classList.toggle('has-player', hasPlayer);
                 if (aboutPage) aboutPage.classList.toggle('has-player', hasPlayer);
                 if (cachePage) cachePage.classList.toggle('has-player', hasPlayer);
+                if (sleepPage) sleepPage.classList.toggle('has-player', hasPlayer);
                 const overlayOpen = anyOverlayOpen();
                 miniPlayer.style.zIndex = hasPlayer && overlayOpen ? '730' : '';
                 document.body.classList.toggle('tab-bar-hidden', overlayOpen);
@@ -2958,6 +3390,9 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                 const key = options.key || 'searchHistory';
                 const title = options.title || '搜索历史';
                 const arr = getHistory(key);
+                const sig = title + '\u0001' + arr.join('\u0001');
+                if (container.__histSig === sig && container.firstChild) return;
+                container.__histSig = sig;
                 container.innerHTML = `
                     <div class="history-header">
                         <span>${esc(title)}</span>
@@ -3334,6 +3769,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
             };
             function currentOverlay() {
                 if (cachePage && cachePage.classList.contains('active')) return 'cache';
+                if (sleepPage && sleepPage.classList.contains('active')) return 'sleep';
                 if (favPage && favPage.classList.contains('active')) return 'fav';
                 if (playlistPage && playlistPage.classList.contains('active')) {
                     return 'playlist';
@@ -3356,7 +3792,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                 hideOverlays();
             }
             function overlayEls() {
-                return [favPage, playlistPage, aboutPage, cachePage, searchResults]
+                return [favPage, playlistPage, aboutPage, cachePage, sleepPage, searchResults]
                     .filter(Boolean);
             }
             function withNoAnim(fn) {
@@ -3405,6 +3841,9 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                     aboutPage.classList.add('active');
                 } else if (st.kind === 'cache') {
                     cachePage.classList.add('active');
+                } else if (st.kind === 'sleep') {
+                    renderSleepState();
+                    sleepPage.classList.add('active');
                 }
                 syncFavPageOffset();
                 syncHeaderHeight();
@@ -4064,7 +4503,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                     </div>
                     <div class="menu-item" data-act="copy-id">
                         <i class="fas fa-hashtag"></i>
-                        <span>复制歌曲ID</span>
+                        <span>查看歌曲ID</span>
                     </div>
                 `;
                 playerMoreMenu.querySelector('[data-act="rate"]')
@@ -4104,9 +4543,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                         const s = currentSong;
                         if (!s) return;
                         closeSheet(playerMoreMenu);
-                        copyTextToClipboard(String(s.id)).then(ok => {
-                            showToast(ok ? ('已复制歌曲ID：' + s.id) : '复制失败');
-                        });
+                        showSongIdDialog(s);
                     });
                 openSheet(playerMoreMenu);
             }
@@ -5429,6 +5866,33 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                 '卸载应用或清除浏览器数据后，上述本地数据将被一并删除，且无法恢复。',
                 '播放与搜索时，本应用会向第三方公开接口发起请求以获取歌曲信息，请求内容不包含你的个人信息。'
             ];
+            function showSongIdDialog(song) {
+                if (!song || song.id == null) return;
+                const id = String(song.id);
+                const html = '歌曲 ID 是「' + esc(id) + '」';
+                if (!window.mdui || !window.mdui.dialog) {
+                    window.alert(html);
+                    return;
+                }
+                mdui.dialog({
+                    title: '歌曲 ID',
+                    content: html,
+                    buttons: [
+                        {
+                            text: '复制',
+                            close: true,
+                            onClick: () => {
+                                copyTextToClipboard(id).then(ok => {
+                                    showToast(ok ? '已复制歌曲ID' : '复制失败');
+                                });
+                            }
+                        },
+                        { text: '确定', bold: true, close: true }
+                    ],
+                    cssClass: 'mky-dialog',
+                    history: false
+                });
+            }
             function showDocDialog(title, items) {
                 if (!window.mdui || !window.mdui.dialog) {
                     window.alert(title + '\n\n' +
@@ -7199,6 +7663,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                 });
             }
             function renderSuggestInto(container, inputEl, q, words) {
+                container.__histSig = '';
                 container.innerHTML = '<div class="history-header"><span>搜索推荐</span></div>';
                 words.forEach(w => {
                     const div = document.createElement('div');
@@ -9618,26 +10083,25 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                 container.querySelectorAll(':scope > .scroll-overscroll-pad')
                     .forEach(p => p.classList.remove('pad-on'));
             }
+            function setHeightVar(scope, name, px) {
+                const val = Math.round(px) + 'px';
+                if (scope.style.getPropertyValue(name) !== val) {
+                    scope.style.setProperty(name, val);
+                }
+            }
             function syncHeaderHeight() {
                 bindHeaderResize();
+                const reads = [];
                 const h = document.querySelector('.header');
-                if (h) {
-                    document.documentElement.style.setProperty(
-                        '--header-h', Math.round(h.offsetHeight) + 'px');
-                }
+                if (h) reads.push([document.documentElement, '--header-h', h.offsetHeight]);
                 const rh = document.querySelector('.search-results-header');
-                if (rh) {
-                    document.documentElement.style.setProperty(
-                        '--results-header-h', Math.round(rh.offsetHeight) + 'px');
-                }
-                [favPage, playlistPage, aboutPage].forEach(page => {
+                if (rh) reads.push([document.documentElement, '--results-header-h', rh.offsetHeight]);
+                [favPage, playlistPage, historyPage, aboutPage, sleepPage].forEach(page => {
                     if (!page) return;
                     const fh = page.querySelector('.fav-header');
-                    if (fh) {
-                        page.style.setProperty(
-                            '--fav-header-h', Math.round(fh.offsetHeight) + 'px');
-                    }
+                    if (fh) reads.push([page, '--fav-header-h', fh.offsetHeight]);
                 });
+                reads.forEach(r => setHeightVar(r[0], r[1], r[2]));
             }
             let headerResizeBound = false;
             function bindHeaderResize() {
@@ -9683,23 +10147,30 @@ body.tab-bar-hidden .mini-player { bottom:0; }
             window.addEventListener('orientationchange', () => {
                 remeasureCoverLyric(3);
             });
+            let resizeRaf = 0;
+            let resizeIdleTimer = 0;
             window.addEventListener('resize', () => {
-                syncHeaderHeight();
-                scheduleScrollOverscrollPad();
-                if (selectMode) syncSelectBarOffset();
-                lyricsLayoutDirty = true;
-                lyricsViewportH = lyricsContainer.clientHeight;
-                remeasureCoverLyric(1);
-                if (isAnyLyricsVisible()) {
-                    if (isDeskLyricsVisible()) {
-                        syncDeskLyricsHighlight(activeLyricIdx);
-                    }
-                    const t = getPlaybackTime();
-                    if (t >= 0) updateLyrics(t);
-                    lyricsTick();
-                } else {
-                    stopLyricsTick();
-                }
+                if (resizeRaf) return;
+                resizeRaf = requestAnimationFrame(() => {
+                    resizeRaf = 0;
+                    syncHeaderHeight();
+                    scheduleScrollOverscrollPad();
+                    if (selectMode) syncSelectBarOffset();
+                    lyricsLayoutDirty = true;
+                    if (!isAnyLyricsVisible()) { stopLyricsTick(); return; }
+                    if (resizeIdleTimer) clearTimeout(resizeIdleTimer);
+                    resizeIdleTimer = setTimeout(() => {
+                        resizeIdleTimer = 0;
+                        lyricsViewportH = lyricsContainer.clientHeight;
+                        remeasureCoverLyric(1);
+                        if (isDeskLyricsVisible()) {
+                            syncDeskLyricsHighlight(activeLyricIdx);
+                        }
+                        const t = getPlaybackTime();
+                        if (t >= 0) updateLyrics(t);
+                        lyricsTick();
+                    }, 120);
+                });
             });
             let dragSeekT = -1;
             let dragRafId = null;
@@ -10236,6 +10707,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
             }
             function init() {
                 applyTheme(getThemeMode());
+                applyGlass(getGlassEnabled());
                 bindSystemTheme();
                 syncFadeDurations();
                 syncHeaderHeight();
@@ -10346,6 +10818,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                 init();
             }
         })();
-     </script>
+    </script>
+
 </body>
 </html>
