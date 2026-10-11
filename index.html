@@ -436,6 +436,7 @@ html.no-glass .pl-pick-check { transition:all 0.2s; }
 .sh-del:hover { opacity:1;color:#fff;background:rgba(233,30,99,0.90); }
 .sh-del:active { transform:scale(0.88); }
 .suggest-item .sh-text em { font-style:normal;font-weight:600;color:var(--primary); }
+.suggest-item.suggest-fallback .sh-text { color:var(--primary);font-weight:600; }
 .search-history-empty { padding:22px 18px;text-align:center;font-size:13px;color:var(--text-secondary);opacity:0.6; }
 .main-content { padding:calc(var(--header-h, 75px) + 12px) 20px 30px;flex:1 1 auto;min-height:0;overflow-y:auto;padding-bottom:calc(var(--tab-height) + env(safe-area-inset-bottom,0px) + 12px);transition:opacity 0.3s,padding-bottom 0.4s cubic-bezier(0.25,0.46,0.45,0.94); }
 body.has-mini-player .main-content { padding-bottom:calc(var(--tab-height) + env(safe-area-inset-bottom,0px) + var(--mini-height) + 12px); }
@@ -583,7 +584,7 @@ body.placeholder-mode #mini-fav-btn,body.placeholder-mode #full-fav-btn,body.pla
 .sel-count { font-size:13px;color:var(--text-secondary);margin-left:4px; }
 .sel-done { margin-left:auto;padding:6px 2px;background:none;border:none;font-family:inherit;font-size:14.5px;font-weight:600;color:var(--primary);cursor:pointer; }
 .sel-done:active { opacity:0.6; }
-#select-bar,#pl-select-bar { display:flex;flex-direction:row;align-items:stretch;gap:6px;max-height:none;overflow:visible;left:0;right:0;padding:8px 10px;border-radius:0;border-left:none;border-right:none;border-bottom:none;background:rgba(9,9,13,0.92);bottom:calc(var(--tab-height) + env(safe-area-inset-bottom,0px));transform:translateY(16px); }
+#select-bar,#pl-select-bar { display:flex;flex-direction:row;align-items:stretch;gap:6px;max-height:none;overflow:visible;left:0;right:0;padding:8px 10px;border-radius:0;border-left:none;border-right:none;border-bottom:none;background:var(--glass-panel-strong);-webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));box-shadow:var(--inset-highlight);bottom:calc(var(--tab-height) + env(safe-area-inset-bottom,0px));transform:translateY(16px); }
 #select-bar.active,#pl-select-bar.active { transform:translateY(0); }
 body.has-mini-player #select-bar,body.has-mini-player #pl-select-bar { bottom:calc(var(--tab-height) + env(safe-area-inset-bottom,0px) + var(--mini-height)); }
 body.select-mode .header,body.select-mode .fav-header,body.select-mode .search-results-header { opacity:0;pointer-events:none;transition:opacity 0.22s; }
@@ -953,10 +954,10 @@ html.no-glass .lyrics-veil-blur-3 { -webkit-backdrop-filter:blur(18px) saturate(
 .lc-btn.lc-play { width:46px;height:46px;background:var(--primary);color:#fff;font-size:18px;box-shadow:0 6px 20px rgba(233,30,99,0.42); }
 .lc-btn.lc-play:hover { background:#f0346f; }
 @media (max-width:400px) { .lyrics-controls { right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px)); } .lc-btn { width:36px;height:36px;font-size:15px; } .lc-btn.lc-play { width:42px;height:42px;font-size:16px; } }
-@media (min-width:900px),(min-width:640px)and (max-height:500px) { .player-content { flex-direction:row;align-items:center;justify-content:center;gap:48px;padding:0 56px;overflow:visible; } .player-swipe-layer { flex-direction:row;justify-content:center;align-items:center;gap:48px;flex:0 1 auto;width:auto; } .player-left { flex:0 1 420px;width:420px;max-width:420px;min-width:0;margin-top:0; } .album-cover-wrap { width:min(100%,260px);height:auto;max-height:none;margin-top:calc(-24px + var(--disc-lift, -80px)); } .progress-container { max-width:370px; } .album-cover-wrap::before { inset:-24px;filter:blur(22px); } .player-lyrics { display:block;max-width:460px;height:min(68vh,560px); } .player-lyrics-inner { padding:12px 8px; } .player-lyrics-inner .lyrics-line { font-size:18px;line-height:1.9; } #lyrics-btn { display:none; } .cover-lyric { display:none; } .main-control-btn.add-pl-btn { display:flex; } .sheet { left:50%;right:auto;width:min(420px,calc(100vw - 48px));transform:translate(-50%,16px) scale(0.97); } .sheet.active { transform:translate(-50%,0) scale(1); } #rate-sheet,.sheet.sheet-dock-left { left:24px;right:auto;width:min(340px,calc(100vw - 48px));bottom:auto;top:50%;transform:translateY(calc(-50% + 16px)) scale(0.97);max-height:min(62vh,520px); } #rate-sheet.active,.sheet.sheet-dock-left.active { transform:translateY(-50%) scale(1); } #rate-sheet { left:auto;right:20px;top:64px;bottom:auto;width:min(300px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right; } #rate-sheet.active { transform:translateY(0) scale(1); } #player-more-menu { left:auto;right:20px;top:64px;bottom:auto;width:min(240px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right; } #player-more-menu.active { transform:translateY(0) scale(1); } .sheet.sheet-dock-topright { left:auto;right:20px;top:64px;bottom:auto;width:min(320px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right;max-height:min(62vh,520px); } .sheet.sheet-dock-topright.active { transform:translateY(0) scale(1); } .lyrics-controls { right:auto;left:24px; } #player-lyrics-inner .lyrics-line { padding:10px 0;min-height:auto;transform:none;transform-origin:left center; } #player-lyrics-inner .lyrics-line.active { transform:none;color:var(--text-primary);font-weight:500;opacity:1; } #player-lyrics-inner .lyrics-line:not(.active) { opacity:0.55; } #lyrics-page .player-header { justify-content:center; } #back-to-player-btn,#lyrics-controls { display:none!important; } #lyrics-page .lyrics-container { padding-left:clamp(40px,12vw,200px);padding-right:clamp(40px,12vw,200px); } }
+@media (min-width:900px),(min-width:640px)and (max-height:500px) { .player-content { flex-direction:row;align-items:center;justify-content:center;gap:48px;padding:0 56px;overflow:visible; } .player-swipe-layer { flex-direction:row;justify-content:center;align-items:center;gap:48px;flex:0 1 auto;width:auto; } .player-left { flex:0 1 420px;width:420px;max-width:420px;min-width:0;margin-top:0; } .album-cover-wrap { width:min(100%,260px);height:auto;max-height:none;margin-top:calc(-24px + var(--disc-lift, -80px)); } .progress-container { max-width:370px; } .album-cover-wrap::before { inset:-24px;filter:blur(22px); } .player-lyrics { display:block;max-width:460px;height:min(68vh,560px); } .player-lyrics-inner { padding:12px 8px; } .player-lyrics-inner .lyrics-line { font-size:18px;line-height:1.9; } #lyrics-btn { display:none; } .cover-lyric { display:none; } .main-control-btn.add-pl-btn { display:flex; } .sheet { left:50%;right:auto;width:min(420px,calc(100vw - 48px));bottom:calc(var(--bottom-stack) + 12px);transform:translate(-50%,16px) scale(0.97); } .sheet.active { transform:translate(-50%,0) scale(1); } #rate-sheet,.sheet.sheet-dock-left { left:24px;right:auto;width:min(340px,calc(100vw - 48px));bottom:auto;top:50%;transform:translateY(calc(-50% + 16px)) scale(0.97);max-height:min(62vh,520px); } #rate-sheet.active,.sheet.sheet-dock-left.active { transform:translateY(-50%) scale(1); } #rate-sheet { left:auto;right:20px;top:64px;bottom:auto;width:min(300px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right; } #rate-sheet.active { transform:translateY(0) scale(1); } #player-more-menu { left:auto;right:20px;top:64px;bottom:auto;width:min(240px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right; } #player-more-menu.active { transform:translateY(0) scale(1); } .sheet.sheet-dock-topright { left:auto;right:20px;top:64px;bottom:auto;width:min(320px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right;max-height:min(62vh,520px); } .sheet.sheet-dock-topright.active { transform:translateY(0) scale(1); } .lyrics-controls { right:auto;left:24px; } #player-lyrics-inner .lyrics-line { padding:10px 0;min-height:auto;transform:none;transform-origin:left center; } #player-lyrics-inner .lyrics-line.active { transform:none;color:var(--text-primary);font-weight:500;opacity:1; } #player-lyrics-inner .lyrics-line:not(.active) { opacity:0.55; } #lyrics-page .player-header { justify-content:center; } #back-to-player-btn,#lyrics-controls { display:none!important; } #lyrics-page .lyrics-container { padding-left:clamp(40px,12vw,200px);padding-right:clamp(40px,12vw,200px); } }
 @media (min-width:640px)and (max-height:500px) { .player-content { gap:28px;padding:4px 24px 16px; } .player-swipe-layer { gap:28px; } .player-left { flex:0 0 auto;width:auto;max-width:340px;--ctrl-size:42px;--ctrl-gap:12px; } .album-cover-wrap { width:min(46vh,230px);height:auto;max-height:none;margin-top:0; } .player-panel { width:100%; } .player-main-controls { margin:0; } .main-control-btn { font-size:18px; } .main-control-btn.play-pause { font-size:20px; } .player-lyrics { height:min(84vh,100%); } .player-lyrics-inner .lyrics-line { font-size:16px;line-height:1.8; } .album-cover-wrap::before { inset:-18px;filter:blur(18px); } .player-header { padding:8px 16px; } .player-title { padding:0 96px; } .player-song-name { font-size:15px; } .player-artist-name { font-size:12px; } }
 @media (min-width:900px),(min-width:640px)and (max-height:500px) { .main-content { padding-left:calc(var(--side-tab-width) + 24px);padding-bottom:30px; } body.has-mini-player .main-content { padding-bottom:calc(var(--mini-height) + 24px); } .header { padding-left:calc(var(--side-tab-width) + 20px); } .mini-player { left:var(--side-tab-width);right:0;bottom:0; } .fab-stack { bottom:18px; } body.has-mini-player .fab-stack { bottom:calc(var(--mini-height) + 18px); } .player-header { padding:16px 32px; } .player-title { padding:0 100px; } .player-song-name { font-size:18px; } .player-artist-name { font-size:13.5px; } .fav-page,.playlist-page,.search-results,.about-page { left:calc(var(--side-tab-width) + 1px); } .about-page { display:none; } body.settings-tab .about-page { display:flex; } }
-@media (min-width:900px),(min-width:640px)and (max-height:500px) { body #select-bar,body #pl-select-bar { left:50%;right:auto;width:min(520px,calc(100vw - 48px));padding:8px;border-radius:20px;border:1px solid var(--glass-edge-heavy);transform:translate(-50%,16px); } body #select-bar.active,body #pl-select-bar.active { transform:translate(-50%,0); } body .select-topbar { left:var(--side-tab-width); } }
+@media (min-width:900px),(min-width:640px)and (max-height:500px) { body #select-bar,body #pl-select-bar { left:var(--side-tab-width);right:0;width:auto;padding:8px 10px;border:none;border-top:1px solid var(--glass-edge);border-radius:0;box-shadow:var(--inset-highlight);background:var(--glass-panel-strong);-webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));justify-content:center;transform:translateY(16px);bottom:0; } body #select-bar .select-act,body #pl-select-bar .select-act { flex:0 1 180px; } body #select-bar.active,body #pl-select-bar.active { transform:translateY(0); } body.has-mini-player #select-bar,body.has-mini-player #pl-select-bar { bottom:var(--mini-height); } body .select-topbar { left:var(--side-tab-width); } }
 </style>
 </head>
 <body>
@@ -1046,7 +1047,7 @@ html.no-glass .lyrics-veil-blur-3 { -webkit-backdrop-filter:blur(18px) saturate(
                         </div>
                     </div>
                     <div class="settings-row">
-                        <div class="settings-label">毛玻璃效果</div>
+                        <div class="settings-label">毛玻璃</div>
                         <label class="settings-switch">
                             <input type="checkbox" id="settings-glass" />
                             <span class="settings-switch-track"><span class="settings-switch-dot"></span></span>
@@ -4597,6 +4598,13 @@ html.no-glass .lyrics-veil-blur-3 { -webkit-backdrop-filter:blur(18px) saturate(
             }
             document.addEventListener('click', (e) => {
                 if (isSortMode()) return;
+                const selectSheetOpen = (selectMoreMenu && selectMoreMenu.classList.contains('active'))
+                    || (plSelectMoreMenu && plSelectMoreMenu.classList.contains('active'));
+                if (selectSheetOpen && !e.target.closest('.sheet')
+                    && !e.target.closest('.select-bar') && !e.target.closest('.select-topbar')) {
+                    closeAllSheets();
+                    return;
+                }
                 if (selectMode && !e.target.closest('.select-bar')
                     && !e.target.closest('.select-topbar')) {
                     const onRow = e.target.closest('.song-item, .result-item, .fav-item');
@@ -7640,11 +7648,9 @@ html.no-glass .lyrics-veil-blur-3 { -webkit-backdrop-filter:blur(18px) saturate(
                 };
                 const paint = (words, keepHidden) => {
                     if (keepHidden) return;
-                    if (!words.length) {
-                        renderHistoryInto(containerEl, inputEl, options.historyOpts);
-                    } else {
-                        renderSuggestInto(containerEl, inputEl, inputEl.value.trim(), words);
-                    }
+                    const q = inputEl.value.trim();
+                    if (!q) renderHistoryInto(containerEl, inputEl, options.historyOpts);
+                    else renderSuggestInto(containerEl, inputEl, q, words);
                     containerEl.classList.add('active');
                 };
                 const run = (keepHidden) => {
@@ -7691,9 +7697,11 @@ html.no-glass .lyrics-veil-blur-3 { -webkit-backdrop-filter:blur(18px) saturate(
             function renderSuggestInto(container, inputEl, q, words) {
                 container.__histSig = '';
                 container.innerHTML = '<div class="history-header"><span>搜索推荐</span></div>';
-                words.forEach(w => {
+                const isFallback = !(words && words.length);
+                const list = isFallback ? [q] : words;
+                list.forEach(w => {
                     const div = document.createElement('div');
-                    div.className = 'search-history-item suggest-item';
+                    div.className = 'search-history-item suggest-item' + (isFallback ? ' suggest-fallback' : '');
                     const icon = document.createElement('i');
                     icon.className = 'fas fa-search sh-icon';
                     const text = document.createElement('span');
@@ -7701,7 +7709,7 @@ html.no-glass .lyrics-veil-blur-3 { -webkit-backdrop-filter:blur(18px) saturate(
                     text.textContent = w;
                     div.appendChild(icon);
                     div.appendChild(text);
-                    const hl = highlightKeyword(w, q);
+                    const hl = isFallback ? '' : highlightKeyword(w, q);
                     if (hl) text.innerHTML = hl;
                     div.addEventListener('click', () => {
                         inputEl.value = w;
