@@ -274,7 +274,7 @@
 @property --halo-angle { syntax:"<angle>";inherits:false;initial-value:0deg; }
 @property --scan { syntax:"<percentage>";inherits:true;initial-value:0%; }
 :root { --glass-bg:rgba(255, 255, 255, 0.06);--glass-border:rgba(255, 255, 255, 0.10);--glass-shadow:0 8px 32px rgba(0, 0, 0, 0.35);--glass-blur:18px;--primary:#e91e63;--primary-glow:rgba(233, 30, 99, 0.35);--primary-tint:rgba(233, 30, 99, 0.16);--text-primary:#ffffff;--text-secondary:rgba(255, 255, 255, 0.70);--bg-body:#0b0b0e;--card-radius:18px;--mini-height:72px;--tab-height:58px;--player-pad-x:24px;--ctrl-size:48px;--ctrl-gap:12px;--side-tab-width:216px;--bottom-stack:0px;--transition:0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);--bg-elevated:#0e0e12;--bg-elevated-2:#121218;--bg-popover:#16161c;--bg-overlay:#0b0b0e;--veil-solid:rgba(11, 11, 14, 1);--veil-mid:rgba(11, 11, 14, 0.72);--veil-clear:rgba(11, 11, 14, 0);--popover-solid:rgba(24, 24, 31, 0.98);--popover-soft:rgba(18, 18, 24, 0.88);--popover-toast:rgba(24, 24, 30, 0.94);--popover-dialog:rgba(26, 26, 33, 0.98);--surface:rgba(255, 255, 255, 0.02);--surface-raised:rgba(255, 255, 255, 0.03);--surface-card:rgba(255, 255, 255, 0.04);--surface-hover:rgba(255, 255, 255, 0.05);--surface-input:rgba(255, 255, 255, 0.06);--surface-hover-strong:rgba(255, 255, 255, 0.07);--surface-input-focus:rgba(255, 255, 255, 0.09);--surface-control:rgba(255, 255, 255, 0.10);--surface-highlight:rgba(255, 255, 255, 0.14);--surface-control-strong:rgba(255, 255, 255, 0.18);--border-subtle:rgba(255, 255, 255, 0.04);--border:rgba(255, 255, 255, 0.06);--border-strong:rgba(255, 255, 255, 0.10);--border-popover:rgba(255, 255, 255, 0.12);--border-control:rgba(255, 255, 255, 0.16);--border-check:rgba(255, 255, 255, 0.22);--text-muted:rgba(255, 255, 255, 0.40);--text-faint:rgba(255, 255, 255, 0.35);--lyric-dim:rgba(255, 255, 255, 0.55);--lyric-bright:rgba(255, 255, 255, 0.90);--lyric-cover-dim:rgba(255, 255, 255, 0.30);--lyric-active:#ffffff;--lyric-pending:rgba(255, 255, 255, 0.42);--text-control:rgba(255, 255, 255, 0.86);--text-on-media:rgba(255, 255, 255, 0.70);--cover-ph-bg:#0b0b0f;--cover-ph-fg:rgba(255, 255, 255, 0.34);--album-ring:rgba(255, 255, 255, 0.07);--shadow-card:0 6px 24px rgba(0, 0, 0, 0.30);--shadow-thumb:0 4px 12px rgba(0, 0, 0, 0.30);--shadow-float:0 10px 28px rgba(0, 0, 0, 0.42), 0 2px 8px rgba(0, 0, 0, 0.28);--shadow-popover:0 20px 60px rgba(0, 0, 0, 0.60);--shadow-dropdown:0 18px 56px rgba(0, 0, 0, 0.80), 0 2px 10px rgba(0, 0, 0, 0.5);--shadow-cover:0 26px 76px rgba(0, 0, 0, 0.65);--mask:rgba(0, 0, 0, 0.62);--mask-sheet:rgba(0, 0, 0, 0.55);--inset-highlight:inset 0 1px 0 rgba(255, 255, 255, 0.08);--glass-blur-strong:34px;--glass-blur-soft:22px;--glass-saturate:175%;--glass-brightness:110%;--glass-panel:rgba(18, 18, 24, 0.55);--glass-panel-strong:rgba(16, 16, 22, 0.62);--glass-edge:rgba(255, 255, 255, 0.09);--glass-blur-heavy:48px;--glass-blur-bar:24px;--glass-panel-heavy:rgba(18, 18, 25, 0.40);--glass-edge-heavy:rgba(255, 255, 255, 0.14);--glass-sheen:linear-gradient(180deg, rgba(255, 255, 255, 0.055) 0%, rgba(255, 255, 255, 0.012) 42%, rgba(255, 255, 255, 0) 100%);--lyrics-veil:rgba(11, 11, 14, 0.92);--veil-solid:color-mix(in srgb, rgb(16, 18, 26) 44%, transparent);--veil-hold:0px;--mdui-color-theme:var(--primary);--mdui-color-theme-accent:#f0346f;--mdui-color-theme-100:#f8bbd0;--mdui-color-theme-200:#f48fb1;--mdui-color-theme-300:#f06292;--mdui-color-theme-400:var(--primary);--mdui-color-theme-500:var(--primary);--mdui-color-theme-600:#d81b60;--mdui-color-theme-700:#c2185b;--mdui-color-theme-800:#ad1457;--mdui-color-theme-900:#880e4f; }
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {:root,:root[data-theme=light] { --veil-solid:var(--lyrics-veil); }}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { :root,:root[data-theme=light] { --veil-solid:var(--lyrics-veil); } }
 :root { --veil-stops:color-mix(in srgb, var(--veil-solid) 68%, transparent) 30%, color-mix(in srgb, var(--veil-solid) 30%, transparent) 58%, color-mix(in srgb, var(--veil-solid) 9%, transparent) 80%, transparent 100%; }
 :root[data-theme=light] { --bg-body:#f5f5f7;--bg-elevated:#ffffff;--bg-elevated-2:#ffffff;--bg-popover:#ffffff;--bg-overlay:#ffffff;--veil-solid:rgba(255, 255, 255, 1);--veil-mid:rgba(255, 255, 255, 0.72);--veil-clear:rgba(255, 255, 255, 0);--popover-solid:rgba(255, 255, 255, 0.98);--popover-soft:rgba(255, 255, 255, 0.95);--popover-toast:rgba(28, 28, 32, 0.92);--popover-dialog:rgba(255, 255, 255, 0.99);--surface:rgba(0, 0, 0, 0.030);--surface-raised:rgba(0, 0, 0, 0.035);--surface-card:rgba(0, 0, 0, 0.035);--surface-hover:rgba(0, 0, 0, 0.050);--surface-input:rgba(0, 0, 0, 0.050);--surface-hover-strong:rgba(0, 0, 0, 0.060);--surface-input-focus:rgba(0, 0, 0, 0.070);--surface-control:rgba(0, 0, 0, 0.120);--surface-highlight:rgba(0, 0, 0, 0.100);--surface-control-strong:rgba(0, 0, 0, 0.200);--border-subtle:rgba(0, 0, 0, 0.05);--border:rgba(0, 0, 0, 0.08);--border-strong:rgba(0, 0, 0, 0.10);--border-popover:rgba(0, 0, 0, 0.10);--border-control:rgba(0, 0, 0, 0.12);--border-check:rgba(0, 0, 0, 0.22);--text-primary:#1c1c1e;--text-secondary:rgba(0, 0, 0, 0.55);--text-muted:rgba(0, 0, 0, 0.32);--text-faint:rgba(0, 0, 0, 0.35);--lyric-dim:rgba(0, 0, 0, 0.34);--lyric-bright:rgba(0, 0, 0, 0.85);--lyric-cover-dim:rgba(0, 0, 0, 0.28);--lyric-active:#1c1c1e;--lyric-pending:rgba(0, 0, 0, 0.34);--text-control:rgba(0, 0, 0, 0.80);--text-on-media:rgba(255, 255, 255, 0.85);--cover-ph-bg:#f2f2f5;--cover-ph-fg:rgba(0, 0, 0, 0.30);--album-ring:rgba(0, 0, 0, 0.08);--shadow-card:0 6px 24px rgba(0, 0, 0, 0.08);--shadow-thumb:0 4px 12px rgba(0, 0, 0, 0.10);--shadow-float:0 10px 28px rgba(0, 0, 0, 0.16), 0 2px 8px rgba(0, 0, 0, 0.08);--shadow-popover:0 20px 60px rgba(0, 0, 0, 0.14);--shadow-dropdown:0 12px 40px rgba(0, 0, 0, 0.16), 0 2px 8px rgba(0, 0, 0, 0.08);--shadow-cover:0 20px 56px rgba(0, 0, 0, 0.20);--mask:rgba(0, 0, 0, 0.32);--mask-sheet:rgba(0, 0, 0, 0.38);--inset-highlight:inset 0 1px 0 rgba(0, 0, 0, 0.05);--primary-glow:rgba(233, 30, 99, 0.22);--primary-tint:rgba(233, 30, 99, 0.12);--glass-bg:rgba(0, 0, 0, 0.03);--glass-border:rgba(0, 0, 0, 0.06);--glass-shadow:0 8px 32px rgba(0, 0, 0, 0.10);--glass-brightness:110%;--glass-saturate:175%;--glass-panel:rgba(255, 255, 255, 0.72);--glass-panel-strong:rgba(255, 255, 255, 0.80);--glass-edge:rgba(0, 0, 0, 0.06);--glass-blur-heavy:48px;--glass-blur-bar:24px;--glass-panel-heavy:rgba(255, 255, 255, 0.55);--glass-edge-heavy:rgba(0, 0, 0, 0.09);--glass-sheen:linear-gradient(180deg, rgba(255, 255, 255, 0.60) 0%, rgba(255, 255, 255, 0.20) 42%, rgba(255, 255, 255, 0) 100%);--lyrics-veil:rgba(245, 245, 247, 0.92);--veil-solid:color-mix(in srgb, rgb(252, 252, 254) 64%, transparent);--veil-hold:0px; }
 * { margin:0;padding:0;box-sizing:border-box;font-family:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;-webkit-tap-highlight-color:transparent; }
@@ -282,14 +282,14 @@ html { height:100%;overflow:hidden;overscroll-behavior:none; }
 body::before { content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(120% 80% at 12% 0%,rgba(255,255,255,0.045) 0%,rgba(255,255,255,0) 62%),radial-gradient(110% 75% at 92% 100%,rgba(0,0,0,0.055) 0%,rgba(0,0,0,0) 60%); }
 :root[data-theme=light] body::before { background:radial-gradient(120% 80% at 12% 0%,rgba(255,255,255,0.72) 0%,rgba(255,255,255,0) 62%),radial-gradient(110% 75% at 92% 100%,rgba(0,0,0,0.045) 0%,rgba(0,0,0,0) 60%); }
 .glass-surface { background:var(--glass-panel);-webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));border-top:1px solid var(--glass-edge); }
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {.glass-surface { background:var(--bg-elevated); }}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .glass-surface { background:var(--bg-elevated); } }
 #panel-chart,.search-results,.mine-list,.playlist-page,.fav-page,.mini-player,.lyrics-page,.player-lyrics { -webkit-user-select:none;-moz-user-select:none;user-select:none;-webkit-touch-callout:none; }
 html,body { -webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-touch-callout:none; }
 .search-input,.dialog-input,.fav-header-search .search-input,textarea,input { -webkit-user-select:text;-moz-user-select:text;user-select:text;-webkit-touch-callout:default; }
 body { background:var(--bg-body);color:var(--text-primary);height:100vh;height:100dvh;overflow:hidden;display:flex;flex-direction:column;position:relative;padding-bottom:0;font-weight:400;letter-spacing:0.01em;transition:padding-bottom 0.4s cubic-bezier(0.25,0.46,0.45,0.94),background-color 0.45s ease,color 0.45s ease; }
 body.has-mini-player { padding-bottom:0; }
 .tab-bar { position:fixed;left:0;right:0;bottom:0;height:calc(var(--tab-height) + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px);display:flex;align-items:stretch;z-index:520;background:var(--glass-panel-strong);-webkit-backdrop-filter:blur(var(--glass-blur-soft)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-soft)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));border-top:1px solid var(--glass-edge);transition:transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94),opacity 0.24s; }
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {.tab-bar { background:var(--bg-elevated); }}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .tab-bar { background:var(--bg-elevated); } }
 .tab-brand { display:none;border:none;background:transparent;font:inherit;color:inherit;text-align:left;width:100%; }
 .tab-items { display:flex;flex:1;align-items:stretch; }
 .tab-item { flex:1;border:none;background:transparent;color:var(--text-secondary);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;font-size:11px;letter-spacing:0.4px;transition:color 0.22s ease;padding:0; }
@@ -298,24 +298,7 @@ body.has-mini-player { padding-bottom:0; }
 .tab-item.active .tab-icon { transform:translateY(-1px) scale(1.12); }
 .tab-item:active .tab-icon { transform:scale(0.9); }
 body.tab-bar-hidden .tab-bar { transform:translateY(100%);opacity:0;pointer-events:none; }
-@media (min-width:900px),(min-width:640px)and (max-height:500px) {
-    .tab-bar { top:0;bottom:0;right:auto;left:0;width:var(--side-tab-width);height:auto;padding-bottom:0;flex-direction:column;align-items:stretch;border-top:none;border-right:1px solid var(--glass-edge); }
-    body.tab-bar-hidden .tab-bar { transform:none;opacity:1;pointer-events:auto; }
-    .tab-brand { display:flex;align-items:center;gap:10px;padding:22px 18px 18px;border-bottom:1px solid var(--glass-edge);margin-bottom:8px;flex-shrink:0;cursor:pointer;transition:background 0.2s ease; }
-    .tab-brand:hover { background:var(--surface-hover); }
-    .tab-brand:active .tab-brand-logo { transform:scale(0.92); }
-    .tab-brand .tab-brand-logo { transition:transform 0.18s cubic-bezier(0.34,1.56,0.64,1); }
-    .tab-brand-logo { width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.28)); }
-    .tab-brand-logo .brand-disc { width:100%;height:100%;display:block; }
-    .tab-brand-name { font-size:15px;font-weight:600;letter-spacing:0.2px;color:var(--text-primary);white-space:nowrap; }
-    .tab-items { flex-direction:column;align-items:stretch;gap:4px;padding:0 10px;overflow-y:auto;flex:0 1 auto; }
-    .tab-item { flex:0 0 auto;flex-direction:row;justify-content:flex-start;gap:12px;padding:12px 14px;border-radius:12px;font-size:14px;letter-spacing:0.2px;transition:color 0.22s ease,background 0.22s ease; }
-    .tab-item .tab-icon { font-size:16px;transition:none; }
-    .tab-item.active { background:var(--primary-tint);color:var(--primary); }
-    .tab-item.active .tab-icon { transform:none; }
-    .tab-item:hover:not(.active) { background:var(--surface-input);color:var(--text-primary); }
-    .tab-item:hover:not(.active) .tab-icon { transform:none; }
-}
+@media (min-width:900px),(min-width:640px)and (max-height:500px) { .tab-bar { top:0;bottom:0;right:auto;left:0;width:var(--side-tab-width);height:auto;padding-bottom:0;flex-direction:column;align-items:stretch;border-top:none;border-right:1px solid var(--glass-edge); } body.tab-bar-hidden .tab-bar { transform:none;opacity:1;pointer-events:auto; } .tab-brand { display:flex;align-items:center;gap:10px;padding:22px 18px 18px;border-bottom:1px solid var(--glass-edge);margin-bottom:8px;flex-shrink:0;cursor:pointer;transition:background 0.2s ease; } .tab-brand:hover { background:var(--surface-hover); } .tab-brand:active .tab-brand-logo { transform:scale(0.92); } .tab-brand .tab-brand-logo { transition:transform 0.18s cubic-bezier(0.34,1.56,0.64,1); } .tab-brand-logo { width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.28)); } .tab-brand-logo .brand-disc { width:100%;height:100%;display:block; } .tab-brand-name { font-size:15px;font-weight:600;letter-spacing:0.2px;color:var(--text-primary);white-space:nowrap; } .tab-items { flex-direction:column;align-items:stretch;gap:4px;padding:0 10px;overflow-y:auto;flex:0 1 auto; } .tab-item { flex:0 0 auto;flex-direction:row;justify-content:flex-start;gap:12px;padding:12px 14px;border-radius:12px;font-size:14px;letter-spacing:0.2px;transition:color 0.22s ease,background 0.22s ease; } .tab-item .tab-icon { font-size:16px;transition:none; } .tab-item.active { background:var(--primary-tint);color:var(--primary); } .tab-item.active .tab-icon { transform:none; } .tab-item:hover:not(.active) { background:var(--surface-input);color:var(--text-primary); } .tab-item:hover:not(.active) .tab-icon { transform:none; } }
 .tab-panel { display:none; }
 .tab-panel.active { display:block; }
 .chart-switch { display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch; }
@@ -358,7 +341,7 @@ body.tab-bar-hidden .tab-bar { transform:translateY(100%);opacity:0;pointer-even
 .settings-switch { position:relative;display:inline-flex;cursor:pointer;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent; }
 .settings-switch input { position:absolute;opacity:0;width:0;height:0; }
 .settings-switch-track { position:relative;width:46px;height:28px;border-radius:999px;background:var(--surface-hover);border:1px solid color-mix(in srgb,var(--primary) calc(var(--on-progress, 0) * 100%),var(--border-subtle));display:inline-flex;align-items:center;padding:2px;transition:background 0.18s ease,border-color 0.18s ease; }
-@supports not (color: color-mix(in srgb,red 50%,blue)) {.settings-switch input:checked+.settings-switch-track { border-color:var(--primary); }}
+@supports not (color: color-mix(in srgb,red 50%,blue)) { .settings-switch input:checked+.settings-switch-track { border-color:var(--primary); } }
 .settings-switch-track::after { content:"";position:absolute;inset:-1px;border-radius:inherit;background:var(--primary);opacity:var(--on-progress, 0);transition:opacity 0.18s ease;pointer-events:none; }
 .settings-switch-dot { position:relative;z-index:1;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.3);transition:transform 0.18s ease;will-change:transform; }
 .settings-switch.dragging .settings-switch-dot,.settings-switch.dragging .settings-switch-track,.settings-switch.dragging .settings-switch-track::after { transition:none; }
@@ -410,16 +393,13 @@ body.mine-tab .fab-stack.show { opacity:1;transform:scale(1);pointer-events:all;
 ::-webkit-scrollbar-thumb { background:var(--surface-highlight);border-radius:20px; }
 .header { position:absolute;top:0;left:0;right:0;z-index:100;padding:14px 20px; }
 .header::before { content:"";position:absolute;inset:0;z-index:-1;background:var(--glass-panel-strong);-webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));border-bottom:1px solid var(--glass-edge); }
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    .header { background:var(--bg-body); }
-    .header::before { display:none; }
-}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .header { background:var(--bg-body); } .header::before { display:none; } }
 .search-container { display:flex;gap:10px;width:100%;position:relative; }
 .search-field { position:relative;flex:1;min-width:0;display:flex; }
 .search-field .search-input { width:100%;padding-right:42px; }
 .input-clear { position:absolute;right:10px;top:50%;transform:translateY(-50%) scale(0.7);width:22px;height:22px;border:none;border-radius:50%;background:var(--surface-highlight);color:var(--text-secondary);font-size:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;opacity:0;pointer-events:none;transition:opacity 0.18s,transform 0.18s,background 0.18s,color 0.18s; }
 .input-clear.show { opacity:1;pointer-events:all;transform:translateY(-50%) scale(1); }
-@media (hover:hover)and (pointer:fine) {.input-clear.show:hover { background:rgba(233,30,99,0.9);color:#fff; }}
+@media (hover:hover)and (pointer:fine) { .input-clear.show:hover { background:rgba(233,30,99,0.9);color:#fff; } }
 .input-clear.show:active { background:rgba(233,30,99,0.9);color:#fff;transform:translateY(-50%) scale(0.86); }
 .search-input { flex:1;background:var(--glass-panel);-webkit-backdrop-filter:blur(var(--glass-blur-soft)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-soft)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));border:1px solid var(--glass-edge);border-radius:60px;padding:12px 22px;color:var(--text-primary);font-size:15px;outline:none;transition:all var(--transition); }
 .search-input:focus { background:var(--surface-input-focus);border-color:rgba(233,30,99,0.30);box-shadow:0 0 0 3px rgba(233,30,99,0.08); }
@@ -434,11 +414,11 @@ body.mine-tab .fab-stack.show { opacity:1;transform:scale(1);pointer-events:all;
 .search-history { position:absolute;top:calc(100% + 8px);left:0;right:0;background:var(--glass-panel-strong);-webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));border:1px solid var(--glass-edge);border-radius:16px;max-height:340px;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none;overscroll-behavior:contain;box-shadow:var(--shadow-dropdown);z-index:1100;display:none;opacity:0;transition:opacity 0.2s; }
 .search-history::-webkit-scrollbar { display:none;width:0;height:0; }
 .search-history.active { display:block;opacity:1; }
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {.search-history { background:var(--bg-popover); }}
-.history-header { padding:12px 18px;font-size:13px;color:var(--text-secondary);display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-subtle);position:sticky;top:0;background:var(--popover-solid);z-index:2;border-radius:16px 16px 0 0; }
-.clear-history { font-size:12px;color:var(--primary);cursor:pointer;opacity:0.9;transition:opacity 0.2s,background 0.2s;padding:4px 11px;border-radius:20px;background:rgba(233,30,99,0.16);display:inline-flex;align-items:center;gap:5px;user-select:none;white-space:nowrap; }
-.clear-history:hover { opacity:1;background:rgba(233,30,99,0.20); }
-.clear-history:active { transform:scale(0.95); }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .search-history { background:var(--bg-popover); } }
+.history-header { padding:9px 18px;font-size:13px;color:var(--text-secondary);display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-subtle);position:sticky;top:0;background:var(--popover-solid);z-index:2;border-radius:16px 16px 0 0; }
+.clear-history { width:22px;height:22px;flex-shrink:0;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;line-height:1;color:var(--text-secondary);opacity:0.6;cursor:pointer;background:transparent;border:none;padding:0;user-select:none;transition:color 0.2s,opacity 0.2s,background 0.2s; }
+.clear-history:hover { opacity:1;color:#ff4d6d; }
+.clear-history:active { transform:scale(0.92); }
 .search-history-item { padding:11px 18px;cursor:pointer;transition:background 0.15s;font-size:14px;color:var(--text-secondary);display:flex;align-items:center;gap:10px; }
 .search-history-item:hover { background:var(--surface-card); }
 .search-history-item .sh-icon { font-size:11px;opacity:0.45;flex-shrink:0; }
@@ -446,6 +426,7 @@ body.mine-tab .fab-stack.show { opacity:1;transform:scale(1);pointer-events:all;
 .sh-del { flex-shrink:0;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;color:var(--text-secondary);opacity:0.45;background:transparent;border:none;cursor:pointer;transition:all 0.2s; }
 .sh-del:hover { opacity:1;color:#fff;background:rgba(233,30,99,0.90); }
 .sh-del:active { transform:scale(0.88); }
+.suggest-item .sh-text em { font-style:normal;font-weight:600;color:var(--primary); }
 .search-history-empty { padding:22px 18px;text-align:center;font-size:13px;color:var(--text-secondary);opacity:0.6; }
 .main-content { padding:calc(var(--header-h, 75px) + 12px) 20px 30px;flex:1 1 auto;min-height:0;overflow-y:auto;padding-bottom:calc(var(--tab-height) + env(safe-area-inset-bottom,0px) + 12px);transition:opacity 0.3s,padding-bottom 0.4s cubic-bezier(0.25,0.46,0.45,0.94); }
 body.has-mini-player .main-content { padding-bottom:calc(var(--tab-height) + env(safe-area-inset-bottom,0px) + var(--mini-height) + 12px); }
@@ -481,7 +462,7 @@ body.has-mini-player .main-content { padding-bottom:calc(var(--tab-height) + env
 .fav-icon-btn:active { transform:scale(0.9); }
 .fav-play-btn i { margin-left:2px; }
 .fav-header { display:flex;flex-direction:column;gap:0;padding:14px 16px;background:var(--glass-panel-strong);-webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));border-bottom:1px solid var(--glass-edge);flex-shrink:0; }
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {.fav-header { background:var(--bg-body); }}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .fav-header { background:var(--bg-body); } }
 .fav-header-row { display:flex;align-items:center;gap:12px;line-height:30px; }
 .fav-header-search { display:flex;align-items:center;gap:10px;max-height:0;padding-top:0;opacity:0;overflow:hidden;pointer-events:none;transition:max-height 0.26s cubic-bezier(0.25,0.46,0.45,0.94),padding-top 0.26s cubic-bezier(0.25,0.46,0.45,0.94),opacity 0.2s ease; }
 .fav-header-search.active { max-height:44px;padding-top:10px;opacity:1;pointer-events:all; }
@@ -509,7 +490,7 @@ body.has-mini-player .main-content { padding-bottom:calc(var(--tab-height) + env
 .fav-item:active { transform:scale(0.985); }
 .fav-item.playing { background:rgba(233,30,99,0.10);border-color:rgba(233,30,99,0.28); }
 .fav-item.playing .fav-item-title { color:var(--primary); }
-#history-page { background:var(--glass-panel-heavy);-webkit-backdrop-filter:blur(var(--glass-blur-heavy)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-heavy)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));z-index:735; }
+#history-page { background:var(--bg-overlay);z-index:735; }
 #history-page .fav-header { flex-shrink:0;padding:8px 16px 8px; }
 #history-page .fav-scroll { padding-top:calc(var(--fav-header-h, 58px) + 8px); }
 #history-page .pl-summary { padding:2px 16px 10px;gap:12px; }
@@ -531,15 +512,12 @@ body.has-mini-player .main-content { padding-bottom:calc(var(--tab-height) + env
 .fav-item.dragging .drag-handle { color:#fff;opacity:1; }
 .fav-item.dragging { position:relative;z-index:30;border-radius:12px;box-shadow:var(--shadow-float);transition:none;pointer-events:none;will-change:transform;contain:layout paint;background:transparent; }
 .fav-item.dragging::before { content:"";position:absolute;inset:0;border-radius:inherit;z-index:-1;background:var(--glass-panel-strong);-webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness)); }
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    .fav-item.dragging { background:var(--bg-body);opacity:0.96; }
-    .fav-item.dragging::before { display:none; }
-    #history-page { background:var(--bg-overlay); }
-    .about-page { background:var(--bg-overlay); }
-}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .fav-item.dragging { background:var(--bg-body);opacity:0.96; } .fav-item.dragging::before { display:none; } .about-page { background:var(--bg-overlay); } }
 .fav-list.dragging-active { position:relative;user-select:none; }
 .drag-handle { display:none; }
 .sort-mode .drag-handle { display:flex; }
+.sort-placeholder { box-sizing:border-box;border:1.5px dashed transparent;border-radius:14px;background:transparent;margin-bottom:6px;pointer-events:none;transition:border-color 0.18s ease,background-color 0.18s ease; }
+.sort-placeholder.show { border-color:var(--border-check);background:var(--surface-hover); }
 .sort-mode .song-more-btn { display:none; }
 .sort-mode .fav-item,.sort-mode .song-item { cursor:default; }
 .sort-actions { display:none; }
@@ -574,20 +552,38 @@ body.placeholder-mode #mini-fav-btn,body.placeholder-mode #full-fav-btn,body.pla
 .select-mode .song-more-btn:hover { opacity:0.9; }
 .select-bar { position:fixed;left:12px;right:12px;bottom:calc(var(--tab-height) + var(--bottom-stack) + 12px);z-index:2400;background:var(--glass-panel-heavy);-webkit-backdrop-filter:blur(var(--glass-blur-bar)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-bar)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));border:1px solid var(--glass-edge-heavy);border-radius:20px;box-shadow:var(--shadow-popover),var(--inset-highlight);padding:8px;opacity:0;transform:translateY(16px) scale(0.97);pointer-events:none;transition:all 0.28s cubic-bezier(0.25,0.46,0.45,0.94);max-height:62vh;overflow-y:auto; }
 .select-bar.active { opacity:1;transform:translateY(0) scale(1);pointer-events:all; }
-@media (min-width:900px),(min-width:640px)and (max-height:500px) {
-    .select-bar { left:50%;right:auto;width:min(520px,calc(100vw - 48px));transform:translate(-50%,16px) scale(0.97); }
-    .select-bar.active { transform:translate(-50%,0) scale(1); }
-}
+@media (min-width:900px),(min-width:640px)and (max-height:500px) { .select-bar { left:50%;right:auto;width:min(520px,calc(100vw - 48px));transform:translate(-50%,16px) scale(0.97); } .select-bar.active { transform:translate(-50%,0) scale(1); } }
 .select-head { padding:10px 14px 8px;border-bottom:1px solid var(--border);margin-bottom:6px; }
 .select-count { font-size:13px;font-weight:600;color:var(--text-secondary); }
 .select-bar .menu-item { display:flex;align-items:center;gap:12px;width:100%;padding:14px 14px;border:none;border-radius:13px;background:none;font-family:inherit;font-size:14.5px;text-align:left;color:var(--text-primary);cursor:pointer;transition:background 0.18s,opacity 0.18s; }
-.select-bar .menu-item:hover:not(:disabled) { background:transparent; }
-.select-bar .menu-item:active:not(:disabled) { transform:scale(0.985); }
+.select-bar .menu-item:hover:not(:disabled) { background:var(--surface-hover-strong); }
+.select-bar .menu-item:active:not(:disabled) { background:var(--surface-hover-strong);transform:none; }
 .select-bar .menu-item i { width:20px;text-align:center;font-size:15px;color:var(--text-secondary); }
 .select-bar .menu-item:disabled { opacity:0.35;cursor:default; }
 .select-bar .menu-item.danger,.select-bar .menu-item.danger i { color:#ff4d6d; }
 .select-bar .menu-item.danger:hover:not(:disabled) { background:rgba(255,77,109,0.12); }
 .select-bar .menu-item:active:not(:disabled):not(.danger),.select-bar .menu-item:active:not(:disabled):not(.danger) i { color:#fff; }
+.select-topbar { position:fixed;top:0;left:0;right:0;z-index:2500;display:flex;align-items:center;gap:10px;padding:0 16px;height:56px;background:var(--glass-panel-strong);-webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));border-bottom:1px solid var(--glass-edge);opacity:0;transform:translateY(-100%);pointer-events:none;transition:opacity 0.28s,transform 0.32s cubic-bezier(0.22,1,0.36,1); }
+.select-topbar.active { opacity:1;transform:translateY(0);pointer-events:all; }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .select-topbar { background:var(--bg-body); } }
+.sel-all { display:flex;align-items:center;gap:8px;padding:6px 2px;background:none;border:none;font-family:inherit;font-size:14px;color:var(--text-primary);cursor:pointer; }
+.sel-box { width:19px;height:19px;box-sizing:border-box;border-radius:50%;border:1.5px solid var(--border-check);display:flex;align-items:center;justify-content:center;font-size:10px;line-height:1;color:#fff;transition:background 0.18s,border-color 0.18s; }
+.sel-box i { opacity:0;transform:scale(0.5);transition:opacity 0.16s,transform 0.2s cubic-bezier(0.22,1,0.36,1); }
+.sel-all.checked .sel-box { background:var(--primary);border-color:var(--primary); }
+.sel-all.checked .sel-box i { opacity:1;transform:scale(1); }
+.sel-count { font-size:13px;color:var(--text-secondary);margin-left:4px; }
+.sel-done { margin-left:auto;padding:6px 2px;background:none;border:none;font-family:inherit;font-size:14.5px;font-weight:600;color:var(--primary);cursor:pointer; }
+.sel-done:active { opacity:0.6; }
+#select-bar,#pl-select-bar { display:flex;flex-direction:row;align-items:stretch;gap:6px;max-height:none;overflow:visible;left:0;right:0;padding:8px 10px;border-radius:0;border-left:none;border-right:none;border-bottom:none;background:rgba(9,9,13,0.92);bottom:calc(var(--tab-height) + env(safe-area-inset-bottom,0px));transform:translateY(16px); }
+#select-bar.active,#pl-select-bar.active { transform:translateY(0); }
+body.has-mini-player #select-bar,body.has-mini-player #pl-select-bar { bottom:calc(var(--tab-height) + env(safe-area-inset-bottom,0px) + var(--mini-height)); }
+body.select-mode .header,body.select-mode .fav-header,body.select-mode .search-results-header { opacity:0;pointer-events:none;transition:opacity 0.22s; }
+body.pl-select-mode .header,body.pl-select-mode .fav-header,body.pl-select-mode .search-results-header { opacity:0;pointer-events:none;transition:opacity 0.22s; }
+.select-act { flex:1;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:6px;padding:9px 4px;border:none;border-radius:12px;background:transparent;font-family:inherit;font-size:13px;color:var(--text-primary);cursor:pointer;transition:background 0.18s,opacity 0.18s; }
+.select-act i { font-size:14px;color:var(--text-secondary); }
+.select-act:active:not(:disabled) { background:var(--surface-hover-strong); }
+.select-act:disabled { opacity:0.35;cursor:default; }
+.select-act.danger,.select-act.danger i { color:#ff4d6d; }
 .toast { position:fixed;left:50%;top:76px;transform:translate(-50%,-14px);background:var(--popover-toast);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--border);color:#fff;padding:10px 20px;border-radius:40px;font-size:13.5px;z-index:5000;opacity:0;pointer-events:none;box-shadow:var(--shadow-popover);transition:opacity 0.28s,transform 0.28s cubic-bezier(0.22,1,0.36,1);white-space:nowrap;max-width:82vw;overflow:hidden;text-overflow:ellipsis; }
 .toast.show { opacity:1;transform:translate(-50%,0); }
 .import-progress { position:fixed;left:50%;top:76px;transform:translate(-50%,-14px);z-index:4900;min-width:210px;max-width:82vw;padding:12px 16px;border-radius:16px;background:var(--popover-toast);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--border);box-shadow:var(--shadow-popover);color:#fff;opacity:0;pointer-events:none;transition:opacity 0.28s,transform 0.28s cubic-bezier(0.22,1,0.36,1); }
@@ -597,7 +593,7 @@ body.placeholder-mode #mini-fav-btn,body.placeholder-mode #full-fav-btn,body.pla
 .import-progress-track { height:4px;border-radius:2px;background:rgba(255,255,255,0.18);overflow:hidden; }
 .import-progress-bar { height:100%;width:0;border-radius:2px;background:var(--primary);transition:width 0.22s ease-out; }
 .mini-player { position:fixed;bottom:calc(var(--tab-height) + env(safe-area-inset-bottom,0px));left:0;right:0;height:var(--mini-height);background:var(--glass-panel-strong);-webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));box-shadow:var(--inset-highlight);display:flex;align-items:center;padding:0 16px;z-index:500;transition:transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94);gap:12px; }
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {.mini-player { background:var(--bg-elevated-2); }}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .mini-player { background:var(--bg-elevated-2); } }
 .mini-player.hidden { transform:translateY(100%); }
 body.tab-bar-hidden .mini-player { bottom:0; }
 .mini-cover { position:relative;width:46px;height:46px;border-radius:10px;overflow:hidden;flex-shrink:0;box-shadow:var(--shadow-thumb); }
@@ -623,10 +619,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
 .control-btn.lc-trans { font-family:inherit; }
 #trans-btn-desk { display:none; }
 #lyrics-trans-btn { display:flex; }
-@media (min-width:900px),(min-width:640px)and (max-height:500px) {
-    #trans-btn-desk { display:flex; }
-    #lyrics-trans-btn { display:none; }
-}
+@media (min-width:900px),(min-width:640px)and (max-height:500px) { #trans-btn-desk { display:flex; } #lyrics-trans-btn { display:none; } }
 #lyrics-trans-btn[hidden],#trans-btn-desk[hidden] { display:none!important; }
 .control-btn:active { transform:scale(0.90); }
 .control-btn.play-pause { background:var(--primary);color:#fff;box-shadow:0 4px 16px rgba(233,30,99,0.25); }
@@ -667,17 +660,14 @@ body.tab-bar-hidden .mini-player { bottom:0; }
 .desk-veil-bottom { bottom:0;--veil-dir:to top; }
 .desk-veil-blur-1 { background:linear-gradient(var(--veil-dir),var(--veil-solid) 0%,color-mix(in srgb,var(--veil-solid) 62%,transparent) 40%,color-mix(in srgb,var(--veil-solid) 20%,transparent) 70%,transparent 100%); }
 .desk-veil-blur-2 { background:linear-gradient(var(--veil-dir),var(--veil-solid) 0%,color-mix(in srgb,var(--veil-solid) 42%,transparent) 18%,transparent 62%); }
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {.desk-veil-blur { display:none; }}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .desk-veil-blur { display:none; } }
 .player-lyrics-inner .lyrics-line { text-align:left; }
 .lyrics-line-plain { color:var(--text-secondary);font-size:14px; }
 .album-cover-wrap { position:relative;width:min(100%,330px);aspect-ratio:1 / 1;height:auto;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:calc(-24px + var(--disc-lift, 0px));cursor:pointer;-webkit-tap-highlight-color:transparent; }
 .album-cover-wrap::before { content:"";position:absolute;inset:-30px;border-radius:50%;background:conic-gradient(from 0deg,var(--disc-glow-a, rgba(233, 30, 99, 0.00)),var(--disc-glow-b, rgba(233, 30, 99, 0.50)),var(--disc-glow-c, rgba(156, 39, 176, 0.34)),var(--disc-glow-a, rgba(233, 30, 99, 0.00)));filter:blur(26px);opacity:0.8;z-index:0;will-change:transform;animation:haloSpin 19s linear infinite;animation-play-state:paused;transition:background 0.5s ease; }
 .album-cover-wrap.spinning::before { animation-play-state:running; }
-@keyframes haloSpin {
-    from { transform:rotate(0deg); }
-    to { transform:rotate(360deg); }
-}
-@media (prefers-reduced-motion:reduce) {.album-cover-wrap::before { animation:none; }}
+@keyframes haloSpin { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
+@media (prefers-reduced-motion:reduce) { .album-cover-wrap::before { animation:none; } }
 .album-cover-wrap::after { content:"";position:absolute;inset:-8px;border-radius:50%;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,0.06) 0%,rgba(0,0,0,0.60) 72%);z-index:1; }
 .album-cover { position:relative;z-index:2;width:calc(100% - 34px);height:calc(100% - 34px);aspect-ratio:1 / 1;border-radius:50%;border:5px solid var(--album-ring);box-shadow:var(--shadow-cover),inset 0 0 0 1px var(--album-ring);overflow:hidden;flex-shrink:0;transform:rotate(0deg);will-change:transform; }
 .album-cover-img { width:100%;height:100%;aspect-ratio:1 / 1;object-fit:cover;object-position:center;display:block;border-radius:inherit; }
@@ -694,19 +684,17 @@ body.tab-bar-hidden .mini-player { bottom:0; }
 .cover-lyric.has-line .cover-lyric-line { color:var(--lyric-bright); }
 .cover-lyric .lyric-seg { --scan:0%;background-image:linear-gradient(90deg,var(--lyric-bright) 0,var(--lyric-bright) var(--scan),var(--lyric-cover-dim) var(--scan),var(--lyric-cover-dim) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:var(--lyric-dim); }
 .cover-lyric .lyric-seg.fading { background-image:linear-gradient(90deg,var(--lyric-bright) 0,var(--lyric-bright) calc(var(--scan) - 0.4em),color-mix(in srgb,var(--lyric-bright) 70%,var(--lyric-cover-dim)) var(--scan),var(--lyric-cover-dim) calc(var(--scan) + 0.4em),var(--lyric-cover-dim) 100%); }
-@supports not ((-webkit-background-clip: text) or (background-clip: text)) {.cover-lyric .lyric-seg { background-image:none;color:var(--lyric-bright);-webkit-text-fill-color:currentColor; }}
-@supports not ((-webkit-mask-image: linear-gradient(#000,#000)) or (mask-image: linear-gradient(#000,#000))) {.cover-lyric { -webkit-mask-image:none;mask-image:none; }}
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) { .cover-lyric .lyric-seg { background-image:none;color:var(--lyric-bright);-webkit-text-fill-color:currentColor; } }
+@supports not ((-webkit-mask-image: linear-gradient(#000,#000)) or (mask-image: linear-gradient(#000,#000))) { .cover-lyric { -webkit-mask-image:none;mask-image:none; } }
 .cover-lyric-scroll { transition:filter 0.42s ease,opacity 0.42s ease; }
 .cover-lyric.has-line .cover-lyric-scroll { filter:blur(0);opacity:1; }
 .cover-lyric:not(.has-line) .cover-lyric-scroll { filter:blur(0.6px);opacity:0.55; }
 .cover-lyric.is-placeholder .cover-lyric-scroll { filter:none;opacity:0.5; }
 .cover-lyric.is-placeholder .cover-lyric-line,.cover-lyric.is-placeholder .lyric-seg { background-image:none;-webkit-text-fill-color:currentColor;color:var(--lyric-cover-dim); }
-@supports not ((filter: blur(1px)) or (-webkit-filter: blur(1px))) {.cover-lyric:not(.has-line) .cover-lyric-scroll { filter:none; }}
+@supports not ((filter: blur(1px)) or (-webkit-filter: blur(1px))) { .cover-lyric:not(.has-line) .cover-lyric-scroll { filter:none; } }
 .player-panel { width:100%;max-width:520px;background:none;border:none;border-radius:0;padding:0;box-shadow:none; }
 .progress-container { width:92%;max-width:330px;margin:0 auto 16px; }
-@media (max-width:400px) {
-    .progress-container { width:94%;max-width:288px; }
-}
+@media (max-width:400px) { .progress-container { width:94%;max-width:288px; } }
 .progress-bar { width:100%;height:3px;background:var(--surface-control);border-radius:6px;position:relative;cursor:pointer;touch-action:none;transition:height 0.22s ease,background 0.22s ease; }
 .progress { height:100%;background:var(--primary);border-radius:6px;width:0%;position:relative;box-shadow:0 0 6px rgba(233,30,99,0.22); }
 .progress-bar:not(.dragging) .progress { transition:width 0.05s linear; }
@@ -714,10 +702,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
 .progress-bar.dragging { height:7px;background:var(--surface-control-strong); }
 .progress-bar.dragging .progress { box-shadow:0 0 14px rgba(233,30,99,0.45); }
 .progress-bar.dragging .progress::after { transform:translateY(-50%) scale(1);cursor:grabbing; }
-@media (hover:hover) {
-    .progress-bar:hover { height:5px;background:var(--surface-control-strong); }
-    .progress-bar:hover .progress::after { transform:translateY(-50%) scale(1); }
-}
+@media (hover:hover) { .progress-bar:hover { height:5px;background:var(--surface-control-strong); } .progress-bar:hover .progress::after { transform:translateY(-50%) scale(1); } }
 .time-info { display:flex;justify-content:space-between;margin-top:9px;font-size:12px;color:var(--text-secondary);opacity:0.75;font-variant-numeric:tabular-nums; }
 .player-main-controls { display:flex;justify-content:center;align-items:center;gap:var(--ctrl-gap, 18px);margin:0;padding:0 0 6px;flex-wrap:nowrap;width:100%;max-width:100%; }
 .main-control-btn { background:none;border:none;color:var(--text-primary);font-size:20px;cursor:pointer;width:var(--ctrl-size, 48px);height:var(--ctrl-size, 48px);flex:0 0 auto;min-width:0;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:background 0.2s,transform 0.15s,color 0.2s; }
@@ -733,11 +718,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
 .lyrics-word { font-size:19px;line-height:1;letter-spacing:1px;font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;transform:translateY(-1px); }
 .main-control-btn.lyrics-word-btn:active .lyrics-word { transform:translateY(-1px) scale(0.94); }
 .main-control-btn.fav-btn.beat { animation:favBeat 0.45s cubic-bezier(0.22,1,0.36,1); }
-@keyframes favBeat {
-    0% { transform:scale(1); }
-    35% { transform:scale(1.32); }
-    100% { transform:scale(1); }
-}
+@keyframes favBeat { 0% { transform:scale(1); } 35% { transform:scale(1.32); } 100% { transform:scale(1); } }
 .lyrics-page { position:fixed;inset:0;background:var(--bg-overlay);z-index:3100;display:flex;flex-direction:column;opacity:0;pointer-events:none;transform:translateY(100%);visibility:hidden;transition:transform 0.5s cubic-bezier(0.22,1,0.36,1),opacity 0.4s ease,visibility 0s linear 0.5s; }
 .lyrics-page.active { opacity:1;pointer-events:all;transform:translateY(0);visibility:visible;transition:transform 0.5s cubic-bezier(0.22,1,0.36,1),opacity 0.4s ease,visibility 0s; }
 .lyrics-scroll-wrap { flex:1 1 0;min-height:0;display:flex;flex-direction:column;position:relative;overflow:hidden; }
@@ -749,7 +730,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
 :root[data-theme=light] #lyrics-page .player-header .control-btn { background:rgba(255,255,255,0.42); }
 :root[data-theme=light] #full-player .player-song-name,:root[data-theme=light] #full-player .player-artist-name { text-shadow:0 1px 8px rgba(255,255,255,0.70),0 1px 2px rgba(255,255,255,0.55); }
 :root[data-theme=light] #full-player .player-header .control-btn { filter:drop-shadow(0 1px 4px rgba(255,255,255,0.75)); }
-@media (min-width:640px)and (max-height:500px) {#lyrics-page .lyrics-veil-top { height:calc(var(--lyrics-header-h, 48px) + var(--lyrics-veil-h, 52px)); }}
+@media (min-width:640px)and (max-height:500px) { #lyrics-page .lyrics-veil-top { height:calc(var(--lyrics-header-h, 48px) + var(--lyrics-veil-h, 52px)); } }
 .lyrics-veil { position:absolute;left:0;right:0;height:var(--lyrics-veil-h, 64px);pointer-events:none;z-index:5; }
 .lyrics-veil-top { top:0; }
 .lyrics-veil-bottom { bottom:0; }
@@ -764,7 +745,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
 .lyrics-veil-tint { position:absolute;inset:0;pointer-events:none;--veil-dir:to bottom;background:linear-gradient(var(--veil-dir),var(--veil-solid) 0%,var(--veil-stops)); }
 .lyrics-veil-bottom .lyrics-veil-tint { --veil-dir:to top; }
 .lyrics-veil-top .lyrics-veil-tint { background:linear-gradient(var(--veil-dir),var(--veil-solid) 0,var(--veil-solid) var(--veil-hold, 0px),color-mix(in srgb,var(--veil-solid) 68%,transparent) calc(var(--veil-hold, 0px) + 9%),color-mix(in srgb,var(--veil-solid) 30%,transparent) calc(var(--veil-hold, 0px) + 26%),color-mix(in srgb,var(--veil-solid) 9%,transparent) calc(var(--veil-hold, 0px) + 42%),transparent 72%); }
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {.lyrics-veil-blur { display:none; }}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .lyrics-veil-blur { display:none; } }
 .lyrics-container { flex:1 1 0%;overflow-y:auto;padding:var(--lyrics-pad-top, 24px) 24px var(--lyrics-pad-bottom, 24px);display:flex;flex-direction:column;align-items:stretch;text-align:left;-webkit-overflow-scrolling:touch;scroll-behavior:auto;overflow-anchor:none;contain:layout paint;scrollbar-width:none;-ms-overflow-style:none; }
 .lyrics-container::-webkit-scrollbar { display:none; }
 .lyrics-line { padding:18px 0;font-size:19px;line-height:1.7;min-height:calc(19px * 1.7 + 36px);flex-shrink:0;position:relative;z-index:1;color:var(--text-muted);transition:color 0.35s ease,opacity 0.35s ease;width:100%;font-weight:300;letter-spacing:0.3px;cursor:pointer;transform:scale(1) translate3d(0,0,0);transform-origin:left center;backface-visibility:hidden; }
@@ -775,15 +756,12 @@ body.tab-bar-hidden .mini-player { bottom:0; }
 .lyrics-line .lyric-main,.lyrics-line .lyric-trans { pointer-events:none; }
 .lyric-seg { --scan:100%;background-image:linear-gradient(90deg,var(--lyric-active) 0,var(--lyric-active) var(--scan),var(--lyric-pending) var(--scan),var(--lyric-pending) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:var(--lyric-pending); }
 .lyric-seg.fading { background-image:linear-gradient(90deg,var(--lyric-active) 0,var(--lyric-active) calc(var(--scan) - 0.4em),color-mix(in srgb,var(--lyric-active) 45%,var(--lyric-pending)) var(--scan),var(--lyric-pending) calc(var(--scan) + 0.4em),var(--lyric-pending) 100%); }
-@supports not ((-webkit-background-clip: text) or (background-clip: text)) {.lyric-seg { background-image:none;color:var(--lyric-active);-webkit-text-fill-color:currentColor; }}
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) { .lyric-seg { background-image:none;color:var(--lyric-active);-webkit-text-fill-color:currentColor; } }
 .search-results { position:fixed;inset:0;bottom:0;background:var(--bg-overlay);z-index:600;display:none;flex-direction:column;opacity:0;transform:translateY(16px);transition:opacity 0.3s,transform 0.3s; }
 .search-results.active { display:flex;opacity:1;transform:translateY(0); }
 .search-results-header { display:flex;align-items:center;gap:12px;padding:12px 16px;position:absolute;top:0;left:0;right:0;z-index:30;flex-wrap:nowrap; }
 .search-results-header::before { content:"";position:absolute;inset:0;z-index:-1;background:var(--glass-panel-strong);-webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));border-bottom:1px solid var(--glass-edge); }
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    .search-results-header { background:var(--bg-body); }
-    .search-results-header::before { display:none; }
-}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .search-results-header { background:var(--bg-body); } .search-results-header::before { display:none; } }
 .back-btn { background:none;border:none;color:var(--text-primary);font-size:15px;cursor:pointer;width:30px;height:30px;padding:0;display:flex;align-items:center;justify-content:center;line-height:1;flex-shrink:0;border-radius:50%;transition:transform 0.15s,background 0.2s; }
 .back-btn:hover { background:var(--surface-hover-strong); }
 .back-btn:active { transform:scale(0.90); }
@@ -808,41 +786,10 @@ body.tab-bar-hidden .mini-player { bottom:0; }
 .loading i { display:none; }
 .loading.error svg { display:none; }
 .loading.error { padding:40px 24px;color:var(--text-muted); }
-@keyframes spin {to { transform:rotate(360deg); }}
-@media (max-width:640px) {
-    :root { --player-pad-x:20px;--ctrl-size:46px;--ctrl-gap:10px; }
-    .main-control-btn.play-pause { width:calc(var(--ctrl-size, 46px) + 14px);height:calc(var(--ctrl-size, 46px) + 14px);font-size:24px; }
-    .chart-cover { width:64px;height:64px; }
-    .chart-header { padding:12px 14px;gap:14px; }
-    .chart-info h2 { font-size:17px; }
-    .song-item { padding:10px 12px; }
-    .song-title { font-size:14px; }
-    .search-results-header { gap:8px;padding:10px 12px; }
-    .results-search-wrap { gap:6px; }
-    .results-search-wrap .search-input { padding:8px 36px 8px 12px;font-size:13.5px; }
-    .results-search-wrap .search-btn { width:36px;height:36px; }
-    .results-search-wrap .search-field { min-width:0; }
-    .lyrics-line { font-size:19px;padding:14px 0; }
-    .lyrics-line.active { font-size:19px; }
-    .album-cover-wrap { width:min(100%,280px); }
-    .player-content { gap:20px; }
-    .player-left { gap:18px; }
-    .cover-lyric { margin-top:14px; }
-}
-@media (max-width:400px) {
-    :root { --player-pad-x:18px;--ctrl-size:40px;--ctrl-gap:6px; }
-    .album-cover-wrap { width:min(100%,250px); }
-    .player-title { padding:0 94px; }
-    .player-song-name { font-size:15px; }
-    .search-input { font-size:14px;padding:10px 16px; }
-    .player-main-controls { gap:var(--ctrl-gap, 6px); }
-    .main-control-btn { font-size:18px; }
-    .main-control-btn.play-pause { font-size:23px; }
-}
-@media (max-height:700px) {
-    .album-cover-wrap { width:min(52vh,240px);height:min(52vh,240px); }
-    .player-content { gap:16px;padding-bottom:28px; }
-}
+@keyframes spin { to { transform:rotate(360deg); } }
+@media (max-width:640px) { :root { --player-pad-x:20px;--ctrl-size:46px;--ctrl-gap:10px; } .main-control-btn.play-pause { width:calc(var(--ctrl-size, 46px) + 14px);height:calc(var(--ctrl-size, 46px) + 14px);font-size:24px; } .chart-cover { width:64px;height:64px; } .chart-header { padding:12px 14px;gap:14px; } .chart-info h2 { font-size:17px; } .song-item { padding:10px 12px; } .song-title { font-size:14px; } .search-results-header { gap:8px;padding:10px 12px; } .results-search-wrap { gap:6px; } .results-search-wrap .search-input { padding:8px 36px 8px 12px;font-size:13.5px; } .results-search-wrap .search-btn { width:36px;height:36px; } .results-search-wrap .search-field { min-width:0; } .lyrics-line { font-size:19px;padding:14px 0; } .lyrics-line.active { font-size:19px; } .album-cover-wrap { width:min(100%,280px); } .player-content { gap:20px; } .player-left { gap:18px; } .cover-lyric { margin-top:14px; } }
+@media (max-width:400px) { :root { --player-pad-x:18px;--ctrl-size:40px;--ctrl-gap:6px; } .album-cover-wrap { width:min(100%,250px); } .player-title { padding:0 94px; } .player-song-name { font-size:15px; } .search-input { font-size:14px;padding:10px 16px; } .player-main-controls { gap:var(--ctrl-gap, 6px); } .main-control-btn { font-size:18px; } .main-control-btn.play-pause { font-size:23px; } }
+@media (max-height:700px) { .album-cover-wrap { width:min(52vh,240px);height:min(52vh,240px); } .player-content { gap:16px;padding-bottom:28px; } }
 .song-more-btn { flex-shrink:0;width:24px;height:34px;margin-left:2px;border:none;background:transparent;color:var(--text-secondary);border-radius:50%;font-size:15px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;opacity:0.5;padding:0;transition:color 0.2s,opacity 0.2s,transform 0.2s; }
 .song-more-btn:hover,.song-more-btn:active { opacity:1;background:transparent;color:#fff; }
 .song-more-btn:active { transform:scale(0.88); }
@@ -857,7 +804,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
 .about-page { background:var(--glass-panel-heavy);-webkit-backdrop-filter:blur(var(--glass-blur-heavy)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-heavy)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness)); }
 .playlist-page.active,.about-page.active { opacity:1;pointer-events:all;transform:translateY(0);visibility:visible;transition:transform 0.42s cubic-bezier(0.22,1,0.36,1),bottom 0.4s cubic-bezier(0.25,0.46,0.45,0.94),opacity 0.32s ease,visibility 0s; }
 .playlist-page.has-player,.about-page.has-player { bottom:var(--mini-height); }
-.fav-page.no-anim,.playlist-page.no-anim,.about-page.no-anim,.search-results.no-anim { transition:none!important; }
+.fav-page.no-anim,.playlist-page.no-anim,.about-page.no-anim,.search-results.no-anim,.sheet.no-anim { transition:none!important; }
 .cache-body { flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(var(--fav-header-h, 62px) + 14px) 16px calc(96px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:10px; }
 .cache-tip { font-size:12.5px;color:var(--text-secondary);padding:0 4px 4px; }
 .cache-item { display:flex;align-items:center;gap:12px;padding:14px 14px;border-radius:14px;background:var(--surface-input);border:1px solid var(--border-popover);cursor:pointer;transition:background 0.18s ease,border-color 0.18s ease; }
@@ -878,11 +825,8 @@ body.tab-bar-hidden .mini-player { bottom:0; }
 .about-logo .disc-spin { transform-origin:32px 32px;transform:rotate(var(--disc-angle, 0deg)); }
 .about-logo.spinning .disc-spin { animation:discSpin 1.2s linear; }
 .about-logo.spinning { pointer-events:none; }
-@keyframes discSpin {
-    from { transform:rotate(calc(var(--disc-angle, 0deg) - 180deg)); }
-    to { transform:rotate(var(--disc-angle, 0deg)); }
-}
-@media (prefers-reduced-motion:reduce) {.about-logo.spinning .disc-spin { animation:none; }}
+@keyframes discSpin { from { transform:rotate(calc(var(--disc-angle, 0deg) - 180deg)); } to { transform:rotate(var(--disc-angle, 0deg)); } }
+@media (prefers-reduced-motion:reduce) { .about-logo.spinning .disc-spin { animation:none; } }
 .about-name { font-size:22px;font-weight:700;letter-spacing:1px;color:var(--text-primary);margin-bottom:8px; }
 .about-version { font-size:13px;color:var(--text-secondary);padding:4px 14px;border-radius:999px;background:var(--surface-input);border:1px solid var(--border);margin-bottom:22px; }
 .about-slogan { font-size:14.5px;line-height:1.9;letter-spacing:0.5px;color:var(--text-secondary);margin-bottom:30px; }
@@ -911,13 +855,13 @@ body.tab-bar-hidden .mini-player { bottom:0; }
 .pl-play-all:active { transform:scale(0.92); }
 .sheet { position:fixed;left:12px;right:12px;bottom:calc(var(--tab-height) + var(--bottom-stack) + 12px);background:var(--glass-panel-heavy);-webkit-backdrop-filter:blur(var(--glass-blur-bar)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-bar)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));border:1px solid var(--glass-edge-heavy);border-radius:20px;box-shadow:var(--shadow-popover),var(--inset-highlight);z-index:3200;padding:8px;opacity:0;transform:translateY(16px) scale(0.97);pointer-events:none;transition:all 0.28s cubic-bezier(0.25,0.46,0.45,0.94);max-height:62vh;overflow-y:auto; }
 .sheet.active { opacity:1;transform:translateY(0) scale(1);pointer-events:all; }
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {.sheet,.select-bar { background:var(--popover-solid); }}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .sheet,.select-bar { background:var(--popover-solid); } }
 .sheet .menu-item { display:flex;align-items:center;gap:12px;padding:14px 14px;border-radius:13px;font-size:14.5px;color:var(--text-primary);cursor:pointer;transition:background 0.18s; }
-.sheet .menu-item:hover { background:transparent; }
-.sheet .menu-item:active { transform:scale(0.985); }
+.sheet .menu-item:hover { background:var(--surface-hover-strong); }
+.sheet .menu-item:active { background:var(--surface-hover-strong);transform:none; }
 .sheet .menu-item i { width:20px;text-align:center;font-size:15px;color:var(--text-secondary); }
 .sheet .menu-item.danger,.sheet .menu-item.danger i { color:#ff4d6d; }
-.sheet .menu-item.danger:hover { background:rgba(255,77,109,0.12); }
+.sheet .menu-item.danger:hover,.sheet .menu-item.danger:active { background:rgba(255,77,109,0.12);transform:none; }
 .sheet .menu-item:active:not(.danger),.sheet .menu-item:active:not(.danger) i { color:#fff; }
 .sheet .menu-item-note { margin-left:auto;font-size:13px;color:var(--text-secondary);font-variant-numeric:tabular-nums; }
 .sheet-title { padding:12px 14px 10px;font-size:14px;font-weight:600;color:var(--text-primary);border-bottom:1px solid var(--border);margin-bottom:6px; }
@@ -939,6 +883,11 @@ body.tab-bar-hidden .mini-player { bottom:0; }
 .pl-pick-row.on .pl-pick-label { color:var(--primary); }
 .sheet-new { width:calc(100% - 8px);margin:6px 4px 4px;border:1px dashed var(--border-control);background:transparent;color:var(--primary);font-size:14px;padding:12px;border-radius:13px;cursor:pointer;transition:background 0.2s; }
 .sheet-new:hover { background:rgba(233,30,99,0.10); }
+#pl-picker-sheet { display:flex;flex-direction:column;max-height:none;overflow:visible; }
+#pl-picker-sheet .sheet-title { flex:0 0 auto;margin-bottom:0; }
+#pl-picker-body { flex:1 1 auto;min-height:0;max-height:min(52vh,440px);overflow-y:auto;overscroll-behavior:contain;padding-top:6px;padding-bottom:2px;scrollbar-width:none;-ms-overflow-style:none; }
+#pl-picker-body::-webkit-scrollbar { display:none; }
+#pl-picker-new { flex:0 0 auto; }
 .rate-body { padding:16px 16px 12px; }
 .rate-value { text-align:center;font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text-primary);letter-spacing:-0.5px;margin-bottom:14px; }
 .rate-range { -webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:2px;background:var(--surface-control);outline:none;cursor:pointer; }
@@ -967,72 +916,11 @@ body.tab-bar-hidden .mini-player { bottom:0; }
 .lc-btn:active { transform:scale(0.92); }
 .lc-btn.lc-play { width:46px;height:46px;background:var(--primary);color:#fff;font-size:18px;box-shadow:0 6px 20px rgba(233,30,99,0.42); }
 .lc-btn.lc-play:hover { background:#f0346f; }
-@media (max-width:400px) {
-    .lyrics-controls { right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px)); }
-    .lc-btn { width:36px;height:36px;font-size:15px; }
-    .lc-btn.lc-play { width:42px;height:42px;font-size:16px; }
-}
-@media (min-width:900px),(min-width:640px)and (max-height:500px) {
-    .player-content { flex-direction:row;align-items:center;justify-content:center;gap:48px;padding:0 56px;overflow:visible; }
-    .player-swipe-layer { flex-direction:row;justify-content:center;align-items:center;gap:48px;flex:0 1 auto;width:auto; }
-    .player-left { flex:0 1 420px;width:420px;max-width:420px;min-width:0;margin-top:0; }
-    .album-cover-wrap { width:min(100%,260px);height:auto;max-height:none;margin-top:calc(-24px + var(--disc-lift, -80px)); }
-    .progress-container { max-width:370px; }
-    .album-cover-wrap::before { inset:-24px;filter:blur(22px); }
-    .player-lyrics { display:block;max-width:460px;height:min(68vh,560px); }
-    .player-lyrics-inner { padding:12px 8px; }
-    .player-lyrics-inner .lyrics-line { font-size:18px;line-height:1.9; }
-    #lyrics-btn { display:none; }
-    .cover-lyric { display:none; }
-    .main-control-btn.add-pl-btn { display:flex; }
-    .sheet { left:50%;right:auto;width:min(420px,calc(100vw - 48px));transform:translate(-50%,16px) scale(0.97); }
-    .sheet.active { transform:translate(-50%,0) scale(1); }
-    #rate-sheet,.sheet.sheet-dock-left { left:24px;right:auto;width:min(340px,calc(100vw - 48px));bottom:auto;top:50%;transform:translateY(calc(-50% + 16px)) scale(0.97);max-height:min(62vh,520px); }
-    #rate-sheet.active,.sheet.sheet-dock-left.active { transform:translateY(-50%) scale(1); }
-    #rate-sheet { left:auto;right:20px;top:64px;bottom:auto;width:min(300px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right; }
-    #rate-sheet.active { transform:translateY(0) scale(1); }
-    #player-more-menu { left:auto;right:20px;top:64px;bottom:auto;width:min(240px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right; }
-    #player-more-menu.active { transform:translateY(0) scale(1); }
-    .lyrics-controls { right:auto;left:24px; }
-    #player-lyrics-inner .lyrics-line { padding:10px 0;min-height:auto;transform:none;transform-origin:left center; }
-    #player-lyrics-inner .lyrics-line.active { transform:none;color:var(--text-primary);font-weight:500;opacity:1; }
-    #player-lyrics-inner .lyrics-line:not(.active) { opacity:0.55; }
-    #lyrics-page .player-header { justify-content:center; }
-    #back-to-player-btn,#lyrics-controls { display:none!important; }
-    #lyrics-page .lyrics-container { padding-left:clamp(40px,12vw,200px);padding-right:clamp(40px,12vw,200px); }
-}
-@media (min-width:640px)and (max-height:500px) {
-    .player-content { gap:28px;padding:4px 24px 16px; }
-    .player-swipe-layer { gap:28px; }
-    .player-left { flex:0 0 auto;width:auto;max-width:340px;--ctrl-size:42px;--ctrl-gap:12px; }
-    .album-cover-wrap { width:min(46vh,230px);height:auto;max-height:none;margin-top:0; }
-    .player-panel { width:100%; }
-    .player-main-controls { margin:0; }
-    .main-control-btn { font-size:18px; }
-    .main-control-btn.play-pause { font-size:20px; }
-    .player-lyrics { height:min(84vh,100%); }
-    .player-lyrics-inner .lyrics-line { font-size:16px;line-height:1.8; }
-    .album-cover-wrap::before { inset:-18px;filter:blur(18px); }
-    .player-header { padding:8px 16px; }
-    .player-title { padding:0 96px; }
-    .player-song-name { font-size:15px; }
-    .player-artist-name { font-size:12px; }
-}
-@media (min-width:900px),(min-width:640px)and (max-height:500px) {
-    .main-content { padding-left:calc(var(--side-tab-width) + 24px);padding-bottom:30px; }
-    body.has-mini-player .main-content { padding-bottom:calc(var(--mini-height) + 24px); }
-    .header { padding-left:calc(var(--side-tab-width) + 20px); }
-    .mini-player { left:var(--side-tab-width);right:0;bottom:0; }
-    .fab-stack { bottom:18px; }
-    body.has-mini-player .fab-stack { bottom:calc(var(--mini-height) + 18px); }
-    .player-header { padding:16px 32px; }
-    .player-title { padding:0 100px; }
-    .player-song-name { font-size:18px; }
-    .player-artist-name { font-size:13.5px; }
-    .fav-page,.playlist-page,.search-results,.about-page { left:calc(var(--side-tab-width) + 1px); }
-    .about-page { display:none; }
-    body.settings-tab .about-page { display:flex; }
-}
+@media (max-width:400px) { .lyrics-controls { right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px)); } .lc-btn { width:36px;height:36px;font-size:15px; } .lc-btn.lc-play { width:42px;height:42px;font-size:16px; } }
+@media (min-width:900px),(min-width:640px)and (max-height:500px) { .player-content { flex-direction:row;align-items:center;justify-content:center;gap:48px;padding:0 56px;overflow:visible; } .player-swipe-layer { flex-direction:row;justify-content:center;align-items:center;gap:48px;flex:0 1 auto;width:auto; } .player-left { flex:0 1 420px;width:420px;max-width:420px;min-width:0;margin-top:0; } .album-cover-wrap { width:min(100%,260px);height:auto;max-height:none;margin-top:calc(-24px + var(--disc-lift, -80px)); } .progress-container { max-width:370px; } .album-cover-wrap::before { inset:-24px;filter:blur(22px); } .player-lyrics { display:block;max-width:460px;height:min(68vh,560px); } .player-lyrics-inner { padding:12px 8px; } .player-lyrics-inner .lyrics-line { font-size:18px;line-height:1.9; } #lyrics-btn { display:none; } .cover-lyric { display:none; } .main-control-btn.add-pl-btn { display:flex; } .sheet { left:50%;right:auto;width:min(420px,calc(100vw - 48px));transform:translate(-50%,16px) scale(0.97); } .sheet.active { transform:translate(-50%,0) scale(1); } #rate-sheet,.sheet.sheet-dock-left { left:24px;right:auto;width:min(340px,calc(100vw - 48px));bottom:auto;top:50%;transform:translateY(calc(-50% + 16px)) scale(0.97);max-height:min(62vh,520px); } #rate-sheet.active,.sheet.sheet-dock-left.active { transform:translateY(-50%) scale(1); } #rate-sheet { left:auto;right:20px;top:64px;bottom:auto;width:min(300px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right; } #rate-sheet.active { transform:translateY(0) scale(1); } #player-more-menu { left:auto;right:20px;top:64px;bottom:auto;width:min(240px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right; } #player-more-menu.active { transform:translateY(0) scale(1); } .sheet.sheet-dock-topright { left:auto;right:20px;top:64px;bottom:auto;width:min(320px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right;max-height:min(62vh,520px); } .sheet.sheet-dock-topright.active { transform:translateY(0) scale(1); } .lyrics-controls { right:auto;left:24px; } #player-lyrics-inner .lyrics-line { padding:10px 0;min-height:auto;transform:none;transform-origin:left center; } #player-lyrics-inner .lyrics-line.active { transform:none;color:var(--text-primary);font-weight:500;opacity:1; } #player-lyrics-inner .lyrics-line:not(.active) { opacity:0.55; } #lyrics-page .player-header { justify-content:center; } #back-to-player-btn,#lyrics-controls { display:none!important; } #lyrics-page .lyrics-container { padding-left:clamp(40px,12vw,200px);padding-right:clamp(40px,12vw,200px); } }
+@media (min-width:640px)and (max-height:500px) { .player-content { gap:28px;padding:4px 24px 16px; } .player-swipe-layer { gap:28px; } .player-left { flex:0 0 auto;width:auto;max-width:340px;--ctrl-size:42px;--ctrl-gap:12px; } .album-cover-wrap { width:min(46vh,230px);height:auto;max-height:none;margin-top:0; } .player-panel { width:100%; } .player-main-controls { margin:0; } .main-control-btn { font-size:18px; } .main-control-btn.play-pause { font-size:20px; } .player-lyrics { height:min(84vh,100%); } .player-lyrics-inner .lyrics-line { font-size:16px;line-height:1.8; } .album-cover-wrap::before { inset:-18px;filter:blur(18px); } .player-header { padding:8px 16px; } .player-title { padding:0 96px; } .player-song-name { font-size:15px; } .player-artist-name { font-size:12px; } }
+@media (min-width:900px),(min-width:640px)and (max-height:500px) { .main-content { padding-left:calc(var(--side-tab-width) + 24px);padding-bottom:30px; } body.has-mini-player .main-content { padding-bottom:calc(var(--mini-height) + 24px); } .header { padding-left:calc(var(--side-tab-width) + 20px); } .mini-player { left:var(--side-tab-width);right:0;bottom:0; } .fab-stack { bottom:18px; } body.has-mini-player .fab-stack { bottom:calc(var(--mini-height) + 18px); } .player-header { padding:16px 32px; } .player-title { padding:0 100px; } .player-song-name { font-size:18px; } .player-artist-name { font-size:13.5px; } .fav-page,.playlist-page,.search-results,.about-page { left:calc(var(--side-tab-width) + 1px); } .about-page { display:none; } body.settings-tab .about-page { display:flex; } }
+@media (min-width:900px),(min-width:640px)and (max-height:500px) { body #select-bar,body #pl-select-bar { left:50%;right:auto;width:min(520px,calc(100vw - 48px));padding:8px;border-radius:20px;border:1px solid var(--glass-edge-heavy);transform:translate(-50%,16px); } body #select-bar.active,body #pl-select-bar.active { transform:translate(-50%,0); } body .select-topbar { left:var(--side-tab-width); } }
 </style>
 </head>
 <body>
@@ -1059,7 +947,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
             <div class="search-history" id="search-history">
                 <div class="history-header">
                     <span>搜索历史</span>
-                    <span class="clear-history" id="clear-history">清空</span>
+                    <button class="clear-history" id="clear-history" type="button" title="清空" aria-label="清空"><i class="fas fa-trash-alt"></i></button>
                 </div>
             </div>
         </div>
@@ -1531,7 +1419,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
         <div class="about-body">
             <div class="about-logo" id="about-logo" role="button" tabindex="0" aria-label="MKY音乐"><svg class="brand-disc" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="bdisc-about" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3d77"/><stop offset="1" stop-color="#c2185b"/></linearGradient><linearGradient id="bdisc-sheen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.34" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.46" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.54" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.66" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient><clipPath id="bdisc-clip"><circle cx="32" cy="32" r="30"/></clipPath></defs><g class="disc-spin"><circle cx="32" cy="32" r="30" fill="#141418"/><circle cx="32" cy="32" r="30" fill="none" stroke="#ffffff" stroke-opacity=".14" stroke-width="2.6"/><circle cx="32" cy="32" r="21" fill="none" stroke="#ffffff" stroke-opacity=".10" stroke-width="1.5"/><circle cx="32" cy="32" r="14" fill="none" stroke="#ffffff" stroke-opacity=".08" stroke-width="1.5"/><circle cx="32" cy="32" r="12" fill="url(#bdisc-about)"/><circle cx="32" cy="32" r="3.4" fill="#141418"/><g clip-path="url(#bdisc-clip)"><rect class="disc-sheen" x="-16" y="-16" width="96" height="96" fill="url(#bdisc-sheen)"/></g></g></svg></div>
             <div class="about-name">MKY音乐</div>
-            <div class="about-version">版本 2.1</div>
+            <div class="about-version">版本 2.2</div>
             <div class="about-slogan">把每一处细节听懂<br>把听歌这件事做好</div>
             <div class="about-links">
                 <div class="about-legal">
@@ -1609,6 +1497,22 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                     <span class="cache-item-sub" id="cache-sub-history">播放历史页里的全部记录</span>
                 </span>
             </label>
+            <label class="cache-item">
+                <input type="checkbox" class="cache-check" data-cache="fav" />
+                <span class="cache-check-box"><i class="fas fa-check"></i></span>
+                <span class="cache-item-info">
+                    <span class="cache-item-title">我的收藏</span>
+                    <span class="cache-item-sub" id="cache-sub-fav">收藏列表</span>
+                </span>
+            </label>
+            <label class="cache-item">
+                <input type="checkbox" class="cache-check" data-cache="playlists" />
+                <span class="cache-check-box"><i class="fas fa-check"></i></span>
+                <span class="cache-item-info">
+                    <span class="cache-item-title">我的歌单</span>
+                    <span class="cache-item-sub" id="cache-sub-playlists">自建歌单及其中歌曲</span>
+                </span>
+            </label>
         </div>
         <div class="cache-footer">
             <button class="cache-clear-btn" id="cache-clear-btn" type="button">清除缓存</button>
@@ -1638,56 +1542,52 @@ body.tab-bar-hidden .mini-player { bottom:0; }
             <button class="rate-reset" id="rate-reset">恢复原速</button>
         </div>
     </div>
+    <div class="select-topbar" id="select-topbar">
+        <button class="sel-all" id="select-all" type="button">
+            <span class="sel-box"><i class="fas fa-check"></i></span>
+            <span>全选</span>
+        </button>
+        <span class="sel-count" id="select-count">已选 0 首</span>
+        <button class="sel-done" id="select-done" type="button">完成</button>
+    </div>
     <div class="select-bar" id="select-bar">
-        <div class="select-head">
-            <span class="select-count" id="select-count">请选择歌曲</span>
-        </div>
-        <button class="menu-item" id="select-all">
-            <i class="fas fa-check-double"></i>
-            <span id="select-all-label">全选</span>
-        </button>
-        <button class="menu-item" id="select-add" disabled>
-            <i class="fas fa-plus"></i>
-            <span>加入歌单</span>
-        </button>
-        <button class="menu-item" id="select-fav" disabled>
+        <button class="select-act" id="select-fav" type="button" disabled>
             <i class="fas fa-heart"></i>
             <span>收藏</span>
         </button>
-        <button class="menu-item" id="select-share" disabled>
-            <i class="fas fa-share"></i>
-            <span>分享</span>
+        <button class="select-act" id="select-add" type="button" disabled>
+            <i class="fas fa-plus"></i>
+            <span>加入歌单</span>
         </button>
-        <button class="menu-item danger" id="select-del" disabled>
-            <i class="fas fa-trash-alt"></i>
-            <span>删除</span>
+        <button class="select-act" id="select-more" type="button" disabled>
+            <i class="fas fa-ellipsis-v"></i>
+            <span>更多</span>
         </button>
     </div>
-    <div class="select-bar" id="pl-select-bar">
-        <div class="select-head">
-            <span class="select-count" id="pl-select-count">请选择歌单</span>
-        </div>
-        <button class="menu-item" id="pl-select-all">
-            <i class="fas fa-check-double"></i>
-            <span id="pl-select-all-label">全选</span>
+    <div class="sheet" id="select-more-menu"></div>
+    <div class="select-topbar" id="pl-select-topbar">
+        <button class="sel-all" id="pl-select-all" type="button">
+            <span class="sel-box"><i class="fas fa-check"></i></span>
+            <span>全选</span>
         </button>
-        <button class="menu-item" id="pl-select-rename" disabled>
+        <span class="sel-count" id="pl-select-count">已选 0 个</span>
+        <button class="sel-done" id="pl-select-done" type="button">完成</button>
+    </div>
+    <div class="select-bar" id="pl-select-bar">
+        <button class="select-act" id="pl-select-rename" type="button" disabled>
             <i class="fas fa-pen"></i>
             <span>重命名</span>
         </button>
-        <button class="menu-item" id="pl-select-share" disabled>
+        <button class="select-act" id="pl-select-share" type="button" disabled>
             <i class="fas fa-share"></i>
             <span>分享</span>
         </button>
-        <button class="menu-item danger" id="pl-select-clear" disabled>
-            <i class="fas fa-broom"></i>
-            <span>清空歌单歌曲</span>
-        </button>
-        <button class="menu-item danger" id="pl-select-del" disabled>
-            <i class="fas fa-trash-alt"></i>
-            <span>删除歌单</span>
+        <button class="select-act" id="pl-select-more" type="button" disabled>
+            <i class="fas fa-ellipsis-v"></i>
+            <span>更多</span>
         </button>
     </div>
+    <div class="sheet" id="pl-select-more-menu"></div>
     <div class="toast" id="toast"></div>
     <div class="import-progress" id="import-progress">
         <div class="import-progress-label">
@@ -1698,7 +1598,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
             <div class="import-progress-bar" id="import-progress-bar"></div>
         </div>
     </div>
-    <script>        
+    <script>
     (function() {
             'use strict';
             const {
@@ -1796,19 +1696,23 @@ body.tab-bar-hidden .mini-player { bottom:0; }
             const importProgressText = $('#import-progress-text');
             const importProgressCount = $('#import-progress-count');
             const selectBar = $('#select-bar');
+            const selectTopbar = $('#select-topbar');
             const selectCountEl = $('#select-count');
             const selectAllBtn = $('#select-all');
             const selectAddBtn = $('#select-add');
             const selectFavBtn = $('#select-fav');
-            const selectShareBtn = $('#select-share');
-            const selectDelBtn = $('#select-del');
+            const selectMoreBtn = $('#select-more');
+            const selectMoreMenu = $('#select-more-menu');
+            const selectDoneBtn = $('#select-done');
             const plSelectBar = $('#pl-select-bar');
+            const plSelectTopbar = $('#pl-select-topbar');
             const plSelectCountEl = $('#pl-select-count');
             const plSelectAllBtn = $('#pl-select-all');
             const plSelectRenameBtn = $('#pl-select-rename');
             const plSelectShareBtn = $('#pl-select-share');
-            const plSelectClearBtn = $('#pl-select-clear');
-            const plSelectDelBtn = $('#pl-select-del');
+            const plSelectMoreBtn = $('#pl-select-more');
+            const plSelectMoreMenu = $('#pl-select-more-menu');
+            const plSelectDoneBtn = $('#pl-select-done');
             const aboutPage = $('#about-page');
             const cachePage = $('#cache-page');
             const cacheBackBtn = $('#cache-back-btn');
@@ -3057,7 +2961,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                 container.innerHTML = `
                     <div class="history-header">
                         <span>${esc(title)}</span>
-                        ${arr.length > 0 ? '<span class="clear-history"><i class="fas fa-trash-alt"></i> 清空全部</span>' : ''}
+                        ${arr.length > 0 ? '<button class="clear-history" type="button" title="清空全部" aria-label="清空全部"><i class="fas fa-trash-alt"></i></button>' : ''}
                     </div>
                 `;
                 if (arr.length === 0) {
@@ -3719,43 +3623,41 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                     openEntryMore(plId, isVirtual, rowEl);
                 }
             }
-            function parseOnePlaylistShare(line) {
-                if (!line) return null;
-                let s = String(line).trim();
-                if (!s) return null;
-                if (s.charAt(0) === '[' && s.charAt(s.length - 1) === ']') {
-                    s = s.slice(1, -1).trim();
-                }
-                const close = s.indexOf(']');
-                const open = close >= 0 ? s.lastIndexOf('[', close) : s.lastIndexOf('[');
-                if (open < 0) return null;
-                const end = close >= 0 ? close : s.length;
-                const name = s.slice(0, open).trim();
-                const body = s.slice(open + 1, end);
-                const ids = body.split(/[,，\s]+/)
-                    .map(x => x.trim())
-                    .filter(x => /^\d+$/.test(x));
-                if (!ids.length && !name) return null;
-                return { name: name, ids: ids };
-            }
             function parsePlaylistShare(raw) {
                 if (!raw) return null;
                 const text = String(raw).trim();
                 if (!text) return null;
+                if (/[\r\n]/.test(text)) return null;
                 const segs = [];
-                text.split(/\r?\n/).forEach(line => {
-                    const t = String(line).trim();
-                    if (!t) return;
-                    if (t.charAt(0) === '#') {
-                        const literal = t.slice(1).trim();
-                        if (literal) segs.push({ name: literal, ids: [], literal: true });
-                        return;
-                    }
-                    const p = parseOnePlaylistShare(t);
-                    if (p) segs.push(p);
-                });
+                const re = /([^\[\],，]*)\[([0-9,\s，]*)\]/g;
+                let m;
+                while ((m = re.exec(text)) !== null) {
+                    const name = m[1].trim();
+                    const ids = m[2].split(/[,，\s]+/)
+                        .map(x => x.trim())
+                        .filter(x => /^\d+$/.test(x));
+                    if (ids.length || name) segs.push({ name: name, ids: ids });
+                }
                 if (!segs.length) return null;
                 return segs;
+            }
+            function mapNeteaseRecord(row, id) {
+                const ar = Array.isArray(row.ar) ? row.ar
+                    : (Array.isArray(row.artists) ? row.artists : []);
+                const al = row.al || row.album || {};
+                const picUrl = al.picUrl || '';
+                const picId = al.pic || '';
+                return {
+                    id: String(id),
+                    name: row.name || '',
+                    artistsname: ar.map(a => a && a.name)
+                        .filter(Boolean).join(' / '),
+                    album: al.name || '',
+                    duration: neteaseRowDuration(row),
+                    picurl: picUrl ? normalizeCoverUrl(picUrl) : '',
+                    picId: picId,
+                    picIdExact: !!picId
+                };
             }
             async function importSongsByIds(ids, onProgress) {
                 const uniq = [];
@@ -3765,31 +3667,30 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                     if (!seen.has(k)) { seen.add(k); uniq.push(k); }
                 });
                 const out = [];
-                let done = 0;
-                for (const id of uniq) {
+                const BATCH = 50;
+                for (let i = 0; i < uniq.length; i += BATCH) {
+                    const chunk = uniq.slice(i, i + BATCH);
+                    let list = [];
                     try {
-                        const row = await fetchNeteaseDetail(id);
-                        if (row) {
-                            const ar = Array.isArray(row.ar) ? row.ar
-                                : (Array.isArray(row.artists) ? row.artists : []);
-                            const al = row.al || row.album || {};
-                            const picUrl = al.picUrl || '';
-                            const picId = al.pic || '';
-                            out.push({
-                                id: String(id),
-                                name: row.name || '',
-                                artistsname: ar.map(a => a && a.name)
-                                    .filter(Boolean).join(' / '),
-                                album: al.name || '',
-                                duration: neteaseRowDuration(row),
-                                picurl: picUrl ? normalizeCoverUrl(picUrl) : '',
-                                picId: picId,
-                                picIdExact: !!picId
-                            });
-                        }
-                    } catch (_) {}
-                    done++;
-                    if (onProgress) onProgress(done, uniq.length);
+                        const url = 'https://music.163.com/api/song/detail/?ids=' +
+                            encodeURIComponent('[' + chunk.join(',') + ']');
+                        const d = await fetchDirectOrProxy(url, {
+                            timeout: RACE_TIMEOUT,
+                            directTimeout: DIRECT_TIMEOUT
+                        });
+                        list = (d && d.songs) || [];
+                    } catch (_) { list = []; }
+                    const byId = new Map();
+                    list.forEach(row => {
+                        if (row && row.id != null) byId.set(String(row.id), row);
+                    });
+                    chunk.forEach(id => {
+                        const row = byId.get(id);
+                        if (row) out.push(mapNeteaseRecord(row, id));
+                    });
+                    if (onProgress) {
+                        onProgress(Math.min(i + BATCH, uniq.length), uniq.length);
+                    }
                 }
                 return out;
             }
@@ -3881,29 +3782,34 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                 openNameDialog('新建歌单', '', (val) => {
                     const segs = parsePlaylistShare(val);
                     if (!segs) {
-                        const pl = createPlaylist(val);
+                        const name = sanitizePlName(val);
+                        if (!name) {
+                            showToast('歌单名不能为空，且不能只包含中括号');
+                            return;
+                        }
+                        const pl = createPlaylist(name);
                         renderMinePage();
                         showToast('歌单「' + pl.name + '」已创建'
-                            + renameNotice(val, pl.name));
+                            + renameNotice(name, pl.name));
                         return;
                     }
                     const created = segs.map(seg =>
-                        createPlaylist(seg.name || '导入的歌单'));
+                        createPlaylist(sanitizePlName(seg.name) || '导入的歌单'));
                     renderMinePage();
                     applyImportToPlaylists(segs, created);
                 });
             }
-            function buildPlaylistShare(name, songs, nest) {
+            function buildPlaylistShare(name, songs) {
                 const ids = (songs || [])
                     .map(s => (s && s.id != null) ? String(s.id) : '')
                     .filter(Boolean);
-                const seg = (name || '歌单') + '[' + ids.join(',') + ']';
-                return nest ? '[' + seg + ']' : seg;
+                const safeName = String(name || '歌单').replace(/[[\]]/g, '') || '歌单';
+                return safeName + '[' + ids.join(',') + ']';
             }
-            function sharePlaylist(name, songs, nest) {
+            function sharePlaylist(name, songs) {
                 const list = songs || [];
                 if (!list.length) { showToast('歌单里还没有歌曲'); return; }
-                const text = buildPlaylistShare(name, list, nest);
+                const text = buildPlaylistShare(name, list);
                 copyTextToClipboard(text).then(ok => {
                     showToast(ok ? '已复制，新建歌单时粘贴可导入歌曲' : '复制失败');
                 });
@@ -3949,7 +3855,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                 const shareItem = menu.querySelector('[data-act="share"]');
                 if (shareItem) shareItem.addEventListener('click', () => {
                     closeSheet(menu);
-                    sharePlaylist(pl.name, pl.songs, false);
+                    sharePlaylist(pl.name, pl.songs);
                 });
                 menu.querySelector('[data-act="rename"]').addEventListener('click', () => {
                     closeSheet(menu);
@@ -3985,6 +3891,10 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                         { title: '删除歌单', confirmText: '删除' });
                     if (ok) {
                         deletePlaylist(plId);
+                        if (playlistPage.classList.contains('active')
+                            && openedPlaylistId === plId) {
+                            closePlaylistPage();
+                        }
                         renderMinePage();
                         showToast('歌单已删除');
                     }
@@ -4084,56 +3994,50 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                 if (/wav/i.test(mime || '')) return '.wav';
                 return '.mp3';
             }
-            function bindLongPressCopy(el, getText, label) {
+            function bindCopyOnTap(el, getText, label) {
                 if (!el) return;
                 el.style.webkitUserSelect = 'none';
                 el.style.userSelect = 'none';
                 el.style.webkitTouchCallout = 'none';
-                let timer = null;
-                let fired = false;
-                let startX = 0, startY = 0;
-                const clear = () => {
-                    if (timer) { clearTimeout(timer); timer = null; }
-                };
-                const onDown = (e) => {
-                    if (e.touches && e.touches.length > 1) return;
-                    const pt = e.touches ? e.touches[0] : e;
-                    startX = pt.clientX;
-                    startY = pt.clientY;
-                    fired = false;
-                    clear();
-                    timer = setTimeout(() => {
-                        timer = null;
-                        fired = true;
-                        const text = getText();
-                        if (!text) return;
-                        copyTextToClipboard(text).then(ok => {
-                            if (ok) {
-                                if (navigator.vibrate) navigator.vibrate(12);
-                                showToast('已复制' + (label || ''));
-                            }
-                        });
-                    }, 520);
-                };
-                const onMove = (e) => {
-                    if (!timer) return;
-                    const pt = e.touches && e.touches[0] ? e.touches[0] : e;
-                    if (Math.abs(pt.clientX - startX) > 8 ||
-                        Math.abs(pt.clientY - startY) > 8) clear();
-                };
-                el.addEventListener('touchstart', onDown, { passive: true });
-                el.addEventListener('touchmove', onMove, { passive: true });
-                el.addEventListener('touchend', clear);
-                el.addEventListener('touchcancel', clear);
-                el.addEventListener('mousedown', onDown);
-                el.addEventListener('mousemove', onMove);
-                el.addEventListener('mouseup', clear);
-                el.addEventListener('mouseleave', clear);
                 el.addEventListener('click', (e) => {
-                    if (fired) { e.preventDefault(); e.stopPropagation(); fired = false; }
-                }, true);
+                    const text = getText();
+                    if (!text) return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    copyTextToClipboard(text).then(ok => {
+                        if (!ok) return;
+                        if (navigator.vibrate) { try { navigator.vibrate(12); } catch (_) {} }
+                        showToast('已复制' + (label || ''));
+                    });
+                });
                 el.addEventListener('contextmenu', (e) => e.preventDefault());
             }
+            const DOUBLE_TAP_MS = 300;
+            function bindDoubleTapTop(el, getScroller, opts) {
+                if (!el) return;
+                const skip = (opts && opts.allowInput)
+                    ? 'button, a'
+                    : 'button, a, input, textarea, select';
+                let lastAt = 0;
+                el.addEventListener('click', (e) => {
+                    if (e.target.closest(skip)) return;
+                    const now = performance.now();
+                    if (now - lastAt > DOUBLE_TAP_MS) { lastAt = now; return; }
+                    lastAt = 0;
+                    const sc = typeof getScroller === 'function'
+                        ? getScroller() : getScroller;
+                    if (!sc) return;
+                    sc.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+            bindDoubleTapTop($('#fav-page .fav-header'), () => favScroll);
+            bindDoubleTapTop($('#playlist-page .fav-header'), () => plScroll);
+            bindDoubleTapTop($('#history-page .fav-header'), () => historyScroll);
+            bindDoubleTapTop($('.search-results-header'), () => resultsList);
+            bindDoubleTapTop($('#song-search-field'), () => mainContent,
+                { allowInput: true });
+            bindDoubleTapTop($('#mine-search-field'), () => mainContent,
+                { allowInput: true });
             function openPlayerMore() {
                 if (!playerMoreMenu) return;
                 if (placeholderMode) { showPlaceholderTip(); return; }
@@ -4172,7 +4076,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                     .addEventListener('click', () => {
                         const s = currentSong;
                         closeSheet(playerMoreMenu);
-                        if (s) openPlaylistPicker(s);
+                        if (s) openPlaylistPicker(s, { placement: 'topright' });
                     });
                 const favItem = playerMoreMenu.querySelector('[data-act="fav"]');
                 favItem.addEventListener('click', () => {
@@ -4212,10 +4116,12 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                     openPlayerMore();
                 });
             }
-            bindLongPressCopy(fullSongName,
+            bindCopyOnTap(fullSongName,
                 () => (currentSong && currentSong.name) || '', '歌名');
-            bindLongPressCopy(fullArtistName,
+            bindCopyOnTap(fullArtistName,
                 () => (currentSong && currentSong.artistsname) || '', '歌手');
+            bindCopyOnTap($('#pl-page-title'),
+                () => (plPageTitle && plPageTitle.textContent) || '', '歌单名');
             function renderRateTicks() {
                 if (!rateTicks) return;
                 rateTicks.innerHTML = RATE_TICKS.map(v => {
@@ -4255,7 +4161,8 @@ body.tab-bar-hidden .mini-player { bottom:0; }
             }
             document.addEventListener('click', (e) => {
                 if (isSortMode()) return;
-                if (selectMode && !e.target.closest('.select-bar')) {
+                if (selectMode && !e.target.closest('.select-bar')
+                    && !e.target.closest('.select-topbar')) {
                     const onRow = e.target.closest('.song-item, .result-item, .fav-item');
                     const onRowBtn = e.target.closest('.song-more-btn, .song-fav-btn, .act-btn');
                     const onOverlay = e.target.closest('.sheet, .overlay, .dialog-mask');
@@ -4265,7 +4172,8 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                         exitSelectMode();
                     }
                 }
-                if (plSelectMode && !e.target.closest('.select-bar')) {
+                if (plSelectMode && !e.target.closest('.select-bar')
+                    && !e.target.closest('.select-topbar')) {
                     const onRow = e.target.closest('.mine-row');
                     const onOverlay = e.target.closest('.sheet, .overlay, .dialog-mask');
                     const justEntered = performance.now() - plSelectEnteredAt < 350;
@@ -4277,17 +4185,25 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                 if (e.target && e.target.isConnected === false) return;
                 closeAllSheets();
             });
+            function sanitizePlName(raw) {
+                return String(raw == null ? '' : raw)
+                    .replace(/[[\]]/g, '').trim().slice(0, 15);
+            }
             function openNameDialog(title, initial, cb) {
                 const label = esc(title || '新建歌单');
                 const isCreate = /新建/.test(String(title || ''));
-                const maxLen = isCreate ? 4096 : 20;
+                const maxLen = isCreate ? 4096 : 15;
                 if (!window.mdui || !window.mdui.prompt) {
-                    const val = window.prompt(title || '新建歌单', initial || '');
-                    if (val && val.trim() && cb) cb(val.trim());
+                    const raw = window.prompt(title || '新建歌单', initial || '');
+                    const val = isCreate ? String(raw || '').trim()
+                        : sanitizePlName(raw);
+                    if (val && cb) cb(val);
                     return;
                 }
                 mdui.prompt(label, function (value) {
-                    const val = String(value == null ? '' : value).trim();
+                    const raw = String(value == null ? '' : value).trim();
+                    if (!raw) return;
+                    const val = isCreate ? raw : sanitizePlName(raw);
                     if (!val) return;
                     if (cb) cb(val);
                 }, null, {
@@ -4425,9 +4341,14 @@ body.tab-bar-hidden .mini-player { bottom:0; }
             function openPlaylistPicker(song, opts) {
                 if (!song || !plPickerSheet) return;
                 pickerSong = song;
-                const fromPlayer = !!(opts && opts.fromPlayer);
-                plPickerSheet.classList.toggle('sheet-dock-left', fromPlayer);
+                const placement = (opts && opts.fromPlayer) ? 'left'
+                    : ((opts && opts.placement) || 'center');
+                plPickerSheet.classList.add('no-anim');
+                plPickerSheet.classList.toggle('sheet-dock-left', placement === 'left');
+                plPickerSheet.classList.toggle('sheet-dock-topright', placement === 'topright');
                 renderPlaylistPicker();
+                void plPickerSheet.offsetHeight;
+                plPickerSheet.classList.remove('no-anim');
                 openSheet(plPickerSheet);
             }
             function renderPlaylistPicker() {
@@ -4490,11 +4411,16 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                 plPickerNew.addEventListener('click', () => {
                     openNameDialog('新建歌单', '', (val) => {
                         const segs = parsePlaylistShare(val);
+                        const plainName = sanitizePlName(val);
+                        if (!segs && !plainName) {
+                            showToast('歌单名不能为空，且不能只包含中括号');
+                            return;
+                        }
                         const created = segs
-                            ? segs.map(seg => createPlaylist(seg.name || '导入的歌单'))
-                            : [createPlaylist(val)];
+                            ? segs.map(seg => createPlaylist(sanitizePlName(seg.name) || '导入的歌单'))
+                            : [createPlaylist(plainName)];
                         const pl = created[0];
-                        const notice = segs ? '' : renameNotice(val, pl.name);
+                        const notice = segs ? '' : renameNotice(plainName, pl.name);
                         const willBatch = !!(segs && segs.length > 1);
                         const afterImport = () => {
                             if (pickerSong) {
@@ -4652,10 +4578,17 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                 setCacheSub('history', histN > 0
                     ? histN + ' 首 · ' + (formatBytes(lsBytes([HISTORY_KEY])) || '0 B')
                     : '播放历史页里的全部记录');
+                const favN = lsCount(FAV_KEY);
+                setCacheSub('fav', favN > 0
+                    ? favN + ' 首 · ' + (formatBytes(lsBytes([FAV_KEY])) || '0 B')
+                    : '收藏列表');
+                const plN = lsCount(PL_KEY);
+                setCacheSub('playlists', plN > 0
+                    ? plN + ' 个 · ' + (formatBytes(lsBytes([PL_KEY])) || '0 B')
+                    : '自建歌单及其中歌曲');
                 const total = lsBytes([
-                    FAV_KEY, PL_KEY, HISTORY_KEY, FAIL_KEY,
-                    'searchHistory', LAST_KEY, THEME_KEY, THEME_MODE_KEY,
-                    VOLUME_KEY, FADE_KEY, AWAKE_KEY, TRANS_KEY, PLAY_MODE_KEY
+                    FAIL_KEY, 'searchHistory', LAST_KEY,
+                    HISTORY_KEY, FAV_KEY, PL_KEY
                 ]);
                 const t = total >= 1024 ? formatBytes(total) : '';
                 if (tipMain) {
@@ -4754,6 +4687,25 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                 try { refreshHistoryDropdowns('searchHistory'); } catch (_) {}
                 try { renderSearchHistory(); } catch (_) {}
             }
+            function clearFavoritesCache() {
+                try {
+                    favorites.length = 0;
+                    localStorage.setItem(FAV_KEY, JSON.stringify(favorites));
+                } catch (_) {}
+                try { syncFavUI(); } catch (_) {}
+                if (favPage && favPage.classList.contains('active')) renderFavorites();
+                if (activeTab === 'mine') renderMinePage();
+            }
+            function clearPlaylistsCache() {
+                try {
+                    playlists.length = 0;
+                    persistPlaylists();
+                } catch (_) {}
+                if (playlistPage && playlistPage.classList.contains('active')) {
+                    closePlaylistPage();
+                }
+                renderMinePage();
+            }
             async function runClearCache() {
                 const list = cacheChecks().filter(c => c.checked);
                 if (!list.length) return;
@@ -4773,6 +4725,8 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                     else if (k === 'search') clearSearchHistory();
                     else if (k === 'resume') clearResumeRecord();
                     else if (k === 'history') clearHistoryRecords();
+                    else if (k === 'fav') clearFavoritesCache();
+                    else if (k === 'playlists') clearPlaylistsCache();
                 });
                 list.forEach(c => { c.checked = false; });
                 syncCachePage();
@@ -5116,10 +5070,26 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                 let dragging = false;
                 let startY = 0;
                 let curY = 0;
-                let rowH = 0;
+                let startTop = 0;
+                let rowH = 1;
                 let fromIdx = 0;
+                let dropIdx = 0;
                 let scrollDelta = 0;
                 let autoScrollRaf = 0;
+                let moveRaf = 0;
+                let phTimer = null;
+                let placeholder = null;
+                let phVisible = false;
+                let lastMovePos = 0;
+                let refY = 0;
+                let pressTimer = null;
+                let pressFired = false;
+                let pressStartX = 0;
+                let pressStartY = 0;
+                const SORT_PRESS_MS = 180;
+                const PH_IDLE_MS = 300;
+                const MOVE_EPS = 10;
+                const HIDE_EPS = 8;
                 const EDGE_ZONE = 64;
                 const MAX_SPEED = 12;
                 let scrollerTop = 0;
@@ -5152,13 +5122,81 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                         const before = scroller.scrollTop;
                         scroller.scrollTop = before + speed;
                         const moved = scroller.scrollTop - before;
-                        if (moved !== 0) {
-                            scrollDelta += moved;
-                        }
+                        if (moved !== 0) scrollDelta += moved;
                     }
                     autoScrollRaf = requestAnimationFrame(autoScrollLoop);
                 };
+                const otherRows = () => Array.from(listEl.children).filter(el =>
+                    el !== rowEl && el !== placeholder &&
+                    el.dataset && el.dataset.index != null);
+                const computeDropIdx = () => {
+                    const len = (sortCtx && sortCtx.getSongs)
+                        ? sortCtx.getSongs().length : 0;
+                    const unit = rowH > 0 ? rowH : 1;
+                    const delta = Math.round(((curY - startY) + scrollDelta) / unit);
+                    return Math.max(0, Math.min(fromIdx + delta, Math.max(0, len - 1)));
+                };
+                const placePlaceholder = () => {
+                    if (!placeholder) return;
+                    const rows = otherRows();
+                    const target = rows[dropIdx] || null;
+                    if (target) {
+                        if (placeholder.nextElementSibling !== target) {
+                            listEl.insertBefore(placeholder, target);
+                        }
+                    } else if (listEl.lastElementChild !== placeholder) {
+                        listEl.appendChild(placeholder);
+                    }
+                };
+                const showPlaceholder = () => {
+                    if (!placeholder) return;
+                    refY = curY;
+                    dropIdx = computeDropIdx();
+                    placePlaceholder();
+                    if (!phVisible) {
+                        phVisible = true;
+                        placeholder.classList.add('show');
+                    }
+                };
+                const hidePlaceholder = () => {
+                    if (!placeholder) return;
+                    if (phVisible) {
+                        phVisible = false;
+                        placeholder.classList.remove('show');
+                    }
+                    if (placeholder.parentElement) {
+                        placeholder.parentElement.removeChild(placeholder);
+                    }
+                };
+                const cancelPhTimer = () => {
+                    if (phTimer) { clearTimeout(phTimer); phTimer = null; }
+                };
+                const schedulePhShow = () => {
+                    cancelPhTimer();
+                    phTimer = setTimeout(() => {
+                        phTimer = null;
+                        if (dragging) showPlaceholder();
+                    }, PH_IDLE_MS);
+                };
+                const clearDragStyles = () => {
+                    cancelPhTimer();
+                    if (placeholder && placeholder.parentElement) {
+                        placeholder.parentElement.removeChild(placeholder);
+                    }
+                    placeholder = null;
+                    phVisible = false;
+                    rowEl.style.position = '';
+                    rowEl.style.left = '';
+                    rowEl.style.top = '';
+                    rowEl.style.width = '';
+                    rowEl.style.margin = '';
+                    rowEl.style.transition = '';
+                    rowEl.style.transform = '';
+                    rowEl.classList.remove('dragging');
+                    listEl.classList.remove('dragging-active');
+                };
                 const onDown = (e) => {
+                    if (dragging) return;
                     const pt = e.touches ? e.touches[0] : e;
                     dragging = true;
                     startY = pt.clientY;
@@ -5168,7 +5206,16 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                     const rect = rowEl.getBoundingClientRect();
                     const gap = parseFloat(getComputedStyle(rowEl).marginBottom) || 0;
                     rowH = rect.height + gap;
+                    startTop = rect.top;
                     measureScroller();
+                    placeholder = document.createElement('div');
+                    placeholder.className = 'sort-placeholder';
+                    placeholder.style.height = rect.height + 'px';
+                    phVisible = false;
+                    dropIdx = fromIdx;
+                    lastMovePos = curY;
+                    refY = curY;
+                    schedulePhShow();
                     rowEl.classList.add('dragging');
                     listEl.classList.add('dragging-active');
                     handle && handle.classList.add('pressing');
@@ -5176,7 +5223,8 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                     rowEl.style.left = rect.left + 'px';
                     rowEl.style.top = rect.top + 'px';
                     rowEl.style.position = 'fixed';
-                    e.preventDefault();
+                    rowEl.style.margin = '0';
+                    if (e.cancelable) e.preventDefault();
                     window.addEventListener('mousemove', onMove, { passive: false });
                     window.addEventListener('touchmove', onMove, { passive: false });
                     window.addEventListener('mouseup', onUp);
@@ -5184,7 +5232,6 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                     window.addEventListener('touchcancel', onUp);
                     autoScrollRaf = requestAnimationFrame(autoScrollLoop);
                 };
-                let moveRaf = 0;
                 const flushMove = () => {
                     moveRaf = 0;
                     if (!dragging) return;
@@ -5194,42 +5241,55 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                     if (!dragging) return;
                     const pt = e.touches ? e.touches[0] : e;
                     curY = pt.clientY;
+                    if (Math.abs(curY - refY) >= HIDE_EPS) hidePlaceholder();
+                    if (Math.abs(curY - lastMovePos) >= MOVE_EPS) {
+                        lastMovePos = curY;
+                        schedulePhShow();
+                    }
                     if (!moveRaf) moveRaf = requestAnimationFrame(flushMove);
-                    e.preventDefault();
+                    if (e.cancelable) e.preventDefault();
                 };
                 const onUp = () => {
                     if (!dragging) return;
                     dragging = false;
                     if (autoScrollRaf) { cancelAnimationFrame(autoScrollRaf); autoScrollRaf = 0; }
                     if (moveRaf) { cancelAnimationFrame(moveRaf); moveRaf = 0; }
+                    cancelPhTimer();
                     handle && handle.classList.remove('pressing');
                     window.removeEventListener('mousemove', onMove);
                     window.removeEventListener('touchmove', onMove);
                     window.removeEventListener('mouseup', onUp);
                     window.removeEventListener('touchend', onUp);
                     window.removeEventListener('touchcancel', onUp);
-                    const moved = (curY - startY) + scrollDelta;
-                    const delta = Math.round(moved / rowH);
-                    const listLen = (sortCtx && sortCtx.getSongs
-                        ? sortCtx.getSongs().length : 0);
-                    const toIdx = Math.max(0, Math.min(fromIdx + delta, listLen - 1));
-                    rowEl.style.position = '';
-                    rowEl.style.left = '';
-                    rowEl.style.top = '';
-                    rowEl.style.width = '';
-                    rowEl.style.transform = '';
-                    rowEl.classList.remove('dragging');
-                    listEl.classList.remove('dragging-active');
-                    if (toIdx !== fromIdx) {
-                        commitSortMove(fromIdx, toIdx);
+                    dropIdx = computeDropIdx();
+                    if (placeholder) {
+                        placePlaceholder();
+                        if (!phVisible) {
+                            phVisible = true;
+                            placeholder.classList.add('show');
+                        }
+                    }
+                    const finalIdx = dropIdx;
+                    const targetTop = placeholder
+                        ? placeholder.getBoundingClientRect().top : null;
+                    pressFired = true;
+                    setTimeout(() => { pressFired = false; }, 320);
+                    if (targetTop != null && finalIdx !== fromIdx) {
+                        rowEl.style.transition =
+                            'transform 0.2s cubic-bezier(0.22,1,0.36,1)';
+                        rowEl.style.transform =
+                            'translateY(' + (targetTop - startTop) + 'px)';
+                        setTimeout(() => {
+                            clearDragStyles();
+                            commitSortMove(fromIdx, finalIdx);
+                        }, 200);
+                    } else {
+                        clearDragStyles();
+                        if (finalIdx !== fromIdx) commitSortMove(fromIdx, finalIdx);
                     }
                 };
                 handle.addEventListener('mousedown', onDown);
                 handle.addEventListener('touchstart', onDown, { passive: false });
-                if (!rowEl) return;
-                let pressTimer = null;
-                let pressFired = false;
-                let pressStartX = 0, pressStartY = 0;
                 const clearPress = () => {
                     if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; }
                 };
@@ -5247,12 +5307,12 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                         pressFired = true;
                         if (navigator.vibrate) { try { navigator.vibrate(14); } catch (_) {} }
                         onDown(e);
-                    }, LONG_PRESS_MS);
+                    }, SORT_PRESS_MS);
                 });
                 rowEl.addEventListener('pointermove', (e) => {
                     if (!pressTimer) return;
-                    if (Math.abs(e.clientX - pressStartX) > 10
-                        || Math.abs(e.clientY - pressStartY) > 10) clearPress();
+                    if (Math.abs(e.clientX - pressStartX) > 12
+                        || Math.abs(e.clientY - pressStartY) > 12) clearPress();
                 });
                 rowEl.addEventListener('pointerup', clearPress);
                 rowEl.addEventListener('pointercancel', clearPress);
@@ -5485,6 +5545,8 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                 if (firstId != null) selectedPlIds.add(String(firstId));
                 if (selectMode) exitSelectMode();
                 if (plSelectBar) plSelectBar.classList.add('active');
+                if (plSelectTopbar) plSelectTopbar.classList.add('active');
+                document.body.classList.add('pl-select-mode');
                 syncPlaylistSelectBar();
                 renderMinePage();
             }
@@ -5492,6 +5554,9 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                 plSelectMode = false;
                 selectedPlIds.clear();
                 if (plSelectBar) plSelectBar.classList.remove('active');
+                if (plSelectTopbar) plSelectTopbar.classList.remove('active');
+                if (plSelectMoreMenu) plSelectMoreMenu.classList.remove('active');
+                document.body.classList.remove('pl-select-mode');
                 renderMinePage();
             }
             function togglePlaylistSelect(id) {
@@ -5507,19 +5572,15 @@ body.tab-bar-hidden .mini-player { bottom:0; }
             function syncPlaylistSelectBar() {
                 if (!plSelectBar) return;
                 const n = selectedPlIds.size;
-                if (plSelectCountEl) {
-                    plSelectCountEl.textContent = n > 0
-                        ? ('已选 ' + n + ' 个歌单') : '请选择歌单';
-                }
-                [plSelectRenameBtn, plSelectShareBtn, plSelectClearBtn, plSelectDelBtn]
+                if (plSelectCountEl) plSelectCountEl.textContent = '已选 ' + n + ' 个';
+                [plSelectRenameBtn, plSelectShareBtn, plSelectMoreBtn]
                     .forEach(b => {
                         if (b) b.disabled = n === 0;
                     });
                 if (plSelectAllBtn) {
                     const all = playlists.length;
                     const allSelected = all > 0 && selectedPlIds.size === all;
-                    const lbl = plSelectAllBtn.querySelector('#pl-select-all-label');
-                    if (lbl) lbl.textContent = allSelected ? '取消全选' : '全选';
+                    plSelectAllBtn.classList.toggle('checked', allSelected);
                 }
             }
             function removePlaylists(ids) {
@@ -5541,8 +5602,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                     renderMinePage();
                 });
             }
-            if (plSelectRenameBtn) {
-                plSelectRenameBtn.addEventListener('click', () => {
+            function renameSelectedPlaylists() {
                     const list = getSelectedPlaylists();
                     if (list.length === 0) return;
                     if (list.length === 1) {
@@ -5576,60 +5636,114 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                         renderMinePage();
                         showToast('已重命名 ' + list.length + ' 个歌单');
                     });
+            }
+            function shareSelectedPlaylists() {
+                const list = getSelectedPlaylists();
+                if (list.length === 0) return;
+                const withSongs = list.filter(pl => (pl.songs || []).length > 0);
+                const emptyN = list.length - withSongs.length;
+                if (withSongs.length === 0) {
+                    showToast('选中的歌单都是空的');
+                    return;
+                }
+                const text = withSongs
+                    .map(pl => buildPlaylistShare(pl.name, pl.songs))
+                    .join(',');
+                copyTextToClipboard(text).then(ok => {
+                    if (!ok) { showToast('复制失败'); return; }
+                    const base = '已复制，新建歌单时粘贴可导入歌曲';
+                    showToast(emptyN > 0
+                        ? (base + '（已跳过 ' + emptyN + ' 个空歌单）')
+                        : base);
                 });
+            }
+            if (plSelectRenameBtn) {
+                plSelectRenameBtn.addEventListener('click', () => renameSelectedPlaylists());
             }
             if (plSelectShareBtn) {
-                plSelectShareBtn.addEventListener('click', () => {
-                    const list = getSelectedPlaylists();
-                    if (list.length === 0) return;
-                    const withSongs = list.filter(pl => (pl.songs || []).length > 0);
-                    const emptyN = list.length - withSongs.length;
-                    if (withSongs.length === 0) {
-                        showToast('选中的歌单都是空的');
-                        return;
-                    }
-                    const text = withSongs
-                        .map(pl => buildPlaylistShare(pl.name, pl.songs, true))
-                        .join('\n');
-                    copyTextToClipboard(text).then(ok => {
-                        if (!ok) { showToast('复制失败'); return; }
-                        const base = '已复制，新建歌单时粘贴可导入歌曲';
-                        showToast(emptyN > 0
-                            ? (base + '（已跳过 ' + emptyN + ' 个空歌单）')
-                            : base);
+                plSelectShareBtn.addEventListener('click', () => shareSelectedPlaylists());
+            }
+            async function clearSelectedPlaylistSongs() {
+                const list = getSelectedPlaylists();
+                if (list.length === 0) return;
+                const totalSongs = list.reduce((s, pl) => s + pl.songs.length, 0);
+                if (totalSongs === 0) { showToast('选中的歌单都是空的'); return; }
+                const ok = await askConfirm(
+                    '确定清空选中的 ' + list.length + ' 个歌单里的全部 '
+                    + totalSongs + ' 首歌曲吗？此操作不可恢复。',
+                    { title: '清空歌单', confirmText: '清空' });
+                if (!ok) return;
+                list.forEach(pl => { pl.songs = []; });
+                persistPlaylists();
+                arrayPersistAndRepaint();
+                showToast('已清空 ' + list.length + ' 个歌单的歌曲');
+            }
+            async function deleteSelectedPlaylists() {
+                const list = getSelectedPlaylists();
+                if (list.length === 0) return;
+                const ok = await askConfirm(
+                    '确定删除选中的 ' + list.length
+                    + ' 个歌单吗？歌单里的歌不会被收藏，只是歌单本身没了。',
+                    { title: '删除歌单', confirmText: '删除' });
+                if (!ok) return;
+                const n = removePlaylists(list.map(p => p.id));
+                showToast('已删除 ' + n + ' 个歌单');
+                exitPlaylistSelectMode();
+            }
+            function openPlSelectMoreMenu() {
+                if (!plSelectMoreMenu) return;
+                plSelectMoreMenu.innerHTML = `
+                    <div class="menu-item" data-act="rename">
+                        <i class="fas fa-pen"></i>
+                        <span>重命名</span>
+                    </div>
+                    <div class="menu-item" data-act="share">
+                        <i class="fas fa-share"></i>
+                        <span>分享</span>
+                    </div>
+                    <div class="menu-item danger" data-act="clear">
+                        <i class="fas fa-broom"></i>
+                        <span>清空歌单歌曲</span>
+                    </div>
+                    <div class="menu-item danger" data-act="del">
+                        <i class="fas fa-trash-alt"></i>
+                        <span>删除歌单</span>
+                    </div>`;
+                const renameItem = plSelectMoreMenu.querySelector('[data-act="rename"]');
+                if (renameItem) {
+                    renameItem.addEventListener('click', () => {
+                        closeSheet(plSelectMoreMenu);
+                        renameSelectedPlaylists();
                     });
-                });
+                }
+                const shareItem = plSelectMoreMenu.querySelector('[data-act="share"]');
+                if (shareItem) {
+                    shareItem.addEventListener('click', () => {
+                        closeSheet(plSelectMoreMenu);
+                        shareSelectedPlaylists();
+                    });
+                }
+                const clearItem = plSelectMoreMenu.querySelector('[data-act="clear"]');
+                if (clearItem) {
+                    clearItem.addEventListener('click', () => {
+                        closeSheet(plSelectMoreMenu);
+                        clearSelectedPlaylistSongs();
+                    });
+                }
+                const delItem = plSelectMoreMenu.querySelector('[data-act="del"]');
+                if (delItem) {
+                    delItem.addEventListener('click', () => {
+                        closeSheet(plSelectMoreMenu);
+                        deleteSelectedPlaylists();
+                    });
+                }
+                openSheet(plSelectMoreMenu);
             }
-            if (plSelectClearBtn) {
-                plSelectClearBtn.addEventListener('click', async () => {
-                    const list = getSelectedPlaylists();
-                    if (list.length === 0) return;
-                    const totalSongs = list.reduce((s, pl) => s + pl.songs.length, 0);
-                    if (totalSongs === 0) { showToast('选中的歌单都是空的'); return; }
-                    const ok = await askConfirm(
-                        '确定清空选中的 ' + list.length + ' 个歌单里的全部 '
-                        + totalSongs + ' 首歌曲吗？此操作不可恢复。',
-                        { title: '清空歌单', confirmText: '清空' });
-                    if (!ok) return;
-                    list.forEach(pl => { pl.songs = []; });
-                    persistPlaylists();
-                    arrayPersistAndRepaint();
-                    showToast('已清空 ' + list.length + ' 个歌单的歌曲');
-                });
+            if (plSelectDoneBtn) {
+                plSelectDoneBtn.addEventListener('click', () => exitPlaylistSelectMode());
             }
-            if (plSelectDelBtn) {
-                plSelectDelBtn.addEventListener('click', async () => {
-                    const list = getSelectedPlaylists();
-                    if (list.length === 0) return;
-                    const ok = await askConfirm(
-                        '确定删除选中的 ' + list.length
-                        + ' 个歌单吗？歌单里的歌不会被收藏，只是歌单本身没了。',
-                        { title: '删除歌单', confirmText: '删除' });
-                    if (!ok) return;
-                    const n = removePlaylists(list.map(p => p.id));
-                    showToast('已删除 ' + n + ' 个歌单');
-                    exitPlaylistSelectMode();
-                });
+            if (plSelectMoreBtn) {
+                plSelectMoreBtn.addEventListener('click', () => openPlSelectMoreMenu());
             }
             function arrayPersistAndRepaint() {
                 persistPlaylists();
@@ -5677,7 +5791,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                 if (selectedIds.has(key)) selectedIds.delete(key);
                 else selectedIds.add(key);
                 syncSelectBar();
-                selectCtx.rerender && selectCtx.rerender();
+                applySelectionDom();
             }
             function activeListEl() {
                 const map = {
@@ -5688,6 +5802,16 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                     history: historyPageList
                 };
                 return map[selectCtx.from] || null;
+            }
+            function applySelectionDom() {
+                const root = activeListEl();
+                if (!root) return;
+                root.querySelectorAll('[data-song-id]').forEach(el => {
+                    const on = selectedIds.has(String(el.dataset.songId));
+                    if (el.classList.contains('selected') !== on) {
+                        el.classList.toggle('selected', on);
+                    }
+                });
             }
             function selectableIds() {
                 const root = activeListEl();
@@ -5706,23 +5830,34 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                 selectedIds.clear();
                 if (!allSelected) ids.forEach(id => selectedIds.add(id));
                 syncSelectBar();
-                selectCtx.rerender && selectCtx.rerender();
+                applySelectionDom();
             }
             function getSelectedSongs() {
                 const all = (selectCtx.getSongs && selectCtx.getSongs()) || [];
                 return all.filter(s => selectedIds.has(String(s.id)));
             }
+            function syncSelectBarOffset() {
+                if (!selectBar) return;
+                const mp = document.querySelector('.mini-player');
+                let gap = 0;
+                if (mp && !mp.classList.contains('hidden')) {
+                    const r = mp.getBoundingClientRect();
+                    const g = window.innerHeight - r.top;
+                    if (g > 0 && g < window.innerHeight) gap = g;
+                }
+                selectBar.style.bottom = gap > 0 ? (gap + 'px') : '';
+            }
             function syncSelectBar() {
                 if (!selectBar) return;
+                syncSelectBarOffset();
                 const n = selectedIds.size;
-                if (selectCountEl) selectCountEl.textContent = n > 0 ? ('已选 ' + n + ' 首') : '请选择歌曲';
-                if (selectBar) selectBar.classList.toggle('active', selectMode);
-                if (selectAllBtn) {
-                    const ids = selectableIds();
-                    const allSelected = ids.length > 0 && ids.every(id => selectedIds.has(id));
-                    selectAllBtn.querySelector('#select-all-label').textContent = allSelected ? '取消全选' : '全选';
-                }
-                [selectAddBtn, selectFavBtn, selectShareBtn, selectDelBtn].forEach(b => {
+                if (selectCountEl) selectCountEl.textContent = '已选 ' + n + ' 首';
+                selectBar.classList.toggle('active', selectMode);
+                if (selectTopbar) selectTopbar.classList.toggle('active', selectMode);
+                const ids = selectableIds();
+                const allSelected = ids.length > 0 && ids.every(id => selectedIds.has(id));
+                if (selectAllBtn) selectAllBtn.classList.toggle('checked', allSelected);
+                [selectAddBtn, selectFavBtn, selectMoreBtn].forEach(b => {
                     if (b) b.disabled = n === 0;
                 });
                 const fromFav = selectCtx.from === 'fav';
@@ -5738,10 +5873,6 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                             selectFavBtn.innerHTML = html;
                         }
                     }
-                }
-                const fromChart = selectCtx.from === 'chart' || selectCtx.from === 'search';
-                if (selectDelBtn) {
-                    selectDelBtn.style.display = fromChart ? 'none' : '';
                 }
             }
             function bindLongPress(el, onLongPress, shouldStart) {
@@ -5796,73 +5927,156 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                 });
             }
             if (selectFavBtn) {
-                selectFavBtn.addEventListener('click', () => {
-                    const songs = getSelectedSongs();
-                    if (songs.length === 0) return;
-                    const allFav = songs.every(s => isFavorite(s.id));
-                    const n = batchSetFavorite(songs, !allFav);
-                    showToast(allFav
-                        ? ('已取消收藏 ' + n + ' 首')
-                        : (n > 0 ? ('已收藏 ' + n + ' 首') : '这些歌都已经收藏过了'));
-                    syncSelectBar();
-                    selectCtx.rerender && selectCtx.rerender();
-                });
+                selectFavBtn.addEventListener('click', () => batchFavSelected());
             }
-            if (selectShareBtn) {
-                selectShareBtn.addEventListener('click', () => {
-                    const songs = getSelectedSongs();
-                    if (songs.length === 0) return;
-                    let name = '歌单';
-                    if (selectCtx.from === 'playlist') {
-                        const pl = getPlaylist(selectCtx.playlistId);
-                        if (pl && pl.name) name = pl.name;
-                    } else if (selectCtx.from === 'fav') {
-                        name = 'Ta的收藏';
-                    }
-                    sharePlaylist(name, songs, true);
-                });
+            if (selectDoneBtn) {
+                selectDoneBtn.addEventListener('click', () => exitSelectMode());
             }
-            if (selectDelBtn) {
-                selectDelBtn.addEventListener('click', async () => {
-                    const songs = getSelectedSongs();
-                    if (songs.length === 0) return;
-                    const n = songs.length;
-                    const ok = await askConfirm(
-                        '确定要删除选中的 ' + n + ' 首歌曲吗？此操作不可恢复。',
-                        { title: '删除歌曲', confirmText: '删除' });
-                    if (!ok) return;
-                    if (selectCtx.from === 'playlist') {
-                        const pl = getPlaylist(selectCtx.playlistId);
-                        if (pl) songs.forEach(s => removeSongFromPlaylist(pl.id, s));
-                        renderPlaylistDetail();
-                        showToast('已从歌单移除 ' + n + ' 首');
-                    } else if (selectCtx.from === 'fav') {
-                        songs.forEach(s => { if (isFavorite(s.id)) toggleFavorite(s); });
-                        renderFavorites();
-                        showToast('已从我的收藏移除 ' + n + ' 首');
-                    } else if (selectCtx.from === 'history') {
-                        let removed = 0;
-                        songs.forEach(s => { if (removeFromPlayHistory(s.id)) removed++; });
-                        renderPlayHistoryPage();
-                        showToast('已从播放历史移除 ' + removed + ' 条');
-                    } else {
-                        songs.forEach(s => {
-                            if (isFavorite(s.id)) toggleFavorite(s);
-                            loadPlaylists().forEach(pl => removeSongFromPlaylist(pl.id, s));
-                        });
-                        showToast('已删除 ' + n + ' 首');
-                    }
-                    syncFavUI();
-                    if (activeTab === 'mine') renderMinePage();
-                    if (playlistPage.classList.contains('active') && selectCtx.from !== 'playlist') renderPlaylistDetail();
-                    exitSelectMode();
-                });
+            if (selectMoreBtn) {
+                selectMoreBtn.addEventListener('click', () => openSelectMoreMenu());
+            }
+            function batchFavSelected() {
+                const songs = getSelectedSongs();
+                if (songs.length === 0) return;
+                const allFav = songs.every(s => isFavorite(s.id));
+                const n = batchSetFavorite(songs, !allFav);
+                showToast(allFav
+                    ? ('已取消收藏 ' + n + ' 首')
+                    : (n > 0 ? ('已收藏 ' + n + ' 首') : '这些歌都已经收藏过了'));
+                syncSelectBar();
+                applySelectionDom();
+            }
+            function openSelectMoreMenu() {
+                if (!selectMoreMenu) return;
+                const f = selectCtx.from;
+                const songs = getSelectedSongs();
+                const fromFav = f === 'fav';
+                const allFav = songs.length > 0 && songs.every(s => isFavorite(s.id));
+                const delLabel = f === 'playlist' ? '从此歌单移除'
+                    : (f === 'history' ? '从播放历史移除'
+                    : (f === 'fav' ? '从我的收藏移除' : '从收藏和歌单移除'));
+                let html = `
+                    <div class="menu-item" data-act="play">
+                        <i class="fas fa-play"></i>
+                        <span>播放</span>
+                    </div>`;
+                if (!fromFav) {
+                    html += `
+                    <div class="menu-item" data-act="fav">
+                        <i class="${allFav ? 'fas' : 'far'} fa-heart"></i>
+                        <span>${allFav ? '取消收藏' : '收藏'}</span>
+                    </div>`;
+                }
+                html += `
+                    <div class="menu-item" data-act="add">
+                        <i class="fas fa-plus"></i>
+                        <span>加入歌单</span>
+                    </div>`;
+                if (SORTABLE_FROM[f]) {
+                    html += `
+                    <div class="menu-item" data-act="sort">
+                        <i class="fas fa-bars"></i>
+                        <span>调整位置</span>
+                    </div>`;
+                }
+                if (f !== 'chart' && f !== 'search') {
+                    html += `
+                    <div class="menu-item danger" data-act="del">
+                        <i class="fas fa-trash-alt"></i>
+                        <span>${delLabel}</span>
+                    </div>`;
+                }
+                selectMoreMenu.innerHTML = html;
+                const playItem = selectMoreMenu.querySelector('[data-act="play"]');
+                if (playItem) {
+                    playItem.addEventListener('click', () => {
+                        const list = getSelectedSongs();
+                        if (list.length === 0) return;
+                        const src = selectCtx.from;
+                        closeSheet(selectMoreMenu);
+                        exitSelectMode();
+                        setQueue(list.map(s => ({ ...s })), src);
+                        playSong(0);
+                    });
+                }
+                const favItem = selectMoreMenu.querySelector('[data-act="fav"]');
+                if (favItem) {
+                    favItem.addEventListener('click', () => {
+                        closeSheet(selectMoreMenu);
+                        batchFavSelected();
+                    });
+                }
+                const addItem = selectMoreMenu.querySelector('[data-act="add"]');
+                if (addItem) {
+                    addItem.addEventListener('click', () => {
+                        closeSheet(selectMoreMenu);
+                        const list = getSelectedSongs();
+                        if (list.length === 0) return;
+                        loadPlaylists();
+                        openBatchPicker(list);
+                    });
+                }
+                const sortItem = selectMoreMenu.querySelector('[data-act="sort"]');
+                if (sortItem) {
+                    sortItem.addEventListener('click', () => {
+                        const sctx = selectCtx;
+                        closeSheet(selectMoreMenu);
+                        if (sctx) {
+                            exitSelectMode();
+                            enterSortMode(sctx.from, sctx);
+                        }
+                    });
+                }
+                const delItem = selectMoreMenu.querySelector('[data-act="del"]');
+                if (delItem) {
+                    delItem.addEventListener('click', () => {
+                        closeSheet(selectMoreMenu);
+                        deleteSelectedSongs();
+                    });
+                }
+                openSheet(selectMoreMenu);
+            }
+            async function deleteSelectedSongs() {
+                const songs = getSelectedSongs();
+                if (songs.length === 0) return;
+                const n = songs.length;
+                const ok = await askConfirm(
+                    '确定要删除选中的 ' + n + ' 首歌曲吗？此操作不可恢复。',
+                    { title: '删除歌曲', confirmText: '删除' });
+                if (!ok) return;
+                if (selectCtx.from === 'playlist') {
+                    const pl = getPlaylist(selectCtx.playlistId);
+                    if (pl) songs.forEach(s => removeSongFromPlaylist(pl.id, s));
+                    renderPlaylistDetail();
+                    showToast('已从歌单移除 ' + n + ' 首');
+                } else if (selectCtx.from === 'fav') {
+                    songs.forEach(s => { if (isFavorite(s.id)) toggleFavorite(s); });
+                    renderFavorites();
+                    showToast('已从我的收藏移除 ' + n + ' 首');
+                } else if (selectCtx.from === 'history') {
+                    let removed = 0;
+                    songs.forEach(s => { if (removeFromPlayHistory(s.id)) removed++; });
+                    renderPlayHistoryPage();
+                    showToast('已从播放历史移除 ' + removed + ' 条');
+                } else {
+                    songs.forEach(s => {
+                        if (isFavorite(s.id)) toggleFavorite(s);
+                        loadPlaylists().forEach(pl => removeSongFromPlaylist(pl.id, s));
+                    });
+                    showToast('已删除 ' + n + ' 首');
+                }
+                syncFavUI();
+                if (activeTab === 'mine') renderMinePage();
+                if (playlistPage.classList.contains('active') && selectCtx.from !== 'playlist') renderPlaylistDetail();
+                exitSelectMode();
             }
             function openBatchPicker(songs) {
                 if (!plPickerSheet) return;
                 loadPlaylists();
                 songBatchPicker = songs;
+                plPickerSheet.classList.add('no-anim');
                 plPickerSheet.classList.remove('sheet-dock-left');
+                plPickerSheet.classList.remove('sheet-dock-topright');
                 pickerSong = songs[0] || null;
                 const favAllIn = songs.length > 0 && songs.every(s => isFavorite(s.id));
                 const favRowHtml = favPickerRowHtml(favAllIn);
@@ -5926,6 +6140,8 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                         if (activeTab === 'mine') renderMinePage();
                     });
                 });
+                void plPickerSheet.offsetHeight;
+                plPickerSheet.classList.remove('no-anim');
                 openSheet(plPickerSheet);
             }
             const coverQueue = [];
@@ -6875,7 +7091,27 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                     picIdExact: !!picId
                 };
             }
-            async function searchSongs(q) {                const xfabeTask = async () => {
+            const NETEASE_SEARCH_FULL = 'https://music.163.com/api/search/get?s=';
+            async function neteaseSearchSongs(q, limit) {
+                const url = NETEASE_SEARCH_FULL + encodeURIComponent(q) +
+                    '&type=1&limit=' + (limit || 50);
+                const d = await fetchDirectOrProxy(url, { timeout: RACE_TIMEOUT });
+                const list = (d && d.result && d.result.songs) || [];
+                const rows = list.map(s => ({
+                    id: s.id,
+                    name: s.name,
+                    artistsname: (s.artists || []).map(a => a.name).join(' / '),
+                    album: (s.album && s.album.name) || '',
+                    duration: s.duration || 0,
+                    picurl: '',
+                    picId: (s.album && s.album.picId) ? String(s.album.picId) : '',
+                    picIdExact: !!(s.album && s.album.picId)
+                }));
+                if (!rows.length) throw new Error('网易云搜索无结果');
+                return rows;
+            }
+            async function searchSongs(q) {
+                const xfabeTask = async () => {
                     const d = await xfabeGet(XFABE_BASE + '/search?search=' +
                         encodeURIComponent(q) + '&limit=50');
                     const list = (d.data && d.data.songs) || [];
@@ -6896,14 +7132,103 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                     try {
                         const rows = await gdSearchTask(q)();
                         if (rows.some(s => s.picIdExact)) return rows;
-                        return await xfabeTask();
+                        try {
+                            return await xfabeTask();
+                        } catch (e2) {
+                            console.warn('xfabe 搜索失败，转网易云：', e2 && e2.message);
+                            return await neteaseSearchSongs(q, 50);
+                        }
                     } catch (e) {
                         console.warn('搜索 gdstudio 失败，转 xfabe：', e && e.message);
-                        return xfabeTask();
+                        try {
+                            return await xfabeTask();
+                        } catch (e2) {
+                            console.warn('xfabe 搜索失败，转网易云：', e2 && e2.message);
+                            return await neteaseSearchSongs(q, 50);
+                        }
                     }
                 })();
                 try { await enrichPicIds(songs); } catch (_) {}
                 return songs;
+            }
+            const NETEASE_SUGGEST = 'https://music.163.com/api/search/suggest/keyword?s=';
+            const suggestCache = new Map();
+            const SUGGEST_CACHE_MAX = 100;
+            let suggestSeq = 0;
+            async function fetchSuggest(q) {
+                if (suggestCache.has(q)) return suggestCache.get(q);
+                const url = NETEASE_SUGGEST + encodeURIComponent(q) + '&limit=8';
+                const d = await fetchDirectOrProxy(url, { timeout: RACE_TIMEOUT });
+                const words = ((d && d.result && d.result.allMatch) || [])
+                    .map(x => x.keyword).filter(Boolean).slice(0, 8);
+                if (suggestCache.size >= SUGGEST_CACHE_MAX) {
+                    suggestCache.delete(suggestCache.keys().next().value);
+                }
+                suggestCache.set(q, words);
+                return words;
+            }
+            function bindSearchSuggest(inputEl, containerEl, opts) {
+                if (!inputEl || !containerEl) return;
+                const options = opts || {};
+                let debounceTimer = null;
+                const run = () => {
+                    const q = inputEl.value.trim();
+                    if (!q) { renderHistoryInto(containerEl, inputEl, options.historyOpts); return; }
+                    const seq = ++suggestSeq;
+                    fetchSuggest(q).then(words => {
+                        if (seq !== suggestSeq) return;
+                        if (inputEl.value.trim() !== q) return;
+                        if (!words.length) {
+                            renderHistoryInto(containerEl, inputEl, options.historyOpts);
+                            containerEl.classList.add('active');
+                            return;
+                        }
+                        renderSuggestInto(containerEl, inputEl, q, words);
+                        containerEl.classList.add('active');
+                    }).catch(() => {
+                        if (seq !== suggestSeq) return;
+                        renderHistoryInto(containerEl, inputEl, options.historyOpts);
+                        containerEl.classList.add('active');
+                    });
+                };
+                inputEl.addEventListener('input', () => {
+                    clearTimeout(debounceTimer);
+                    const q = inputEl.value.trim();
+                    if (!q) { run(); return; }
+                    debounceTimer = setTimeout(run, 250);
+                });
+            }
+            function renderSuggestInto(container, inputEl, q, words) {
+                container.innerHTML = '<div class="history-header"><span>搜索推荐</span></div>';
+                words.forEach(w => {
+                    const div = document.createElement('div');
+                    div.className = 'search-history-item suggest-item';
+                    const icon = document.createElement('i');
+                    icon.className = 'fas fa-search sh-icon';
+                    const text = document.createElement('span');
+                    text.className = 'sh-text';
+                    text.textContent = w;
+                    div.appendChild(icon);
+                    div.appendChild(text);
+                    const hl = highlightKeyword(w, q);
+                    if (hl) text.innerHTML = hl;
+                    div.addEventListener('click', () => {
+                        inputEl.value = w;
+                        if (typeof inputEl.__syncClear === 'function') inputEl.__syncClear();
+                        container.classList.remove('active');
+                        inputEl.blur();
+                        doSearch(w);
+                    });
+                    container.appendChild(div);
+                });
+            }
+            function highlightKeyword(word, q) {
+                if (!q) return '';
+                const i = word.toLowerCase().indexOf(q.toLowerCase());
+                if (i < 0) return '';
+                return esc(word.slice(0, i)) + '<em>' +
+                    esc(word.slice(i, i + q.length)) + '</em>' +
+                    esc(word.slice(i + q.length));
             }
             function gdPlayTask(id, allowTrial) {
                 return async () => {
@@ -7503,8 +7828,13 @@ body.tab-bar-hidden .mini-player { bottom:0; }
             }
             const SMOOTH_DRIFT = 0.25;
             const SMOOTH_MAX_AHEAD = 0.35;
+            const SMOOTH_RESYNC = 0.5;
             let smoothBase = -1;
             let smoothBaseAt = 0;
+            function resetSmoothTime() {
+                smoothBase = -1;
+                smoothBaseAt = 0;
+            }
             function smoothPlaybackTime() {
                 if (playbackTimeSource) return playbackTimeSource();
                 if (isDraggingProgress && dragSeekT >= 0) return dragSeekT;
@@ -7520,12 +7850,14 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                 }
                 const now = performance.now();
                 const rate = Math.max(0.25, currentAudio.playbackRate || 1);
-                if (smoothBase < 0 || smoothBase > raw + SMOOTH_DRIFT) {
+                const elapsed = (now - smoothBaseAt) / 1000 * rate;
+                if (smoothBase < 0 || smoothBase > raw + SMOOTH_DRIFT
+                    || smoothBase + elapsed < raw - SMOOTH_RESYNC) {
                     smoothBase = raw;
                     smoothBaseAt = now;
                     return raw;
                 }
-                let out = smoothBase + (now - smoothBaseAt) / 1000 * rate;
+                let out = smoothBase + elapsed;
                 if (out > raw + SMOOTH_MAX_AHEAD) {
                     out = raw + SMOOTH_MAX_AHEAD;
                     smoothBase = out;
@@ -9070,7 +9402,9 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                     return;
                 }
                 try { currentAudio.currentTime = time; } catch (_) {}
-                if (isPlaying) return;
+                resetSmoothTime();
+                isLyricsScrolling = true;
+                clearTimeout(scrollTimeout);
                 const dur = audioDuration(currentAudio);
                 if (dur > 0) {
                     progress.style.width = ((time / dur) * 100) + '%';
@@ -9078,6 +9412,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                 currentTimeEl.textContent = formatTime(time);
                 lyricsLayoutDirty = true;
                 updateLyrics(time);
+                if (isPlaying && isAnyLyricsVisible()) lyricsTick();
             }
             searchBtn.addEventListener('click', () => {
                 const q = searchInput.value.trim();
@@ -9119,7 +9454,8 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                     searchInput.focus();
                 });
             }
-            searchInput.addEventListener('input', () => {
+            bindSearchSuggest(searchInput, searchHistory, {
+                historyOpts: { key: 'searchHistory', title: '搜索历史' }
             });
             searchInput.addEventListener('focus', () => {
                 renderSearchHistory();
@@ -9144,6 +9480,9 @@ body.tab-bar-hidden .mini-player { bottom:0; }
                 });
                 resultsHistory.classList.add('active');
                 resultsSearchInput.focus();
+            });
+            bindSearchSuggest(resultsSearchInput, resultsHistory, {
+                historyOpts: { key: 'searchHistory', title: '搜索历史' }
             });
             resultsSearchInput.addEventListener('focus', () => {
                 renderHistoryInto(resultsHistory, resultsSearchInput, {
@@ -9347,6 +9686,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
             window.addEventListener('resize', () => {
                 syncHeaderHeight();
                 scheduleScrollOverscrollPad();
+                if (selectMode) syncSelectBarOffset();
                 lyricsLayoutDirty = true;
                 lyricsViewportH = lyricsContainer.clientHeight;
                 remeasureCoverLyric(1);
@@ -9623,7 +9963,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
             if (favHeaderShare) {
                 favHeaderShare.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    sharePlaylist('Ta的收藏', favorites, false);
+                    sharePlaylist('Ta的收藏', favorites);
                 });
             }
             favSearchToggle.addEventListener('click', (e) => {
