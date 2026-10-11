@@ -29,7 +29,6 @@
             } catch (_) {}
         })();
     </script>
-
     <script>
         (function () {
             'use strict';
@@ -235,7 +234,6 @@
             };
         })();
     </script>
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/mdui@0.4.3/dist/css/mdui.min.css" />
     <script src="https://fastly.jsdelivr.net/npm/mdui@0.4.3/dist/js/mdui.min.js"></script>
@@ -3428,6 +3426,7 @@ html.no-glass .lyrics-veil-blur-3 { -webkit-backdrop-filter:blur(18px) saturate(
                     div.appendChild(del);
                     div.addEventListener('click', () => {
                         inputEl.value = q;
+                        if (typeof inputEl.__cancelSuggest === 'function') inputEl.__cancelSuggest();
                         inputEl.dispatchEvent(new Event('input', { bubbles: true }));
                         if (typeof options.onPick === 'function') options.onPick(q);
                         else doSearch(q);
@@ -7635,25 +7634,36 @@ html.no-glass .lyrics-veil-blur-3 { -webkit-backdrop-filter:blur(18px) saturate(
                 if (!inputEl || !containerEl) return;
                 const options = opts || {};
                 let debounceTimer = null;
-                const run = () => {
+                inputEl.__setSilently = (val) => {
+                    inputEl.value = val || '';
+                    if (typeof inputEl.__syncClear === 'function') inputEl.__syncClear();
+                };
+                const paint = (words, keepHidden) => {
+                    if (keepHidden) return;
+                    if (!words.length) {
+                        renderHistoryInto(containerEl, inputEl, options.historyOpts);
+                    } else {
+                        renderSuggestInto(containerEl, inputEl, inputEl.value.trim(), words);
+                    }
+                    containerEl.classList.add('active');
+                };
+                const run = (keepHidden) => {
                     const q = inputEl.value.trim();
-                    if (!q) { renderHistoryInto(containerEl, inputEl, options.historyOpts); return; }
+                    if (!q) { paint([], keepHidden); return; }
+                    if (suggestCache.has(q)) { paint(suggestCache.get(q), keepHidden); return; }
                     const seq = ++suggestSeq;
                     fetchSuggest(q).then(words => {
                         if (seq !== suggestSeq) return;
                         if (inputEl.value.trim() !== q) return;
-                        if (!words.length) {
-                            renderHistoryInto(containerEl, inputEl, options.historyOpts);
-                            containerEl.classList.add('active');
-                            return;
-                        }
-                        renderSuggestInto(containerEl, inputEl, q, words);
-                        containerEl.classList.add('active');
+                        paint(words, keepHidden);
                     }).catch(() => {
                         if (seq !== suggestSeq) return;
-                        renderHistoryInto(containerEl, inputEl, options.historyOpts);
-                        containerEl.classList.add('active');
+                        paint([], keepHidden);
                     });
+                };
+                inputEl.__cancelSuggest = () => {
+                    clearTimeout(debounceTimer);
+                    suggestSeq++;
                 };
                 inputEl.addEventListener('input', () => {
                     clearTimeout(debounceTimer);
@@ -7661,6 +7671,22 @@ html.no-glass .lyrics-veil-blur-3 { -webkit-backdrop-filter:blur(18px) saturate(
                     if (!q) { run(); return; }
                     debounceTimer = setTimeout(run, 250);
                 });
+                inputEl.__refresh = (keepHidden) => {
+                    clearTimeout(debounceTimer);
+                    const q = inputEl.value.trim();
+                    if (q) { run(keepHidden); return; }
+                    inputEl.__refreshHistory();
+                    if (!keepHidden) containerEl.classList.add('active');
+                };
+                inputEl.__refreshHistory = () => {
+                    clearTimeout(debounceTimer);
+                    if (typeof options.historyOpts === 'function') {
+                        options.historyOpts();
+                    } else if (options.historyOpts) {
+                        renderHistoryInto(containerEl, inputEl, options.historyOpts);
+                    }
+                };
+                inputEl.__showDropdown = () => { inputEl.__refresh(); };
             }
             function renderSuggestInto(container, inputEl, q, words) {
                 container.__histSig = '';
@@ -9923,6 +9949,10 @@ html.no-glass .lyrics-veil-blur-3 { -webkit-backdrop-filter:blur(18px) saturate(
                 historyOpts: { key: 'searchHistory', title: '搜索历史' }
             });
             searchInput.addEventListener('focus', () => {
+                if (typeof searchInput.__showDropdown === 'function') {
+                    searchInput.__showDropdown();
+                    return;
+                }
                 renderSearchHistory();
                 searchHistory.classList.add('active');
             });
@@ -9950,6 +9980,10 @@ html.no-glass .lyrics-veil-blur-3 { -webkit-backdrop-filter:blur(18px) saturate(
                 historyOpts: { key: 'searchHistory', title: '搜索历史' }
             });
             resultsSearchInput.addEventListener('focus', () => {
+                if (typeof resultsSearchInput.__showDropdown === 'function') {
+                    resultsSearchInput.__showDropdown();
+                    return;
+                }
                 renderHistoryInto(resultsHistory, resultsSearchInput, {
                     key: 'searchHistory', title: '搜索历史'
                 });
@@ -9966,11 +10000,19 @@ html.no-glass .lyrics-veil-blur-3 { -webkit-backdrop-filter:blur(18px) saturate(
                 hideResultsHistory();
                 mainContent.classList.remove('hidden');
                 syncChartSearchInput(resultsSearchInput ? resultsSearchInput.value : '');
+                if (typeof searchInput.__refresh === 'function') {
+                    searchInput.__refresh(true);
+                }
+                searchHistory.classList.remove('active');
                 renderSongList(hotSongs, songList, { from: 'chart', showMore: true });
                 syncFavPageOffset();
             }
             function syncChartSearchInput(val) {
                 if (!searchInput) return;
+                if (typeof searchInput.__setSilently === 'function') {
+                    searchInput.__setSilently(val || '');
+                    return;
+                }
                 searchInput.value = val || '';
                 if (typeof searchInput.__syncClear === 'function') {
                     searchInput.__syncClear();
@@ -10819,6 +10861,5 @@ html.no-glass .lyrics-veil-blur-3 { -webkit-backdrop-filter:blur(18px) saturate(
             }
         })();
     </script>
-
 </body>
 </html>
