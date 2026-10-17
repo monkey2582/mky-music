@@ -977,8 +977,8 @@ html.no-glass .lyrics-veil-blur-3 { -webkit-backdrop-filter:blur(18px) saturate(
 .result-cover-fallback { position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--cover-ph-fg); }
 .result-cover:has(img:not([src])) .result-cover-fallback { opacity:0.45; }
 .result-cover img.loaded~.result-cover-fallback { display:none; }
-.mv-result-cover { width:78px;height:44px;border-radius:8px;background:#000; }
-.mv-result-cover img { object-fit:contain; }
+.mv-result-cover { width:78px;height:44px;border-radius:8px;background:var(--cover-ph-bg); }
+.mv-result-cover img { object-fit:cover; }
 .playlist-page,.about-page { position:fixed;inset:0;bottom:0;background:var(--bg-overlay);z-index:700;display:flex;flex-direction:column;opacity:0;pointer-events:none;transform:translateY(20px);visibility:hidden;transition:transform 0.42s cubic-bezier(0.22,1,0.36,1),bottom 0.4s cubic-bezier(0.25,0.46,0.45,0.94),opacity 0.32s ease,visibility 0s linear 0.42s; }
 .playlist-page.active,.about-page.active { opacity:1;pointer-events:all;transform:translateY(0);visibility:visible;transition:transform 0.42s cubic-bezier(0.22,1,0.36,1),bottom 0.4s cubic-bezier(0.25,0.46,0.45,0.94),opacity 0.32s ease,visibility 0s; }
 .about-page.has-player { bottom:0; }
@@ -9384,6 +9384,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     return;
                 }
                 setQueue(songs.map(s => ({ ...s, picurl: s.picurl || '' })), 'search');
+                const renderedSongs = currentSongs;
                 clearResultsList();
                 currentSongs.forEach((song, idx) => {
                     const div = document.createElement('div');
@@ -9410,7 +9411,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     div.addEventListener('click', (e) => {
                         if (e.target.closest('.song-fav-btn') || e.target.closest('.song-more-btn')) return;
                         if (selectMode) { toggleSelect(song.id); return; }
-                        playSong(parseInt(div.dataset.index));
+                        setQueue(renderedSongs, 'search');
+                        playSong(idx);
                     });
                     const searchSelectCtx = {
                         from: 'search',
@@ -9449,6 +9451,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     closeSearchResults();
                     return;
                 }
+                const searchToken = ++searchSeq;
                 saveSearchHistory(q);
                 searchResults.classList.add('active');
                 mainContent.classList.add('hidden');
@@ -9463,7 +9466,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     else renderSongResults(cached.data);
                     return;
                 }
-                const searchToken = ++searchSeq;
                 setResultsContent('<div class="loading"><svg viewBox="0 0 24 24" aria-hidden="true"><circle class="ring-track" cx="12" cy="12" r="9"></circle><circle class="ring-arc" cx="12" cy="12" r="9"></circle></svg><span>搜索中...</span></div>');
                 try {
                     if (resultsTab === 'mv') {
@@ -9937,6 +9939,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 };
                 const paint = (words, keepHidden) => {
                     if (keepHidden) return;
+                    if (document.activeElement !== inputEl) return;
                     const q = inputEl.value.trim();
                     if (!q) renderHistoryInto(containerEl, inputEl, options.historyOpts);
                     else renderSuggestInto(containerEl, inputEl, q, words);
