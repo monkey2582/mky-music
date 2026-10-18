@@ -308,7 +308,7 @@
             };
         })();
     </script>
-    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/mdui@0.4.3/dist/css/mdui.min.css" />
     <script src="https://fastly.jsdelivr.net/npm/mdui@0.4.3/dist/js/mdui.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/nosleep.js@0.12.0/dist/NoSleep.min.js"></script>
@@ -1322,8 +1322,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             <i class="fas fa-music mini-cover-fallback" aria-hidden="true"></i>
         </div>
         <div class="mini-song-info">
-            <div class="mini-song-title" id="mini-song-title">未播放</div>
-            <div class="mini-song-artist" id="mini-song-artist">请选择歌曲</div>
+            <div class="mini-song-title" id="mini-song-title">MKY音乐</div>
+            <div class="mini-song-artist" id="mini-song-artist">MKY音乐</div>
         </div>
         <div class="player-controls">
             <button class="control-btn mini-fav-btn" id="mini-fav-btn" aria-label="收藏" data-tip="收藏">
@@ -13655,7 +13655,11 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 renderChartChips();
                 switchTab(activeTab);
                 loadChart(activeChart);
-                restoreLastPlayback();
+                // mid 深链需要独占播放队列：跳过"上次播放恢复"，避免 restoreLastPlayback
+                // 里的 restoreQueue/setQueue 与深链的 playSong 并发覆盖，导致偶发疯狂切歌。
+                if (!new URLSearchParams(location.search).has('mid')) {
+                    restoreLastPlayback();
+                }
                 setTimeout(placePeekShifts, 600);
                 // URL 参数配置：打开应用时按 query 跳转到对应内容
                 function applyUrlConfig() {
@@ -13682,7 +13686,11 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         if (mid) {
                             try {
                                 const song = await searchSongById(mid);
-                                if (!song) { showToast('未找到该歌曲：' + mid); return; }
+                                if (!song) {
+                                    showToast('未找到该歌曲：' + mid);
+                                    restoreLastPlayback();
+                                    return;
+                                }
                                 // 通过 mid 进入：以播放历史为队列，切歌在播放历史里进行
                                 pushPlayHistory(song);
                                 playHistoryAsQueue(0);
@@ -13691,6 +13699,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                                 if (rawSpeed) applyPlaybackRate(parseSpeed(rawSpeed) || 1);
                             } catch (e) {
                                 showToast('歌曲加载失败');
+                                restoreLastPlayback();
                             }
                             return;
                         }
