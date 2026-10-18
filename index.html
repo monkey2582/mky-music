@@ -5680,13 +5680,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     mvVideo.src = src;
                     if (mvInfo && mvInfo.rate) mvSetRate(mvInfo.rate);
                     mvSyncUi();
-                    mvVideo.play().catch((err) => {
-                        if (!err || err.name !== 'NotAllowedError') return;
-                        mvVideo.muted = true;
-                        mvSyncVolIcon();
-                        mvVideo.play().catch(() => {});
-                        mvArmSoundUnlock();
-                    });
+                    mvVideo.play().catch(() => {});
                     mvPokeBar();
                     loadMvRelated(artist || title, mvid, seq);
                 } catch (e) {
@@ -5784,22 +5778,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             function mvShowLoading(on) {
                 if (!mvLoading) return;
                 mvLoading.classList.toggle('hide', !on);
-            }
-            let mvSoundUnlockArmed = false;
-            function mvArmSoundUnlock() {
-                if (mvSoundUnlockArmed) return;
-                mvSoundUnlockArmed = true;
-                showToast('已静音播放，点按画面开启声音');
-                const unlock = () => {
-                    document.removeEventListener('pointerdown', unlock, true);
-                    document.removeEventListener('keydown', unlock, true);
-                    if (!mvSoundUnlockArmed) return;
-                    mvSoundUnlockArmed = false;
-                    if (mvVideo) mvVideo.muted = false;
-                    mvSyncVolIcon();
-                };
-                document.addEventListener('pointerdown', unlock, true);
-                document.addEventListener('keydown', unlock, true);
             }
             function mvSyncVolIcon() {
                 if (!mvVolIcon || !mvVideo) return;
