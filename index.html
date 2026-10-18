@@ -308,7 +308,7 @@
             };
         })();
     </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/mdui@0.4.3/dist/css/mdui.min.css" />
     <script src="https://fastly.jsdelivr.net/npm/mdui@0.4.3/dist/js/mdui.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/nosleep.js@0.12.0/dist/NoSleep.min.js"></script>
@@ -11674,8 +11674,23 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     setCoverSpin(false);
                     saveLastPlayback();
                 });
+                let maxPlayed = 0;
                 myAudio.addEventListener('ended', () => {
                     if (myAudio !== currentAudio) return;
+                    // 异常结束：几乎没实际播放（空音频/坏地址）。若继续自动下一首，
+                    // 会在历史队列里连环跳歌（表现为"疯狂切歌"）。先重取地址，仍异常则停下。
+                    const totalSec = audioDuration(myAudio);
+                    if (maxPlayed < 1 && (totalSec <= 0 || totalSec > 5)) {
+                        console.warn('异常结束（几乎未播放）:', song.name, maxPlayed, totalSec);
+                        if (retryFreshUrl()) return;
+                        isPlaying = false;
+                        updatePlayButtons();
+                        setCoverSpin(false);
+                        if (progressInterval) { clearInterval(progressInterval);
+                            progressInterval = null; }
+                        showToast('「' + (song.name || '这首歌') + '」音频异常，已停止');
+                        return;
+                    }
                     if (getPlayMode() === 'single' && currentSong) {
                         if (progressInterval) { clearInterval(progressInterval);
                             progressInterval = null; }
@@ -11785,11 +11800,17 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     markAudible();
                     clearTimeout(startupWatch);
                     staleRetryCount.delete(String(song.id || ''));
-                    if (Date.now() - lastFailAt > 1500) failStreak = 0;
+                    // 只有真正播到 10 秒以上才清零失败计数：
+                    // 否则坏歌"闪播一下"就能重置上限，导致连环跳歌不受控。
+                    if ((myAudio.currentTime || 0) > 10) failStreak = 0;
                 };
                 const softDisarm = () => clearTimeout(startupWatch);
                 myAudio.addEventListener('playing', disarm);
-                myAudio.addEventListener('timeupdate', disarm);
+                myAudio.addEventListener('timeupdate', () => {
+                    const t = myAudio.currentTime || 0;
+                    if (t > maxPlayed) maxPlayed = t;
+                    disarm();
+                });
                 myAudio.addEventListener('loadeddata', softDisarm);
                 myAudio.addEventListener('canplay', softDisarm);
                 myAudio.addEventListener('loadedmetadata', softDisarm);
@@ -11960,10 +11981,25 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     el.classList.toggle('playing', String(sid) === String(id));
                 });
             }
+            let autoAdvanceAt = 0;
+            let autoAdvanceCount = 0;
             function playAutoNext() {
                 if (getPlayMode() === 'single') return;
                 if (placeholderMode) { playNext(); return; }
                 if (swipeSettling) return;
+                // 兜底熔断：6 秒内连续自动切歌超过 4 次，说明队列里有坏音频，
+                // 继续跳只会"疯狂切歌"，直接停下并提示。
+                const now = Date.now();
+                if (now - autoAdvanceAt > 6000) autoAdvanceCount = 0;
+                autoAdvanceAt = now;
+                if (++autoAdvanceCount > 4) {
+                    autoAdvanceCount = 0;
+                    isPlaying = false;
+                    updatePlayButtons();
+                    setCoverSpin(false);
+                    showToast('连续多首异常，已停止自动切换');
+                    return;
+                }
                 switchDisc(-1);
             }
             function songAtId(id) {
