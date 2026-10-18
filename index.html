@@ -308,7 +308,7 @@
             };
         })();
     </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
     <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/mdui@0.4.3/dist/css/mdui.min.css" />
     <script src="https://fastly.jsdelivr.net/npm/mdui@0.4.3/dist/js/mdui.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/nosleep.js@0.12.0/dist/NoSleep.min.js"></script>
@@ -539,6 +539,8 @@ body.has-mini-player .main-content { padding-bottom:calc(var(--tab-height) + env
 .fav-header { display:flex;flex-direction:column;gap:0;padding:14px 16px;background:var(--glass-panel-strong);-webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));border-bottom:1px solid var(--glass-edge);flex-shrink:0; }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .fav-header { background:var(--bg-body); } }
 .fav-header-row { display:flex;align-items:center;gap:12px;line-height:30px; }
+#playlist-page .fav-header { background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;border-bottom-color:transparent; }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { #playlist-page .fav-header { background:transparent; } }
 .fav-header-search { display:flex;align-items:center;gap:10px;max-height:0;padding-top:0;opacity:0;overflow:hidden;pointer-events:none;transition:max-height 0.26s cubic-bezier(0.25,0.46,0.45,0.94),padding-top 0.26s cubic-bezier(0.25,0.46,0.45,0.94),opacity 0.2s ease; }
 .fav-header-search.active { max-height:44px;padding-top:10px;opacity:1;pointer-events:all; }
 .fav-header-search .search-field { position:relative;flex:1;min-width:0;display:flex; }
@@ -609,8 +611,14 @@ body.has-mini-player .main-content { padding-bottom:calc(var(--tab-height) + env
 .mv-vol-range::-moz-range-thumb { width:12px;height:12px;border:0;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.35); }
 .mv-vol-num { font-size:11.5px;color:var(--text-primary);min-width:26px;text-align:center;font-variant-numeric:tabular-nums; }
 .mv-info { width:100%;max-width:960px;display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left; }
-.mv-info-name { font-size:18px;font-weight:600;color:var(--text-primary);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
-.mv-info-artist { font-size:14px;color:var(--text-secondary);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+.mv-info-head { display:flex;align-items:center;gap:12px;width:100%; }
+.mv-info-text { min-width:0;flex:1;display:flex;flex-direction:column;gap:4px; }
+.mv-info-name { font-size:18px;font-weight:600;color:var(--text-primary);max-width:100%;overflow-x:auto;white-space:nowrap; }
+.mv-info-artist { font-size:14px;color:var(--text-secondary);max-width:100%;overflow-x:auto;white-space:nowrap; }
+.mv-info-actions { display:flex;align-items:center;gap:8px;flex-shrink:0; }
+.mv-info-btn { display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;padding:0;border:none;background:none;color:var(--text-primary);font-size:16px;line-height:1;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity 0.18s, color 0.18s; }
+.mv-info-btn:hover { opacity:0.7; }
+.mv-info-btn:active { opacity:0.5; }
 .mv-related { width:100%;max-width:960px;display:flex;flex-direction:column;gap:12px; }
 .mv-related[hidden] { display:none; }
 .mv-related-title { font-size:13px;font-weight:600;color:var(--text-secondary); }
@@ -738,7 +746,7 @@ body.pl-select-mode .header,body.pl-select-mode .fav-header,body.pl-select-mode 
 .import-progress-count { font-variant-numeric:tabular-nums;opacity:0.72; }
 .import-progress-track { height:4px;border-radius:2px;background:rgba(255,255,255,0.18);overflow:hidden; }
 .import-progress-bar { height:100%;width:0;border-radius:2px;background:var(--primary);transition:width 0.22s ease-out; }
-.mini-player { position:fixed;bottom:calc(var(--tab-height) + env(safe-area-inset-bottom,0px));left:0;right:0;height:var(--mini-height);background:var(--glass-panel-strong);-webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));box-shadow:var(--inset-highlight);display:flex;align-items:center;padding:0 16px;z-index:500;transition:transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94);gap:12px; }
+.mini-player { position:fixed;bottom:calc(var(--tab-height) + env(safe-area-inset-bottom,0px));left:0;right:0;height:var(--mini-height);background:var(--glass-panel-strong);-webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));box-shadow:var(--inset-highlight);display:flex;align-items:center;padding:0 16px;z-index:800;transition:transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94);gap:12px; }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .mini-player { background:var(--bg-elevated-2); } }
 .mini-player.hidden { transform:translateY(100%); }
 body.tab-bar-hidden .mini-player { bottom:0; }
@@ -793,7 +801,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
 .player-song-name::-webkit-scrollbar,.player-artist-name::-webkit-scrollbar { display:none;width:0;height:0; }
 .player-song-name { font-size:17px;font-weight:600;width:max-content; }
 .player-artist-name { font-size:13px;color:var(--text-secondary);width:max-content; }
-.player-content { flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 var(--player-pad-x, 24px) 48px;margin-top:0;overflow-y:auto;overflow-x:hidden;min-height:0;min-width:0; }
+.player-content { flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:64px var(--player-pad-x, 24px) 48px;margin-top:-64px;overflow-y:auto;overflow-x:hidden;min-height:0;min-width:0; }
 .player-content.swiping { touch-action:none; }
 .player-content .album-cover-wrap { transition:transform 0.28s cubic-bezier(0.22,1,0.36,1),opacity 0.28s ease;will-change:transform,opacity; }
 .player-content.swiping .album-cover-wrap { transition:none; }
@@ -1135,8 +1143,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
 .lc-btn.lc-play { width:46px;height:46px;background:var(--primary);color:#fff;font-size:18px;box-shadow:0 6px 20px rgba(233,30,99,0.42); }
 .lc-btn.lc-play:hover { background:#f0346f; }
 @media (max-width:400px) { .lyrics-controls { right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px)); } .lc-btn { width:36px;height:36px;font-size:15px; } .lc-btn.lc-play { width:42px;height:42px;font-size:16px; } }
-@media (min-width:900px),(min-width:640px)and (max-height:500px) { .player-content { flex-direction:row;align-items:center;justify-content:center;gap:48px;padding:0 56px;overflow:visible; } .player-swipe-layer { flex-direction:row;justify-content:center;align-items:center;gap:48px;flex:0 1 auto;width:auto; } .player-left { flex:0 1 420px;width:420px;max-width:420px;min-width:0;margin-top:0;clip-path:inset(-160px -148px -160px -2000px); } .disc-stage { margin-top:calc(-24px + var(--disc-lift, -80px)); } .album-cover-wrap { width:min(100%,260px);height:auto;max-height:none;margin-top:calc(-24px + var(--disc-lift, -80px)); } .progress-container { max-width:370px; } .album-cover-wrap::before,.album-cover-peek::before { inset:-24px;filter:blur(22px); } .player-lyrics { display:block;max-width:460px;height:min(68vh,560px); } .player-lyrics-inner { padding:12px 8px; } .player-lyrics-inner .lyrics-line { font-size:18px;line-height:1.9; } #lyrics-btn { display:none; } .cover-lyric { display:none; } .main-control-btn.add-pl-btn { display:flex;color:var(--text-primary); } .sheet { left:50%;right:auto;width:min(420px,calc(100vw - 48px));bottom:calc(var(--bottom-stack) + 12px);transform:translate(-50%,16px) scale(0.97); } #pl-select-more-menu { bottom:calc(var(--bottom-stack) + 56px); } .sheet.active { transform:translate(-50%,0) scale(1); } #rate-sheet,.sheet.sheet-dock-left { left:24px;right:auto;width:min(340px,calc(100vw - 48px));bottom:auto;top:50%;transform:translateY(calc(-50% + 16px)) scale(0.97);max-height:min(62vh,520px); } .sheet.sheet-dock-left { left:calc(var(--side-tab-width) + 56px); } #rate-sheet.active,.sheet.sheet-dock-left.active { transform:translateY(-50%) scale(1); } #rate-sheet { left:auto;right:20px;top:64px;bottom:auto;width:min(300px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right; } #rate-sheet.active { transform:translateY(0) scale(1); } #player-more-menu { left:auto;right:20px;top:64px;bottom:auto;width:min(240px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right; } #player-more-menu.active { transform:translateY(0) scale(1); } .sheet.sheet-dock-topright { left:auto;right:20px;top:64px;bottom:auto;width:min(320px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right;max-height:min(62vh,520px); } .sheet.sheet-dock-topright.active { transform:translateY(0) scale(1); } .lyrics-controls { right:auto;left:24px; } #player-lyrics-inner .lyrics-line { padding:10px 0;min-height:auto;transform:none;transform-origin:left center; } #player-lyrics-inner .lyrics-line.active { transform:none;color:var(--text-primary);font-weight:500;opacity:1; } #player-lyrics-inner .lyrics-line:not(.active) { opacity:0.55; } #lyrics-page .player-header { justify-content:center; } #back-to-player-btn,#lyrics-controls { display:none!important; } #lyrics-page .lyrics-container { padding-left:clamp(40px,12vw,200px);padding-right:clamp(40px,12vw,200px); } }
-@media (min-width:640px)and (max-height:500px) { .player-content { gap:28px;padding:4px 24px 16px; } .player-swipe-layer { gap:28px; } .player-left { flex:0 0 auto;width:auto;max-width:340px;--ctrl-size:42px;--ctrl-gap:12px;clip-path:inset(-160px -124px -160px -2000px); } .disc-stage { margin-top:0; } .album-cover-wrap { width:min(46vh,230px);height:auto;max-height:none;margin-top:0; } .player-panel { width:100%; } .player-main-controls { margin:0; } .main-control-btn { font-size:18px; } .main-control-btn.play-pause { font-size:20px; } .player-lyrics { height:min(84vh,100%); } .player-lyrics-inner .lyrics-line { font-size:16px;line-height:1.8; } .album-cover-wrap::before { inset:-18px;filter:blur(18px); } .player-header { padding:8px 16px; } .player-title { padding:0 96px; } .player-song-name { font-size:15px; } .player-artist-name { font-size:12px; } }
+@media (min-width:900px),(min-width:640px)and (max-height:500px) { .player-content { flex-direction:row;align-items:center;justify-content:center;gap:48px;padding:0 56px;overflow:visible;margin-top:0; } .player-swipe-layer { flex-direction:row;justify-content:center;align-items:center;gap:48px;flex:0 1 auto;width:auto; } .player-left { flex:0 1 420px;width:420px;max-width:420px;min-width:0;margin-top:0;clip-path:inset(-160px -148px -160px -2000px); } .disc-stage { margin-top:calc(-24px + var(--disc-lift, -80px)); } .album-cover-wrap { width:min(100%,260px);height:auto;max-height:none;margin-top:calc(-24px + var(--disc-lift, -80px)); } .progress-container { max-width:370px; } .album-cover-wrap::before,.album-cover-peek::before { inset:-24px;filter:blur(22px); } .player-lyrics { display:block;max-width:460px;height:min(68vh,560px); } .player-lyrics-inner { padding:12px 8px; } .player-lyrics-inner .lyrics-line { font-size:18px;line-height:1.9; } #lyrics-btn { display:none; } .cover-lyric { display:none; } .main-control-btn.add-pl-btn { display:flex;color:var(--text-primary); } .sheet { left:50%;right:auto;width:min(420px,calc(100vw - 48px));bottom:calc(var(--bottom-stack) + 12px);transform:translate(-50%,16px) scale(0.97); } #pl-select-more-menu { bottom:calc(var(--bottom-stack) + 56px); } .sheet.active { transform:translate(-50%,0) scale(1); } #rate-sheet,.sheet.sheet-dock-left { left:24px;right:auto;width:min(340px,calc(100vw - 48px));bottom:auto;top:50%;transform:translateY(calc(-50% + 16px)) scale(0.97);max-height:min(62vh,520px); } .sheet.sheet-dock-left { left:calc(var(--side-tab-width) + 56px); } #rate-sheet.active,.sheet.sheet-dock-left.active { transform:translateY(-50%) scale(1); } #rate-sheet { left:auto;right:20px;top:64px;bottom:auto;width:min(300px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right; } #rate-sheet.active { transform:translateY(0) scale(1); } #player-more-menu { left:auto;right:20px;top:64px;bottom:auto;width:min(240px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right; } #player-more-menu.active { transform:translateY(0) scale(1); } .sheet.sheet-dock-topright { left:auto;right:20px;top:64px;bottom:auto;width:min(320px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right;max-height:min(62vh,520px); } .sheet.sheet-dock-topright.active { transform:translateY(0) scale(1); } .lyrics-controls { right:auto;left:24px; } #player-lyrics-inner .lyrics-line { padding:10px 0;min-height:auto;transform:none;transform-origin:left center; } #player-lyrics-inner .lyrics-line.active { transform:none;color:var(--text-primary);font-weight:500;opacity:1; } #player-lyrics-inner .lyrics-line:not(.active) { opacity:0.55; } #lyrics-page .player-header { justify-content:center; } #back-to-player-btn,#lyrics-controls { display:none!important; } #lyrics-page .lyrics-container { padding-left:clamp(40px,12vw,200px);padding-right:clamp(40px,12vw,200px); } }
+@media (min-width:640px)and (max-height:500px) { .player-content { gap:28px;padding:4px 24px 16px;margin-top:0; } .player-swipe-layer { gap:28px; } .player-left { flex:0 0 auto;width:auto;max-width:340px;--ctrl-size:42px;--ctrl-gap:12px;clip-path:inset(-160px -124px -160px -2000px); } .disc-stage { margin-top:0; } .album-cover-wrap { width:min(46vh,230px);height:auto;max-height:none;margin-top:0; } .player-panel { width:100%; } .player-main-controls { margin:0; } .main-control-btn { font-size:18px; } .main-control-btn.play-pause { font-size:20px; } .player-lyrics { height:min(84vh,100%); } .player-lyrics-inner .lyrics-line { font-size:16px;line-height:1.8; } .album-cover-wrap::before { inset:-18px;filter:blur(18px); } .player-header { padding:8px 16px; } .player-title { padding:0 96px; } .player-song-name { font-size:15px; } .player-artist-name { font-size:12px; } }
 @media (min-width:900px),(min-width:640px)and (max-height:500px) { .main-content { padding-left:calc(var(--side-tab-width) + 24px);padding-bottom:30px; } body.has-mini-player .main-content { padding-bottom:calc(var(--mini-height) + 24px); } .header { padding-left:calc(var(--side-tab-width) + 20px); } .mini-player { left:var(--side-tab-width);right:0;bottom:0; } .fab-stack { bottom:18px; } body.has-mini-player .fab-stack { bottom:calc(var(--mini-height) + 18px); } .player-header { padding:16px 32px; } .player-title { padding:0 100px; } .player-song-name { font-size:18px; } .player-artist-name { font-size:13.5px; } .fav-page,.playlist-page,.search-results,.about-page { left:calc(var(--side-tab-width) + 1px); } .about-page { display:none; } body.settings-tab .about-page { display:flex; } }
 @media (min-width:900px),(min-width:640px)and (max-height:500px) { body #select-bar,body #pl-select-bar { left:var(--side-tab-width);right:0;width:auto;padding:8px 10px;border:none;border-top:1px solid var(--glass-edge);border-radius:0;box-shadow:var(--inset-highlight);background:var(--glass-panel-strong);-webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));transform:translateY(16px);bottom:0; } body #select-bar.active,body #pl-select-bar.active { transform:translateY(0); } body.has-mini-player #select-bar,body.has-mini-player #pl-select-bar { bottom:var(--mini-height); } body .select-topbar { left:var(--side-tab-width); } }
 </style>
@@ -1852,8 +1860,20 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
         </div>
         <div class="mv-body" id="mv-body">
             <div class="mv-info">
-                <div class="mv-info-name" id="mv-info-name"></div>
-                <div class="mv-info-artist" id="mv-info-artist"></div>
+                <div class="mv-info-head">
+                    <div class="mv-info-text">
+                        <div class="mv-info-name" id="mv-info-name"></div>
+                        <div class="mv-info-artist" id="mv-info-artist"></div>
+                    </div>
+                    <div class="mv-info-actions">
+                        <button class="mv-info-btn" id="mv-download-btn" type="button" aria-label="下载 MV">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button class="mv-info-btn" id="mv-share-link-btn" type="button" aria-label="复制分享链接">
+                            <i class="fas fa-share"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
             <div class="mv-stage" id="mv-stage">
                 <video id="mv-video" playsinline webkit-playsinline x5-playsinline="true" x5-video-player-type="h5" preload="metadata" poster="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAJCAYAAAA7KqwyAAAAD0lEQVR42mNgGAWjgAoAAAJJAAFgJMPaAAAAAElFTkSuQmCC"></video>
@@ -2218,6 +2238,9 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             const mvVolNum = $('#mv-vol-num');
             const mvInfoName = $('#mv-info-name');
             const mvInfoArtist = $('#mv-info-artist');
+            const mvDownloadBtn = $('#mv-download-btn');
+            const mvShareLinkBtn = $('#mv-share-link-btn');
+            let currentMvMeta = { id: '', name: '', artist: '' };
             const mvBackBtn = $('#mv-back-btn');
             const mvStage = $('#mv-stage');
             const mvBar = $('#mv-bar');
@@ -5627,7 +5650,9 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     if (!src) throw new Error('mv-no-url');
                     if (mvInfoName) mvInfoName.textContent = title;
                     if (mvInfoArtist) mvInfoArtist.textContent = artist;
+                    currentMvMeta = { id: mvid, name: title, artist: artist };
                     mvVideo.src = src;
+                    if (mvInfo && mvInfo.rate) mvSetRate(mvInfo.rate);
                     mvSyncUi();
                     mvVideo.play().catch(() => {});
                     mvPokeBar();
@@ -5848,6 +5873,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (mvBar) mvBar.classList.remove('hide');
                 if (mvInfoName) mvInfoName.textContent = '';
                 if (mvInfoArtist) mvInfoArtist.textContent = '';
+                currentMvMeta = { id: '', name: '', artist: '' };
                 if (mvVideo) mvVideo.muted = false;
                 if (mvVolume) mvVolume.value = '100';
                 if (mvVolPop) mvVolPop.classList.remove('show');
@@ -6686,6 +6712,40 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             }
             if (mvBackBtn) {
                 mvBackBtn.addEventListener('click', closeMvPage);
+            }
+            if (mvDownloadBtn) {
+                mvDownloadBtn.addEventListener('click', async () => {
+                    const url = mvVideo && mvVideo.src ? mvVideo.src : '';
+                    if (!url) { showToast('MV 还没加载好'); return; }
+                    showToast('准备下载 MV...');
+                    try {
+                        const res = await fetch(url, { mode: 'cors' });
+                        if (!res.ok) throw new Error('http ' + res.status);
+                        const blob = await res.blob();
+                        if (!blob || blob.size === 0) throw new Error('empty');
+                        const safe = (currentMvMeta.name || 'mv').replace(/[\\/:*?"<>|]/g, '_').slice(0, 80);
+                        const objUrl = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = objUrl;
+                        a.download = safe + (currentMvMeta.artist ? ' - ' + currentMvMeta.artist.replace(/[\\/:*?"<>|]/g, '_').slice(0, 40) : '') + '.mp4';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        setTimeout(() => URL.revokeObjectURL(objUrl), 4000);
+                        showToast('已开始下载');
+                    } catch (_) {
+                        showToast('下载失败，请稍后再试');
+                    }
+                });
+            }
+            if (mvShareLinkBtn) {
+                mvShareLinkBtn.addEventListener('click', () => {
+                    if (!currentMvMeta.id) { showToast('MV 还没加载好'); return; }
+                    const link = location.origin + location.pathname + '?mvid=' + encodeURIComponent(currentMvMeta.id);
+                    copyTextToClipboard(link).then(ok => {
+                        showToast(ok ? '已复制 MV 分享链接' : '复制失败');
+                    });
+                });
             }
             if (mvPlayBtn) mvPlayBtn.addEventListener('click', mvTogglePlay);
             if (mvBigPlay) mvBigPlay.addEventListener('click', mvTogglePlay);
@@ -7941,6 +8001,16 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                             onClick: () => {
                                 copyTextToClipboard(id).then(ok => {
                                     showToast(ok ? '已复制歌曲ID' : '复制失败');
+                                });
+                            }
+                        },
+                        {
+                            text: '复制链接',
+                            close: true,
+                            onClick: () => {
+                                const link = location.origin + location.pathname + '?mid=' + encodeURIComponent(id);
+                                copyTextToClipboard(link).then(ok => {
+                                    showToast(ok ? '已复制链接' : '复制失败');
                                 });
                             }
                         },
@@ -13587,6 +13657,89 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 loadChart(activeChart);
                 restoreLastPlayback();
                 setTimeout(placePeekShifts, 600);
+                // URL 参数配置：打开应用时按 query 跳转到对应内容
+                function applyUrlConfig() {
+                    const params = new URLSearchParams(location.search);
+                    if (params.size === 0) return;
+                    const get = (k) => { const v = params.get(k); return v == null ? '' : v.trim(); };
+                    // speed：仅接受 0.5~3；越界/非法 → 0（调用方回落 1x）；
+                    // 两位及以上小数截断到一位（1.25 → 1.2）。
+                    const parseSpeed = (s) => {
+                        const n = parseFloat(s);
+                        if (!isFinite(n) || n < 0.5 || n > 3) return 0;
+                        return Math.floor(n * 10 + 1e-9) / 10;
+                    };
+                    const run = async () => {
+                        const mvid = get('mvid');
+                        if (mvid) {
+                            const rawSpeed = get('speed');
+                            // 未提供 speed → 0（不干预默认 1x）；提供了但越界 → 回落 1x
+                            const rate = rawSpeed ? (parseSpeed(rawSpeed) || 1) : 0;
+                            openMvPage(null, { id: mvid, rate: rate });
+                            return;
+                        }
+                        const mid = get('mid');
+                        if (mid) {
+                            try {
+                                const song = await searchSongById(mid);
+                                if (!song) { showToast('未找到该歌曲：' + mid); return; }
+                                // 通过 mid 进入：以播放历史为队列，切歌在播放历史里进行
+                                pushPlayHistory(song);
+                                playHistoryAsQueue(0);
+                                openFullPlayer();
+                                const rawSpeed = get('speed');
+                                if (rawSpeed) applyPlaybackRate(parseSpeed(rawSpeed) || 1);
+                            } catch (e) {
+                                showToast('歌曲加载失败');
+                            }
+                            return;
+                        }
+                        const artist = get('artist');
+                        if (artist) {
+                            openArtistPage('', artist);
+                            return;
+                        }
+                        const songlist = get('songlist');
+                        if (songlist) {
+                            loadPlaylists();
+                            const key = songlist.toLowerCase();
+                            if (key === 'fav' || key === '我的收藏') {
+                                switchTab('mine');
+                                openFavPage();
+                            } else if (key === 'history' || key === '播放历史') {
+                                switchTab('mine');
+                                openHistoryPage();
+                            } else {
+                                const pl = playlists.find(p => p.name === songlist);
+                                if (pl) {
+                                    switchTab('mine');
+                                    openPlaylistPage(pl.id);
+                                } else {
+                                    showToast('未找到歌单：' + songlist);
+                                }
+                            }
+                            return;
+                        }
+                        const share = get('share');
+                        if (share) {
+                            const codes = extractShareCodes(share);
+                            if (codes.length) {
+                                switchTab('mine');
+                                importShareCodes(codes);
+                            } else {
+                                showToast('未识别到有效的分享码');
+                            }
+                            return;
+                        }
+                        const search = get('search');
+                        if (search) {
+                            resultsTab = 'song';
+                            doSearch(search, { force: true });
+                        }
+                    };
+                    run().catch(e => console.warn('URL 配置应用失败:', e));
+                }
+                applyUrlConfig();
                 if (tabBar) {
                     tabBar.querySelectorAll('.tab-item').forEach(btn => {
                         btn.addEventListener('click', () => switchTab(btn.dataset.tab));
