@@ -308,7 +308,7 @@
             };
         })();
     </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/mdui@0.4.3/dist/css/mdui.min.css" />
     <script src="https://fastly.jsdelivr.net/npm/mdui@0.4.3/dist/js/mdui.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/nosleep.js@0.12.0/dist/NoSleep.min.js"></script>
@@ -539,8 +539,6 @@ body.has-mini-player .main-content { padding-bottom:calc(var(--tab-height) + env
 .fav-header { display:flex;flex-direction:column;gap:0;padding:14px 16px;background:var(--glass-panel-strong);-webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));border-bottom:1px solid var(--glass-edge);flex-shrink:0; }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .fav-header { background:var(--bg-body); } }
 .fav-header-row { display:flex;align-items:center;gap:12px;line-height:30px; }
-#playlist-page .fav-header { background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;border-bottom-color:transparent; }
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { #playlist-page .fav-header { background:transparent; } }
 .fav-header-search { display:flex;align-items:center;gap:10px;max-height:0;padding-top:0;opacity:0;overflow:hidden;pointer-events:none;transition:max-height 0.26s cubic-bezier(0.25,0.46,0.45,0.94),padding-top 0.26s cubic-bezier(0.25,0.46,0.45,0.94),opacity 0.2s ease; }
 .fav-header-search.active { max-height:44px;padding-top:10px;opacity:1;pointer-events:all; }
 .fav-header-search .search-field { position:relative;flex:1;min-width:0;display:flex; }
@@ -944,7 +942,7 @@ html.no-glass .lyrics-veil-blur-3 { -webkit-backdrop-filter:blur(18px) saturate(
 .results-tab { position:relative;padding:6px 2px 9px;border:none;background:none;font-size:14px;color:var(--text-secondary);cursor:pointer;transition:color 0.2s; }
 .results-tab.active { color:var(--text-primary);font-weight:600; }
 .results-tab.active::after { content:"";position:absolute;left:0;right:0;bottom:0;height:2px;border-radius:2px;background:var(--primary); }
-.mv-result-item { margin-bottom:10px; }
+.mv-result-item { margin-bottom:18px; }
 .search-results-header::before { content:"";position:absolute;inset:0;z-index:-1;background:var(--glass-panel-strong);-webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));border-bottom:1px solid var(--glass-edge); }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .search-results-header { background:var(--bg-body); } .search-results-header::before { display:none; } }
 .back-btn { background:none;border:none;color:var(--text-primary);font-size:15px;cursor:pointer;width:30px;height:30px;padding:0;display:flex;align-items:center;justify-content:center;line-height:1;flex-shrink:0;border-radius:50%;transition:transform 0.15s,background 0.2s; }
@@ -1079,8 +1077,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
 .sheet .menu-item.danger,.sheet .menu-item.danger i { color:#ff4d6d; }
 .menu-item[hidden],.sheet .menu-item[hidden] { display:none; }
 .share-list { display:flex;flex-direction:column;gap:8px;padding:10px 0 4px;max-height:48vh;overflow-y:auto; }
-.share-row { padding:11px 14px;border-radius:12px;background:var(--surface-hover);cursor:pointer;transition:background 0.18s; }
-.share-row:active { background:var(--surface-hover-strong); }
+.share-row { padding:11px 14px;border-radius:12px;background:var(--surface-hover);cursor:pointer; }
 .share-row-head { display:flex;align-items:center;gap:8px; }
 .share-row-name { flex:1;min-width:0;font-size:14px;font-weight:600;color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
 .share-row-copy { flex-shrink:0;width:28px;height:28px;padding:0;border:none;border-radius:50%;background:none;color:var(--text-secondary);font-size:13px;display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:color 0.18s; }
@@ -1088,7 +1085,10 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
 .share-row-copy:active { background:none; }
 .share-row-del { flex-shrink:0;width:28px;height:28px;padding:0;border:none;border-radius:50%;background:none;color:var(--text-secondary);font-size:13px;display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:color 0.18s; }
 .share-row-del:hover,.share-row-del:active { background:none;color:var(--primary); }
-.share-row-code { margin-top:3px;font-size:19px;font-weight:700;letter-spacing:1.5px;font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--primary);user-select:text;-webkit-user-select:text; }
+.share-row-code { margin-top:3px;font-size:19px;font-weight:700;letter-spacing:1.5px;font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--primary);user-select:text;-webkit-user-select:text;-webkit-tap-highlight-color:transparent;transition:none; }
+.share-row-code:hover,.share-row-code:active { color:var(--primary);background:transparent; }
+.share-row-code::selection { background:transparent;color:var(--primary); }
+.share-row-code::-moz-selection { background:transparent;color:var(--primary); }
 .share-row-sub { margin-top:2px;font-size:11.5px;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
 .share-hint { padding:10px 2px 2px;font-size:12px;line-height:1.6;color:var(--text-muted);text-align:center; }
 [data-tip] { position:relative; }
@@ -1688,6 +1688,10 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         aria-label="搜索歌手歌曲" title="搜索">
                     <i class="fas fa-search"></i>
                 </button>
+                <button class="fav-icon-btn" id="artist-share-btn"
+                        aria-label="分享歌手" title="分享">
+                    <i class="fas fa-share"></i>
+                </button>
                 <button class="fav-icon-btn" id="artist-more-btn"
                         aria-label="更多" title="更多" hidden>
                     <i class="fas fa-ellipsis-v"></i>
@@ -2218,6 +2222,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             const artistHeaderPlay = $('#artist-header-play');
             const artistSearchToggle = $('#artist-search-toggle');
             const artistMoreBtn = $('#artist-more-btn');
+            const artistShareBtn = $('#artist-share-btn');
             const artistHeaderSearch = $('#artist-header-search');
             const artistSearchInput = $('#artist-search-input');
             const artistSearchClear = $('#artist-search-clear');
@@ -4904,18 +4909,25 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 try { MKYStore.set(FAV_SHARE_KEY, JSON.stringify(v || null)); } catch (_) {}
             }
             async function shareApi(path, payload, method) {
-                const res = await fetch(SHARE_API + path, {
-                    method: method || 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: payload ? JSON.stringify(payload) : undefined
-                });
-                const data = await res.json().catch(function () { return null; });
-                if (!res.ok || !data) {
-                    const err = new Error((data && data.error) || ('HTTP ' + res.status));
-                    err.status = res.status;
-                    throw err;
+                const ctl = (typeof AbortController === 'function') ? new AbortController() : null;
+                const timer = ctl ? setTimeout(function () { try { ctl.abort(); } catch (_) {} }, 8000) : null;
+                try {
+                    const res = await fetch(SHARE_API + path, {
+                        method: method || 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: payload ? JSON.stringify(payload) : undefined,
+                        signal: ctl ? ctl.signal : undefined
+                    });
+                    const data = await res.json().catch(function () { return null; });
+                    if (!res.ok || !data) {
+                        const err = new Error((data && data.error) || ('HTTP ' + res.status));
+                        err.status = res.status;
+                        throw err;
+                    }
+                    return data;
+                } finally {
+                    if (timer) clearTimeout(timer);
                 }
-                return data;
             }
             async function sharePackCount(code) {
                 try {
@@ -4977,6 +4989,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const sheet = $('#share-sheet');
                 const list = $('#share-list');
                 if (!sheet || !list) return;
+                rows = (rows || []).filter(r => r && r.code);
+                if (!rows.length) { showToast('分享码获取失败'); return; }
                 list.innerHTML = rows.map(r => `
                     <div class="share-row" data-code="${esc(r.code)}" data-secret="${esc(r.secret || '')}">
                         <div class="share-row-head">
@@ -5035,13 +5049,14 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     }
                     if (!code) {
                         const d = await shareApi('/api/share', { packs: valid });
-                        code = d.code;
-                        secret = d.secret;
+                        code = d && d.code;
+                        secret = d && d.secret;
                     }
+                    if (!code || !/^MKY-[A-Z0-9]+$/i.test(code)) throw new Error('bad-code');
                 } catch (_) {
                     const text = valid.map(p => buildShareText(p.name, p.ids)).join(',');
                     copyTextToClipboard(text).then(done => {
-                        showToast(done ? '分享服务不可用，已复制歌单文本' : '分享失败');
+                        showToast(done ? '分享服务不可用（可能被广告拦截插件阻挡），已复制歌单文本' : '分享失败');
                     });
                     return;
                 }
@@ -5640,6 +5655,17 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         if (!mvid) throw new Error('mv-not-found');
                         title = (song && song.name) || '';
                         artist = (song && song.artistsname) || '';
+                    }
+                    if (!title || !artist) {
+                        try {
+                            const info = await fetchDirectOrProxy(
+                                ARTIST_API + '/mv/detail?mvid=' + encodeURIComponent(mvid),
+                                { directFirst: true, timeout: 12000 });
+                            const row = (info && info.data) || {};
+                            if (!title) title = row.name || row.title || '';
+                            if (!artist) artist = row.artistName || row.artist || '';
+                        } catch (_) {}
+                        if (seq !== mvReqSeq) return;
                     }
                     const url = ARTIST_API + '/mv/url?id=' + encodeURIComponent(mvid);
                     const d = await fetchDirectOrProxy(url,
@@ -6925,6 +6951,18 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     if (!name) return;
                     copyTextToClipboard(name).then(ok => {
                         showToast(ok ? '已复制歌手名' : '复制失败');
+                    });
+                });
+            }
+            if (artistShareBtn) {
+                artistShareBtn.addEventListener('click', () => {
+                    const name = (artistCtx && artistCtx.name)
+                        || (artistNameEl && artistNameEl.textContent.trim()) || '';
+                    if (!name) { showToast('未知歌手'); return; }
+                    const link = location.origin + location.pathname
+                        + '?artist=' + encodeURIComponent(name);
+                    copyTextToClipboard(link).then(ok => {
+                        showToast(ok ? '歌手链接已复制' : '复制失败');
                     });
                 });
             }
@@ -11677,8 +11715,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 let maxPlayed = 0;
                 myAudio.addEventListener('ended', () => {
                     if (myAudio !== currentAudio) return;
-                    // 异常结束：几乎没实际播放（空音频/坏地址）。若继续自动下一首，
-                    // 会在历史队列里连环跳歌（表现为"疯狂切歌"）。先重取地址，仍异常则停下。
                     const totalSec = audioDuration(myAudio);
                     if (maxPlayed < 1 && (totalSec <= 0 || totalSec > 5)) {
                         console.warn('异常结束（几乎未播放）:', song.name, maxPlayed, totalSec);
@@ -11800,8 +11836,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     markAudible();
                     clearTimeout(startupWatch);
                     staleRetryCount.delete(String(song.id || ''));
-                    // 只有真正播到 10 秒以上才清零失败计数：
-                    // 否则坏歌"闪播一下"就能重置上限，导致连环跳歌不受控。
                     if ((myAudio.currentTime || 0) > 10) failStreak = 0;
                 };
                 const softDisarm = () => clearTimeout(startupWatch);
@@ -11987,8 +12021,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (getPlayMode() === 'single') return;
                 if (placeholderMode) { playNext(); return; }
                 if (swipeSettling) return;
-                // 兜底熔断：6 秒内连续自动切歌超过 4 次，说明队列里有坏音频，
-                // 继续跳只会"疯狂切歌"，直接停下并提示。
                 const now = Date.now();
                 if (now - autoAdvanceAt > 6000) autoAdvanceCount = 0;
                 autoAdvanceAt = now;
@@ -13120,9 +13152,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const img = el && el.querySelector('img');
                 return !!(img && img.getAttribute('src'));
             }
-            // 把目标假唱片（即将接管为新唱片）的光晕色调同步给主唱片。
-            // 优先直接读取假唱片上已解析好的 --disc-glow-* 变量（同步、无需等待图片/缓存），
-            // 取不到时才退回按封面 url 重新解析。
             function adoptPeekTint(sourceEl) {
                 const wrap = albumCoverWrap;
                 if (!wrap || !sourceEl) return;
@@ -13215,9 +13244,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (peeking && peekHasCover(peeking)) peeking.style.opacity = '1';
                 settleTimer = setTimeout(() => {
                     settleTimer = 0;
-                    // 此刻主唱片阴影已随 --disc-veil 完成 0.28s 淡出（完全不可见），假唱片正落位到中心。
-                    // 趁这个不可见窗口，把主唱片的光晕色调同步为目标假唱片（即即将接管的新唱片）的色调；
-                    // 这样主唱片恢复可见时直接呈现新色，杜绝"旧色阴影 → 突变成新色阴影"的跳变。
                     cover.classList.add('swipe-reset');
                     adoptPeekTint(peeking);
                     void cover.offsetWidth;
@@ -13691,19 +13717,14 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 renderChartChips();
                 switchTab(activeTab);
                 loadChart(activeChart);
-                // mid 深链需要独占播放队列：跳过"上次播放恢复"，避免 restoreLastPlayback
-                // 里的 restoreQueue/setQueue 与深链的 playSong 并发覆盖，导致偶发疯狂切歌。
                 if (!new URLSearchParams(location.search).has('mid')) {
                     restoreLastPlayback();
                 }
                 setTimeout(placePeekShifts, 600);
-                // URL 参数配置：打开应用时按 query 跳转到对应内容
                 function applyUrlConfig() {
                     const params = new URLSearchParams(location.search);
                     if (params.size === 0) return;
                     const get = (k) => { const v = params.get(k); return v == null ? '' : v.trim(); };
-                    // speed：仅接受 0.5~3；越界/非法 → 0（调用方回落 1x）；
-                    // 两位及以上小数截断到一位（1.25 → 1.2）。
                     const parseSpeed = (s) => {
                         const n = parseFloat(s);
                         if (!isFinite(n) || n < 0.5 || n > 3) return 0;
@@ -13712,16 +13733,14 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     const run = async () => {
                         const mvid = get('mvid');
                         if (mvid) {
+                            await new Promise((res) => setTimeout(res, 300));
                             const rawSpeed = get('speed');
-                            // 未提供 speed → 0（不干预默认 1x）；提供了但越界 → 回落 1x
                             const rate = rawSpeed ? (parseSpeed(rawSpeed) || 1) : 0;
                             openMvPage(null, { id: mvid, rate: rate });
                             return;
                         }
                         const mid = get('mid');
                         if (mid) {
-                            // 等 init 里的异步任务（榜单加载、队列恢复等）落定，
-                            // 再由深链接管播放，避免它们随后覆盖队列导致连环切歌。
                             await new Promise((res) => setTimeout(res, 500));
                             try {
                                 const song = await searchSongById(mid);
@@ -13730,7 +13749,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                                     restoreLastPlayback();
                                     return;
                                 }
-                                // 通过 mid 进入：以播放历史为队列，切歌在播放历史里进行
                                 pushPlayHistory(song);
                                 playHistoryAsQueue(0);
                                 openFullPlayer();
