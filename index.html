@@ -1094,6 +1094,12 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
 [data-tip] { position:relative; }
 [data-tip]::after { content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%) translateY(2px);padding:5px 9px;border-radius:7px;font-size:11.5px;line-height:1.2;font-weight:400;white-space:nowrap;background:var(--popover-toast);color:var(--text-primary);border:1px solid var(--border-popover);box-shadow:var(--shadow-popover);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity 0.16s ease,transform 0.16s ease;z-index:6; }
 [data-tip]:hover::after { opacity:1;transform:translateX(-50%) translateY(0); }
+.fav-header [data-tip]::after { top:calc(100% + 8px);bottom:auto;transform:translateX(-50%) translateY(-2px); }
+.fav-header [data-tip]:hover::after { transform:translateX(-50%) translateY(0); }
+#player-more-btn::after { top:calc(100% + 8px);bottom:auto;transform:translateX(-50%) translateY(-2px); }
+#player-more-btn:hover::after { transform:translateX(-50%) translateY(0); }
+#player-more-menu { left:auto;right:12px;top:calc(env(safe-area-inset-top,0px) + 62px);bottom:auto;width:min(240px,calc(100vw - 32px));transform:translateY(-8px) scale(0.97);transform-origin:top right; }
+#player-more-menu.active { transform:translateY(0) scale(1); }
 @media (hover:none) { [data-tip]::after { display:none; } }
 .sheet .menu-item.danger:hover,.sheet .menu-item.danger:active { background:rgba(255,77,109,0.12);transform:none; }
 .sheet .menu-item:active:not(.danger),.sheet .menu-item:active:not(.danger) i { color:var(--text-primary); }
@@ -4083,35 +4089,44 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (!raw) return '（未命名已自动命名）';
                 return '';
             }
-            function syncShareOnRemove(code, secret) {
+            function dropShareCode(code, secret, holders, favHolds) {
+                shareApi('/api/revoke', { code: code, secret: secret }).catch(() => {});
+                (holders || []).forEach(pl => {
+                    if (String(pl.shareCode || '') === String(code)) {
+                        pl.shareCode = '';
+                        pl.shareSecret = '';
+                        pl.shareFp = '';
+                    }
+                });
+                if (favHolds) saveFavShareMeta(null);
+                persistPlaylists();
+            }
+            function syncShareOnRemove(code, secret, wasMulti) {
                 if (!code || !secret) return;
                 const holders = playlists.filter(pl => String(pl.shareCode) === String(code));
                 const fm = favShareMeta();
                 const favHolds = !!(fm && fm.code === code);
-                if (holders.length === 0 && !favHolds) {
-                    shareApi('/api/revoke', { code: code, secret: secret }).catch(() => {});
+                const alive = holders.filter(pl => (pl.songs || []).length > 0);
+                const aliveCount = alive.length + (favHolds && favorites.length ? 1 : 0);
+                if (aliveCount === 0) {
+                    dropShareCode(code, secret, holders, favHolds);
                     return;
                 }
-                const packs = holders
-                    .filter(pl => (pl.songs || []).length > 0)
-                    .map(pl => ({ name: pl.name, ids: songIdList(pl.songs) }));
+                const packs = alive.map(pl => ({ name: pl.name, ids: songIdList(pl.songs) }));
                 if (favHolds && favorites.length) {
                     packs.push({ name: '我的收藏', ids: songIdList(favorites) });
                 }
                 shareApi('/api/update', { code: code, secret: secret, packs: packs })
                     .then((d) => {
                         if (!d || !d.empty) return;
-                        holders.forEach(pl => {
-                            if (String(pl.shareCode || '') === String(code)) {
-                                pl.shareCode = '';
-                                pl.shareSecret = '';
-                                pl.shareFp = '';
-                            }
-                        });
-                        if (favHolds) saveFavShareMeta(null);
-                        persistPlaylists();
+                        dropShareCode(code, secret, holders, favHolds);
                     })
                     .catch(() => {});
+            }
+            function syncShareAfterClear(pl) {
+                if (!pl || !pl.shareCode || !pl.shareSecret) return;
+                const count = playlists.filter(p => String(p.shareCode) === String(pl.shareCode)).length;
+                syncShareOnRemove(pl.shareCode, pl.shareSecret, count > 1);
             }
             function syncShareOnRemoveMany(list) {
                 const seen = new Set();
@@ -4126,9 +4141,12 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const i = playlists.findIndex(p => p.id === String(id));
                 if (i < 0) return false;
                 const gone = playlists[i];
+                const code = String((gone && gone.shareCode) || '');
+                const wasMulti = !!code
+                    && playlists.filter(p => String(p.shareCode) === code).length > 1;
                 playlists.splice(i, 1);
                 persistPlaylists();
-                syncShareOnRemove(gone && gone.shareCode, gone && gone.shareSecret);
+                syncShareOnRemove(gone && gone.shareCode, gone && gone.shareSecret, wasMulti);
                 return true;
             }
             function latestCoverOf(list, fromEnd) {
@@ -5290,6 +5308,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     if (ok) {
                         pl.songs = [];
                         persistPlaylists();
+                        syncShareAfterClear(pl);
                         if (playlistPage.classList.contains('active')) renderPlaylistDetail();
                         renderMinePage();
                         showToast('歌单已清空');
@@ -5680,7 +5699,13 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     mvVideo.src = src;
                     if (mvInfo && mvInfo.rate) mvSetRate(mvInfo.rate);
                     mvSyncUi();
-                    mvVideo.play().catch(() => {});
+                    mvVideo.play().catch((err) => {
+                        if (!err || err.name !== 'NotAllowedError') return;
+                        mvVideo.muted = true;
+                        mvSyncVolIcon();
+                        mvVideo.play().catch(() => {});
+                        mvArmSoundUnlock();
+                    });
                     mvPokeBar();
                     loadMvRelated(artist || title, mvid, seq);
                 } catch (e) {
@@ -5778,6 +5803,22 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             function mvShowLoading(on) {
                 if (!mvLoading) return;
                 mvLoading.classList.toggle('hide', !on);
+            }
+            let mvSoundUnlockArmed = false;
+            function mvArmSoundUnlock() {
+                if (mvSoundUnlockArmed) return;
+                mvSoundUnlockArmed = true;
+                showToast('已静音播放，点按画面开启声音');
+                const unlock = () => {
+                    document.removeEventListener('pointerdown', unlock, true);
+                    document.removeEventListener('keydown', unlock, true);
+                    if (!mvSoundUnlockArmed) return;
+                    mvSoundUnlockArmed = false;
+                    if (mvVideo) mvVideo.muted = false;
+                    mvSyncVolIcon();
+                };
+                document.addEventListener('pointerdown', unlock, true);
+                document.addEventListener('keydown', unlock, true);
             }
             function mvSyncVolIcon() {
                 if (!mvVolIcon || !mvVideo) return;
@@ -8217,10 +8258,21 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const set = new Set(ids.map(String));
                 const before = playlists.length;
                 const gone = playlists.filter(p => set.has(String(p.id)));
+                const counts = new Map();
+                playlists.forEach(p => {
+                    const c = String(p.shareCode || '');
+                    if (c) counts.set(c, (counts.get(c) || 0) + 1);
+                });
                 playlists = playlists.filter(p => !set.has(String(p.id)));
                 if (playlists.length === before) return 0;
                 persistPlaylists();
-                syncShareOnRemoveMany(gone);
+                const seen = new Set();
+                gone.forEach(p => {
+                    const c = String((p && p.shareCode) || '');
+                    if (!c || seen.has(c)) return;
+                    seen.add(c);
+                    syncShareOnRemove(c, p.shareSecret, (counts.get(c) || 0) > 1);
+                });
                 renderMinePage();
                 return before - playlists.length;
             }
@@ -8355,9 +8407,18 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     + totalSongs + ' 首歌曲吗？此操作不可恢复。',
                     { title: '清空歌单', confirmText: '清空' });
                 if (!ok) return;
-                list.forEach(pl => { pl.songs = []; });
+                const codes = new Map();
+                list.forEach(pl => {
+                    const c = String(pl.shareCode || '');
+                    if (c && pl.shareSecret) codes.set(c, pl.shareSecret);
+                    pl.songs = [];
+                });
                 persistPlaylists();
                 arrayPersistAndRepaint();
+                codes.forEach((secret, code) => {
+                    const count = playlists.filter(p => String(p.shareCode) === String(code)).length;
+                    syncShareOnRemove(code, secret, count > 1);
+                });
                 showToast('已清空 ' + list.length + ' 个歌单的歌曲');
             }
             async function deleteSelectedPlaylists() {
@@ -13694,12 +13755,22 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     renderSongList(hotSongs, songList, { from: 'chart', showMore: true });
                 }, 30);
             }
+            function bindHeaderTips() {
+                $$('.fav-header .fav-icon-btn').forEach(el => {
+                    if (!el.dataset.tip) {
+                        el.dataset.tip = el.getAttribute('title')
+                            || el.getAttribute('aria-label') || '';
+                    }
+                    el.removeAttribute('title');
+                });
+            }
             function init() {
                 applyTheme(getThemeMode());
                 applyGlass(getGlassEnabled());
                 bindSystemTheme();
                 syncFadeDurations();
                 syncHeaderHeight();
+                bindHeaderTips();
                 loadFavorites();
                 loadPlaylists();
                 loadFailedIds();
