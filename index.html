@@ -393,10 +393,13 @@ body.tab-bar-hidden .tab-bar { transform:translateY(100%);opacity:0;pointer-even
 .settings-row-link:active { background:var(--surface-hover); }
 .settings-label { font-size:15px;color:var(--text-primary); }
 .settings-value { margin-left:auto;font-size:13px;color:var(--text-muted);font-variant-numeric:tabular-nums;white-space:nowrap; }
+:root[data-lyrics-align="center"] .lyrics-line,:root[data-lyrics-align="center"] #player-lyrics-inner .lyrics-line { text-align:center;transform-origin:center center;padding:13px 0; }
+:root[data-lyrics-align="center"] .lyrics-line { min-height:calc(19px * 1.7 + 26px); }
+:root[data-lyrics-align="left"] .lyrics-line,:root[data-lyrics-align="left"] #player-lyrics-inner .lyrics-line { text-align:left;transform-origin:left center; }
 .settings-value:empty { display:none; }
 .settings-arrow { font-size:13px;color:var(--text-muted); }
 .settings-theme { position:relative;display:inline-flex;gap:6px;background:var(--surface-hover);border-radius:10px;padding:3px;flex-shrink:0;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent; }
-.theme-slider { position:absolute;top:3px;left:3px;bottom:3px;border-radius:8px;box-sizing:border-box;background:rgba(127,127,127,0.22);border:1px solid rgba(127,127,127,0.18);pointer-events:none;transition:transform 0.28s cubic-bezier(0.34,1.3,0.5,1),width 0.28s cubic-bezier(0.34,1.3,0.5,1);will-change:transform,width; }
+.theme-slider { position:absolute;top:4px;left:4px;bottom:4px;border-radius:6px;box-sizing:border-box;background:rgba(127,127,127,0.22);pointer-events:none;transition:transform 0.28s cubic-bezier(0.22,1,0.36,1),width 0.28s cubic-bezier(0.22,1,0.36,1);will-change:transform,width; }
 .theme-chip { position:relative;z-index:1;display:inline-flex;align-items:center;gap:5px;border:none;background:transparent;color:var(--text-secondary);font-size:13px;padding:6px 11px;border-radius:8px;cursor:pointer;transition:color 0.2s ease,font-weight 0.2s ease; }
 .theme-chip-icon { width:15px;height:15px;flex-shrink:0; }
 .theme-chip.active { color:var(--text-primary);font-weight:600; }
@@ -828,23 +831,28 @@ body.tab-bar-hidden .mini-player { bottom:0; }
 .album-cover-wrap.spinning::before,.album-cover-wrap.spinning .album-cover-peek::before { animation-play-state:running; }
 @keyframes haloSpin { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
 @media (prefers-reduced-motion:reduce) { .album-cover-wrap::before,.album-cover-peek::before { animation:none; } }
-.album-cover-wrap::after,.album-cover-peek::after { content:"";position:absolute;inset:-13px;border-radius:50%;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,0.06) 0%,rgba(0,0,0,0.60) 72%);z-index:1;opacity:var(--disc-veil, 1);transition:opacity 0.28s ease; }
-.album-cover { aspect-ratio:1 / 1;border-radius:50%;border:5px solid var(--album-ring);background:var(--surface-input);box-shadow:var(--shadow-cover); }
-.album-cover-peek-disc { position:relative;z-index:2;width:calc(100% - 34px);height:calc(100% - 34px);aspect-ratio:1 / 1;flex-shrink:0;border-radius:50%;border:5px solid var(--album-ring);background:var(--surface-input);box-shadow:var(--shadow-cover);overflow:hidden; }
-.album-cover { position:relative;z-index:2;width:calc(100% - 34px);height:calc(100% - 34px);flex-shrink:0;overflow:hidden;transform:rotate(0deg);will-change:transform; }
-.album-cover-img { width:100%;height:100%;aspect-ratio:1 / 1;object-fit:cover;object-position:center;display:block;border-radius:inherit; }
+.album-cover-wrap::after,.album-cover-peek::after { content:"";position:absolute;inset:0;border-radius:50%;background:none;z-index:1;opacity:var(--disc-veil, 1);transition:opacity 0.28s ease; }
+.album-cover { position:relative;z-index:2;width:100%;height:100%;aspect-ratio:1 / 1;flex-shrink:0;border-radius:50%;background:repeating-radial-gradient(circle at 50% 50%,rgba(255,255,255,0.020) 0px,rgba(255,255,255,0.020) 1px,rgba(0,0,0,0) 1px,rgba(0,0,0,0) 3px),radial-gradient(circle at 50% 50%,#262626 0%,#202020 34%,#181818 70%,#111 100%),radial-gradient(circle at 50% 50%,rgba(0,0,0,0) 54%,rgba(0,0,0,0.34) 100%);box-shadow:0 0 0 1px rgba(255,255,255,0.16),0 0 30px 6px rgba(255,255,255,0.14),0 30px 60px -26px rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;overflow:hidden;transform:rotate(0deg);will-change:transform; }
+
+.album-cover-peek-disc { position:relative;z-index:2;width:100%;height:100%;aspect-ratio:1 / 1;flex-shrink:0;border-radius:50%;background:repeating-radial-gradient(circle at 50% 50%,rgba(255,255,255,0.020) 0px,rgba(255,255,255,0.020) 1px,rgba(0,0,0,0) 1px,rgba(0,0,0,0) 3px),radial-gradient(circle at 50% 50%,#262626 0%,#202020 34%,#181818 70%,#111 100%),radial-gradient(circle at 50% 50%,rgba(0,0,0,0) 54%,rgba(0,0,0,0.34) 100%);box-shadow:0 0 0 1px rgba(255,255,255,0.16),0 0 30px 6px rgba(255,255,255,0.14),0 30px 60px -26px rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center; }
+
+.album-cover-img { width:68%;height:68%;aspect-ratio:1 / 1;object-fit:cover;object-position:center;display:block;border-radius:50%;box-shadow:0 0 0 2px rgba(0,0,0,0.55),0 8px 20px rgba(0,0,0,0.45); }
 .album-cover-peek { --disc-veil:1;position:absolute;left:50%;top:50%;width:100%;height:100%;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;z-index:2;transform:translate(-50%,-50%);transition:opacity 0.24s ease,transform 0.3s cubic-bezier(0.22,1,0.36,1);will-change:transform,opacity; }
 .album-cover-peek::before,.album-cover-peek::after { pointer-events:none; }
 .player-content .album-cover { transition:opacity 0.28s ease; }
 .player-content.swiping .album-cover { transition:none; }
 .player-content.swiping .album-cover-peek,.player-content.swiping .album-cover-wrap::before,.player-content.swiping .album-cover-wrap::after { transition:none; }
-.album-cover-peek img { width:100%;height:100%;aspect-ratio:1 / 1;object-fit:cover;object-position:center;display:block;border-radius:inherit;visibility:hidden; }
+.album-cover-peek img { width:68%;height:68%;aspect-ratio:1 / 1;object-fit:cover;object-position:center;display:block;border-radius:50%;box-shadow:0 0 0 2px rgba(0,0,0,0.55),0 8px 20px rgba(0,0,0,0.45);visibility:hidden; }
 .album-cover-peek img[src] { visibility:visible; }
 .album-cover-peek-fallback { position:absolute;inset:0;display:none;align-items:center;justify-content:center;font-size:64px;color:var(--text-faint);pointer-events:none; }
 .album-cover-peek-disc:has(>img:not([src])) .album-cover-peek-fallback { display:flex;opacity:0.45; }
 .album-cover-wrap.swipe-reset,.album-cover-wrap.swipe-reset .album-cover-peek,.album-cover-wrap.swipe-reset .album-cover-peek-disc,.album-cover-wrap.swipe-reset .album-cover,.album-cover-wrap.swipe-reset::before,.album-cover-wrap.swipe-reset::after { transition:none; }
 .album-cover-fallback { position:absolute;inset:0;display:none;align-items:center;justify-content:center;font-size:64px;color:var(--text-faint); }
-.album-cover.no-cover { background:var(--surface-input);background-clip:padding-box; }
+.album-cover::after { content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;background:linear-gradient(45deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 26%,rgba(255,255,255,0.02) 35%,rgba(255,255,255,0.055) 43%,rgba(255,255,255,0.085) 50%,rgba(255,255,255,0.055) 57%,rgba(255,255,255,0.02) 65%,rgba(255,255,255,0) 74%,rgba(255,255,255,0) 100%); }
+.album-cover-peek-disc::after { content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;background:linear-gradient(45deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 26%,rgba(255,255,255,0.02) 35%,rgba(255,255,255,0.055) 43%,rgba(255,255,255,0.085) 50%,rgba(255,255,255,0.055) 57%,rgba(255,255,255,0.02) 65%,rgba(255,255,255,0) 74%,rgba(255,255,255,0) 100%); }
+.album-cover.no-cover::after { display:none; }
+.album-cover.no-cover { background:transparent;box-shadow:none; }
+.album-cover.no-cover .album-cover-fallback { display:flex;opacity:0.30; }
 .album-cover.no-cover .album-cover-img { display:none; }
 .album-cover.no-cover .album-cover-fallback { display:flex;opacity:0.45; }
 .album-cover:has(>img:not([src])) .album-cover-fallback { display:flex;opacity:0.45; }
@@ -1098,8 +1106,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
 .fav-header [data-tip]:hover::after { transform:translateX(-50%) translateY(0); }
 #player-more-btn::after { top:calc(100% + 8px);bottom:auto;transform:translateX(-50%) translateY(-2px); }
 #player-more-btn:hover::after { transform:translateX(-50%) translateY(0); }
-#player-more-menu { left:auto;right:12px;top:calc(env(safe-area-inset-top,0px) + 62px);bottom:auto;width:min(240px,calc(100vw - 32px));transform:translateY(-8px) scale(0.97);transform-origin:top right; }
-#player-more-menu.active { transform:translateY(0) scale(1); }
 @media (hover:none) { [data-tip]::after { display:none; } }
 .sheet .menu-item.danger:hover,.sheet .menu-item.danger:active { background:rgba(255,77,109,0.12);transform:none; }
 .sheet .menu-item:active:not(.danger),.sheet .menu-item:active:not(.danger) i { color:var(--text-primary); }
@@ -1248,6 +1254,20 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                             <span class="settings-switch-track"><span class="settings-switch-dot"></span></span>
                         </label>
                     </div>
+                    <div class="settings-row">
+                        <div class="settings-label">歌词样式</div>
+                        <div class="settings-theme" id="settings-lyrics-align">
+                            <div class="theme-slider" aria-hidden="true"></div>
+                            <button class="theme-chip active" type="button" data-val="left">
+                                <svg class="theme-chip-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 3.5h12M2 8h7M2 12.5h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>
+                                <span>居左</span>
+                            </button>
+                            <button class="theme-chip" type="button" data-val="center">
+                                <svg class="theme-chip-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 3.5h12M4.5 8h7M2 12.5h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>
+                                <span>居中</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <div class="settings-group">
                     <div class="settings-group-title">播放</div>
@@ -1338,7 +1358,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             <button class="control-btn" id="menu-btn" aria-label="播放历史" data-tip="播放历史">
                 <i class="mini-history-icon" aria-hidden="true"><svg class="history-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4.2" width="14" height="2.4" rx="1.2" fill="currentColor"/><rect x="2.5" y="10.2" width="10.5" height="2.4" rx="1.2" fill="currentColor"/><rect x="2.5" y="16.2" width="7" height="2.4" rx="1.2" fill="currentColor"/><path d="M15.6 12.6c0-.8.87-1.28 1.53-.85l5.2 3.4c.62.4.62 1.3 0 1.7l-5.2 3.4c-.66.43-1.53-.05-1.53-.85z" fill="currentColor"/></svg></i>
             </button>
-            <button class="control-btn play-pause" id="mini-play-btn" aria-label="播放/暂停">
+            <button class="control-btn play-pause" id="mini-play-btn" aria-label="播放/暂停" data-tip="播放">
                 <svg class="mini-ring" viewBox="0 0 24 24" aria-hidden="true">
                     <circle class="mini-ring-track" cx="12" cy="12" r="9"></circle>
                     <circle class="mini-ring-arc" id="mini-ring-fill" cx="12" cy="12" r="9"></circle>
@@ -1531,7 +1551,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 <div class="fav-title">我的收藏</div>
                 <button class="fav-icon-btn mode-toggle-btn" id="fav-mode-btn"
                         aria-label="播放模式" title="播放模式">
-                    <svg class="mode-icon-svg" viewBox="0 0 24 24" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>
+                    <svg class="mode-icon-svg" viewBox="0 0 24 24" aria-hidden="true"></svg>
                 </button>
                 <button class="fav-icon-btn fav-play-btn" id="fav-header-play" aria-label="播放全部" title="播放全部">
                     <i class="fas fa-play"></i>
@@ -1581,7 +1601,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 <div class="fav-title" id="pl-page-title">歌单</div>
                 <button class="fav-icon-btn mode-toggle-btn" id="pl-mode-btn"
                         aria-label="播放模式" title="播放模式">
-                    <svg class="mode-icon-svg" viewBox="0 0 24 24" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>
+                    <svg class="mode-icon-svg" viewBox="0 0 24 24" aria-hidden="true"></svg>
                 </button>
                 <button class="fav-icon-btn fav-play-btn" id="pl-header-play" aria-label="播放全部" title="播放全部">
                     <i class="fas fa-play"></i>
@@ -1631,7 +1651,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 <div class="fav-title">播放历史</div>
                 <button class="fav-icon-btn mode-toggle-btn" id="history-mode-btn"
                         aria-label="播放模式" title="播放模式">
-                    <svg class="mode-icon-svg" viewBox="0 0 24 24" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>
+                    <svg class="mode-icon-svg" viewBox="0 0 24 24" aria-hidden="true"></svg>
                 </button>
                 <button class="fav-icon-btn fav-play-btn" id="history-header-play"
                         aria-label="播放全部" title="播放全部">
@@ -1684,7 +1704,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 <div class="fav-title" id="artist-page-title">歌手</div>
                 <button class="fav-icon-btn mode-toggle-btn" id="artist-mode-btn"
                         aria-label="播放模式" title="播放模式">
-                    <svg class="mode-icon-svg" viewBox="0 0 24 24" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>
+                    <svg class="mode-icon-svg" viewBox="0 0 24 24" aria-hidden="true"></svg>
                 </button>
                 <button class="fav-icon-btn fav-play-btn" id="artist-header-play"
                         aria-label="播放全部" title="播放全部">
@@ -2604,10 +2624,24 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 syncPlayModeUI();
                 refreshSwipePeeks();
             }
+            const ICONS = {
+                repeat: { vb: '0 0 24 24', a: 'stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"', b: '<path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/>' },
+                repeat1: { vb: '0 0 24 24', a: 'stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"', b: '<path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/><path d="M11 10h1v4"/>' },
+                shuffle: { vb: '0 0 24 24', a: 'stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"', mode: 'shuffle', b: '<path d="m18 14 4 4-4 4"/><path d="m18 2 4 4-4 4"/><path d="M2 18h1.973a4 4 0 0 0 3.3-1.7l5.454-8.6a4 4 0 0 1 3.3-1.7H22"/><path d="M2 6h1.972a4 4 0 0 1 3.6 2.2"/><path d="M22 18h-6.041a4 4 0 0 1-3.3-1.8l-.359-.45"/>' },
+                history: { vb: '0 0 24 24', a: '', b: '<rect x="2.5" y="4.2" width="14" height="2.4" rx="1.2" fill="currentColor"/><rect x="2.5" y="10.2" width="10.5" height="2.4" rx="1.2" fill="currentColor"/><rect x="2.5" y="16.2" width="7" height="2.4" rx="1.2" fill="currentColor"/><path d="M15.6 12.6c0-.8.87-1.28 1.53-.85l5.2 3.4c.62.4.62 1.3 0 1.7l-5.2 3.4c-.66.43-1.53-.05-1.53-.85z" fill="currentColor"/>' }
+            };
+            function svgIcon(name, cls) {
+                const ic = ICONS[name];
+                if (!ic) return '';
+                return '<svg' + (cls ? ' class="' + cls + '"' : '')
+                    + (ic.mode ? ' data-mode="' + ic.mode + '"' : '')
+                    + ' viewBox="' + ic.vb + '"' + (ic.a ? ' ' + ic.a : '')
+                    + ' aria-hidden="true">' + ic.b + '</svg>';
+            }
             const MODE_ICONS = {
-                repeat: `<svg class="mode-icon-svg" viewBox="0 0 24 24" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>`,
-                repeat1: `<svg class="mode-icon-svg" viewBox="0 0 24 24" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/><path d="M11 10h1v4"/></svg>`,
-                shuffle: `<svg class="mode-icon-svg" data-mode="shuffle" viewBox="0 0 24 24" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 14 4 4-4 4"/><path d="m18 2 4 4-4 4"/><path d="M2 18h1.973a4 4 0 0 0 3.3-1.7l5.454-8.6a4 4 0 0 1 3.3-1.7H22"/><path d="M2 6h1.972a4 4 0 0 1 3.6 2.2"/><path d="M22 18h-6.041a4 4 0 0 1-3.3-1.8l-.359-.45"/></svg>`
+                repeat: svgIcon('repeat', 'mode-icon-svg'),
+                repeat1: svgIcon('repeat1', 'mode-icon-svg'),
+                shuffle: svgIcon('shuffle', 'mode-icon-svg')
             };
             const MODE_LOADING_ICON = `<svg class="mode-icon-svg mode-loading" viewBox="0 0 512 512" aria-hidden="true"><path d="M0 0 C0.53947266 0.28875 0.53947266 0.28875 3.26953125 1.75 C10.51968697 5.77062551 16.75575331 10.56741315 23 16 C23.41056641 16.34353516 23.41056641 16.34353516 25.48828125 18.08203125 C46.23137098 35.91381014 58.84314739 59.19952056 67 85 C67.66325855 87.00113281 68.32875843 89.00153079 69 91 C69.57105469 90.07703125 70.14210938 89.1540625 70.73046875 88.203125 C75.67968986 80.23024398 80.70460823 72.30975733 85.8125 64.4375 C86.35092529 63.60573242 86.88935059 62.77396484 87.4440918 61.91699219 C90.51929133 57.19148799 93.68708672 52.5621449 97 48 C103.70629026 51.51513281 109.87088942 55.55991363 116 60 C112.57708836 66.37015463 108.85300914 72.46330684 104.875 78.5 C103.71209033 80.2772461 102.54933214 82.05459132 101.38671875 83.83203125 C100.81228027 84.70811035 100.2378418 85.58418945 99.64599609 86.48681641 C97.31481294 90.04617556 94.99892914 93.61529133 92.6875 97.1875 C92.25848389 97.84935303 91.82946777 98.51120605 91.38745117 99.19311523 C88.5609766 103.56130321 85.7597794 107.94501298 82.96875 112.3359375 C82.26145752 113.44686768 81.55416504 114.55779785 80.82543945 115.70239258 C79.43316879 117.89056446 78.04354538 120.0804237 76.65698242 122.2722168 C65.49885126 139.80045949 65.49885126 139.80045949 60 142 C55.47170989 142.35406384 52.91388747 141.80530216 49.0625 139.4375 C48.01578125 138.79554688 46.9690625 138.15359375 45.890625 137.4921875 C38.98261058 133.09450276 32.13464542 128.60332979 25.2890625 124.109375 C20.00898894 120.64881975 14.69917817 117.23747444 9.37548828 113.84448242 C5.22336378 111.19797207 1.07915393 108.53921479 -3.06445312 105.87939453 C-4.9899377 104.64666164 -6.91823776 103.41831306 -8.84960938 102.19482422 C-11.4290629 100.55935467 -13.99690915 98.90710064 -16.5625 97.25 C-17.32473877 96.77280518 -18.08697754 96.29561035 -18.87231445 95.80395508 C-20.94140625 94.453125 -20.94140625 94.453125 -24 92 C-24 87.99199085 -23.84140963 87.25418492 -21.8125 84.109375 C-21.36132812 83.40039062 -20.91015625 82.69140625 -20.4453125 81.9609375 C-20.20683594 81.59613281 -20.20683594 81.59613281 -19 79.75 C-18.52304687 79.00492187 -18.04609375 78.25984375 -17.5546875 77.4921875 C-16.37772931 75.65613272 -15.1927029 73.8258505 -14 72 C-9.48858438 73.56694207 -5.7021873 76.00268441 -1.75 78.625 C-0.23752979 79.61672567 1.27552886 80.6075543 2.7890625 81.59765625 C3.61567383 82.13922363 4.44228516 82.68079102 5.29394531 83.23876953 C10.38098216 86.54965764 15.50691064 89.79991479 20.625 93.0625 C29.82301785 98.93552354 38.96067295 104.88559341 48 111 C43.83477085 79.76078138 29.95409219 50.45839812 4.6875 30.75 C-20.51917351 11.80189693 -51.66198703 2.71932367 -83.046875 6.77148438 C-109.10682371 10.62512058 -130.88945817 22.04467227 -150 40 C-150.59167969 40.515625 -151.18335938 41.03125 -151.79296875 41.5625 C-172.40610034 60.3640262 -182.37199322 90.58611044 -183.9140625 117.71972656 C-185.09354528 149.01622981 -173.16842279 179.12668079 -152.1875 202.125 C-130.80092854 224.80870726 -100.60758481 237.31446808 -69.58837891 238.3515625 C-41.47538847 238.66706952 -14.58225118 228.91387987 7 211 C7.91007813 210.26523437 8.82015625 209.53046875 9.7578125 208.7734375 C19.15564077 200.76788008 26.87027015 190.7063187 33 180 C37.32421646 181.58444573 41.26442583 183.717804 45.25 186 C45.88679687 186.35578125 46.52359375 186.7115625 47.1796875 187.078125 C51.87881324 189.75762649 51.87881324 189.75762649 53 192 C49.08291025 199.64828371 43.55238175 206.4862518 38 213 C37.18789063 213.9590625 36.37578125 214.918125 35.5390625 215.90625 C14.30725495 240.35511814 -19.19712142 258.56124978 -51.76904297 260.88720703 C-92.8517725 262.96427215 -130.72230054 253.34436492 -161.79833984 225.38183594 C-189.37973401 199.87966603 -205.69216374 164.88142884 -207.21875 127.296875 C-208.25193931 87.89922227 -194.07646747 52.20354476 -167.09863281 23.640625 C-123.88800619 -20.6227251 -53.7494359 -29.80637042 0 0 Z" transform="translate(324.1,134.6)"/></svg>`;
             const PLAY_MODE_META = {
@@ -2634,6 +2668,164 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 showToast('已切换为' + (PLAY_MODE_META[next] || {}).label);
             }
             const THEME_MODE_KEY = 'mky_theme_mode';
+            const LYRICS_ALIGN_KEY = 'mky_lyrics_align';
+            function getLyricsAlign() {
+                try { return MKYStore.get(LYRICS_ALIGN_KEY) === 'center' ? 'center' : 'left'; }
+                catch (_) { return 'center'; }
+            }
+            let lyricsSliderBound = false;
+            let lyricsDragging = false;
+            let lyricsDragJustEnded = false;
+            let lyricsDragBound = false;
+            function bindLyricsDrag() {
+                const box = $('#settings-lyrics-align');
+                if (!box || lyricsDragBound) return;
+                lyricsDragBound = true;
+                const slider = box.querySelector('.theme-slider');
+                let drag = null;
+                let bounds = { minX: 0, maxX: 0, w: 0 };
+                const chips = () => Array.from(box.querySelectorAll('.theme-chip'));
+                const metrics = (chip) => {
+                    const b = box.getBoundingClientRect();
+                    const r = chip.getBoundingClientRect();
+                    return { x: r.left - b.left - 4, w: r.width };
+                };
+                const clamp = (v, lo, hi) => v < lo ? lo : (v > hi ? hi : v);
+                const syncBounds = () => {
+                    let w = Infinity, first = Infinity, last = -Infinity;
+                    chips().forEach(c => {
+                        const m = metrics(c);
+                        w = Math.min(w, Math.max(0, m.w - 2));
+                        first = Math.min(first, m.x + 1);
+                        last = Math.max(last, m.x + 1);
+                    });
+                    bounds = {
+                        w: isFinite(w) ? w : 0,
+                        minX: isFinite(first) ? first : 0,
+                        maxX: isFinite(last) ? last : 0
+                    };
+                    if (slider) slider.style.width = bounds.w + 'px';
+                };
+                const paintLens = (x) => {
+                    let cur = 0, bestD = Infinity;
+                    chips().forEach((c, i) => {
+                        const m = metrics(c);
+                        const d = Math.abs((m.x + 1) - x);
+                        if (d < bestD) { bestD = d; cur = i; }
+                    });
+                    chips().forEach((c, i) => c.classList.toggle('lens', i === cur));
+                };
+                const clearLens = () => chips().forEach(c => c.classList.remove('lens'));
+                const chipAtSlider = () => {
+                    const t = slider.style.transform || '';
+                    const mm = /translateX\(\s*(-?[\d.]+)px/.exec(t);
+                    if (!mm) return null;
+                    const x = parseFloat(mm[1]);
+                    let best = null, bestD = Infinity;
+                    chips().forEach(c => {
+                        const m = metrics(c);
+                        const d = Math.abs((m.x + 1) - x);
+                        if (d < bestD) { bestD = d; best = c; }
+                    });
+                    return best;
+                };
+                const commit = (chip) => {
+                    if (!chip) return;
+                    const val = chip.dataset.val === 'left' ? 'left' : 'center';
+                    try { MKYStore.set(LYRICS_ALIGN_KEY, val); } catch (_) {}
+                    applyLyricsAlign(val);
+                };
+                box.addEventListener('pointerdown', (e) => {
+                    if (e.button !== 0 && e.pointerType === 'mouse') return;
+                    const active = box.querySelector('.theme-chip.active');
+                    if (!active) return;
+                    drag = { x: e.clientX, moved: false };
+                    syncBounds();
+                    drag.clientStart = clamp(metrics(active).x + 2, bounds.minX, bounds.maxX);
+                });
+                box.addEventListener('pointermove', (e) => {
+                    if (!drag) return;
+                    if (!drag.moved && Math.abs(e.clientX - drag.x) < 3) return;
+                    if (!drag.moved) {
+                        drag.moved = true;
+                        if (slider) slider.style.transition = 'none';
+                        try { box.setPointerCapture(e.pointerId); } catch (_) {}
+                    }
+                    e.preventDefault();
+                    lyricsDragging = true;
+                    box.classList.add('dragging');
+                    const x = clamp(drag.clientStart + (e.clientX - drag.x), bounds.minX, bounds.maxX);
+                    if (slider) slider.style.transform = 'translateX(' + x + 'px)';
+                    paintLens(x);
+                });
+                const finish = () => {
+                    if (!drag) return;
+                    const moved = drag.moved;
+                    drag = null;
+                    lyricsDragging = false;
+                    box.classList.remove('dragging');
+                    clearLens();
+                    if (slider) slider.style.transition = '';
+                    if (!moved) return;
+                    lyricsDragJustEnded = true;
+                    setTimeout(() => { lyricsDragJustEnded = false; }, 0);
+                    commit(chipAtSlider());
+                };
+                box.addEventListener('pointerup', (e) => {
+                    try { box.releasePointerCapture(e.pointerId); } catch (_) {}
+                    finish();
+                });
+                box.addEventListener('pointercancel', finish);
+                box.addEventListener('click', (e) => {
+                    if (lyricsDragJustEnded) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                }, true);
+            }
+            function moveLyricsSlider(instant) {
+                if (lyricsDragging) return;
+                const box = $('#settings-lyrics-align');
+                if (!box) return;
+                const slider = box.querySelector('.theme-slider');
+                const chip = box.querySelector('.theme-chip.active');
+                if (!slider || !chip) return;
+                const b = box.getBoundingClientRect();
+                const r = chip.getBoundingClientRect();
+                if (!r.width) return;
+                const m = { x: r.left - b.left - 4, w: r.width };
+                const w = Math.max(0, m.w - 2);
+                const x = m.x + 1;
+                slider.style.width = w + 'px';
+                if (instant) {
+                    slider.style.transition = 'none';
+                    slider.style.transform = 'translateX(' + x + 'px)';
+                    void slider.offsetWidth;
+                    slider.style.transition = '';
+                    return;
+                }
+                slider.style.transform = 'translateX(' + x + 'px)';
+            }
+            function applyLyricsAlign(mode) {
+                const m = mode === 'left' ? 'left' : 'center';
+                document.documentElement.dataset.lyricsAlign = m;
+                const box = $('#settings-lyrics-align');
+                if (!box) return;
+                box.querySelectorAll('.theme-chip').forEach(b => {
+                    b.classList.toggle('active', b.dataset.val === m);
+                });
+                if (!lyricsSliderBound) {
+                    lyricsSliderBound = true;
+                    if (window.ResizeObserver) {
+                        try {
+                            new ResizeObserver(() => moveLyricsSlider(true)).observe(box);
+                        } catch (_) {}
+                    }
+                    window.addEventListener('resize', () => moveLyricsSlider(true));
+                }
+                bindLyricsDrag();
+                moveLyricsSlider(false);
+            }
             function getThemeMode() {
                 try {
                     const m = MKYStore.get(THEME_MODE_KEY);
@@ -2689,7 +2881,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             let themeSliderBound = false;
             let themeSliderPending = true;
             let themeDragging = false;
-            const SLIDER_LEFT = 3;
+            const SLIDER_LEFT = 4;
             function themeSliderMetrics(chip) {
                 const box = settingsThemeBox.getBoundingClientRect();
                 const r = chip.getBoundingClientRect();
@@ -2705,10 +2897,10 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const chip = settingsThemeBox.querySelector('.theme-chip.active');
                 if (!chip) return;
                 const m = themeSliderMetrics(chip);
-                const w = Math.max(0, m.w - 4);
+                const w = Math.max(0, m.w - 2);
                 slider.style.transition = 'none';
                 slider.style.width = w + 'px';
-                slider.style.transform = 'translateX(' + (m.x + 2) + 'px)';
+                slider.style.transform = 'translateX(' + (m.x + 1) + 'px)';
                 void slider.offsetWidth;
                 slider.style.transition = '';
                 themeSliderPending = false;
@@ -2732,8 +2924,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     window.addEventListener('resize', themeSliderJump);
                 }
                 const m = themeSliderMetrics(chip);
-                const w = Math.max(0, m.w - 4);
-                const x = m.x + 2;
+                const w = Math.max(0, m.w - 2);
+                const x = m.x + 1;
                 slider.style.width = w + 'px';
                 if (!w) { themeSliderPending = true; return; }
                 if (themeSliderPending || animate === 'instant') {
@@ -2776,7 +2968,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     let bestD = Infinity;
                     for (let i = 0; i < list.length; i++) {
                         const m = themeSliderMetrics(list[i]);
-                        const d = Math.abs((m.x + 2) - x);
+                        const d = Math.abs((m.x + 1) - x);
                         if (d < bestD) { bestD = d; best = list[i]; }
                     }
                     return best;
@@ -2790,9 +2982,9 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     let last = -Infinity;
                     for (let i = 0; i < list.length; i++) {
                         const m = themeSliderMetrics(list[i]);
-                        w = Math.min(w, Math.max(0, m.w - 4));
-                        first = Math.min(first, m.x + 2);
-                        last = Math.max(last, m.x + 2);
+                        w = Math.min(w, Math.max(0, m.w - 2));
+                        first = Math.min(first, m.x + 1);
+                        last = Math.max(last, m.x + 1);
                     }
                     if (!isFinite(w)) w = 0;
                     if (!isFinite(first)) { first = 0; last = 0; }
@@ -2808,7 +3000,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     let bestD = Infinity;
                     for (let i = 0; i < list.length; i++) {
                         const m = themeSliderMetrics(list[i]);
-                        const d = Math.abs((m.x + 2) - x);
+                        const d = Math.abs((m.x + 1) - x);
                         if (d < bestD) { bestD = d; cur = i; }
                     }
                     for (let i = 0; i < list.length; i++) {
@@ -2855,7 +3047,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     drag = { x: e.clientX, chip: active, moved: false };
                     syncDragBounds();
                     drag.clientStart = clamp(
-                        themeSliderMetrics(active).x + 2,
+                        themeSliderMetrics(active).x + 1,
                         drag.minX, drag.maxX);
                 });
                 settingsThemeBox.addEventListener('pointermove', (e) => {
@@ -3404,6 +3596,16 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     paintVolumeTrack();
                     settingsVolume.addEventListener('input', () => {
                         setVolume(parseFloat(settingsVolume.value) / 100);
+                    });
+                }
+                const lyricsAlignBox = $('#settings-lyrics-align');
+                if (lyricsAlignBox) {
+                    lyricsAlignBox.addEventListener('click', (e) => {
+                        const btn = e.target.closest('.theme-chip');
+                        if (!btn) return;
+                        const m = btn.dataset.val === 'left' ? 'left' : 'center';
+                        try { MKYStore.set(LYRICS_ALIGN_KEY, m); } catch (_) {}
+                        applyLyricsAlign(m);
                     });
                 }
                 if (settingsGlass) {
@@ -4233,7 +4435,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     fbIcon: 'fa-heart'
                 });
             }
-            const HISTORY_ICON_SVG = '<svg class="history-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4.2" width="14" height="2.4" rx="1.2" fill="currentColor"/><rect x="2.5" y="10.2" width="10.5" height="2.4" rx="1.2" fill="currentColor"/><rect x="2.5" y="16.2" width="7" height="2.4" rx="1.2" fill="currentColor"/><path d="M15.6 12.6c0-.8.87-1.28 1.53-.85l5.2 3.4c.62.4.62 1.3 0 1.7l-5.2 3.4c-.66.43-1.53-.05-1.53-.85z" fill="currentColor"/></svg>';
+            const HISTORY_ICON_SVG = svgIcon('history', 'history-svg');
             function historyPickerRowHtml(on) {
                 return pickerRowHtml({
                     plId: '__history__',
@@ -4590,7 +4792,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                             <div class="mine-cover${cover ? '' : ' no-cover'}">
                                 ${cover ? `<img src="${esc(cover)}" alt="">` : '<img alt="">'}
                                 <div class="mine-cover-fallback">${isHistory
-                                    ? '<svg class="history-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4.2" width="14" height="2.4" rx="1.2" fill="currentColor"/><rect x="2.5" y="10.2" width="10.5" height="2.4" rx="1.2" fill="currentColor"/><rect x="2.5" y="16.2" width="7" height="2.4" rx="1.2" fill="currentColor"/><path d="M15.6 12.6c0-.8.87-1.28 1.53-.85l5.2 3.4c.62.4.62 1.3 0 1.7l-5.2 3.4c-.66.43-1.53-.05-1.53-.85z" fill="currentColor"/></svg>'
+                                    ? svgIcon('history', 'history-svg')
                                     : `<i class="fas ${fbIcon}"></i>`}</div>
                             </div>
                             <div class="mine-info">
@@ -7952,7 +8154,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             }
             function reshuffleQueue() {
                 if (getPlayMode() !== 'shuffle') {
-                    showToast('长按重洗仅在随机播放时可用');
                     return false;
                 }
                 shuffleBag = [];
@@ -12281,6 +12482,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             function updatePlayButtons() {
                 const icon = isPlaying ? 'fa-pause' : 'fa-play';
                 if (miniPlayIcon) miniPlayIcon.className = `fas ${icon}`;
+                if (miniPlayBtn) miniPlayBtn.setAttribute('data-tip', isPlaying ? '暂停' : '播放');
                 playBtn.innerHTML = `<i class="fas ${icon}"></i>`;
                 playBtn.setAttribute('data-tip', isPlaying ? '暂停' : '播放');
                 if (lyricsPlayBtn) lyricsPlayBtn.innerHTML = `<i class="fas ${icon}"></i>`;
@@ -13766,6 +13968,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             }
             function init() {
                 applyTheme(getThemeMode());
+                applyLyricsAlign(getLyricsAlign());
                 applyGlass(getGlassEnabled());
                 bindSystemTheme();
                 syncFadeDurations();
