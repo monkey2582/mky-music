@@ -393,9 +393,9 @@ body.tab-bar-hidden .tab-bar { transform:translateY(100%);opacity:0;pointer-even
 .settings-row-link:active { background:var(--surface-hover); }
 .settings-label { font-size:15px;color:var(--text-primary); }
 .settings-value { margin-left:auto;font-size:13px;color:var(--text-muted);font-variant-numeric:tabular-nums;white-space:nowrap; }
-:root[data-lyrics-align="center"] .lyrics-line,:root[data-lyrics-align="center"] #player-lyrics-inner .lyrics-line { text-align:center;transform-origin:center center;padding:13px 0; }
-:root[data-lyrics-align="center"] .lyrics-line { min-height:calc(19px * 1.7 + 26px); }
-:root[data-lyrics-align="left"] .lyrics-line,:root[data-lyrics-align="left"] #player-lyrics-inner .lyrics-line { text-align:left;transform-origin:left center; }
+:root[data-lyrics-align="center"] #lyrics-container .lyrics-line { text-align:center;transform-origin:center center;padding:13px 0; }
+:root[data-lyrics-align="center"] #lyrics-container .lyrics-line { min-height:calc(19px * 1.7 + 26px); }
+:root[data-lyrics-align="left"] #lyrics-container .lyrics-line,:root[data-lyrics-align="left"] #player-lyrics-inner .lyrics-line { text-align:left;transform-origin:left center; }
 .settings-value:empty { display:none; }
 .settings-arrow { font-size:13px;color:var(--text-muted); }
 .settings-theme { position:relative;display:inline-flex;gap:6px;background:var(--surface-hover);border-radius:10px;padding:3px;flex-shrink:0;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent; }
@@ -406,7 +406,9 @@ body.tab-bar-hidden .tab-bar { transform:translateY(100%);opacity:0;pointer-even
 .settings-theme.dragging .theme-chip.active:not(.lens) { color:var(--text-secondary);font-weight:400; }
 .theme-chip.lens { color:var(--text-primary);font-weight:600; }
 .settings-volume { display:flex;align-items:center;gap:10px; }
-.settings-volume i { color:var(--text-muted);font-size:13px; }
+.settings-vol-icon { display:flex;align-items:center;justify-content:center;width:20px;height:20px;padding:0;
+  border:none;background:transparent;color:var(--text-muted);font-size:13px;cursor:pointer; }
+.settings-vol-icon svg,.mv-vol-icon svg,.mv-vol-mini svg { height:1.1em;width:auto;display:block; }
 .settings-volume input[type=range] { width:118px;height:6px;-webkit-appearance:none;appearance:none;background:linear-gradient(to right,var(--primary) 0%,var(--primary) var(--vol-pct, 100%),var(--surface-hover) var(--vol-pct, 100%),var(--surface-hover) 100%);border-radius:999px;outline:none;cursor:pointer; }
 .settings-volume input[type=range]::-webkit-slider-thumb { -webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.42),0 0 0 1px rgba(0,0,0,0.06);border:none;cursor:pointer; }
 .settings-volume input[type=range]::-moz-range-thumb { width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.42),0 0 0 1px rgba(0,0,0,0.06);border:none;cursor:pointer; }
@@ -595,7 +597,7 @@ body.has-mini-player .main-content { padding-bottom:calc(var(--tab-height) + env
 .mv-btn:hover { background:rgba(255,255,255,0.14);color:#fff; }
 .mv-time { flex-shrink:0;min-width:36px;text-align:center;font-size:12px;color:rgba(255,255,255,0.68);font-variant-numeric:tabular-nums; }
 .mv-vol { position:relative;flex-shrink:0;display:flex;align-items:center; }
-.mv-vol-icon { font-size:14px; }
+.mv-vol-icon { font-size:14px;display:flex;align-items:center;justify-content:center; }
 .mv-vol-pop { position:absolute;right:-4px;bottom:calc(100% + 12px);transform:translateY(4px);display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 8px;border-radius:8px;background:var(--popover-toast);border:1px solid var(--border-popover);box-shadow:var(--shadow-popover);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);opacity:0;pointer-events:none;transition:opacity 0.2s ease,transform 0.2s ease; }
 .mv-vol-pop.show { opacity:1;pointer-events:auto;transform:translateY(0); }
 .mv-rate { position:relative;flex-shrink:0;display:flex;align-items:center; }
@@ -605,7 +607,8 @@ body.has-mini-player .main-content { padding-bottom:calc(var(--tab-height) + env
 .mv-rate-item { padding:6px 12px;border-radius:6px;font-size:12.5px;color:var(--text-secondary);white-space:nowrap;cursor:pointer;transition:background 0.16s,color 0.16s; }
 .mv-rate-item:hover { background:var(--surface-hover);color:var(--text-primary); }
 .mv-rate-item.active { color:var(--primary);font-weight:600; }
-.mv-vol-mini { font-size:11.5px;color:var(--text-secondary); }
+.mv-vol-mini { display:flex;align-items:center;justify-content:center;width:20px;height:18px;padding:0;
+  border:none;background:transparent;color:var(--text-secondary);font-size:11.5px;cursor:pointer; }
 .mv-vol-range { width:3px;height:84px;writing-mode:vertical-lr;direction:rtl;-webkit-appearance:none;appearance:none;border-radius:999px;outline:none;cursor:pointer;background:linear-gradient(to top,var(--primary) 0%,var(--primary) var(--vol-pct,100%),var(--surface-hover) var(--vol-pct,100%),var(--surface-hover) 100%); }
 :root[data-theme=light] .mv-vol-range { box-shadow:0 0 0 1px rgba(0, 0, 0, 0.16); }
 .mv-vol-range::-webkit-slider-thumb { -webkit-appearance:none;appearance:none;width:12px;height:12px;border-radius:50%;background:#fff;border:none;box-shadow:0 1px 3px rgba(0,0,0,0.35); }
@@ -1274,7 +1277,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     <div class="settings-row">
                         <div class="settings-label">音量</div>
                         <div class="settings-volume">
-                            <i class="fas fa-volume-low"></i>
+                            <button type="button" class="settings-vol-icon" id="settings-vol-icon" aria-label="静音"></button>
                             <input type="range" id="settings-volume" min="0" max="100" step="1" value="100" aria-label="音量" />
                             <span class="settings-volume-num" id="settings-volume-num">100</span>
                         </div>
@@ -1928,12 +1931,12 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     <span class="mv-time" id="mv-dur">0:00</span>
                     <div class="mv-vol" id="mv-vol">
                         <button class="mv-btn" id="mv-vol-btn" aria-label="音量">
-                            <i class="fas fa-volume-high mv-vol-icon" id="mv-vol-icon"></i>
+                            <span class="mv-vol-icon" id="mv-vol-icon"></span>
                         </button>
                         <div class="mv-vol-pop" id="mv-vol-pop">
                             <span class="mv-vol-num" id="mv-vol-num">100</span>
                             <input type="range" class="mv-vol-range" id="mv-volume" min="0" max="100" step="1" value="100" aria-label="音量" />
-                            <i class="fas fa-volume-low mv-vol-mini"></i>
+                            <button type="button" class="mv-vol-mini" id="mv-vol-mini" aria-label="静音"></button>
                         </div>
                     </div>
                     <div class="mv-rate" id="mv-rate">
@@ -2262,6 +2265,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             const mvVideo = $('#mv-video');
             const mvLoading = $('#mv-loading');
             const mvVolIcon = $('#mv-vol-icon');
+            const mvVolMini = $('#mv-vol-mini');
             const mvVolume = $('#mv-volume');
             const mvVolBtn = $('#mv-vol-btn');
             const mvVol = $('#mv-vol');
@@ -3095,6 +3099,37 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
             }
             const VOLUME_KEY = 'mky_volume';
+            const VOLUME_PREV_KEY = 'mky_volume_prev';
+            const VOL_ICON_2 = '<svg viewBox="0 0 560 512" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M473.1 107c43.2 35.2 70.9 88.9 70.9 149s-27.7 113.8-70.9 149c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C475.3 341.3 496 301.1 496 256s-20.7-85.3-53.2-111.8c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5zm-60.5 74.5C434.1 199.1 448 225.9 448 256s-13.9 56.9-35.4 74.5c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C393.1 284.4 400 271 400 256s-6.9-28.4-17.7-37.3c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5zM301.1 34.8C312.6 40 320 51.4 320 64V448c0 12.6-7.4 24-18.9 29.2s-25 3.1-34.4-5.3L131.8 352H64c-35.3 0-64-28.7-64-64V224c0-35.3 28.7-64 64-64h67.8L266.7 40.1c9.4-8.4 22.9-10.4 34.4-5.3z"/></svg>';
+            function volumeIconMarkup(v) {
+                if (!(v > 0.001)) return '<i class="fas fa-volume-xmark"></i>';
+                if (v < 0.34) return '<i class="fas fa-volume-low"></i>';
+                if (v < 0.67) return VOL_ICON_2;
+                return '<i class="fas fa-volume-high"></i>';
+            }
+            let volumeMuted = false;
+            let volumePrev = 0.6;
+            try {
+                const pv = parseFloat(MKYStore.get(VOLUME_PREV_KEY));
+                if (isFinite(pv) && pv > 0.001 && pv <= 1) volumePrev = pv;
+            } catch (_) {}
+            function syncVolumeIcons() {
+                const btn = $('#settings-vol-icon');
+                if (btn) btn.innerHTML = volumeIconMarkup(getVolume());
+            }
+            function toggleVolumeMute() {
+                const cur = getVolume();
+                if (cur > 0.001) {
+                    volumePrev = cur;
+                    try { MKYStore.set(VOLUME_PREV_KEY, String(cur)); } catch (_) {}
+                    setVolume(0);
+                } else {
+                    const back = volumePrev > 0.001 ? volumePrev : 0.6;
+                    setVolume(back);
+                }
+                syncVolumeIcons();
+            }
+
             const FADE_KEY = 'mky_fade';
             function getVolume() {
                 try {
@@ -3112,6 +3147,11 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             function setVolume(v) {
                 const val = Math.max(0, Math.min(1, v));
                 try { MKYStore.set(VOLUME_KEY, String(val)); } catch (_) {}
+                volumeMuted = val <= 0.001;
+                if (!volumeMuted) {
+                    volumePrev = val;
+                    try { MKYStore.set(VOLUME_PREV_KEY, String(val)); } catch (_) {}
+                }
                 if (currentAudio) {
                     try { currentAudio.volume = val; } catch (_) {}
                 }
@@ -3123,6 +3163,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     if (settingsVolume.value !== sv) settingsVolume.value = sv;
                 }
                 paintVolumeTrack();
+                syncVolumeIcons();
             }
             function getFadeEnabled() {
                 try {
@@ -3594,6 +3635,11 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         settingsVolumeNum.textContent = settingsVolume.value;
                     }
                     paintVolumeTrack();
+                    syncVolumeIcons();
+                    const volIconBtn = $('#settings-vol-icon');
+                    if (volIconBtn) {
+                        volIconBtn.addEventListener('click', () => toggleVolumeMute());
+                    }
                     settingsVolume.addEventListener('input', () => {
                         setVolume(parseFloat(settingsVolume.value) / 100);
                     });
@@ -4663,6 +4709,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         settingsVolumeNum.textContent = settingsVolume.value;
                     }
                     paintVolumeTrack();
+                    syncVolumeIcons();
                     if (settingsFade) settingsFade.checked = getFadeEnabled();
                     refreshCacheUsage();
                 }
@@ -6022,14 +6069,32 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 document.addEventListener('pointerdown', unlock, true);
                 document.addEventListener('keydown', unlock, true);
             }
+            let mvLastVolume = 1;
             function mvSyncVolIcon() {
                 if (!mvVolIcon || !mvVideo) return;
                 const v = mvVideo.muted ? 0 : mvVideo.volume;
-                const cls = v <= 0.001 ? 'volume-xmark' : (v < 0.5 ? 'volume-low' : 'volume-high');
-                mvVolIcon.className = 'fas fa-' + cls + ' mv-vol-icon';
+                if (v > 0.001) mvLastVolume = v;
+                mvVolIcon.innerHTML = volumeIconMarkup(v);
+                if (mvVolMini) mvVolMini.innerHTML = volumeIconMarkup(v);
                 const pct = Math.round(v * 100);
                 if (mvVolNum) mvVolNum.textContent = String(pct);
                 if (mvVolume) mvVolume.style.setProperty('--vol-pct', pct + '%');
+            }
+            function mvToggleMute() {
+                if (!mvVideo) return;
+                if (mvVideo.muted || mvVideo.volume <= 0.001) {
+                    mvVideo.muted = false;
+                    mvVideo.volume = mvLastVolume > 0.001 ? mvLastVolume : 0.6;
+                } else {
+                    mvLastVolume = mvVideo.volume;
+                    mvVideo.muted = true;
+                }
+                if (mvVolume) {
+                    mvVolume.value = String(Math.round(
+                        (mvVideo.muted ? 0 : mvVideo.volume) * 100));
+                }
+                mvSyncVolIcon();
+                mvPokeBar();
             }
             function mvCloseVolPop() {
                 if (!mvVolPop || !mvVolPop.classList.contains('show')) return;
@@ -6209,6 +6274,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     if (favPage.classList.contains('active')) renderFavorites();
                     if (playlistPage.classList.contains('active')) renderPlaylistDetail();
                     if (activeTab === 'mine') renderMinePage();
+                    closeSheet(playerMoreMenu);
                 });
                 bindMvItem(playerMoreMenu, () => currentSong);
                 playerMoreMenu.querySelector('[data-act="download"]')
@@ -6405,6 +6471,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         if (favPage.classList.contains('active')) renderFavorites();
                         if (playlistPage.classList.contains('active')) renderPlaylistDetail();
                         if (activeTab === 'mine') renderMinePage();
+                        closeSheet(songMoreMenu);
                     });
                 }
                 const toPlItem = songMoreMenu.querySelector('[data-act="to-playlist"]');
@@ -7072,6 +7139,12 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         mvVolPop.classList.add('show');
                     }
                     mvPokeBar();
+                });
+            }
+            if (mvVolMini) {
+                mvVolMini.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    mvToggleMute();
                 });
             }
             if (mvVolume) {
@@ -10914,8 +10987,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 lyricsMaxScroll = Math.max(0, lyricsContainer.scrollHeight - lyricsViewportH);
                 lyricsLayoutDirty = false;
             }
-            const LYRIC_ANCHOR_DESK = 0.35;
-            const LYRIC_ANCHOR_MOBILE = 0.25;
+            const LYRIC_ANCHOR_DESK = 0.33;
+            const LYRIC_ANCHOR_MOBILE = 0.33;
             const LYRICS_RESUME_DELAY = 2600;
             const LYRICS_TOP_PAD_MAX_RATIO = 0.14;
             function applyLyricsPadding() {
@@ -13504,7 +13577,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 cover.style.transform = 'translateX(' + (dir < 0 ? -gap : gap) + 'px)';
                 cover.style.setProperty('--disc-veil', '0');
                 if (albumCoverBox) albumCoverBox.style.opacity = '0';
-                if (peeking && peekHasCover(peeking)) peeking.style.opacity = '1';
+                if (peeking && (peekHasCover(peeking) || isDesktopPointer())) peeking.style.opacity = '1';
                 settleTimer = setTimeout(() => {
                     settleTimer = 0;
                     cover.classList.add('swipe-reset');
@@ -13540,11 +13613,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             function switchDisc(dir) {
                 if (swipeSettling) return;
                 if (placeholderMode) { showPlaceholderTip(); return; }
-                if (isDesktopPointer()) {
-                    resetSwipeShift();
-                    if (dir < 0) playNext(); else playPrev();
-                    return;
-                }
+                resetSwipeShift();
                 ensurePlayQueue();
                 if (currentSongs.length < 2) {
                     if (dir < 0) playNext(); else playPrev();
@@ -13552,7 +13621,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
                 refreshSwipePeeks();
                 const peeking = dir < 0 ? albumPeekNext : albumPeekPrev;
-                if (!peeking || !peekHasCover(peeking)) {
+                if (!peeking || (!peekHasCover(peeking) && !isDesktopPointer())) {
                     if (dir < 0) playNext(); else playPrev();
                     return;
                 }
