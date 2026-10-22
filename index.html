@@ -626,19 +626,15 @@ body.has-mini-player .main-content { padding-bottom:calc(var(--tab-height) + env
 .mv-related { width:100%;max-width:960px;display:flex;flex-direction:column;gap:12px; }
 .mv-related[hidden] { display:none; }
 .mv-related-title { font-size:13px;font-weight:600;color:var(--text-secondary); }
-.mv-related-list { display:flex;flex-direction:column;gap:8px;scrollbar-width:thin;scrollbar-color:rgba(255, 255, 255, 0.30) transparent; }
-.mv-related-list::-webkit-scrollbar { width:5px; }
-.mv-related-list::-webkit-scrollbar-track { background:transparent; }
-.mv-related-list::-webkit-scrollbar-thumb { background:rgba(255, 255, 255, 0.30);border-radius:999px; }
-:root[data-theme=light] .mv-related-list { scrollbar-color:rgba(0, 0, 0, 0.22) transparent; }
-:root[data-theme=light] .mv-related-list::-webkit-scrollbar-thumb { background:rgba(0, 0, 0, 0.22); }
+.mv-related-list { display:flex;flex-direction:column;gap:8px;scrollbar-width:none;-ms-overflow-style:none; }
+.mv-related-list::-webkit-scrollbar { width:0;height:0;display:none; }
 .mv-related-item { display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;cursor:pointer;transition:background 0.18s; }
 .mv-related-item:hover { background:var(--surface-hover); }
 .mv-related-cover { flex-shrink:0;width:64px;height:36px;border-radius:6px;object-fit:cover;background:var(--surface-card); }
 .mv-related-info { flex:1;min-width:0;display:flex;flex-direction:column;gap:2px; }
 .mv-related-name { font-size:13px;color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
 .mv-related-artist { font-size:11.5px;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
-@media (min-width:900px),(min-width:640px)and (max-height:500px) { .mv-body { display:grid;grid-template-columns:minmax(0,1fr) 270px;grid-template-rows:auto minmax(0,1fr);grid-template-areas:"info list" "stage list";align-items:start;justify-items:stretch;gap:14px 18px;padding:92px 20px 0;overflow:hidden; } .mv-info { grid-area:info;max-width:none; } .mv-stage { grid-area:stage;width:100%;max-width:none;aspect-ratio:16/9;height:auto;max-height:100%;min-height:0; } #mv-video { width:100%;height:100%;max-height:none;min-height:0;aspect-ratio:auto;object-fit:contain; } .mv-related { grid-area:list;max-width:none;height:100%;overflow:hidden; } .mv-related-list { flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain; } }
+@media (min-width:900px),(min-width:640px)and (max-height:500px) { .mv-body { display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,360px);grid-template-rows:auto minmax(0,1fr);grid-template-areas:"info list" "stage list";align-items:start;justify-items:stretch;gap:14px 18px;padding:92px 20px 0;overflow:hidden; } .mv-info { grid-area:info;max-width:none; } .mv-stage { grid-area:stage;width:100%;max-width:none;aspect-ratio:16/9;height:auto;max-height:calc(100vh - 190px);min-height:0;align-self:start; } #mv-video { width:100%;height:100%;max-height:none;min-height:0;aspect-ratio:auto;object-fit:contain; } .mv-related { grid-area:list;max-width:none;height:100%;overflow:hidden; } .mv-related-list { flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain; } }
 #history-page .fav-header { flex-shrink:0;padding:14px 16px; }
 #history-page .fav-scroll { padding-top:calc(var(--fav-header-h, 58px) + 8px); }
 #history-page .pl-summary { padding:2px 16px 10px;gap:12px; }
@@ -829,23 +825,25 @@ body.tab-bar-hidden .mini-player { bottom:0; }
 .lyrics-line-plain { color:var(--text-secondary);font-size:14px; }
 .disc-stage { width:100%;display:flex;align-items:center;justify-content:center;margin-top:calc(-24px + var(--disc-lift, 0px)); }
 .disc-stage > .album-cover-wrap { margin-top:0; }
-.album-cover-wrap { position:relative;width:min(100%,330px);aspect-ratio:1 / 1;height:auto;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:calc(-24px + var(--disc-lift, 0px));cursor:pointer;-webkit-tap-highlight-color:transparent; }
-.album-cover-wrap::before,.album-cover-peek::before { content:"";position:absolute;inset:-30px;border-radius:50%;background:conic-gradient(from 0deg,var(--disc-glow-a, rgba(233, 30, 99, 0.00)),var(--disc-glow-b, rgba(233, 30, 99, 0.50)),var(--disc-glow-c, rgba(156, 39, 176, 0.34)),var(--disc-glow-a, rgba(233, 30, 99, 0.00)));filter:blur(26px);opacity:calc(0.8 * var(--disc-veil, 1));z-index:0;will-change:transform;animation:haloSpin 19s linear infinite;animation-play-state:paused;transition:opacity 0.28s ease,background 0.5s ease; }
+.album-cover-wrap { position:relative;width:min(100%,330px);aspect-ratio:1 / 1;height:auto;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:calc(-24px + var(--disc-lift, 0px));cursor:pointer;-webkit-tap-highlight-color:transparent;border-radius:50%; }
+.album-cover-shadow { position:absolute;inset:0;border-radius:50%;box-shadow:0 30px 60px -26px rgba(0,0,0,0.7);pointer-events:none;z-index:0;transition:opacity 0.24s ease; }
+.player-content.swiping .album-cover-shadow { transition:none; }
+.album-cover-wrap::before,.album-cover-peek::before { content:"";position:absolute;inset:-30px;border-radius:50%;background:conic-gradient(from 0deg,var(--disc-glow-a, rgba(233, 30, 99, 0.00)),var(--disc-glow-b, rgba(233, 30, 99, 0.50)),var(--disc-glow-c, rgba(156, 39, 176, 0.34)),var(--disc-glow-a, rgba(233, 30, 99, 0.00)));filter:blur(26px);opacity:calc(0.8 * var(--disc-veil, 1));z-index:1;will-change:transform;animation:haloSpin 19s linear infinite;animation-play-state:paused;transition:opacity 0.28s ease,background 0.5s ease; }
 .album-cover-wrap.spinning::before,.album-cover-wrap.spinning .album-cover-peek::before { animation-play-state:running; }
 @keyframes haloSpin { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
 @media (prefers-reduced-motion:reduce) { .album-cover-wrap::before,.album-cover-peek::before { animation:none; } }
 .album-cover-wrap::after,.album-cover-peek::after { content:"";position:absolute;inset:0;border-radius:50%;background:none;z-index:1;opacity:var(--disc-veil, 1);transition:opacity 0.28s ease; }
-.album-cover { position:relative;z-index:2;width:100%;height:100%;aspect-ratio:1 / 1;flex-shrink:0;border-radius:50%;background:repeating-radial-gradient(circle at 50% 50%,rgba(255,255,255,0.020) 0px,rgba(255,255,255,0.020) 1px,rgba(0,0,0,0) 1px,rgba(0,0,0,0) 3px),radial-gradient(circle at 50% 50%,#262626 0%,#202020 34%,#181818 70%,#111 100%),radial-gradient(circle at 50% 50%,rgba(0,0,0,0) 54%,rgba(0,0,0,0.34) 100%);box-shadow:0 0 0 1px rgba(255,255,255,0.16),0 0 30px 6px rgba(255,255,255,0.14),0 30px 60px -26px rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;overflow:hidden;transform:rotate(0deg);will-change:transform; }
+.album-cover { position:relative;z-index:2;width:100%;height:100%;aspect-ratio:1 / 1;flex-shrink:0;border-radius:50%;background:repeating-radial-gradient(circle at 50% 50%,rgba(255,255,255,0.020) 0px,rgba(255,255,255,0.020) 1px,rgba(0,0,0,0) 1px,rgba(0,0,0,0) 3px),radial-gradient(circle at 50% 50%,#262626 0%,#202020 34%,#181818 70%,#111 100%),radial-gradient(circle at 50% 50%,rgba(0,0,0,0) 54%,rgba(0,0,0,0.34) 100%);box-shadow:0 0 0 1px rgba(255,255,255,0.16),0 0 30px 6px rgba(255,255,255,0.14);display:flex;align-items:center;justify-content:center;overflow:hidden;transform:rotate(0deg);will-change:transform; }
 
-.album-cover-peek-disc { position:relative;z-index:2;width:100%;height:100%;aspect-ratio:1 / 1;flex-shrink:0;border-radius:50%;background:repeating-radial-gradient(circle at 50% 50%,rgba(255,255,255,0.020) 0px,rgba(255,255,255,0.020) 1px,rgba(0,0,0,0) 1px,rgba(0,0,0,0) 3px),radial-gradient(circle at 50% 50%,#262626 0%,#202020 34%,#181818 70%,#111 100%),radial-gradient(circle at 50% 50%,rgba(0,0,0,0) 54%,rgba(0,0,0,0.34) 100%);box-shadow:0 0 0 1px rgba(255,255,255,0.16),0 0 30px 6px rgba(255,255,255,0.14),0 30px 60px -26px rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center; }
+.album-cover-peek-disc { position:relative;z-index:2;width:100%;height:100%;aspect-ratio:1 / 1;flex-shrink:0;border-radius:50%;background:repeating-radial-gradient(circle at 50% 50%,rgba(255,255,255,0.020) 0px,rgba(255,255,255,0.020) 1px,rgba(0,0,0,0) 1px,rgba(0,0,0,0) 3px),radial-gradient(circle at 50% 50%,#262626 0%,#202020 34%,#181818 70%,#111 100%),radial-gradient(circle at 50% 50%,rgba(0,0,0,0) 54%,rgba(0,0,0,0.34) 100%);box-shadow:0 0 0 1px rgba(255,255,255,0.16),0 0 30px 6px rgba(255,255,255,0.14);display:flex;align-items:center;justify-content:center; }
 
-.album-cover-img { width:68%;height:68%;aspect-ratio:1 / 1;object-fit:cover;object-position:center;display:block;border-radius:50%;box-shadow:0 0 0 2px rgba(0,0,0,0.55),0 8px 20px rgba(0,0,0,0.45); }
-.album-cover-peek { --disc-veil:1;position:absolute;left:50%;top:50%;width:100%;height:100%;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;z-index:2;transform:translate(-50%,-50%);transition:opacity 0.24s ease,transform 0.3s cubic-bezier(0.22,1,0.36,1);will-change:transform,opacity; }
+.album-cover-img { width:68%;height:68%;aspect-ratio:1 / 1;object-fit:cover;object-position:center;display:block;border-radius:50%;box-shadow:0 0 0 2px rgba(0,0,0,0.55),0 0 18px rgba(0,0,0,0.45); }
+.album-cover-peek { --disc-veil:1;position:absolute;left:50%;top:50%;width:100%;height:100%;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;z-index:2;border-radius:50%;box-shadow:0 30px 60px -26px rgba(0,0,0,0.7);transform:translate(-50%,-50%);transition:opacity 0.24s ease,transform 0.3s cubic-bezier(0.22,1,0.36,1);will-change:transform,opacity; }
 .album-cover-peek::before,.album-cover-peek::after { pointer-events:none; }
 .player-content .album-cover { transition:opacity 0.28s ease; }
 .player-content.swiping .album-cover { transition:none; }
 .player-content.swiping .album-cover-peek,.player-content.swiping .album-cover-wrap::before,.player-content.swiping .album-cover-wrap::after { transition:none; }
-.album-cover-peek img { width:68%;height:68%;aspect-ratio:1 / 1;object-fit:cover;object-position:center;display:block;border-radius:50%;box-shadow:0 0 0 2px rgba(0,0,0,0.55),0 8px 20px rgba(0,0,0,0.45);visibility:hidden; }
+.album-cover-peek img { width:68%;height:68%;aspect-ratio:1 / 1;object-fit:cover;object-position:center;display:block;border-radius:50%;box-shadow:0 0 0 2px rgba(0,0,0,0.55),0 0 18px rgba(0,0,0,0.45);visibility:hidden; }
 .album-cover-peek img[src] { visibility:visible; }
 .album-cover-peek-fallback { position:absolute;inset:0;display:none;align-items:center;justify-content:center;font-size:64px;color:var(--text-faint);pointer-events:none; }
 .album-cover-peek-disc:has(>img:not([src])) .album-cover-peek-fallback { display:flex;opacity:0.45; }
@@ -1102,14 +1100,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
 .share-row-code::-moz-selection { background:transparent;color:var(--primary); }
 .share-row-sub { margin-top:2px;font-size:11.5px;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
 .share-hint { padding:10px 2px 2px;font-size:12px;line-height:1.6;color:var(--text-muted);text-align:center; }
-[data-tip] { position:relative; }
-[data-tip]::after { content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%) translateY(2px);padding:5px 9px;border-radius:7px;font-size:11.5px;line-height:1.2;font-weight:400;white-space:nowrap;background:var(--popover-toast);color:var(--text-primary);border:1px solid var(--border-popover);box-shadow:var(--shadow-popover);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity 0.16s ease,transform 0.16s ease;z-index:6; }
-[data-tip]:hover::after { opacity:1;transform:translateX(-50%) translateY(0); }
-.fav-header [data-tip]::after { top:calc(100% + 8px);bottom:auto;transform:translateX(-50%) translateY(-2px); }
-.fav-header [data-tip]:hover::after { transform:translateX(-50%) translateY(0); }
 #player-more-btn::after { top:calc(100% + 8px);bottom:auto;transform:translateX(-50%) translateY(-2px); }
 #player-more-btn:hover::after { transform:translateX(-50%) translateY(0); }
-@media (hover:none) { [data-tip]::after { display:none; } }
 .sheet .menu-item.danger:hover,.sheet .menu-item.danger:active { background:rgba(255,77,109,0.12);transform:none; }
 .sheet .menu-item:active:not(.danger),.sheet .menu-item:active:not(.danger) i { color:var(--text-primary); }
 .sheet .menu-item-note { margin-left:auto;font-size:13px;color:var(--text-secondary);font-variant-numeric:tabular-nums; }
@@ -1158,7 +1150,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
 .lc-btn.lc-play { width:46px;height:46px;background:var(--primary);color:#fff;font-size:18px;box-shadow:0 6px 20px rgba(233,30,99,0.42); }
 .lc-btn.lc-play:hover { background:#f0346f; }
 @media (max-width:400px) { .lyrics-controls { right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px)); } .lc-btn { width:36px;height:36px;font-size:15px; } .lc-btn.lc-play { width:42px;height:42px;font-size:16px; } }
-@media (min-width:900px),(min-width:640px)and (max-height:500px) { .player-content { flex-direction:row;align-items:center;justify-content:center;gap:48px;padding:0 56px;overflow:visible;margin-top:0; } .player-swipe-layer { flex-direction:row;justify-content:center;align-items:center;gap:48px;flex:0 1 auto;width:auto; } .player-left { flex:0 1 420px;width:420px;max-width:420px;min-width:0;margin-top:0;clip-path:inset(-160px -148px -160px -2000px); } .disc-stage { margin-top:calc(-24px + var(--disc-lift, -80px)); } .album-cover-wrap { width:min(100%,260px);height:auto;max-height:none;margin-top:calc(-24px + var(--disc-lift, -80px)); } .progress-container { max-width:370px; } .album-cover-wrap::before,.album-cover-peek::before { inset:-24px;filter:blur(22px); } .player-lyrics { display:block;max-width:460px;height:min(68vh,560px); } .player-lyrics-inner { padding:12px 8px; } .player-lyrics-inner .lyrics-line { font-size:18px;line-height:1.9; } #lyrics-btn { display:none; } .cover-lyric { display:none; } .main-control-btn.add-pl-btn { display:flex;color:var(--text-primary); } .sheet { left:50%;right:auto;width:min(420px,calc(100vw - 48px));bottom:calc(var(--bottom-stack) + 12px);transform:translate(-50%,16px) scale(0.97); } #pl-select-more-menu { bottom:calc(var(--bottom-stack) + 56px); } .sheet.active { transform:translate(-50%,0) scale(1); } #rate-sheet,.sheet.sheet-dock-left { left:24px;right:auto;width:min(340px,calc(100vw - 48px));bottom:auto;top:50%;transform:translateY(calc(-50% + 16px)) scale(0.97);max-height:min(62vh,520px); } .sheet.sheet-dock-left { left:calc(var(--side-tab-width) + 56px); } #rate-sheet.active,.sheet.sheet-dock-left.active { transform:translateY(-50%) scale(1); } #rate-sheet { left:auto;right:20px;top:64px;bottom:auto;width:min(300px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right; } #rate-sheet.active { transform:translateY(0) scale(1); } #player-more-menu { left:auto;right:20px;top:64px;bottom:auto;width:min(240px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right; } #player-more-menu.active { transform:translateY(0) scale(1); } .sheet.sheet-dock-topright { left:auto;right:20px;top:64px;bottom:auto;width:min(320px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right;max-height:min(62vh,520px); } .sheet.sheet-dock-topright.active { transform:translateY(0) scale(1); } .lyrics-controls { right:auto;left:24px; } #player-lyrics-inner .lyrics-line { padding:10px 0;min-height:auto;transform:none;transform-origin:left center; } #player-lyrics-inner .lyrics-line.active { transform:none;color:var(--text-primary);font-weight:500;opacity:1; } #player-lyrics-inner .lyrics-line:not(.active) { opacity:0.55; } #lyrics-page .player-header { justify-content:center; } #back-to-player-btn,#lyrics-controls { display:none!important; } #lyrics-page .lyrics-container { padding-left:clamp(40px,12vw,200px);padding-right:clamp(40px,12vw,200px); } }
+@media (min-width:900px),(min-width:640px)and (max-height:500px) { .player-content { flex-direction:row;align-items:center;justify-content:center;gap:48px;padding:0 56px;overflow:visible;margin-top:0; } .player-swipe-layer { flex-direction:row;justify-content:center;align-items:center;gap:48px;flex:0 1 auto;width:auto; } .player-left { flex:0 1 420px;width:420px;max-width:420px;min-width:0;margin-top:0;clip-path:inset(-160px -148px -160px -2000px); } .disc-stage { margin-top:calc(-24px + var(--disc-lift, -80px)); } .album-cover-wrap { width:min(100%,30vh,230px);height:auto;max-height:none;margin-top:calc(-24px + var(--disc-lift, -80px)); } .progress-container { max-width:370px; } .album-cover-wrap::before,.album-cover-peek::before { inset:-24px;filter:blur(22px); } .player-lyrics { display:block;max-width:460px;height:min(68vh,560px); } .player-lyrics-inner { padding:12px 8px; } .player-lyrics-inner .lyrics-line { font-size:18px;line-height:1.9; } #lyrics-btn { display:none; } .cover-lyric { display:none; } .main-control-btn.add-pl-btn { display:flex;color:var(--text-primary); } .sheet { left:50%;right:auto;width:min(420px,calc(100vw - 48px));bottom:calc(var(--bottom-stack) + 12px);transform:translate(-50%,16px) scale(0.97); } #pl-select-more-menu { bottom:calc(var(--bottom-stack) + 56px); } .sheet.active { transform:translate(-50%,0) scale(1); } #rate-sheet,.sheet.sheet-dock-left { left:24px;right:auto;width:min(340px,calc(100vw - 48px));bottom:auto;top:50%;transform:translateY(calc(-50% + 16px)) scale(0.97);max-height:min(62vh,520px); } .sheet.sheet-dock-left { left:calc(var(--side-tab-width) + 56px); } #rate-sheet.active,.sheet.sheet-dock-left.active { transform:translateY(-50%) scale(1); } #rate-sheet { left:auto;right:20px;top:64px;bottom:auto;width:min(300px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right; } #rate-sheet.active { transform:translateY(0) scale(1); } #player-more-menu { left:auto;right:20px;top:64px;bottom:auto;width:min(240px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right; } #player-more-menu.active { transform:translateY(0) scale(1); } .sheet.sheet-dock-topright { left:auto;right:20px;top:64px;bottom:auto;width:min(320px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right;max-height:min(62vh,520px); } .sheet.sheet-dock-topright.active { transform:translateY(0) scale(1); } .lyrics-controls { right:auto;left:24px; } #player-lyrics-inner .lyrics-line { padding:10px 0;min-height:auto;transform:none;transform-origin:left center; } #player-lyrics-inner .lyrics-line.active { transform:none;color:var(--text-primary);font-weight:500;opacity:1; } #player-lyrics-inner .lyrics-line:not(.active) { opacity:0.55; } #lyrics-page .player-header { justify-content:center; } #back-to-player-btn,#lyrics-controls { display:none!important; } #lyrics-page .lyrics-container { padding-left:clamp(40px,12vw,200px);padding-right:clamp(40px,12vw,200px); } }
 @media (min-width:640px)and (max-height:500px) { .player-content { gap:28px;padding:4px 24px 16px;margin-top:0; } .player-swipe-layer { gap:28px; } .player-left { flex:0 0 auto;width:auto;max-width:340px;--ctrl-size:42px;--ctrl-gap:12px;clip-path:inset(-160px -124px -160px -2000px); } .disc-stage { margin-top:0; } .album-cover-wrap { width:min(46vh,230px);height:auto;max-height:none;margin-top:0; } .player-panel { width:100%; } .player-main-controls { margin:0; } .main-control-btn { font-size:18px; } .main-control-btn.play-pause { font-size:20px; } .player-lyrics { height:min(84vh,100%); } .player-lyrics-inner .lyrics-line { font-size:16px;line-height:1.8; } .album-cover-wrap::before { inset:-18px;filter:blur(18px); } .player-header { padding:8px 16px; } .player-title { padding:0 96px; } .player-song-name { font-size:15px; } .player-artist-name { font-size:12px; } }
 @media (min-width:900px),(min-width:640px)and (max-height:500px) { .main-content { padding-left:calc(var(--side-tab-width) + 24px);padding-bottom:30px; } body.has-mini-player .main-content { padding-bottom:calc(var(--mini-height) + 24px); } .header { padding-left:calc(var(--side-tab-width) + 20px); } .mini-player { left:var(--side-tab-width);right:0;bottom:0; } .fab-stack { bottom:18px; } body.has-mini-player .fab-stack { bottom:calc(var(--mini-height) + 18px); } .player-header { padding:16px 32px; } .player-title { padding:0 100px; } .player-song-name { font-size:18px; } .player-artist-name { font-size:13.5px; } .fav-page,.playlist-page,.search-results,.about-page { left:calc(var(--side-tab-width) + 1px); } .about-page { display:none; } body.settings-tab .about-page { display:flex; } }
 @media (min-width:900px),(min-width:640px)and (max-height:500px) { body #select-bar,body #pl-select-bar { left:var(--side-tab-width);right:0;width:auto;padding:8px 10px;border:none;border-top:1px solid var(--glass-edge);border-radius:0;box-shadow:var(--inset-highlight);background:var(--glass-panel-strong);-webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));transform:translateY(16px);bottom:0; } body #select-bar.active,body #pl-select-bar.active { transform:translateY(0); } body.has-mini-player #select-bar,body.has-mini-player #pl-select-bar { bottom:var(--mini-height); } body .select-topbar { left:var(--side-tab-width); } }
@@ -1168,7 +1160,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
     <header class="header">
         <div class="search-container" id="song-search-container">
             <div class="search-field" id="song-search-field">
-                <input type="text" class="search-input" id="search-input" placeholder="搜索歌曲、歌手..." autocomplete="off" />
+                <input type="text" class="search-input" id="search-input" placeholder="搜索歌曲..." autocomplete="off" />
                 <button class="input-clear" id="search-input-clear" aria-label="清除" title="清除">
                     <i class="fas fa-times"></i>
                 </button>
@@ -1355,13 +1347,13 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             <div class="mini-song-artist" id="mini-song-artist">MKY音乐</div>
         </div>
         <div class="player-controls">
-            <button class="control-btn mini-fav-btn" id="mini-fav-btn" aria-label="收藏" data-tip="收藏">
+            <button class="control-btn mini-fav-btn" id="mini-fav-btn" aria-label="收藏" title="收藏">
                 <i class="far fa-heart"></i>
             </button>
-            <button class="control-btn" id="menu-btn" aria-label="播放历史" data-tip="播放历史">
+            <button class="control-btn" id="menu-btn" aria-label="播放历史" title="播放历史">
                 <i class="mini-history-icon" aria-hidden="true"><svg class="history-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4.2" width="14" height="2.4" rx="1.2" fill="currentColor"/><rect x="2.5" y="10.2" width="10.5" height="2.4" rx="1.2" fill="currentColor"/><rect x="2.5" y="16.2" width="7" height="2.4" rx="1.2" fill="currentColor"/><path d="M15.6 12.6c0-.8.87-1.28 1.53-.85l5.2 3.4c.62.4.62 1.3 0 1.7l-5.2 3.4c-.66.43-1.53-.05-1.53-.85z" fill="currentColor"/></svg></i>
             </button>
-            <button class="control-btn play-pause" id="mini-play-btn" aria-label="播放/暂停" data-tip="播放">
+            <button class="control-btn play-pause" id="mini-play-btn" aria-label="播放/暂停" title="播放">
                 <svg class="mini-ring" viewBox="0 0 24 24" aria-hidden="true">
                     <circle class="mini-ring-track" cx="12" cy="12" r="9"></circle>
                     <circle class="mini-ring-arc" id="mini-ring-fill" cx="12" cy="12" r="9"></circle>
@@ -1385,7 +1377,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     <span class="lc-trans-label">译</span>
                 </button>
                 <button class="control-btn" id="player-more-btn"
-                        aria-label="更多" data-tip="更多">
+                        aria-label="更多" title="更多">
                     <i class="fas fa-ellipsis-v"></i>
                 </button>
             </div>
@@ -1395,6 +1387,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             <div class="player-left">
                 <div class="disc-stage" id="disc-stage">
                     <div class="album-cover-wrap" id="album-cover-wrap">
+                        <div class="album-cover-shadow" id="album-cover-shadow" aria-hidden="true"></div>
                         <div class="album-cover-peek" id="album-peek-prev" aria-hidden="true">
                             <div class="album-cover-peek-disc">
                                 <img alt="" />
@@ -1430,22 +1423,22 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         </div>
                     </div>
                     <div class="player-main-controls">
-                        <button class="main-control-btn fav-btn" id="full-fav-btn" aria-label="点赞">
+                        <button class="main-control-btn fav-btn" id="full-fav-btn" aria-label="收藏" title="收藏">
                             <i class="far fa-heart"></i>
                         </button>
-                        <button class="main-control-btn" id="prev-btn" aria-label="上一首" data-tip="上一首">
+                        <button class="main-control-btn" id="prev-btn" aria-label="上一首" title="上一首">
                             <i class="fas fa-step-backward"></i>
                         </button>
-                        <button class="main-control-btn play-pause" id="play-btn" aria-label="播放/暂停" data-tip="播放">
+                        <button class="main-control-btn play-pause" id="play-btn" aria-label="播放/暂停" title="播放">
                             <i class="fas fa-play"></i>
                         </button>
-                        <button class="main-control-btn" id="next-btn" aria-label="下一首" data-tip="下一首">
+                        <button class="main-control-btn" id="next-btn" aria-label="下一首" title="下一首">
                             <i class="fas fa-step-forward"></i>
                         </button>
-                        <button class="main-control-btn lyrics-word-btn" id="lyrics-btn" aria-label="歌词" data-tip="歌词">
+                        <button class="main-control-btn lyrics-word-btn" id="lyrics-btn" aria-label="歌词" title="歌词">
                             <span class="lyrics-word">词</span>
                         </button>
-                        <button class="main-control-btn add-pl-btn" id="bar-add-pl-btn" aria-label="加入歌单" data-tip="加入歌单">
+                        <button class="main-control-btn add-pl-btn" id="bar-add-pl-btn" aria-label="加入歌单" title="加入歌单">
                             <i class="fas fa-plus"></i>
                         </button>
                     </div>
@@ -1524,7 +1517,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 </button>
                 <div class="results-search-wrap">
                     <div class="search-field">
-                        <input type="text" class="search-input" id="results-search-input" placeholder="搜索歌曲、歌手..." autocomplete="off" />
+                        <input type="text" class="search-input" id="results-search-input" placeholder="搜索歌曲..." autocomplete="off" />
                         <button class="input-clear" id="results-search-input-clear" aria-label="清除" title="清除">
                             <i class="fas fa-times"></i>
                         </button>
@@ -1569,7 +1562,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             <div class="fav-header-search" id="fav-header-search">
                 <div class="search-field">
                     <input type="text" class="search-input" id="fav-search-input"
-                           placeholder="搜索歌曲、歌手..." autocomplete="off" />
+                           placeholder="搜索歌曲..." autocomplete="off" />
                     <button class="input-clear" id="fav-search-clear" aria-label="清除" title="清除">
                         <i class="fas fa-times"></i>
                     </button>
@@ -1619,7 +1612,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             <div class="fav-header-search" id="pl-header-search">
                 <div class="search-field">
                     <input type="text" class="search-input" id="pl-search-input"
-                           placeholder="搜索歌曲、歌手..." autocomplete="off" />
+                           placeholder="搜索歌曲..." autocomplete="off" />
                     <button class="input-clear" id="pl-search-clear" aria-label="清除" title="清除">
                         <i class="fas fa-times"></i>
                     </button>
@@ -1672,7 +1665,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             <div class="fav-header-search" id="history-header-search">
                 <div class="search-field">
                     <input type="text" class="search-input" id="history-search-input"
-                           placeholder="搜索歌曲、歌手..." autocomplete="off" />
+                           placeholder="搜索歌曲..." autocomplete="off" />
                     <button class="input-clear" id="history-search-clear" aria-label="清除" title="清除">
                         <i class="fas fa-times"></i>
                     </button>
@@ -1729,7 +1722,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             <div class="fav-header-search" id="artist-header-search">
                 <div class="search-field">
                     <input type="text" class="search-input" id="artist-search-input"
-                           placeholder="搜索歌曲、歌手..." autocomplete="off" />
+                           placeholder="搜索歌曲..." autocomplete="off" />
                     <button class="input-clear" id="artist-search-clear" aria-label="清除" title="清除">
                         <i class="fas fa-times"></i>
                     </button>
@@ -1940,12 +1933,12 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         </div>
                     </div>
                     <div class="mv-rate" id="mv-rate">
-                        <button class="mv-btn" id="mv-rate-btn" aria-label="倍速" data-tip="倍速">
+                        <button class="mv-btn" id="mv-rate-btn" aria-label="倍速" title="倍速">
                             <span class="mv-rate-label" id="mv-rate-label">1x</span>
                         </button>
                         <div class="mv-rate-pop" id="mv-rate-pop"></div>
                     </div>
-                    <button class="mv-btn" id="mv-full-btn" aria-label="全屏" data-tip="全屏">
+                    <button class="mv-btn" id="mv-full-btn" aria-label="全屏" title="全屏">
                         <i class="fas fa-expand"></i>
                     </button>
                 </div>
@@ -2333,6 +2326,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             const fullFavBtn = $('#full-fav-btn');
             const barAddPlBtn = $('#bar-add-pl-btn');
             const albumCoverWrap = $('#album-cover-wrap');
+            const albumCoverShadow = $('#album-cover-shadow');
             const albumPeekPrev = $('#album-peek-prev');
             const albumPeekNext = $('#album-peek-next');
             const coverLyricEl = $('#cover-lyric');
@@ -2549,7 +2543,19 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             function pushPlayHistory(song) {
                 if (!song || !song.id) return;
                 const key = String(song.id);
-                playHistory = playHistory.filter(s => String(s.id) !== key);
+                const at = playHistory.findIndex(s => String(s.id) === key);
+                if (at >= 0) {
+                    const item = playHistory[at];
+                    if (!item.picurl) {
+                        const cover = song.picurl || knownPicurlOf(song.id);
+                        if (cover) {
+                            item.picurl = cover;
+                            persistPlayHistory();
+                            renderPlayHistoryPage();
+                        }
+                    }
+                    return;
+                }
                 playHistory.unshift({
                     id: song.id,
                     name: song.name || '未知歌曲',
@@ -6136,7 +6142,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const on = !!(document.fullscreenElement || document.webkitFullscreenElement);
                 const label = on ? '退出全屏' : '全屏';
                 mvFullBtn.innerHTML = '<i class="fas fa-' + (on ? 'compress' : 'expand') + '"></i>';
-                mvFullBtn.setAttribute('data-tip', label);
+                mvFullBtn.setAttribute('title', label);
                 mvFullBtn.setAttribute('aria-label', label);
             }
             function mvFmtTime(t) {
@@ -6857,6 +6863,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             }
             async function loadArtistPage(id, name) {
                 artistCtx = { id: id, name: name, songs: [], more: false, total: 0, offset: 0 };
+                artistExtraSongs = [];
                 if (artistPageTitle) artistPageTitle.textContent = name || '歌手';
                 if (artistNameEl) artistNameEl.textContent = name || '歌手';
                 if (artistSubEl) artistSubEl.textContent = '';
@@ -6947,11 +6954,19 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             function renderArtistSongs() {
                 if (!artistList || !artistCtx) return;
                 const kw = (artistKeyword || '').trim().toLowerCase();
-                const all = artistCtx.songs;
-                const shown = kw
-                    ? all.filter(s => (s.name || '').toLowerCase().includes(kw)
-                        || (s.artistsname || '').toLowerCase().includes(kw))
-                    : all;
+                let all = artistCtx.songs;
+                if (kw && artistExtraSongs.length) {
+                    const seen = new Set(all.map(s => String(s.id)));
+                    all = all.concat(artistExtraSongs.filter(
+                        s => !seen.has(String(s.id))));
+                }
+                const artistName = String(artistCtx.name || '').toLowerCase();
+                const selfSearch = !!kw && !!artistName
+                    && (artistName.includes(kw) || kw.includes(artistName));
+                const shown = (!kw || selfSearch)
+                    ? all
+                    : all.filter(s => (s.name || '').toLowerCase().includes(kw)
+                        || (s.artistsname || '').toLowerCase().includes(kw));
                 renderArtistSub(shown.length);
                 if (!shown.length) {
                     showArtistState(kw ? '没找到匹配的歌曲' : '暂无歌曲', !!kw);
@@ -7024,7 +7039,78 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     artistList.appendChild(more);
                 }
             }
+            let artistExtraSongs = [];
             let artistLoadingMore = false;
+            let artistLoadingAll = false;
+            let artistSearchTimer = 0;
+            function artistHasMore() {
+                if (!artistCtx) return false;
+                if (artistCtx.more) return true;
+                return artistCtx.total > 0 && artistCtx.songs.length < artistCtx.total;
+            }
+            async function ensureAllArtistSongs() {
+                if (!artistCtx || !artistCtx.id || artistLoadingAll || artistLoadingMore) return;
+                artistLoadingAll = true;
+                const seq = artistReqSeq;
+                let guard = 0;
+                try {
+                    while (guard++ < 20) {
+                        let page = null;
+                        try {
+                            page = await fetchArtistSongsNetstart(artistCtx.id,
+                                artistCtx.songs.length, 1000);
+                        } catch (_) {
+                            if (guard > 1) break;
+                            page = await fetchArtistSongsNetstart(artistCtx.id,
+                                artistCtx.songs.length);
+                        }
+                        if (seq !== artistReqSeq || !artistCtx || !page) return;
+                        const batch = (page.songs || [])
+                            .map(r => mapNeteaseRecord(r, r.id));
+                        if (!batch.length) break;
+                        const seen = new Set(artistCtx.songs.map(s => String(s.id)));
+                        let added = 0;
+                        batch.forEach(song => {
+                            const key = String(song.id);
+                            if (seen.has(key)) return;
+                            seen.add(key);
+                            artistCtx.songs.push(song);
+                            added++;
+                        });
+                        artistCtx.offset = artistCtx.songs.length;
+                        artistCtx.more = !!page.more;
+                        if (page.total) artistCtx.total = page.total;
+                        if (!added) break;
+                        if (artistCtx.total > 0
+                            && artistCtx.songs.length >= artistCtx.total) break;
+                    }
+                } catch (_) {}
+                finally { artistLoadingAll = false; }
+            }
+            async function fillArtistSearchFromGlobal() {
+                if (!artistCtx || !artistCtx.id || !artistCtx.name) return;
+                const kw = (artistKeyword || '').trim();
+                if (!kw) return;
+                const name = String(artistCtx.name).toLowerCase();
+                const seq = artistReqSeq;
+                try {
+                    const list = await searchSongs(kw + ' ' + artistCtx.name);
+                    if (seq !== artistReqSeq || !artistCtx) return;
+                    const seen = new Set(artistCtx.songs.concat(artistExtraSongs)
+                        .map(s => String(s.id)));
+                    let added = 0;
+                    (list || []).forEach(song => {
+                        if (!String(song.artistsname || '').toLowerCase()
+                            .includes(name)) return;
+                        const key = String(song.id);
+                        if (seen.has(key)) return;
+                        seen.add(key);
+                        artistExtraSongs.push(song);
+                        added++;
+                    });
+                    if (added) renderArtistSongs();
+                } catch (_) {}
+            }
             async function loadMoreArtistSongs() {
                 if (!artistCtx || artistLoadingMore || !artistCtx.more || !artistCtx.id) return;
                 artistLoadingMore = true;
@@ -7254,6 +7340,15 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 artistSearchInput.addEventListener('input', () => {
                     artistKeyword = artistSearchInput.value;
                     renderArtistSongs();
+                    clearTimeout(artistSearchTimer);
+                    const kw = artistKeyword.trim();
+                    if (!kw) return;
+                    artistSearchTimer = setTimeout(async () => {
+                        if (!artistCtx || !artistCtx.id || artistLoadingAll) return;
+                        await ensureAllArtistSongs();
+                        await fillArtistSearchFromGlobal();
+                        if ((artistKeyword || '').trim()) renderArtistSongs();
+                    }, 300);
                 });
             }
             bindInputClear(artistSearchInput, artistSearchClear, () => {
@@ -9132,7 +9227,9 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                                 : ('这些歌都在「' + pl.name + '」里了'));
                         }
                         if (subEl) subEl.textContent = pl.songs.length + ' 首';
+                        syncPickerCovers();
                         if (activeTab === 'mine') renderMinePage();
+                        if (playlistPage.classList.contains('active')) renderPlaylistDetail();
                     });
                 });
                 void plPickerSheet.offsetHeight;
@@ -9418,6 +9515,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 picurl = normalizeCoverUrl(picurl);
                 const key = String(id);
                 syncSongCoverEverywhere(id, picurl);
+                try { syncPickerCovers(); } catch (_) {}
                 if (currentSong && String(currentSong.id) === key) {
                     currentSong.picurl = picurl;
                     setCoverSrc(miniCoverWrap, miniCover, picurl);
@@ -10071,9 +10169,10 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     albumSize: (pick && pick.albumSize) || 0
                 };
             }
-            async function fetchArtistSongsNetstart(id, offset) {
+            async function fetchArtistSongsNetstart(id, offset, limit) {
                 const url = ARTIST_API + '/artist/songs?id=' + encodeURIComponent(id) +
-                    '&limit=' + ARTIST_PAGE_SIZE + '&offset=' + (offset || 0) + '&order=hot';
+                    '&limit=' + (limit || ARTIST_PAGE_SIZE) + '&offset=' + (offset || 0) +
+                    '&order=hot';
                 const d = await fetchDirectOrProxy(url,
                     { directFirst: true, directTimeout: 6000, timeout: 16000 });
                 return {
@@ -10840,7 +10939,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     syncTransButtons();
                     return;
                 }
-                const hasAnyTrans = arr => !!(arr && arr.some(t => !!t));
                 const show = (picked) => {
                     if (lyricsId !== id) return false;
                     lyricsData = picked.rows;
@@ -12555,9 +12653,9 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             function updatePlayButtons() {
                 const icon = isPlaying ? 'fa-pause' : 'fa-play';
                 if (miniPlayIcon) miniPlayIcon.className = `fas ${icon}`;
-                if (miniPlayBtn) miniPlayBtn.setAttribute('data-tip', isPlaying ? '暂停' : '播放');
+                if (miniPlayBtn) miniPlayBtn.setAttribute('title', isPlaying ? '暂停' : '播放');
                 playBtn.innerHTML = `<i class="fas ${icon}"></i>`;
-                playBtn.setAttribute('data-tip', isPlaying ? '暂停' : '播放');
+                playBtn.setAttribute('title', isPlaying ? '暂停' : '播放');
                 if (lyricsPlayBtn) lyricsPlayBtn.innerHTML = `<i class="fas ${icon}"></i>`;
                 syncMediaSession();
             }
@@ -13540,6 +13638,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const ratio = Math.abs(shift) / limit;
                 const fade = 1 - ratio * 0.40;
                 cover.style.transform = 'translateX(' + shift + 'px)';
+                if (albumCoverShadow) albumCoverShadow.style.opacity = String(fade);
                 if (albumCoverBox) albumCoverBox.style.opacity = String(fade);
                 const reveal = String(Math.min(1, ratio * 2.2));
                 if (albumPeekPrev) {
@@ -13556,6 +13655,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (!cover) return;
                 cover.style.transform = '';
                 cover.style.removeProperty('--disc-veil');
+                if (albumCoverShadow) albumCoverShadow.style.opacity = '';
                 if (albumCoverBox) albumCoverBox.style.opacity = '';
                 if (albumPeekPrev) albumPeekPrev.style.opacity = '';
                 if (albumPeekNext) albumPeekNext.style.opacity = '';
@@ -13576,6 +13676,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 swipeSettling = true;
                 cover.style.transform = 'translateX(' + (dir < 0 ? -gap : gap) + 'px)';
                 cover.style.setProperty('--disc-veil', '0');
+                if (albumCoverShadow) albumCoverShadow.style.opacity = '0';
                 if (albumCoverBox) albumCoverBox.style.opacity = '0';
                 if (peeking && (peekHasCover(peeking) || isDesktopPointer())) peeking.style.opacity = '1';
                 settleTimer = setTimeout(() => {
@@ -13589,6 +13690,12 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         cover.classList.add('swipe-reset');
                         cover.style.transform = '';
                         cover.style.removeProperty('--disc-veil');
+                        if (albumCoverShadow) {
+                            albumCoverShadow.style.transition = 'none';
+                            albumCoverShadow.style.opacity = '';
+                            void albumCoverShadow.offsetWidth;
+                            albumCoverShadow.style.transition = '';
+                        }
                         updateDiscGlow(currentSong ? currentSong.picurl : '');
                         if (albumCoverBox) albumCoverBox.style.opacity = '';
                         if (albumPeekPrev) albumPeekPrev.style.opacity = '';
@@ -14028,11 +14135,9 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             }
             function bindHeaderTips() {
                 $$('.fav-header .fav-icon-btn').forEach(el => {
-                    if (!el.dataset.tip) {
-                        el.dataset.tip = el.getAttribute('title')
-                            || el.getAttribute('aria-label') || '';
+                    if (!el.getAttribute('title')) {
+                        el.setAttribute('title', el.getAttribute('aria-label') || '');
                     }
-                    el.removeAttribute('title');
                 });
             }
             function init() {
