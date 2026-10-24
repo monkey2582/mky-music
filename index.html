@@ -113,7 +113,7 @@
                 const el = new Audio();
                 const vol = Math.max(0, Math.min(1,
                     (opts.volume == null ? 100 : opts.volume) / 100));
-                el.preload = 'auto';
+                el.preload = opts.preload || 'auto';
                 el.loop = !!opts.loop;
                 el.volume = vol;
                 el.autoplay = !!opts.autoplay;
@@ -12723,12 +12723,9 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     if (pic && !/^data:/i.test(pic)) {
                         art.push({ src: pic, sizes: '300x300', type: 'image/jpeg' });
                         art.push({ src: pic, sizes: '512x512', type: 'image/jpeg' });
+                    } else {
+                        art.push({ src: MS_FALLBACK_COVER, sizes: '512x512', type: 'image/png' });
                     }
-                    art.push({
-                        src: song.__msFallback || MS_FALLBACK_COVER,
-                        sizes: '512x512',
-                        type: 'image/png'
-                    });
                     navigator.mediaSession.metadata = new window.MediaMetadata({
                         title: song.name || '未知歌曲',
                         artist: song.artistsname || '未知歌手',
@@ -12738,16 +12735,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 } catch (_) {}
             }
             function updatePlaceholderMetadata() {
-                const item = {
-                    title: 'MKY音乐',
-                    artist: 'MKY音乐',
-                    album: '',
-                    art: MS_FALLBACK_COVER
-                };
-                const wms = wcMs();
-                if (wms) {
-                    try { wms.updateMetadata({ item }); } catch (_) {}
-                }
                 if (mediaSessionSupported()) {
                     try {
                         navigator.mediaSession.metadata = new window.MediaMetadata({
@@ -14164,6 +14151,43 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 showMiniPlayer();
                 refreshSwipePeeks();
                 preloadSwipePeeks();
+                primeRestoredAudio(target, t);
+            }
+            async function primeRestoredAudio(song, seekSec) {
+                if (!song || !song.id || currentAudio || placeholderMode) return;
+                let info;
+                try { info = await playUrlOf(song.id); } catch (e) { return; }
+                if (!info || !info.url) return;
+                if (currentAudio || placeholderMode) return;
+                if (!currentSong || String(currentSong.id) !== String(song.id)) return;
+                song.url = info.url;
+                if (currentSong && String(currentSong.id) === String(song.id)) {
+                    currentSong.url = info.url;
+                }
+                if (info.duration > 0 && !(song.duration > 0)) song.duration = info.duration;
+                try {
+                    currentAudio = createAudio({
+                        src: info.url,
+                        volume: Math.round(getVolume() * 100),
+                        autoplay: false,
+                        loop: false,
+                        preload: 'metadata'
+                    });
+                } catch (e) { return; }
+                const el = currentAudio;
+                el.addEventListener('error', () => {
+                    if (currentAudio !== el) return;
+                    currentAudio = null;
+                    destroyAudio(el);
+                }, { once: true });
+                const applySeek = () => {
+                    if (currentAudio !== el) return;
+                    if (seekSec > 0) { try { el.currentTime = seekSec; } catch (_) {} }
+                };
+                if (el.readyState >= 1) applySeek();
+                else el.addEventListener('loadedmetadata', applySeek, { once: true });
+                updateMediaMetadata(song);
+                syncMediaSession();
             }
             function refreshRestoredDuration(song) {
                 fillDurationFor(song).then(ok => {
