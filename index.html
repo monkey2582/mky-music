@@ -369,7 +369,7 @@ body.has-mini-player { padding-bottom:0; }
 .tab-item.active .tab-icon { transform:translateY(-1px) scale(1.12); }
 .tab-item:active .tab-icon { transform:scale(0.9); }
 body.tab-bar-hidden .tab-bar { transform:translateY(100%);opacity:0;pointer-events:none; }
-@media (min-width:900px),(min-width:640px)and (max-height:500px) { .tab-bar { top:0;bottom:0;right:auto;left:0;width:var(--side-tab-width);height:auto;padding-bottom:0;flex-direction:column;align-items:stretch;border-top:none;border-right:1px solid var(--glass-edge); } body.tab-bar-hidden .tab-bar { transform:none;opacity:1;pointer-events:auto; } .tab-brand { display:flex;align-items:center;gap:10px;padding:22px 18px 18px;border-bottom:1px solid var(--glass-edge);margin-bottom:8px;flex-shrink:0;cursor:pointer;transition:background 0.2s ease; } .tab-brand:hover { background:var(--surface-hover); } .tab-brand:active .tab-brand-logo { transform:scale(0.92); } .tab-brand .tab-brand-logo { transition:transform 0.18s cubic-bezier(0.34,1.56,0.64,1); } .tab-brand-logo { width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.28)); } .tab-brand-logo .brand-disc { width:100%;height:100%;display:block; } .tab-brand-name { font-size:15px;font-weight:600;letter-spacing:0.2px;color:var(--text-primary);white-space:nowrap; } .tab-items { flex-direction:column;align-items:stretch;gap:4px;padding:0 10px;overflow-y:auto;flex:0 1 auto; } .tab-item { flex:0 0 auto;flex-direction:row;justify-content:flex-start;gap:12px;padding:12px 14px;border-radius:12px;font-size:14px;letter-spacing:0.2px;transition:color 0.22s ease,background 0.22s ease; } .tab-item .tab-icon { font-size:16px;transition:none; } .tab-item.active { background:var(--primary-tint);color:var(--primary); } .tab-item.active .tab-icon { transform:none; } .tab-item:hover:not(.active) { background:var(--surface-input);color:var(--text-primary); } .tab-item:hover:not(.active) .tab-icon { transform:none; } }
+@media (min-width:900px),(min-width:640px)and (max-height:500px) { .tab-bar { top:0;bottom:0;right:auto;left:0;width:var(--side-tab-width);height:auto;padding-bottom:0;flex-direction:column;align-items:stretch;border-top:none;border-right:1px solid var(--glass-edge); } body.tab-bar-hidden .tab-bar { transform:none;opacity:1;pointer-events:auto; } .tab-brand { display:flex;align-items:center;gap:10px;padding:22px 18px 12px;margin-bottom:2px;flex-shrink:0;cursor:pointer; } .tab-brand-logo { width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.28)); } .tab-brand-logo .brand-disc { width:100%;height:100%;display:block; } .tab-brand-name { font-size:15px;font-weight:600;letter-spacing:0.2px;color:var(--text-primary);white-space:nowrap; } .tab-items { flex-direction:column;align-items:stretch;gap:4px;padding:0 10px;overflow-y:auto;flex:0 1 auto; } .tab-item { flex:0 0 auto;flex-direction:row;justify-content:flex-start;gap:12px;padding:12px 14px;border-radius:12px;font-size:14px;letter-spacing:0.2px;transition:color 0.22s ease,background 0.22s ease; } .tab-item .tab-icon { font-size:16px;transition:none; } .tab-item.active { background:var(--primary-tint);color:var(--primary); } .tab-item.active .tab-icon { transform:none; } .tab-item:hover:not(.active) { background:var(--surface-input);color:var(--text-primary); } .tab-item:hover:not(.active) .tab-icon { transform:none; } }
 .tab-panel { display:none; }
 .tab-panel.active { display:block; }
 .chart-switch { display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch; }
@@ -580,21 +580,22 @@ body.has-mini-player .main-content { padding-bottom:calc(var(--tab-height) + env
 #mv-video { width:100%;aspect-ratio:16/9;min-height:180px;max-height:58vh;object-fit:contain;border-radius:12px;background:#000;outline:none;display:block; }
 .mv-stage:fullscreen,.mv-stage:-webkit-full-screen { border-radius:0;max-width:none;width:100%;height:100%; }
 .mv-stage:fullscreen #mv-video,.mv-stage:-webkit-full-screen #mv-video { max-height:none;height:100%;border-radius:0;object-fit:contain; }
+.mv-stage:fullscreen .mv-bar,.mv-stage:-webkit-full-screen .mv-bar { border-radius:0; }
 .mv-loading { position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:rgba(255,255,255,0.72);font-size:13px;pointer-events:none;transition:opacity 0.24s ease; }
 .mv-loading.hide { opacity:0; }
 .mv-loading svg { width:26px;height:26px;animation:spin 0.8s linear infinite; }
 .mv-loading svg circle { fill:none;stroke-width:2.6;stroke-linecap:round; }
 .mv-loading svg .ring-track { stroke:rgba(255,255,255,0.18); }
 .mv-loading svg .ring-arc { stroke:rgba(255,255,255,0.78);stroke-dasharray:16 56.5; }
-.mv-big-play { position:absolute;z-index:2;width:64px;height:64px;padding:0 0 0 4px;border:none;border-radius:50%;background:rgba(0,0,0,0.5);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:#fff;font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:opacity 0.24s,transform 0.16s,background 0.2s; }
-.mv-big-play:hover { background:rgba(0,0,0,0.66);transform:scale(1.06); }
+.mv-big-play { position:absolute;z-index:2;width:78px;height:78px;padding:0 0 0 5px;border:none;border-radius:50%;background:transparent;color:#fff;font-size:27px;display:flex;align-items:center;justify-content:center;cursor:pointer;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.55));transition:opacity 0.24s,transform 0.16s; }
+.mv-big-play:hover { transform:scale(1.06); }
 .mv-big-play.hide { opacity:0;pointer-events:none; }
-.mv-bar { position:absolute;left:0;right:0;bottom:0;z-index:2;display:flex;align-items:center;gap:5px;padding:26px 8px 8px;background:linear-gradient(to top,rgba(0,0,0,0.74),rgba(0,0,0,0.28) 62%,rgba(0,0,0,0));transition:opacity 0.3s ease; }
+.mv-bar { position:absolute;left:0;right:0;bottom:0;z-index:2;display:flex;align-items:center;gap:5px;padding:26px 8px 8px;background:linear-gradient(to top,rgba(0,0,0,0.74),rgba(0,0,0,0.28) 62%,rgba(0,0,0,0));border-radius:0 0 12px 12px;transition:opacity 0.3s ease; }
 .mv-bar.hide { opacity:0;pointer-events:none; }
 .mv-bar .progress-bar { flex:1;min-width:0; }
 #mv-progress::before { content:"";position:absolute;left:0;right:0;top:-11px;bottom:-11px; }
-.mv-btn { flex-shrink:0;width:32px;height:32px;padding:0;border:none;border-radius:50%;background:none;color:rgba(255,255,255,0.92);font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.2s,color 0.2s; }
-.mv-btn:hover { background:rgba(255,255,255,0.14);color:#fff; }
+.mv-btn { flex-shrink:0;width:32px;height:32px;padding:0;border:none;border-radius:50%;background:none;color:rgba(255,255,255,0.92);font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:color 0.2s; }
+.mv-btn:hover { color:#fff; }
 .mv-time { flex-shrink:0;min-width:36px;text-align:center;font-size:12px;color:rgba(255,255,255,0.68);font-variant-numeric:tabular-nums; }
 .mv-vol { position:relative;flex-shrink:0;display:flex;align-items:center; }
 .mv-vol-icon { font-size:14px;display:flex;align-items:center;justify-content:center; }
@@ -614,6 +615,8 @@ body.has-mini-player .main-content { padding-bottom:calc(var(--tab-height) + env
 .mv-vol-range::-webkit-slider-thumb { -webkit-appearance:none;appearance:none;width:12px;height:12px;border-radius:50%;background:#fff;border:none;box-shadow:0 1px 3px rgba(0,0,0,0.35); }
 .mv-vol-range::-moz-range-thumb { width:12px;height:12px;border:0;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.35); }
 .mv-vol-num { font-size:11.5px;color:var(--text-primary);min-width:26px;text-align:center;font-variant-numeric:tabular-nums; }
+.mv-main { display:flex;flex-direction:column;width:100%;min-width:0;gap:12px;align-self:stretch;-webkit-overflow-scrolling:touch;touch-action:pan-y;scrollbar-width:none;-ms-overflow-style:none; }
+.mv-main::-webkit-scrollbar { width:0;height:0;display:none; }
 .mv-info { width:100%;max-width:960px;display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left; }
 .mv-info-head { display:flex;align-items:center;gap:12px;width:100%; }
 .mv-info-text { min-width:0;flex:1;display:flex;flex-direction:column;gap:4px; }
@@ -623,7 +626,7 @@ body.has-mini-player .main-content { padding-bottom:calc(var(--tab-height) + env
 .mv-info-btn { display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;padding:0;border:none;background:none;color:var(--text-primary);font-size:16px;line-height:1;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity 0.18s, color 0.18s; }
 .mv-info-btn:hover { opacity:0.7; }
 .mv-info-btn:active { opacity:0.5; }
-.mv-related { width:100%;max-width:960px;display:flex;flex-direction:column;gap:12px; }
+.mv-related { width:100%;max-width:960px;display:flex;flex-direction:column;gap:12px;align-self:stretch; }
 .mv-related[hidden] { display:none; }
 .mv-related-title { font-size:13px;font-weight:600;color:var(--text-secondary); }
 .mv-related-list { display:flex;flex-direction:column;gap:8px;scrollbar-width:none;-ms-overflow-style:none; }
@@ -634,7 +637,15 @@ body.has-mini-player .main-content { padding-bottom:calc(var(--tab-height) + env
 .mv-related-info { flex:1;min-width:0;display:flex;flex-direction:column;gap:2px; }
 .mv-related-name { font-size:13px;color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
 .mv-related-artist { font-size:11.5px;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
-@media (min-width:900px),(min-width:640px)and (max-height:500px) { .mv-body { display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,360px);grid-template-rows:auto minmax(0,1fr);grid-template-areas:"info list" "stage list";align-items:start;justify-items:stretch;gap:14px 18px;padding:92px 20px 0;overflow:hidden; } .mv-info { grid-area:info;max-width:none; } .mv-stage { grid-area:stage;width:100%;max-width:none;aspect-ratio:16/9;height:auto;max-height:calc(100vh - 190px);min-height:0;align-self:start; } #mv-video { width:100%;height:100%;max-height:none;min-height:0;aspect-ratio:auto;object-fit:contain; } .mv-related { grid-area:list;max-width:none;height:100%;overflow:hidden; } .mv-related-list { flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain; } }
+@media (min-width:900px),(min-width:640px)and (max-height:500px) { .mv-body { display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,360px);grid-template-rows:minmax(0,1fr);grid-template-areas:"main list";align-items:start;justify-items:stretch;gap:14px 18px;padding:92px 20px 0;overflow:hidden; } .mv-info { max-width:none; } .mv-main { grid-area:main;min-height:0;align-self:stretch;overflow-y:auto; } .mv-stage { grid-area:stage;width:100%;max-width:none;aspect-ratio:16/9;height:auto;max-height:calc(100vh - 190px);min-height:0;align-self:start; } #mv-video { width:100%;height:100%;max-height:none;min-height:0;aspect-ratio:auto;object-fit:contain; } .mv-related { grid-area:list;max-width:none;height:100%;overflow:hidden; } .mv-related-list { flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y; } }
+@media (max-height:500px) and (orientation:landscape) {
+  .mv-body { grid-template-columns:minmax(0,1fr) 240px;grid-template-rows:minmax(0,1fr);grid-template-areas:"main list";overflow:hidden;padding:72px 16px 0; } .mv-main { overflow-y:auto;overscroll-behavior:contain; }
+  .mv-stage { max-height:none; }
+  #mv-video { height:auto;max-height:none;aspect-ratio:16/9; }
+  .mv-related { height:auto;max-height:none;min-height:0;align-self:stretch;overflow:hidden; }
+  .mv-related-list { flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain; }
+}
+
 #history-page .fav-header { flex-shrink:0;padding:14px 16px; }
 #history-page .fav-scroll { padding-top:calc(var(--fav-header-h, 58px) + 8px); }
 #history-page .pl-summary { padding:2px 16px 10px;gap:12px; }
@@ -700,7 +711,7 @@ body.placeholder-mode .main-control-btn.add-pl-btn { color:var(--text-secondary)
 .select-mode .song-fav-btn { pointer-events:none;opacity:0.30; }
 .select-mode .song-more-btn { opacity:0.45; }
 .select-mode .song-more-btn:hover { opacity:0.9; }
-.select-bar { position:fixed;left:12px;right:12px;bottom:calc(var(--tab-height) + var(--bottom-stack) + 12px);z-index:2400;background:var(--glass-panel-heavy);-webkit-backdrop-filter:blur(var(--glass-blur-bar)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-bar)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));border:1px solid var(--glass-edge-heavy);border-radius:20px;box-shadow:var(--shadow-popover),var(--inset-highlight);padding:8px;opacity:0;transform:translateY(16px) scale(0.97);pointer-events:none;transition:opacity 0.28s cubic-bezier(0.25,0.46,0.45,0.94),transform 0.28s cubic-bezier(0.25,0.46,0.45,0.94);max-height:62vh;overflow-y:auto; }
+.select-bar { position:fixed;left:12px;right:12px;bottom:calc(var(--tab-height) + var(--bottom-stack) + 12px);z-index:2400;background:var(--glass-panel-heavy);-webkit-backdrop-filter:blur(var(--glass-blur-bar)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-bar)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));border:1px solid var(--glass-edge-heavy);border-radius:20px;box-shadow:var(--shadow-popover),var(--inset-highlight);padding:8px;opacity:0;transform:translateY(16px) scale(0.97);pointer-events:none;transition:opacity 0.28s cubic-bezier(0.25,0.46,0.45,0.94),transform 0.28s cubic-bezier(0.25,0.46,0.45,0.94);max-height:62vh;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none; }
 .select-bar.active { opacity:1;transform:translateY(0) scale(1);pointer-events:all; }
 @media (min-width:900px),(min-width:640px)and (max-height:500px) { .select-bar { left:50%;right:auto;width:min(520px,calc(100vw - 48px));transform:translate(-50%,16px) scale(0.97); } .select-bar.active { transform:translate(-50%,0) scale(1); } }
 .select-count { font-size:13px;font-weight:600;color:var(--text-secondary); }
@@ -837,22 +848,31 @@ body.tab-bar-hidden .mini-player { bottom:0; }
 
 .album-cover-peek-disc { position:relative;z-index:2;width:100%;height:100%;aspect-ratio:1 / 1;flex-shrink:0;border-radius:50%;background:repeating-radial-gradient(circle at 50% 50%,rgba(255,255,255,0.020) 0px,rgba(255,255,255,0.020) 1px,rgba(0,0,0,0) 1px,rgba(0,0,0,0) 3px),radial-gradient(circle at 50% 50%,#262626 0%,#202020 34%,#181818 70%,#111 100%),radial-gradient(circle at 50% 50%,rgba(0,0,0,0) 54%,rgba(0,0,0,0.34) 100%);box-shadow:0 0 0 1px rgba(255,255,255,0.16),0 0 30px 6px rgba(255,255,255,0.14);display:flex;align-items:center;justify-content:center; }
 
-.album-cover-img { width:68%;height:68%;aspect-ratio:1 / 1;object-fit:cover;object-position:center;display:block;border-radius:50%;box-shadow:0 0 0 2px rgba(0,0,0,0.55),0 0 18px rgba(0,0,0,0.45); }
+.album-cover-img { position:relative;z-index:2;width:68%;height:68%;aspect-ratio:1 / 1;object-fit:cover;object-position:center;display:block;border-radius:50%;box-shadow:0 0 0 2px rgba(0,0,0,0.55),0 0 18px rgba(0,0,0,0.45); }
 .album-cover-peek { --disc-veil:1;position:absolute;left:50%;top:50%;width:100%;height:100%;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;z-index:2;border-radius:50%;box-shadow:0 30px 60px -26px rgba(0,0,0,0.7);transform:translate(-50%,-50%);transition:opacity 0.24s ease,transform 0.3s cubic-bezier(0.22,1,0.36,1);will-change:transform,opacity; }
 .album-cover-peek::before,.album-cover-peek::after { pointer-events:none; }
 .player-content .album-cover { transition:opacity 0.28s ease; }
 .player-content.swiping .album-cover { transition:none; }
 .player-content.swiping .album-cover-peek,.player-content.swiping .album-cover-wrap::before,.player-content.swiping .album-cover-wrap::after { transition:none; }
-.album-cover-peek img { width:68%;height:68%;aspect-ratio:1 / 1;object-fit:cover;object-position:center;display:block;border-radius:50%;box-shadow:0 0 0 2px rgba(0,0,0,0.55),0 0 18px rgba(0,0,0,0.45);visibility:hidden; }
+.album-cover-peek img { position:relative;z-index:2;width:68%;height:68%;aspect-ratio:1 / 1;object-fit:cover;object-position:center;display:block;border-radius:50%;box-shadow:0 0 0 2px rgba(0,0,0,0.55),0 0 18px rgba(0,0,0,0.45);visibility:hidden; }
 .album-cover-peek img[src] { visibility:visible; }
 .album-cover-peek-fallback { position:absolute;inset:0;display:none;align-items:center;justify-content:center;font-size:64px;color:var(--text-faint);pointer-events:none; }
 .album-cover-peek-disc:has(>img:not([src])) .album-cover-peek-fallback { display:flex;opacity:0.45; }
 .album-cover-wrap.swipe-reset,.album-cover-wrap.swipe-reset .album-cover-peek,.album-cover-wrap.swipe-reset .album-cover-peek-disc,.album-cover-wrap.swipe-reset .album-cover,.album-cover-wrap.swipe-reset::before,.album-cover-wrap.swipe-reset::after { transition:none; }
-.album-cover-fallback { position:absolute;inset:0;display:none;align-items:center;justify-content:center;font-size:64px;color:var(--text-faint); }
-.album-cover::after { content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;background:linear-gradient(45deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 26%,rgba(255,255,255,0.02) 35%,rgba(255,255,255,0.055) 43%,rgba(255,255,255,0.085) 50%,rgba(255,255,255,0.055) 57%,rgba(255,255,255,0.02) 65%,rgba(255,255,255,0) 74%,rgba(255,255,255,0) 100%); }
-.album-cover-peek-disc::after { content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;background:linear-gradient(45deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 26%,rgba(255,255,255,0.02) 35%,rgba(255,255,255,0.055) 43%,rgba(255,255,255,0.085) 50%,rgba(255,255,255,0.055) 57%,rgba(255,255,255,0.02) 65%,rgba(255,255,255,0) 74%,rgba(255,255,255,0) 100%); }
-.album-cover.no-cover::after { display:none; }
-.album-cover.no-cover { background:transparent;box-shadow:none; }
+.album-cover-fallback { position:absolute;inset:0;display:none;align-items:center;justify-content:center;font-size:64px;color:var(--text-faint);z-index:2; }
+.album-cover-frost { position:absolute;left:50%;top:50%;width:68%;height:68%;transform:translate(-50%,-50%);border-radius:50%;display:none;pointer-events:none;z-index:2;
+  background:#1c1c21;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.06); }
+.album-cover.no-cover .album-cover-frost { display:block; }
+:root[data-theme=light] .album-cover-frost { background:#ececef;box-shadow:inset 0 0 0 1px rgba(0,0,0,0.06); }
+.album-cover.no-cover .album-cover-fallback { opacity:0.55;font-size:52px;z-index:3; }
+.album-cover::after { content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;z-index:1;background:linear-gradient(45deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 26%,rgba(255,255,255,0.02) 35%,rgba(255,255,255,0.055) 43%,rgba(255,255,255,0.085) 50%,rgba(255,255,255,0.055) 57%,rgba(255,255,255,0.02) 65%,rgba(255,255,255,0) 74%,rgba(255,255,255,0) 100%); }
+.album-cover-peek-disc::after { content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;z-index:1;background:linear-gradient(45deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 26%,rgba(255,255,255,0.02) 35%,rgba(255,255,255,0.055) 43%,rgba(255,255,255,0.085) 50%,rgba(255,255,255,0.055) 57%,rgba(255,255,255,0.02) 65%,rgba(255,255,255,0) 74%,rgba(255,255,255,0) 100%); }
+.album-cover.no-cover { background:repeating-radial-gradient(circle at 50% 50%,rgba(255,255,255,0.020) 0 1px,rgba(0,0,0,0) 1.5px 4px),radial-gradient(circle at 50% 50%,#15151a 0%,#0a0a0d 62%,#050507 100%);box-shadow:0 0 0 1px rgba(255,255,255,0.16),0 0 30px 6px rgba(255,255,255,0.14); }
+:root[data-theme=light] .album-cover { box-shadow:0 0 0 1px rgba(0,0,0,0.10),0 0 24px 4px rgba(0,0,0,0.08); }
+:root[data-theme=light] .album-cover-shadow,:root[data-theme=light] .album-cover-peek { box-shadow:0 20px 44px -24px rgba(0,0,0,0.32); }
+:root[data-theme=light] .album-cover-img,:root[data-theme=light] .album-cover-peek img { box-shadow:0 0 0 2px rgba(0,0,0,0.28),0 0 18px rgba(0,0,0,0.22); }
+:root[data-theme=light] .album-cover-wrap::before,:root[data-theme=light] .album-cover-peek::before { opacity:calc(0.45 * var(--disc-veil, 1)); }
+:root[data-theme=light] .album-cover::after,:root[data-theme=light] .album-cover-peek-disc::after { background:linear-gradient(45deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 22%,rgba(255,255,255,0.025) 33%,rgba(255,255,255,0.065) 42%,rgba(255,255,255,0.13) 50%,rgba(255,255,255,0.065) 58%,rgba(255,255,255,0.025) 67%,rgba(255,255,255,0) 78%,rgba(255,255,255,0) 100%); }
 .album-cover.no-cover .album-cover-fallback { display:flex;opacity:0.30; }
 .album-cover.no-cover .album-cover-img { display:none; }
 .album-cover.no-cover .album-cover-fallback { display:flex;opacity:0.45; }
@@ -1078,6 +1098,8 @@ html.no-glass .lyrics-veil-blur-3 { -webkit-backdrop-filter:blur(18px) saturate(
 body.select-from-chart #select-more-menu { bottom:calc(var(--tab-height) + env(safe-area-inset-bottom,0px) + 74px); }
 body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab-height) + env(safe-area-inset-bottom,0px) + var(--mini-height) + 74px); }
 .sheet.active { opacity:1;transform:translateY(0) scale(1);pointer-events:all; }
+.sheet::-webkit-scrollbar { width:0;height:0;display:none; }
+.sheet .menu-scroll::-webkit-scrollbar { width:0;height:0;display:none; }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .sheet,.select-bar { background:var(--popover-solid); } }
 .sheet .menu-item { display:flex;align-items:center;gap:12px;padding:14px 14px;border-radius:13px;font-size:14.5px;color:var(--text-primary);cursor:pointer;transition:background 0.18s; }
 .sheet .menu-item:hover { background:var(--surface-hover-strong); }
@@ -1085,7 +1107,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
 .sheet .menu-item i { width:20px;text-align:center;font-size:15px;color:var(--text-secondary); }
 .sheet .menu-item.danger,.sheet .menu-item.danger i { color:#ff4d6d; }
 .menu-item[hidden],.sheet .menu-item[hidden] { display:none; }
-.share-list { display:flex;flex-direction:column;gap:8px;padding:10px 0 4px;max-height:48vh;overflow-y:auto; }
+.share-list { display:flex;flex-direction:column;gap:8px;padding:10px 0 4px;max-height:48vh;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none; }
+.share-list::-webkit-scrollbar,.search-history::-webkit-scrollbar { width:0;height:0;display:none; }
 .share-row { padding:11px 14px;border-radius:12px;background:var(--surface-hover);cursor:pointer; }
 .share-row-head { display:flex;align-items:center;gap:8px; }
 .share-row-name { flex:1;min-width:0;font-size:14px;font-weight:600;color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
@@ -1150,9 +1173,9 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
 .lc-btn.lc-play { width:46px;height:46px;background:var(--primary);color:#fff;font-size:18px;box-shadow:0 6px 20px rgba(233,30,99,0.42); }
 .lc-btn.lc-play:hover { background:#f0346f; }
 @media (max-width:400px) { .lyrics-controls { right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px)); } .lc-btn { width:36px;height:36px;font-size:15px; } .lc-btn.lc-play { width:42px;height:42px;font-size:16px; } }
-@media (min-width:900px),(min-width:640px)and (max-height:500px) { .player-content { flex-direction:row;align-items:center;justify-content:center;gap:48px;padding:0 56px;overflow:visible;margin-top:0; } .player-swipe-layer { flex-direction:row;justify-content:center;align-items:center;gap:48px;flex:0 1 auto;width:auto; } .player-left { flex:0 1 420px;width:420px;max-width:420px;min-width:0;margin-top:0;clip-path:inset(-160px -148px -160px -2000px); } .disc-stage { margin-top:calc(-24px + var(--disc-lift, -80px)); } .album-cover-wrap { width:min(100%,30vh,230px);height:auto;max-height:none;margin-top:calc(-24px + var(--disc-lift, -80px)); } .progress-container { max-width:370px; } .album-cover-wrap::before,.album-cover-peek::before { inset:-24px;filter:blur(22px); } .player-lyrics { display:block;max-width:460px;height:min(68vh,560px); } .player-lyrics-inner { padding:12px 8px; } .player-lyrics-inner .lyrics-line { font-size:18px;line-height:1.9; } #lyrics-btn { display:none; } .cover-lyric { display:none; } .main-control-btn.add-pl-btn { display:flex;color:var(--text-primary); } .sheet { left:50%;right:auto;width:min(420px,calc(100vw - 48px));bottom:calc(var(--bottom-stack) + 12px);transform:translate(-50%,16px) scale(0.97); } #pl-select-more-menu { bottom:calc(var(--bottom-stack) + 56px); } .sheet.active { transform:translate(-50%,0) scale(1); } #rate-sheet,.sheet.sheet-dock-left { left:24px;right:auto;width:min(340px,calc(100vw - 48px));bottom:auto;top:50%;transform:translateY(calc(-50% + 16px)) scale(0.97);max-height:min(62vh,520px); } .sheet.sheet-dock-left { left:calc(var(--side-tab-width) + 56px); } #rate-sheet.active,.sheet.sheet-dock-left.active { transform:translateY(-50%) scale(1); } #rate-sheet { left:auto;right:20px;top:64px;bottom:auto;width:min(300px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right; } #rate-sheet.active { transform:translateY(0) scale(1); } #player-more-menu { left:auto;right:20px;top:64px;bottom:auto;width:min(240px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right; } #player-more-menu.active { transform:translateY(0) scale(1); } .sheet.sheet-dock-topright { left:auto;right:20px;top:64px;bottom:auto;width:min(320px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right;max-height:min(62vh,520px); } .sheet.sheet-dock-topright.active { transform:translateY(0) scale(1); } .lyrics-controls { right:auto;left:24px; } #player-lyrics-inner .lyrics-line { padding:10px 0;min-height:auto;transform:none;transform-origin:left center; } #player-lyrics-inner .lyrics-line.active { transform:none;color:var(--text-primary);font-weight:500;opacity:1; } #player-lyrics-inner .lyrics-line:not(.active) { opacity:0.55; } #lyrics-page .player-header { justify-content:center; } #back-to-player-btn,#lyrics-controls { display:none!important; } #lyrics-page .lyrics-container { padding-left:clamp(40px,12vw,200px);padding-right:clamp(40px,12vw,200px); } }
+@media (min-width:900px),(min-width:640px)and (max-height:500px) { .player-content { flex-direction:row;align-items:center;justify-content:center;gap:48px;padding:0 56px;overflow:visible;margin-top:0; } .player-swipe-layer { flex-direction:row;justify-content:center;align-items:center;gap:48px;flex:0 1 auto;width:auto; } .player-left { flex:0 1 420px;width:420px;max-width:420px;min-width:0;margin-top:0;clip-path:inset(-160px -148px -160px -2000px); } .disc-stage { margin-top:calc(-24px + var(--disc-lift, -80px)); } .album-cover-wrap { width:min(100%,34vh,260px);height:auto;max-height:none;margin-top:calc(-24px + var(--disc-lift, -80px)); } .progress-container { max-width:370px; } .album-cover-wrap::before,.album-cover-peek::before { inset:-24px;filter:blur(22px); } .player-lyrics { display:block;max-width:460px;height:min(68vh,560px); } .player-lyrics-inner { padding:12px 8px; } .player-lyrics-inner .lyrics-line { font-size:18px;line-height:1.9; } #lyrics-btn { display:none; } .cover-lyric { display:none; } .main-control-btn.add-pl-btn { display:flex;color:var(--text-primary); } .sheet { left:50%;right:auto;width:min(420px,calc(100vw - 48px));bottom:calc(var(--bottom-stack) + 12px);transform:translate(-50%,16px) scale(0.97); } #pl-select-more-menu { bottom:calc(var(--bottom-stack) + 56px); } .sheet.active { transform:translate(-50%,0) scale(1); } #rate-sheet,.sheet.sheet-dock-left { left:24px;right:auto;width:min(340px,calc(100vw - 48px));bottom:auto;top:50%;transform:translateY(calc(-50% + 16px)) scale(0.97);max-height:min(62vh,520px); } .sheet.sheet-dock-left { left:calc(var(--side-tab-width) + 72px); } #rate-sheet.active,.sheet.sheet-dock-left.active { transform:translateY(-50%) scale(1); } #rate-sheet { left:auto;right:20px;top:64px;bottom:auto;width:min(300px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right; } #rate-sheet.active { transform:translateY(0) scale(1); } #player-more-menu { left:auto;right:20px;top:64px;bottom:auto;width:min(240px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right; } #player-more-menu.active { transform:translateY(0) scale(1); } .sheet.sheet-dock-topright { left:auto;right:20px;top:64px;bottom:auto;width:min(320px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right;max-height:min(62vh,520px); } .sheet.sheet-dock-topright.active { transform:translateY(0) scale(1); } .lyrics-controls { right:auto;left:24px; } #player-lyrics-inner .lyrics-line { padding:10px 0;min-height:auto;transform:none;transform-origin:left center; } #player-lyrics-inner .lyrics-line.active { transform:none;color:var(--text-primary);font-weight:500;opacity:1; } #player-lyrics-inner .lyrics-line:not(.active) { opacity:0.55; } #lyrics-page .player-header { justify-content:center; } #back-to-player-btn,#lyrics-controls { display:none!important; } #lyrics-page .lyrics-container { padding-left:clamp(40px,12vw,200px);padding-right:clamp(40px,12vw,200px); } }
 @media (min-width:640px)and (max-height:500px) { .player-content { gap:28px;padding:4px 24px 16px;margin-top:0; } .player-swipe-layer { gap:28px; } .player-left { flex:0 0 auto;width:auto;max-width:340px;--ctrl-size:42px;--ctrl-gap:12px;clip-path:inset(-160px -124px -160px -2000px); } .disc-stage { margin-top:0; } .album-cover-wrap { width:min(46vh,230px);height:auto;max-height:none;margin-top:0; } .player-panel { width:100%; } .player-main-controls { margin:0; } .main-control-btn { font-size:18px; } .main-control-btn.play-pause { font-size:20px; } .player-lyrics { height:min(84vh,100%); } .player-lyrics-inner .lyrics-line { font-size:16px;line-height:1.8; } .album-cover-wrap::before { inset:-18px;filter:blur(18px); } .player-header { padding:8px 16px; } .player-title { padding:0 96px; } .player-song-name { font-size:15px; } .player-artist-name { font-size:12px; } }
-@media (min-width:900px),(min-width:640px)and (max-height:500px) { .main-content { padding-left:calc(var(--side-tab-width) + 24px);padding-bottom:30px; } body.has-mini-player .main-content { padding-bottom:calc(var(--mini-height) + 24px); } .header { padding-left:calc(var(--side-tab-width) + 20px); } .mini-player { left:var(--side-tab-width);right:0;bottom:0; } .fab-stack { bottom:18px; } body.has-mini-player .fab-stack { bottom:calc(var(--mini-height) + 18px); } .player-header { padding:16px 32px; } .player-title { padding:0 100px; } .player-song-name { font-size:18px; } .player-artist-name { font-size:13.5px; } .fav-page,.playlist-page,.search-results,.about-page { left:calc(var(--side-tab-width) + 1px); } .about-page { display:none; } body.settings-tab .about-page { display:flex; } }
+@media (min-width:900px),(min-width:640px)and (max-height:500px) { .main-content { padding-left:calc(var(--side-tab-width) + 24px);padding-bottom:30px; } body.has-mini-player .main-content { padding-bottom:calc(var(--mini-height) + 24px); } .header { padding-left:calc(var(--side-tab-width) + 20px); } .mini-player { left:var(--side-tab-width);right:0;bottom:0; } .fab-stack { bottom:18px; } body.has-mini-player .fab-stack { bottom:calc(var(--mini-height) + 18px); } .player-header { padding:16px 32px; } .player-title { padding:0 100px; } .player-song-name { font-size:18px; } .player-artist-name { font-size:13.5px; } .fav-page,.playlist-page,.search-results,.about-page { left:var(--side-tab-width); } .about-page { display:none; } body.settings-tab .about-page { display:flex; } }
 @media (min-width:900px),(min-width:640px)and (max-height:500px) { body #select-bar,body #pl-select-bar { left:var(--side-tab-width);right:0;width:auto;padding:8px 10px;border:none;border-top:1px solid var(--glass-edge);border-radius:0;box-shadow:var(--inset-highlight);background:var(--glass-panel-strong);-webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));transform:translateY(16px);bottom:0; } body #select-bar.active,body #pl-select-bar.active { transform:translateY(0); } body.has-mini-player #select-bar,body.has-mini-player #pl-select-bar { bottom:var(--mini-height); } body .select-topbar { left:var(--side-tab-width); } }
 </style>
 </head>
@@ -1319,7 +1342,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
     <nav class="tab-bar" id="tab-bar">
         <button class="tab-brand" id="tab-brand" type="button"
                 title="刷新页面" aria-label="MKY音乐，点击刷新页面">
-            <span class="tab-brand-logo"><svg class="brand-disc" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="bdisc-tab" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3d77"/><stop offset="1" stop-color="#c2185b"/></linearGradient><linearGradient id="bdisc-tab-sheen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.34" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.46" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.54" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.66" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient><clipPath id="bdisc-tab-clip"><circle cx="32" cy="32" r="30"/></clipPath></defs><circle cx="32" cy="32" r="30" fill="#141418"/><circle cx="32" cy="32" r="30" fill="none" stroke="#ffffff" stroke-opacity=".14" stroke-width="2.6"/><circle cx="32" cy="32" r="21" fill="none" stroke="#ffffff" stroke-opacity=".10" stroke-width="1.5"/><circle cx="32" cy="32" r="14" fill="none" stroke="#ffffff" stroke-opacity=".08" stroke-width="1.5"/><circle cx="32" cy="32" r="12" fill="url(#bdisc-tab)"/><circle cx="32" cy="32" r="3.4" fill="#141418"/><g clip-path="url(#bdisc-tab-clip)"><rect x="-16" y="-16" width="96" height="96" fill="url(#bdisc-tab-sheen)"/></g></svg></span>
+            <span class="tab-brand-logo"><svg class="brand-disc" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="bdisc-tab" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff2d78"/><stop offset="1" stop-color="#e91e63"/></linearGradient><linearGradient id="bdisc-tab-sheen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.34" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.46" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.54" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.66" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient><clipPath id="bdisc-tab-clip"><circle cx="32" cy="32" r="30"/></clipPath></defs><circle cx="32" cy="32" r="30" fill="#141418"/><circle cx="32" cy="32" r="30" fill="none" stroke="#ffffff" stroke-opacity=".14" stroke-width="2.6"/><circle cx="32" cy="32" r="21" fill="none" stroke="#ffffff" stroke-opacity=".10" stroke-width="1.5"/><circle cx="32" cy="32" r="14" fill="none" stroke="#ffffff" stroke-opacity=".08" stroke-width="1.5"/><circle cx="32" cy="32" r="12" fill="url(#bdisc-tab)"/><circle cx="32" cy="32" r="3.4" fill="#141418"/><g clip-path="url(#bdisc-tab-clip)"><rect x="-16" y="-16" width="96" height="96" fill="url(#bdisc-tab-sheen)"/></g></svg></span>
             <span class="tab-brand-name">MKY音乐</span>
         </button>
         <div class="tab-items" id="tab-items">
@@ -1401,6 +1424,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                             </div>
                         </div>
                         <div class="album-cover no-cover" id="album-cover-box">
+                            <span class="album-cover-frost" aria-hidden="true"></span>
                             <img alt="" class="album-cover-img" id="album-cover" />
                             <i class="fas fa-music album-cover-fallback" aria-hidden="true"></i>
                         </div>
@@ -1755,9 +1779,9 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             </div>
         </div>
         <div class="about-body">
-            <div class="about-logo" id="about-logo" role="button" tabindex="0" aria-label="MKY音乐"><svg class="brand-disc" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="bdisc-about" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3d77"/><stop offset="1" stop-color="#c2185b"/></linearGradient><linearGradient id="bdisc-sheen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.34" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.46" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.54" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.66" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient><clipPath id="bdisc-clip"><circle cx="32" cy="32" r="30"/></clipPath></defs><g class="disc-spin"><circle cx="32" cy="32" r="30" fill="#141418"/><circle cx="32" cy="32" r="30" fill="none" stroke="#ffffff" stroke-opacity=".14" stroke-width="2.6"/><circle cx="32" cy="32" r="21" fill="none" stroke="#ffffff" stroke-opacity=".10" stroke-width="1.5"/><circle cx="32" cy="32" r="14" fill="none" stroke="#ffffff" stroke-opacity=".08" stroke-width="1.5"/><circle cx="32" cy="32" r="12" fill="url(#bdisc-about)"/><circle cx="32" cy="32" r="3.4" fill="#141418"/><g clip-path="url(#bdisc-clip)"><rect class="disc-sheen" x="-16" y="-16" width="96" height="96" fill="url(#bdisc-sheen)"/></g></g></svg></div>
+            <div class="about-logo" id="about-logo" role="button" tabindex="0" aria-label="MKY音乐"><svg class="brand-disc" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="bdisc-about" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff2d78"/><stop offset="1" stop-color="#e91e63"/></linearGradient><linearGradient id="bdisc-sheen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.34" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.46" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.54" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.66" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient><clipPath id="bdisc-clip"><circle cx="32" cy="32" r="30"/></clipPath></defs><g class="disc-spin"><circle cx="32" cy="32" r="30" fill="#141418"/><circle cx="32" cy="32" r="30" fill="none" stroke="#ffffff" stroke-opacity=".14" stroke-width="2.6"/><circle cx="32" cy="32" r="21" fill="none" stroke="#ffffff" stroke-opacity=".10" stroke-width="1.5"/><circle cx="32" cy="32" r="14" fill="none" stroke="#ffffff" stroke-opacity=".08" stroke-width="1.5"/><circle cx="32" cy="32" r="12" fill="url(#bdisc-about)"/><circle cx="32" cy="32" r="3.4" fill="#141418"/><g clip-path="url(#bdisc-clip)"><rect class="disc-sheen" x="-16" y="-16" width="96" height="96" fill="url(#bdisc-sheen)"/></g></g></svg></div>
             <div class="about-name">MKY音乐</div>
-            <div class="about-version">版本 2.7</div>
+            <div class="about-version">版本 2.8</div>
             <div class="about-slogan">把每一处细节听懂<br>把听歌这件事做好</div>
             <div class="about-links">
                 <div class="about-legal">
@@ -1885,6 +1909,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             </div>
         </div>
         <div class="mv-body" id="mv-body">
+            <div class="mv-main">
             <div class="mv-info">
                 <div class="mv-info-head">
                     <div class="mv-info-text">
@@ -1942,6 +1967,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         <i class="fas fa-expand"></i>
                     </button>
                 </div>
+            </div>
             </div>
             <div class="mv-related" id="mv-related" hidden>
                 <div class="mv-related-title">相关推荐</div>
@@ -2378,7 +2404,12 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             }
             let queueCtx = { playlistId: '', artistId: '', artistName: '', chart: '' };
             function setQueue(list, source, ctx) {
-                currentSongs = list || [];
+                currentSongs = (list || []).map((song) => {
+                    if (song && song.url && !isUsableAudioUrl(song.url)) {
+                        song.url = '';
+                    }
+                    return song;
+                });
                 queueSource = source || 'chart';
                 queueCtx = Object.assign({
                     playlistId: '', artistId: '', artistName: '', chart: ''
@@ -4431,22 +4462,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 img.src = url;
                 box.classList.remove('no-cover');
             }
-            const MS_FALLBACK_COVER = (function () {
-                const toDataUri = (svg) =>
-                    'data:image/svg+xml,' + encodeURIComponent(svg);
-                const noteSvg =
-                    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">' +
-                    '<rect width="300" height="300" rx="63" ry="63" fill="#1a1a1c"/>' +
-                    '<g fill="#3d3d3f">' +
-                    '<ellipse cx="116" cy="182" rx="17" ry="13" transform="rotate(-18 116 182)"/>' +
-                    '<ellipse cx="180" cy="168" rx="17" ry="13" transform="rotate(-18 180 168)"/>' +
-                    '<rect x="129" y="108" width="8" height="76" rx="2"/>' +
-                    '<rect x="193" y="94" width="8" height="76" rx="2"/>' +
-                    '<path d="M129 108 L201 94 L201 113 L129 127 Z"/>' +
-                    '</g>' +
-                    '</svg>';
-                return toDataUri(noteSvg);
-            })();
+            const MS_FALLBACK_COVER = new URL('mky-cover.png', location.href).href;
             function coverOrFavDefault(url) {
                 return url || '';
             }
@@ -4771,7 +4787,12 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                             <h2>${esc(data.data.listName || name)}</h2>
                             <p>${esc(data.data.listDesc || '网易' + name + ' · 每日更新')}</p>
                         `;
-                        const songs = data.data.songs || [];
+                        const songs = (data.data.songs || []).map((song) => {
+                            if (song && song.url && !isUsableAudioUrl(song.url)) {
+                                song.url = '';
+                            }
+                            return song;
+                        });
                         hotSongs = songs;
                         renderSongList(songs, songList, { from: 'chart', showMore: true });
                         if (pendingQueueRestore) {
@@ -10146,6 +10167,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             }
             const XFABE_BASE = 'https://node.api.xfabe.com/api/wangyi';
             const GD_BASE = 'https://music-api.gdstudio.xyz/api.php';
+            const METING_BASE = 'https://api.qijieya.cn/meting/';
             const NETEASE_SEARCH = 'https://music.163.com/api/search/get?s=';
             const ARTIST_API = 'https://apis.netstart.cn/music';
             const ARTIST_PAGE_SIZE = 100;
@@ -10587,6 +10609,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (!/^https?:\/\//i.test(u)) return false;
                 if (/node\.api\.xfabe\.com/i.test(u)) return false;
                 if (/\/api\/wangyi\//i.test(u)) return false;
+                if (/music\.163\.com\/song\/media\/outer\/url/i.test(u)) return false;
                 return true;
             }
             function isTrialClipUrl(u) {
@@ -10609,29 +10632,47 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     if (timer) clearTimeout(timer);
                 });
             }
+            function metingPlayTask(id, allowTrial) {
+                return async () => {
+                    const api = METING_BASE + '?type=url&id=' +
+                        encodeURIComponent(id);
+                    const res = await withTimeout(fetch(api, {
+                        headers: { Range: 'bytes=0-1' },
+                        cache: 'no-store'
+                    }), 8000, 'meting 超时');
+                    if (!res.ok && res.status !== 206) {
+                        throw new Error('meting 状态 ' + res.status);
+                    }
+                    const ct = (res.headers.get('content-type') || '').toLowerCase();
+                    if (ct && !/(audio|octet-stream|mpegurl)/.test(ct)) {
+                        throw new Error('meting 返回的不是音频');
+                    }
+                    const finalUrl = (res.url || '').replace(/^http:\/\//i, 'https://');
+                    if (!isUsableAudioUrl(finalUrl)) {
+                        throw new Error('meting 地址不可用');
+                    }
+                    if (!allowTrial && isTrialClipUrl(finalUrl)) {
+                        throw new Error('meting 只返回试听片段');
+                    }
+                    try { await res.arrayBuffer(); } catch (_) {}
+                    return { url: finalUrl, br: 0, size: 0 };
+                };
+            }
             async function playUrlOf(id) {
                 try {
-                    const d = await xfabeGet(XFABE_BASE + '/music?type=json&id=' +
-                        encodeURIComponent(id));
-                    const row = d.data || {};
-                    if (!row.url) throw new Error('xfabe 未返回播放地址');
-                    if (!isUsableAudioUrl(row.url)) {
-                        throw new Error('xfabe 返回的地址不是音频');
-                    }
-                    return {
-                        url: row.url,
-                        br: 0,
-                        size: 0,
-                        duration: row.duration || 0,
-                        pay: row.pay || ''
-                    };
+                    return await metingPlayTask(id, false)();
                 } catch (e) {
-                    console.warn('主源失败，转 gdstudio：', e && e.message);
+                    console.warn('meting 失败，转 gdstudio：', e && e.message);
                 }
                 try {
                     return await gdPlayTask(id)();
                 } catch (e) {
-                    console.warn('gdstudio 失败，改用试听源：', e && e.message);
+                    console.warn('gdstudio 失败，转试听源：', e && e.message);
+                }
+                try {
+                    return await metingPlayTask(id, true)();
+                } catch (e) {
+                    console.warn('meting 试听失败，转 gdstudio 试听：', e && e.message);
                 }
                 return previewPlayUrl(id);
             }
@@ -12018,8 +12059,9 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     currentTimeEl.textContent = '0:00';
                     progress.style.width = '0%';
                 }
-                let url = song.url;
+                let url = canUseSongUrl(song) ? song.url : '';
                 if (!url) {
+                    song.url = '';
                     try {
                         const got = await withTimeout(playUrlOf(song.id), URL_WAIT_MS,
                             '获取播放地址超时');
@@ -12310,8 +12352,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             }
             function canUseSongUrl(song) {
                 if (!song) return false;
-                const u = song.url;
-                return !!(u && typeof u === 'string' && u.trim() !== '');
+                return isUsableAudioUrl(song.url);
             }
             function togglePlay() {
                 if (placeholderMode) { showPlaceholderTip(); return; }
@@ -12685,7 +12726,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     }
                     art.push({
                         src: song.__msFallback || MS_FALLBACK_COVER,
-                        sizes: '300x300',
+                        sizes: '512x512',
                         type: 'image/png'
                     });
                     navigator.mediaSession.metadata = new window.MediaMetadata({
@@ -12695,6 +12736,32 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         artwork: art
                     });
                 } catch (_) {}
+            }
+            function updatePlaceholderMetadata() {
+                const item = {
+                    title: 'MKY音乐',
+                    artist: 'MKY音乐',
+                    album: '',
+                    art: MS_FALLBACK_COVER
+                };
+                const wms = wcMs();
+                if (wms) {
+                    try { wms.updateMetadata({ item }); } catch (_) {}
+                }
+                if (mediaSessionSupported()) {
+                    try {
+                        navigator.mediaSession.metadata = new window.MediaMetadata({
+                            title: 'MKY音乐',
+                            artist: 'MKY音乐',
+                            album: '',
+                            artwork: [{
+                                src: MS_FALLBACK_COVER,
+                                sizes: '512x512',
+                                type: 'image/png'
+                            }]
+                        });
+                    } catch (_) {}
+                }
             }
             let mediaSessionBound = false;
             let msSeekHoldUntil = 0;
@@ -14036,6 +14103,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 setLyricsPlaceholder('暂无歌词', true);
                 syncFavUI();
                 showMiniPlayer();
+                updatePlaceholderMetadata();
             }
             async function restoreLastPlayback() {
                 const saved = loadLastPlayback();
