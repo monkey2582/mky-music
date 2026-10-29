@@ -14331,6 +14331,14 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                                     return;
                                 }
                                 pushPlayHistory(song);
+                                const hi = playHistory.findIndex(
+                                    s => String(s.id) === String(song.id));
+                                if (hi > 0) {
+                                    const moved = playHistory.splice(hi, 1)[0];
+                                    playHistory.unshift(moved);
+                                    persistPlayHistory();
+                                    renderPlayHistoryPage();
+                                }
                                 playHistoryAsQueue(0);
                                 openFullPlayer();
                                 const rawSpeed = get('speed');
