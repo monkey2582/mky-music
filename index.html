@@ -974,7 +974,8 @@ html.no-glass .lyrics-veil-blur-3 { -webkit-backdrop-filter:blur(18px) saturate(
 .mv-result-item { margin-bottom:18px; }
 .search-results-header::before { content:"";position:absolute;inset:0;z-index:-1;background:var(--glass-panel-strong);-webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));border-bottom:1px solid var(--glass-edge); }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .search-results-header { background:var(--bg-body); } .search-results-header::before { display:none; } }
-.back-btn { background:none;border:none;color:var(--text-primary);font-size:15px;cursor:pointer;width:30px;height:30px;padding:0;display:flex;align-items:center;justify-content:center;line-height:1;flex-shrink:0;border-radius:50%;transition:transform 0.15s; }
+.back-btn { background:none;border:none;color:var(--text-primary);font-size:15px;cursor:pointer;width:30px;height:30px;padding:0;display:flex;align-items:center;justify-content:center;line-height:1;flex-shrink:0;border-radius:50%;transition:transform 0.15s,background 0.2s; }
+.back-btn:hover { background:var(--surface-hover-strong); }
 .back-btn:active { transform:scale(0.90); }
 .results-search-wrap { flex:1 1 auto;min-width:0;display:flex;gap:8px;position:relative; }
 .results-search-wrap .search-history { top:calc(100% + 10px);left:-38px;right:0;width:auto;min-width:260px;max-width:none; }
@@ -11868,6 +11869,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             let fallbackGuard = false;
             let failStreak = 0;
             let lastFailAt = 0;
+            let autoplayBlocked = false;
             const FAIL_KEY = 'mky_playFail';
             const FAIL_KEEP = 20;
             let failedIds = new Set();
@@ -11928,7 +11930,60 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
                 return null;
             }
+            function handleAutoplayBlocked() {
+                playStarting = false;
+                isPlaying = false;
+                pendingPauseAfterSeek = false;
+                updatePlayButtons();
+                setCoverSpin(false);
+                if (autoplayBlocked) return;
+                autoplayBlocked = true;
+                armAutoplayResume();
+                showToast('浏览器已拦截自动播放，点一下屏幕继续');
+            }
+            function armAutoplayResume() {
+                const fire = () => {
+                    document.removeEventListener('click', fire, true);
+                    document.removeEventListener('touchend', fire, true);
+                    document.removeEventListener('keydown', fire, true);
+                    setTimeout(resumeFromUserGesture, 0);
+                };
+                document.addEventListener('click', fire, true);
+                document.addEventListener('touchend', fire, true);
+                document.addEventListener('keydown', fire, true);
+            }
+            function resumeFromUserGesture() {
+                if (!autoplayBlocked) return;
+                if (playStarting) { autoplayBlocked = false; return; }
+                const el = currentAudio;
+                if (el && !el.paused) { autoplayBlocked = false; return; }
+                if (el && !el.getAttribute('src')) return;
+                autoplayBlocked = false;
+                if (el) {
+                    const sp = playAudioFaded(el, FADE_RESUME_MS);
+                    if (sp && typeof sp.catch === 'function') {
+                        sp.catch((err) => {
+                            if (err && err.name === 'AbortError') return;
+                            if (err && err.name === 'NotAllowedError') return;
+                            failPlayback(currentSong, '恢复播放被拒');
+                        });
+                    }
+                    return;
+                }
+                if (currentSong || currentSongs.length) playSong(currentIndex);
+            }
+            function isAutoplayBlockedError(err) {
+                return !!(err && (err.name === 'NotAllowedError'
+                    || err.name === 'SecurityError'));
+            }
             function failPlayback(song, why) {
+                if (autoplayBlocked) {
+                    playStarting = false;
+                    isPlaying = false;
+                    updatePlayButtons();
+                    setCoverSpin(false);
+                    return;
+                }
                 if (staleUrlRetrying
                     && String((song && song.id) || '') === String(retryingSongId)) {
                     console.warn('地址重取中，忽略本次失败:', why, song && song.name);
@@ -12140,9 +12195,15 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                                     sp.catch((err) => {
                                         if (self !== currentAudio) return;
                                         if (err && err.name === 'AbortError') return;
+                                        if (isAutoplayBlockedError(err)) {
+                                            handleAutoplayBlocked();
+                                            return;
+                                        }
                                         console.error('续播被拒:', err && err.name);
                                         failPlayback(song, '起播被拒');
                                     });
+                                } else if (!sp) {
+                                    handleAutoplayBlocked();
                                 }
                             }
                         } catch (_) {}
@@ -12166,12 +12227,19 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         if (myAttempt !== playAttemptSeq) return;
                         if (myAudio !== currentAudio) return;
                         if (err && err.name === 'AbortError') return;
+                        if (isAutoplayBlockedError(err)) {
+                            handleAutoplayBlocked();
+                            return;
+                        }
                         console.error('起播被拒:', err && err.name, err && err.message);
                         failPlayback(song, '起播被拒');
                     });
+                } else if (!startPromise && targetSeek <= 0 && !pendingPauseAfterSeek) {
+                    handleAutoplayBlocked();
                 }
                 myAudio.addEventListener('play', () => {
                     if (myAudio !== currentAudio) return;
+                    autoplayBlocked = false;
                     isPlaying = true;
                     updatePlayButtons();
                     setCoverSpin(true);
@@ -12290,6 +12358,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     clearTimeout(startupWatch);
                     startupWatch = setTimeout(() => {
                         if (myAudio !== currentAudio) return;
+                        if (autoplayBlocked) return;
                         if (everAudible) return;
                         if (!myAudio.paused || myAudio.ended) return;
                         if ((myAudio.currentTime || 0) > 0.25) return;
@@ -12376,12 +12445,17 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         return;
                     }
                     if (currentAudio.paused) {
+                        autoplayBlocked = false;
                         const p = playAudioFaded(currentAudio, FADE_RESUME_MS);
                         const self = currentAudio;
                         if (p && typeof p.catch === 'function') {
                             p.catch((err) => {
                                 if (self !== currentAudio) return;
                                 if (err && err.name === 'AbortError') return;
+                                if (isAutoplayBlockedError(err)) {
+                                    handleAutoplayBlocked();
+                                    return;
+                                }
                                 console.error('恢复播放被拒:', err && err.name);
                                 failPlayback(currentSong, '恢复播放被拒');
                             });
@@ -12600,10 +12674,10 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     if (currentSong) return false;
                     at = step > 0 ? -1 : 0;
                 }
-                let target = at - step;
+                let target = at + step;
                 if (target < 0) target = playHistory.length - 1;
                 if (target >= playHistory.length) target = 0;
-                setQueue(playHistory.map(s => ({ ...s, pay: s.pay || '免费音乐' })), 'search');
+                setQueue(playHistory.map(s => ({ ...s, pay: s.pay || '免费音乐' })), 'history');
                 playSong(target);
                 return true;
             }
@@ -12767,12 +12841,17 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 safe(() => {
                     ms.setActionHandler('play', () => {
                         if (currentAudio && canUseSongUrl(currentSong)) {
+                            autoplayBlocked = false;
                             const p = playAudioFaded(currentAudio, FADE_RESUME_MS);
                             const self = currentAudio;
                             if (p && typeof p.catch === 'function') {
                                 p.catch((err) => {
                                     if (self !== currentAudio) return;
                                     if (err && err.name === 'AbortError') return;
+                                    if (isAutoplayBlockedError(err)) {
+                                        handleAutoplayBlocked();
+                                        return;
+                                    }
                                     console.error('恢复播放被拒:', err && err.name);
                                     failPlayback(currentSong, '恢复播放被拒');
                                 });
