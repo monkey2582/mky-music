@@ -9039,7 +9039,9 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                             text: '复制链接',
                             close: true,
                             onClick: () => {
-                                const link = location.origin + location.pathname + '?mid=' + encodeURIComponent(id);
+                                const val = readableSongId(song);
+                                const link = 'https://mky-music.pages.dev/?mid=' +
+                                    encodeURIComponent(val === 'kw_…' ? id : val);
                                 copyTextToClipboard(link).then(ok => {
                                     showToast(ok ? '已复制链接' : '复制失败');
                                 });
@@ -11277,7 +11279,71 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 });
                 return changed;
             }
+            async function kuwoSongByMid(mid) {
+                const m = String(mid || '').replace(/^MUSIC_/, '').trim();
+                if (!/^\d+$/.test(m)) return null;
+                let info = null, lrcName = '', lrcArtist = '';
+                for (let i = 0; i < 6; i++) {
+                    try {
+                        const d = await fetchOne(u => u,
+                            KUWO_LRC_API + m + '&httpsStatus=1', 6000);
+                        const data = d && d.data;
+                        const si = data && data.songinfo;
+                        const line = String(((data && data.lrclist) || [])
+                            .map(x => (x && x.lineLyric) || '')[0] || '');
+                        const hit = line.match(/^(.+?)\s*[-–—]\s*(.+)$/);
+                        if (si && !info) info = si;
+                        if (hit && !lrcArtist) {
+                            lrcArtist = kuwoText(hit[1]);
+                            lrcName = kuwoText(hit[2]);
+                        }
+                        if (kuwoText(si && (si.songName || si.name)) || lrcName) break;
+                    } catch (_) {}
+                    await new Promise(r => setTimeout(r, 200));
+                }
+                const name = kuwoText(info && (info.songName || info.name)) || lrcName;
+                const artist = kuwoText(info && info.artist) || lrcArtist;
+                const album = kuwoText(info && info.album);
+                const sec = Number(info && info.duration) || 0;
+                const pic = (info && (info.pic || info.albumpic)) || '';
+                return {
+                    id: 'kw_' + m,
+                    kwid: m,
+                    name: name,
+                    artistsname: artist || '未知歌手',
+                    artists: artist ? artist.split(/[\/&,、]/)
+                        .map(n => ({ name: n.trim() }))
+                        .filter(a => a.name) : [],
+                    album: album,
+                    duration: sec * 1000,
+                    picurl: pic ? normalizeCoverUrl(pic) : '',
+                    picId: '',
+                    picIdExact: !!pic
+                };
+            }
+            async function kuwoSongFromLegacyId(sid) {
+                let parts = [];
+                try { parts = decodeURIComponent(sid.slice(3)).split('|'); } catch (_) {}
+                const name = kuwoText(parts[0]);
+                const artist = kuwoText(parts[1]);
+                if (!name) return null;
+                let mid = '';
+                try {
+                    const hit = await kuwoResolveMid({ name: name, artist: artist, sec: 0 });
+                    if (hit && hit.mid) mid = String(hit.mid);
+                } catch (_) {}
+                if (!mid) return null;
+                const song = await kuwoSongByMid(mid);
+                if (song && !song.name) song.name = name;
+                return song;
+            }
             async function searchSongById(id) {
+                const sid = String(id || '');
+                if (sid.indexOf('kw_') === 0) {
+                    const rest = sid.slice(3);
+                    if (/^\d+$/.test(rest)) return await kuwoSongByMid(rest);
+                    return await kuwoSongFromLegacyId(sid);
+                }
                 const row = await fetchNeteaseDetail(id);
                 if (!row) return null;
                 const ar = Array.isArray(row.ar) ? row.ar
@@ -11893,16 +11959,40 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
                 throw lastErr || new Error('酷我无可用结果');
             }
+            async function kuwoMidPlayTask(mid) {
+                const rid = 'MUSIC_' + String(mid || '').replace(/^MUSIC_/, '');
+                const txt = (await proxiedText(
+                    'https://antiserver.kuwo.cn/anti.s?type=convert_url&format=mp3' +
+                    '&response=url&rid=' + rid, 9000)).trim();
+                const u = txt.replace(/^http:/i, 'https:');
+                if (!/^https?:\/\//i.test(u)) throw new Error('酷我未返回地址');
+                if (!(await probeAudioUrl(u, 2500))) throw new Error('酷我地址已失效');
+                return { url: u, br: 128000, pay: '免费音乐', from: 'kuwo' };
+            }
             async function playUrlOf(id, hint) {
                 const sid = String(id);
                 const isByName = sid.indexOf('kw_') === 0;
                 let name = hint && hint.name ? String(hint.name) : '';
                 let artist = hint && hint.artistsname ? String(hint.artistsname) : '';
                 let dur = hint && hint.duration ? Number(hint.duration) : 0;
-                if (sid.indexOf('kw_') === 0) {
+                if (sid.indexOf('kw_') === 0 && !/^\d+$/.test(sid.slice(3))) {
                     const parts = decodeURIComponent(sid.slice(3)).split('|');
                     if (!name && parts[0]) name = parts[0];
                     if (!artist && parts[1]) artist = parts[1];
+                }
+                if (/^kw_\d+$/.test(sid)) {
+                    try {
+                        return await kuwoMidPlayTask(sid.slice(3));
+                    } catch (e) {
+                        console.warn('酷我mid播放失败：', e && e.message);
+                        if (name) {
+                            try {
+                                return await kuwoPlayTask(name, artist,
+                                    dur > 0 ? dur / 1000 : 0);
+                            } catch (_) {}
+                        }
+                        throw new Error('该曲暂无可播放源');
+                    }
                 }
                 const metaOf = async () => {
                     if (!name && !isByName) {
@@ -12091,7 +12181,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const s = String(id || '');
                 const song = (currentSong && String(currentSong.id) === s) ? currentSong : null;
                 const sec = (song && Number(song.duration)) ? Number(song.duration) / 1000 : 0;
-                if (s.indexOf('kw_') === 0) {
+                if (s.indexOf('kw_') === 0 && !/^\d+$/.test(s.slice(3))) {
                     const p = decodeURIComponent(s.slice(3)).split('|');
                     return { name: p[0] || '', artist: p[1] || '', sec: sec };
                 }
