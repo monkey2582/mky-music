@@ -6815,11 +6815,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     ? String(a.id) !== curId
                     : (a.name || '') !== curName);
             }
-            function artistLineOf(song) {
-                const artist = (song && song.artistsname) || '未知歌手';
-                const album = String((song && song.album) || '').trim();
-                return album ? artist + ' - ' + album : artist;
-            }
             function openSongInfo(song) {
                 if (!song || !artistPickerSheet) return;
                 const list = normalizeArtistList(song.artists, song.artistsname);
@@ -10285,40 +10280,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const nn = normName(name);
                 return !!na && !!nn && na === nn;
             }
-            const albumSizePending = new Map();
-            function albumSizeOf(album, artist) {
-                const key = normName(album) + '|' + normName(artist);
-                if (albumSizeCache.has(key)) {
-                    return Promise.resolve(albumSizeCache.get(key));
-                }
-                if (albumSizePending.has(key)) return albumSizePending.get(key);
-                const p = albumSearch(album, artist).then((list) => {
-                    const hit = pickAlbumRow(list, album, artist);
-                    const size = Number(hit && hit.size);
-                    const val = (hit && isFinite(size) && size > 0) ? size : null;
-                    if (val !== null) albumSizeCache.set(key, val);
-                    albumSizePending.delete(key);
-                    return val;
-                }).catch(() => {
-                    albumSizePending.delete(key);
-                    return null;
-                });
-                albumSizePending.set(key, p);
-                return p;
-            }
-            function applyArtistLine(el, song) {
-                if (!el) return;
-                const artist = (song && song.artistsname) || '未知歌手';
-                const album = String((song && song.album) || '').trim();
-                const tag = String((song && song.id) || '');
-                el.dataset.lineTag = tag;
-                el.textContent = artistLineOf(song);
-                if (!album) return;
-                albumSizeOf(album, artist).then((size) => {
-                    if (el.dataset.lineTag !== tag) return;
-                    if (size === 1) el.textContent = artist;
-                });
-            }
             function verifyAlbumSpans(root) {
                 if (!root) return;
                 root.querySelectorAll('.song-album[data-album]').forEach((el) => {
@@ -10341,15 +10302,11 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     }).catch(() => {});
                 });
             }
-            function songMetaParts(song, from) {
+            function songMetaParts(song) {
                 const artist = String((song && song.artistsname) || '未知歌手')
                     .replace(/，/g, '/')
                     .replace(/,(?=\S)/g, '/');
-                const album = String((song && song.album) || '').trim();
-                return {
-                    artist: artist,
-                    album: (from === 'chart' && album) ? album : ''
-                };
+                return { artist: artist, album: '' };
             }
             function renderSongList(songs, target, opts) {
                 const root = target || songList;
@@ -10364,7 +10321,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
                 const frag = document.createDocumentFragment();
                 songs.forEach((song, idx) => {
-                    const meta = songMetaParts(song, from);
+                    const meta = songMetaParts(song);
                     const li = document.createElement('li');
                     li.className = 'song-item' + (selectedIds.has(String(song.id)) ? ' selected' : '');
                     li.dataset.index = idx;
@@ -10381,7 +10338,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         </div>
                         <div class="song-details">
                             <div class="song-title">${esc(song.name || '未知歌曲')}</div>
-                            <div class="song-artist">${esc(meta.artist)}${meta.album ? `<span class="song-album" data-album="${esc(meta.album)}" data-name="${esc(song.name || '')}" data-artist="${esc(meta.artist)}"> - ${esc(meta.album)}</span>` : ''}</div>
+                            <div class="song-artist">${esc(meta.artist)}</div>
                         </div>
                         <div class="song-duration">${formatTime((song.duration || 0) / 1000)}</div>
                         ${showMore ? `
@@ -13791,16 +13748,16 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
                 setCoverSrc(miniCoverWrap, miniCover, song.picurl);
                 miniSongTitle.textContent = song.name || '未知歌曲';
-                applyArtistLine(miniSongArtist, song);
+                miniSongArtist.textContent = (song && song.artistsname) || '未知歌手';
                 setCoverSrc(albumCoverBox, albumCover, song.picurl);
                 updateDiscGlow(song.picurl);
                 if (!swipeSettling) refreshSwipePeeks();
                 preloadSwipePeeks();
                 if (!song.picurl) backfillCoverFor(song);
                 fullSongName.textContent = song.name || '未知歌曲';
-                applyArtistLine(fullArtistName, song);
+                fullArtistName.textContent = (song && song.artistsname) || '未知歌手';
                 lyricsSongName.textContent = song.name || '未知歌曲';
-                applyArtistLine(lyricsArtistName, song);
+                lyricsArtistName.textContent = (song && song.artistsname) || '未知歌手';
                 updateMediaMetadata(song);
                 showMiniPlayer();
                 resetCoverSpin();
@@ -15921,13 +15878,13 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const target = currentSong;
                 setCoverSrc(miniCoverWrap, miniCover, target.picurl);
                 miniSongTitle.textContent = target.name || '未知歌曲';
-                applyArtistLine(miniSongArtist, target);
+                miniSongArtist.textContent = (target && target.artistsname) || '未知歌手';
                 setCoverSrc(albumCoverBox, albumCover, target.picurl);
                 updateDiscGlow(target.picurl);
                 fullSongName.textContent = target.name || '未知歌曲';
-                applyArtistLine(fullArtistName, target);
+                fullArtistName.textContent = (target && target.artistsname) || '未知歌手';
                 lyricsSongName.textContent = target.name || '未知歌曲';
-                applyArtistLine(lyricsArtistName, target);
+                lyricsArtistName.textContent = (target && target.artistsname) || '未知歌手';
                 const t = saved.currentTime || 0;
                 const dur = (target.duration || 0) / 1000;
                 if (dur > 0 && t > 0) {
