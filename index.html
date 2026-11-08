@@ -529,6 +529,10 @@ body.has-mini-player .main-content { padding-bottom:calc(var(--tab-height) + env
 .song-fav-btn { flex-shrink:0;width:34px;height:34px;margin-left:6px;border:none;background:transparent;color:var(--text-secondary);font-size:15px;border-radius:50%;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;opacity:0.5;transition:color 0.2s,opacity 0.2s; }
 .song-fav-btn:hover { opacity:1;color:var(--primary); }
 .song-fav-btn.active { opacity:1;color:var(--primary); }
+.fav-item .song-fav-btn { width:28px;margin-left:2px;margin-right:-8px; }
+.fav-item .song-more-btn { width:28px;margin-left:0;margin-right:0; }
+.result-item .song-fav-btn { width:28px;margin-left:4px;margin-right:-6px; }
+.result-item .song-more-btn { width:28px;margin-left:0;margin-right:-6px; }
 .song-fav-btn.beat { animation:favBeat 0.45s cubic-bezier(0.22,1,0.36,1); }
 .song-item.playing .song-title,.result-item.playing .result-title { color:var(--primary); }
 .song-item.playing .song-index { color:var(--primary);opacity:1; }
@@ -675,6 +679,8 @@ body.has-mini-player .main-content { padding-bottom:calc(var(--tab-height) + env
 .fav-list.dragging-active { position:relative;user-select:none; }
 .drag-handle { display:none; }
 .sort-mode .drag-handle { display:flex; }
+.select-sort .drag-handle { display:flex; }
+.select-sort .song-more-btn { display:none; }
 .sort-placeholder { box-sizing:border-box;border:1.5px dashed transparent;border-radius:14px;background:transparent;margin-bottom:6px;pointer-events:none;transition:border-color 0.18s ease,background-color 0.18s ease; }
 .sort-placeholder.show { border-color:var(--border-check);background:var(--surface-hover); }
 .sort-mode .song-more-btn { display:none; }
@@ -709,8 +715,8 @@ body.placeholder-mode .main-control-btn.add-pl-btn { color:var(--text-secondary)
 .select-mode .song-item.selected,.select-mode .result-item.selected,.select-mode .fav-item.selected { background:rgba(233,30,99,0.10);border-color:rgba(233,30,99,0.28); }
 .select-mode .song-item,.select-mode .result-item,.select-mode .fav-item { padding-left:40px; }
 .select-mode .song-fav-btn { pointer-events:none;opacity:0.30; }
-.select-mode .song-more-btn { opacity:0.45; }
-.select-mode .song-more-btn:hover { opacity:0.9; }
+.select-mode .result-item .song-fav-btn { display:none; }
+.select-mode .song-more-btn { display:none; }
 .select-bar { position:fixed;left:12px;right:12px;bottom:calc(var(--tab-height) + var(--bottom-stack) + 12px);z-index:2400;background:var(--glass-panel-heavy);-webkit-backdrop-filter:blur(var(--glass-blur-bar)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-bar)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));border:1px solid var(--glass-edge-heavy);border-radius:20px;box-shadow:var(--shadow-popover),var(--inset-highlight);padding:8px;opacity:0;transform:translateY(16px) scale(0.97);pointer-events:none;transition:opacity 0.28s cubic-bezier(0.25,0.46,0.45,0.94),transform 0.28s cubic-bezier(0.25,0.46,0.45,0.94);max-height:62vh;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none; }
 .select-bar.active { opacity:1;transform:translateY(0) scale(1);pointer-events:all; }
 @media (min-width:900px),(min-width:640px)and (max-height:500px) { .select-bar { left:50%;right:auto;width:min(520px,calc(100vw - 48px));transform:translate(-50%,16px) scale(0.97); } .select-bar.active { transform:translate(-50%,0) scale(1); } }
@@ -1002,10 +1008,10 @@ html.no-glass .lyrics-veil-blur-3 { -webkit-backdrop-filter:blur(18px) saturate(
 @media (max-width:640px) { :root { --player-pad-x:20px;--ctrl-size:46px;--ctrl-gap:10px; } .main-control-btn.play-pause { width:calc(var(--ctrl-size, 46px) + 14px);height:calc(var(--ctrl-size, 46px) + 14px);font-size:24px; } .chart-cover { width:64px;height:64px; } .chart-header { padding:12px 14px;gap:14px; } .chart-info h2 { font-size:17px; } .song-item { padding:10px 12px; } .song-title { font-size:14px; } .search-results-header { padding:10px 12px 0; } .results-header-row { gap:8px; } .results-search-wrap { gap:6px; } .results-search-wrap .search-input { padding:8px 36px 8px 12px;font-size:13.5px; } .results-search-wrap .search-btn { width:36px;height:36px; } .results-search-wrap .search-field { min-width:0; } .lyrics-line { font-size:19px;padding:14px 0; } .lyrics-line.active { font-size:19px; } .album-cover-wrap { width:min(100%,280px); } .player-content { gap:20px; } .player-left { gap:18px; } .cover-lyric { margin-top:14px; } }
 @media (max-width:400px) { :root { --player-pad-x:18px;--ctrl-size:40px;--ctrl-gap:6px; } .album-cover-wrap { width:min(100%,250px); } .player-title { padding:0 94px; } .player-song-name { font-size:15px; } .search-input { font-size:14px;padding:10px 16px; } .player-main-controls { gap:var(--ctrl-gap, 6px); } .main-control-btn { font-size:18px; } .main-control-btn.play-pause { font-size:23px; } }
 @media (max-height:700px) { .album-cover-wrap { width:min(52vh,240px);height:min(52vh,240px); } .player-content { gap:16px;padding-bottom:28px; } }
-.song-more-btn { flex-shrink:0;width:24px;height:34px;margin-left:2px;border:none;background:transparent;color:var(--text-secondary);border-radius:50%;font-size:15px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;opacity:0.5;padding:0;transition:color 0.2s,opacity 0.2s,transform 0.2s; }
+.song-more-btn { flex-shrink:0;width:22px;height:34px;margin-left:-1px;margin-right:0;border:none;background:transparent;color:var(--text-secondary);border-radius:50%;font-size:15px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;opacity:0.5;padding:0;transition:color 0.2s,opacity 0.2s,transform 0.2s; }
 .song-more-btn:hover,.song-more-btn:active { opacity:1;background:transparent;color:var(--text-primary); }
 .song-more-btn:active { transform:scale(0.88); }
-.song-fav-btn+.song-more-btn { margin-left:2px; }
+.song-fav-btn+.song-more-btn { margin-left:-1px; }
 .result-cover { position:relative;width:44px;height:44px;border-radius:9px;overflow:hidden;flex-shrink:0;background:var(--cover-ph-bg);border:1px solid var(--glass-edge); }
 .result-cover img { width:100%;height:100%;object-fit:cover;display:none; }
 .result-cover img.loaded { display:block; }
@@ -1128,6 +1134,9 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
 .sheet .menu-item.danger:hover,.sheet .menu-item.danger:active { background:rgba(255,77,109,0.12);transform:none; }
 .sheet .menu-item:active:not(.danger),.sheet .menu-item:active:not(.danger) i { color:var(--text-primary); }
 .sheet .menu-item-note { margin-left:auto;font-size:13px;color:var(--text-secondary);font-variant-numeric:tabular-nums; }
+.info-label { padding:10px 12px 4px;font-size:12px;color:var(--text-secondary); }
+.info-divider { height:1px;background:var(--border);margin:6px 12px; }
+.info-album-row .pl-pick-label { padding-right:4px; }
 .sheet-title { padding:12px 14px 10px;font-size:14px;font-weight:600;color:var(--text-primary);border-bottom:1px solid var(--border);margin-bottom:6px; }
 .pl-pick-row { display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:14px;cursor:pointer;transition:background 0.18s; }
 .sheet .pl-pick-row:hover { background:var(--surface-hover-strong); }
@@ -1769,6 +1778,60 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             <div class="scroll-overscroll-pad" aria-hidden="true"></div>
         </div>
     </div>
+    <div class="playlist-page" id="album-page">
+        <div class="fav-header">
+            <div class="fav-header-row">
+                <button class="back-btn" id="album-back-btn" aria-label="返回">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div class="fav-title" id="album-page-title">专辑</div>
+                <button class="fav-icon-btn mode-toggle-btn" id="album-mode-btn"
+                        aria-label="播放模式" title="播放模式">
+                    <svg class="mode-icon-svg" viewBox="0 0 24 24" aria-hidden="true"></svg>
+                </button>
+                <button class="fav-icon-btn fav-play-btn" id="album-header-play"
+                        aria-label="播放全部" title="播放全部">
+                    <i class="fas fa-play"></i>
+                </button>
+                <button class="fav-icon-btn" id="album-search-toggle"
+                        aria-label="搜索专辑歌曲" title="搜索">
+                    <i class="fas fa-search"></i>
+                </button>
+                <button class="fav-icon-btn" id="album-share-btn"
+                        aria-label="分享专辑" title="分享">
+                    <i class="fas fa-share"></i>
+                </button>
+                <button class="fav-icon-btn" id="album-more-btn"
+                        aria-label="更多" title="更多" hidden>
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+            </div>
+            <div class="fav-header-search" id="album-header-search">
+                <div class="search-field">
+                    <input type="text" class="search-input" id="album-search-input"
+                           placeholder="搜索歌曲..." autocomplete="off" />
+                    <button class="input-clear" id="album-search-clear" aria-label="清除" title="清除">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="fav-scroll" id="album-scroll">
+            <div class="scroll-overscroll-pad" aria-hidden="true"></div>
+            <div class="pl-summary" id="album-summary">
+                <div class="pl-summary-cover no-cover" id="album-page-cover">
+                    <img alt="">
+                    <div class="mine-cover-fallback"><i class="fas fa-compact-disc"></i></div>
+                </div>
+                <div class="pl-summary-info">
+                    <div class="pl-summary-name" id="album-name">专辑</div>
+                    <div class="pl-summary-sub" id="album-sub"></div>
+                </div>
+            </div>
+            <div class="fav-list" id="album-list"></div>
+            <div class="scroll-overscroll-pad" aria-hidden="true"></div>
+        </div>
+    </div>
     <div class="about-page" id="about-page">
         <div class="fav-header">
             <div class="fav-header-row">
@@ -1781,7 +1844,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
         <div class="about-body">
             <div class="about-logo" id="about-logo" role="button" tabindex="0" aria-label="MKY音乐"><svg class="brand-disc" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="bdisc-sheen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.34" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.46" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.54" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.66" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient><clipPath id="bdisc-clip"><circle cx="32" cy="32" r="30"/></clipPath></defs><g class="disc-spin"><circle cx="32" cy="32" r="30" fill="#141418"/><circle cx="32" cy="32" r="30" fill="none" stroke="#ffffff" stroke-opacity=".14" stroke-width="2.6"/><circle cx="32" cy="32" r="21" fill="none" stroke="#ffffff" stroke-opacity=".10" stroke-width="1.5"/><circle cx="32" cy="32" r="14" fill="none" stroke="#ffffff" stroke-opacity=".08" stroke-width="1.5"/><circle cx="32" cy="32" r="12" fill="#e91e63"/><circle cx="32" cy="32" r="3.4" fill="#141418"/><g clip-path="url(#bdisc-clip)"><rect class="disc-sheen" x="-16" y="-16" width="96" height="96" fill="url(#bdisc-sheen)"/></g></g></svg></div>
             <div class="about-name">MKY音乐</div>
-            <div class="about-version">版本 2.8</div>
+            <div class="about-version">版本 2.9</div>
             <div class="about-slogan">把每一处细节听懂<br>把听歌这件事做好</div>
             <div class="about-links">
                 <div class="about-legal">
@@ -2280,6 +2343,28 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             const artistNameEl = $('#artist-name');
             const artistSubEl = $('#artist-sub');
             const artistList = $('#artist-list');
+            const albumPage = $('#album-page');
+            const albumBackBtn = $('#album-back-btn');
+            const albumPageTitle = $('#album-page-title');
+            const albumHeaderPlay = $('#album-header-play');
+            const albumSearchToggle = $('#album-search-toggle');
+            const albumMoreBtn = $('#album-more-btn');
+            const albumShareBtn = $('#album-share-btn');
+            const albumHeaderSearch = $('#album-header-search');
+            const albumSearchInput = $('#album-search-input');
+            const albumSearchClear = $('#album-search-clear');
+            const albumScroll = $('#album-scroll');
+            const albumPageCover = $('#album-page-cover');
+            const albumPageCoverImg = albumPageCover ? albumPageCover.querySelector('img') : null;
+            const albumNameEl = $('#album-name');
+            const albumSubEl = $('#album-sub');
+            const albumList = $('#album-list');
+            let albumCtx = null;
+            let albumReqSeq = 0;
+            let albumPrevFull = false;
+            let albumPrevLyrics = false;
+            let albumPrevArtist = false;
+            let albumKeyword = '';
             const mvPage = $('#mv-page');
             const mvVideo = $('#mv-video');
             const mvLoading = $('#mv-loading');
@@ -2329,7 +2414,10 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             const plPickerSheet = $('#pl-picker-sheet');
             const artistPickerSheet = $('#artist-picker-sheet');
             const artistPickerBody = $('#artist-picker-body');
+            const artistPickerTitle = artistPickerSheet
+                ? artistPickerSheet.querySelector('.sheet-title') : null;
             let artistPickerList = [];
+            let artistPickerSong = null;
             const plPickerBody = $('#pl-picker-body');
             const plPickerNew = $('#pl-picker-new');
             const lyricsControls = $('#lyrics-controls');
@@ -4112,6 +4200,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 return favPage.classList.contains('active') ||
                     (playlistPage && playlistPage.classList.contains('active')) ||
                     (artistPage && artistPage.classList.contains('active')) ||
+                    (albumPage && albumPage.classList.contains('active')) ||
                     (historyPage && historyPage.classList.contains('active')) ||
                     (searchResults && searchResults.classList.contains('active')) ||
                     (cachePage && cachePage.classList.contains('active')) ||
@@ -4123,6 +4212,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 favPage.classList.toggle('has-player', hasPlayer);
                 if (playlistPage) playlistPage.classList.toggle('has-player', hasPlayer);
                 if (artistPage) artistPage.classList.toggle('has-player', hasPlayer);
+                if (albumPage) albumPage.classList.toggle('has-player', hasPlayer);
                 if (historyPage) historyPage.classList.toggle('has-player', hasPlayer);
                 if (searchResults) searchResults.classList.toggle('has-player', hasPlayer);
                 if (aboutPage) aboutPage.classList.toggle('has-player', hasPlayer);
@@ -4636,7 +4726,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             }
             function overlayEls() {
                 return [favPage, playlistPage, aboutPage, cachePage, sleepPage, searchResults,
-                    historyPage, artistPage, mvPage]
+                    historyPage, artistPage, albumPage, mvPage]
                     .filter(Boolean);
             }
             function withNoAnim(fn) {
@@ -4659,6 +4749,11 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     artistBackStack = [];
                     artistPrevFull = false;
                     artistPrevLyrics = false;
+                    albumReqSeq++;
+                    albumCtx = null;
+                    albumPrevFull = false;
+                    albumPrevLyrics = false;
+                    albumPrevArtist = false;
                     closeMvPage();
                     [plSelectBar, selectBar].forEach(el => el && el.classList.remove('active'));
                     hideResultsHistory();
@@ -4998,6 +5093,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     artistsname: arts.map(a => a.name).filter(Boolean).join('/'),
                     artists: arts,
                     album: al.name || '',
+                    albumId: al.id != null ? String(al.id) : '',
                     duration: neteaseRowDuration(row),
                     picurl: picUrl ? normalizeCoverUrl(picUrl) : '',
                     picId: picId,
@@ -5678,7 +5774,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 let url = direct ? song.url : '';
                 if (!url) {
                     try {
-                        const got = await playUrlOf(song.id);
+                        const got = await playUrlOf(song.id, song);
                         url = got && got.url ? got.url : '';
                     } catch (_) {
                         url = '';
@@ -5716,7 +5812,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 let got = await tryFetch(direct);
                 if (got) return got;
                 try {
-                    const fresh = await playUrlOf(song.id);
+                    const fresh = await playUrlOf(song.id, song);
                     const u = fresh && fresh.url ? fresh.url : '';
                     if (u && u !== direct) got = await tryFetch(u);
                 } catch (_) {
@@ -5819,7 +5915,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     e.stopPropagation();
                     if (longPressed) { longPressed = false; return; }
                     if (!currentSong) { showPlaceholderTip(); return; }
-                    openSongArtist(currentSong);
+                    openSongInfo(currentSong);
                 });
                 el.addEventListener('contextmenu', (e) => e.preventDefault());
             }
@@ -5858,8 +5954,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             async function findMvId(song) {
                 const kw = ((song.name || '') + ' ' + (song.artistsname || '')).trim();
                 if (!kw) return '';
-                const url = ARTIST_API + '/search?keywords=' + encodeURIComponent(kw) +
-                    '&type=1004&limit=10';
+                const url = NETEASE_API + '/v1/search/get?type=1004&limit=10&s=' +
+                    encodeURIComponent(kw);
                 const d = await fetchDirectOrProxy(url,
                     { directFirst: true, timeout: 12000 });
                 const list = (d && d.result && d.result.mvs) || [];
@@ -6443,11 +6539,11 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const fav = isFavorite(song.id);
                 const showFavItem = (moreCtx.from !== 'fav');
                 const showDelete = (moreCtx.from !== 'chart' && moreCtx.from !== 'search'
-                    && moreCtx.from !== 'artist');
+                    && moreCtx.from !== 'artist' && moreCtx.from !== 'album');
                 const showPlActions = true;
                 const sortableFrom = !!(pendingSelectCtx && SORTABLE_FROM[pendingSelectCtx.from]);
                 const artistTargets = moreCtx.from === 'artist' ? artistMenuTargets(song) : null;
-                const showArtistItem = moreCtx.from !== 'artist' || artistTargets.length > 0;
+                const showInfoItem = !!(song.artistsname || song.album);
                 songMoreMenu.innerHTML = `
                     ${showFavItem ? `
                     <div class="menu-item" data-act="fav">
@@ -6459,21 +6555,16 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         <i class="fas fa-plus"></i>
                         <span>加入歌单</span>
                     </div>` : ''}
-                    ${showArtistItem ? `
-                    <div class="menu-item" data-act="artist">
-                        <i class="fas fa-user"></i>
-                        <span>查看歌手</span>
+                    ${showInfoItem ? `
+                    <div class="menu-item" data-act="info">
+                        <i class="fas fa-info-circle"></i>
+                        <span>查看歌曲信息</span>
                     </div>` : ''}
                     ${mvMenuHtml(song, !!MV_MENU_FROM[moreCtx.from])}
                     <div class="menu-item" data-act="select">
                         <i class="fas fa-check-circle"></i>
                         <span>多选</span>
                     </div>
-                    ${sortableFrom ? `
-                    <div class="menu-item" data-act="sort">
-                        <i class="fas fa-bars"></i>
-                        <span>调整位置</span>
-                    </div>` : ''}
                     ${showDelete ? `
                     <div class="menu-item danger" data-act="delete">
                         <i class="fas fa-trash-alt"></i>
@@ -6509,12 +6600,12 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         if (s) openPlaylistPicker(s);
                     });
                 }
-                const artistItem = songMoreMenu.querySelector('[data-act="artist"]');
-                if (artistItem) {
-                    artistItem.addEventListener('click', () => {
+                const infoItem = songMoreMenu.querySelector('[data-act="info"]');
+                if (infoItem) {
+                    infoItem.addEventListener('click', () => {
                         const s = moreCtx && moreCtx.song;
                         closeSheet(songMoreMenu);
-                        if (s) openSongArtist(s, artistTargets);
+                        if (s) openSongInfo(s);
                     });
                 }
                 const selectItem = songMoreMenu.querySelector('[data-act="select"]');
@@ -6526,14 +6617,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         if (ctx && ctx.song) {
                             enterSelectMode(sctx || { from: ctx.from, playlistId: ctx.playlistId }, ctx.song.id);
                         }
-                    });
-                }
-                const sortItem = songMoreMenu.querySelector('[data-act="sort"]');
-                if (sortItem) {
-                    sortItem.addEventListener('click', () => {
-                        const sctx = pendingSelectCtx;
-                        closeSheet(songMoreMenu);
-                        if (sctx) enterSortMode(sctx.from, sctx);
                     });
                 }
                 const delItem = songMoreMenu.querySelector('[data-act="delete"]');
@@ -6732,6 +6815,35 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     ? String(a.id) !== curId
                     : (a.name || '') !== curName);
             }
+            function artistLineOf(song) {
+                const artist = (song && song.artistsname) || '未知歌手';
+                const album = String((song && song.album) || '').trim();
+                return album ? artist + ' - ' + album : artist;
+            }
+            function openSongInfo(song) {
+                if (!song || !artistPickerSheet) return;
+                const list = normalizeArtistList(song.artists, song.artistsname);
+                const album = String(song.album || '').trim();
+                if (!list.length && !album) {
+                    showToast('暂无歌曲信息');
+                    return;
+                }
+                const singleCached = (album && list.length === 1)
+                    ? albumSizeCache.get(normName(album) + '|' +
+                        normName(list[0].name))
+                    : undefined;
+                if (list.length === 1 && (!album || singleCached === 1)) {
+                    const neteaseSong = /^\d+$/.test(String(song.id || ''));
+                    openArtistPage(neteaseSong ? (list[0].id || '') : '',
+                        list[0].name || '');
+                    return;
+                }
+                artistPickerSong = song;
+                artistPickerList = list;
+                if (artistPickerTitle) artistPickerTitle.textContent = '歌曲信息';
+                renderArtistPicker();
+                openSheet(artistPickerSheet);
+            }
             function openSongArtist(song, presetList) {
                 if (!song) return;
                 const list = presetList || normalizeArtistList(song.artists, song.artistsname);
@@ -6744,13 +6856,28 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             }
             function openArtistPicker(list) {
                 if (!artistPickerSheet || !artistPickerBody || !list.length) return;
+                artistPickerSong = null;
                 artistPickerList = list;
+                if (artistPickerTitle) artistPickerTitle.textContent = '选择歌手';
                 renderArtistPicker();
                 openSheet(artistPickerSheet);
             }
+            function splitAlbumNames(raw) {
+                const s = String(raw || '').trim();
+                if (!s) return [];
+                if (!/[\u4e00-\u9fa5]/.test(s)) return [s];
+                const parts = s.split(/\s*\/\s*/)
+                    .map(x => x.trim()).filter(Boolean);
+                if (parts.length < 2 || parts.length > 3) return [s];
+                if (parts.some(x => x.length < 2)) return [s];
+                return parts;
+            }
             function renderArtistPicker() {
                 if (!artistPickerBody) return;
-                artistPickerBody.innerHTML = artistPickerList.map((a, i) => `
+                const song = artistPickerSong;
+                const album = song ? String(song.album || '').trim() : '';
+                const albums = song ? splitAlbumNames(album) : [];
+                const rows = artistPickerList.map((a, i) => `
                     <div class="pl-pick-row" data-idx="${i}">
                         <div class="pl-pick-cover no-img">
                             <img alt="">
@@ -6760,11 +6887,32 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                             <div class="pl-pick-label">${esc(a.name || '未知歌手')}</div>
                         </div>
                     </div>`).join('');
-                artistPickerBody.querySelectorAll('.pl-pick-row').forEach((rowEl, i) => {
+                const albumRows = albums.map((al) => `
+                       <div class="pl-pick-row info-album-row" data-act="album" data-album="${esc(al)}">
+                           <div class="pl-pick-cover no-img">
+                               <img alt="">
+                               <div class="pl-pick-fb"><i class="fas fa-compact-disc"></i></div>
+                           </div>
+                           <div class="pl-pick-info">
+                               <div class="pl-pick-label">${esc(al)}</div>
+                           </div>
+                       </div>`).join('');
+                artistPickerBody.innerHTML = song
+                    ? `${rows ? `<div class="info-label">歌手</div>${rows}` : ''}
+                       ${albums.length ? `
+                       <div class="info-album-section">
+                           ${rows ? '<div class="info-divider"></div>' : ''}
+                           <div class="info-label">专辑</div>
+                           ${albumRows}
+                       </div>` : ''}`
+                    : rows;
+                const neteaseSong = !song || /^\d+$/.test(String(song.id || ''));
+                artistPickerBody.querySelectorAll('.pl-pick-row[data-idx]').forEach((rowEl, i) => {
                     const a = artistPickerList[i] || {};
+                    const aid = neteaseSong ? (a.id || '') : '';
                     rowEl.addEventListener('click', () => {
                         closeSheet(artistPickerSheet);
-                        openArtistPage(a.id || '', a.name || '');
+                        openArtistPage(aid, a.name || '');
                     });
                     const cov = rowEl.querySelector('.pl-pick-cover');
                     const img = cov && cov.querySelector('img');
@@ -6777,13 +6925,84 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         };
                         img.src = url;
                     };
-                    if (a.id) {
-                        fetchArtistDetailNetstart(a.id)
+                    if (aid) {
+                        fetchArtistDetailNetstart(aid)
                             .then(d => applyCover(d && d.picUrl)).catch(() => {});
                     } else if (a.name) {
                         searchArtistNetstart(a.name)
                             .then(d => applyCover(d && d.picUrl)).catch(() => {});
                     }
+                });
+                const albumRowEls =
+                    artistPickerBody.querySelectorAll('[data-act="album"]');
+                albumRowEls.forEach((albumRow) => {
+                    if (!song) return;
+                    const albumName = albumRow.getAttribute('data-album') || album;
+                    const img = albumRow.querySelector('img');
+                    const cov = albumRow.querySelector('.pl-pick-cover');
+                    const artist = String(song.artistsname ||
+                        (song.artists || []).map(a => a.name).join('/') || '').trim();
+                    if (img) {
+                        img.addEventListener('load', () => cov.classList.remove('no-img'), { once: true });
+                        ensureSongCover(song, img);
+                    }
+                    albumSearch(albumName, artist).then((list) => {
+                        const hit = pickAlbumRow(list, albumName, artist);
+                        if (!hit) return;
+                        if (Number(hit.size) === 1) {
+                            albumRow.remove();
+                            const sec = artistPickerBody.querySelector(
+                                '.info-album-section');
+                            if (sec && !sec.querySelector('[data-act="album"]')) {
+                                sec.remove();
+                                if (artistPickerList.length === 1) {
+                                    const only = artistPickerList[0] || {};
+                                    const isNetease =
+                                        /^\d+$/.test(String(song.id || ''));
+                                    setTimeout(() => {
+                                        if (!artistPickerSheet.classList
+                                            .contains('active')) return;
+                                        closeSheet(artistPickerSheet);
+                                        openArtistPage(
+                                            isNetease ? (only.id || '') : '',
+                                            only.name || '');
+                                    }, 0);
+                                }
+                            }
+                            return;
+                        }
+                        albumRow.dataset.albumId = String(hit.id);
+                        const cover = normalizeCoverUrl(hit.picUrl || '');
+                        if (cover && img) {
+                            cov.classList.add('no-img');
+                            img.onload = () => cov.classList.remove('no-img');
+                            img.onerror = () => cov.classList.add('no-img');
+                            img.src = cover;
+                        }
+                    }).catch(() => {});
+                    albumRow.addEventListener('click', async () => {
+                        closeSheet(artistPickerSheet);
+                        const presetCover = (img && img.src) || song.picurl;
+                        const directId = albumRow.dataset.albumId || '';
+                        if (directId) {
+                            openAlbumPage(directId, albumName, artist,
+                                presetCover, 'netease');
+                            return;
+                        }
+                        let picked = null;
+                        try {
+                            picked = await resolveAlbumForSong(Object.assign({}, song, {
+                                album: albumName, albumId: '',
+                                albumSrc: '', albumKuwoId: ''
+                            }));
+                        } catch (_) { picked = null; }
+                        if (picked && picked.id) {
+                            openAlbumPage(picked.id, albumName, artist,
+                                presetCover, picked.src);
+                        } else {
+                            showToast('暂无专辑详情');
+                        }
+                    });
                 });
             }
             function openArtistPage(artistId, artistName, fromBack) {
@@ -6860,6 +7079,237 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     fabStack.classList.add('show');
                 }
                 syncFavPageOffset();
+            }
+            function openAlbumPage(albumId, albumName, artistName, presetCover, src) {
+                if (!albumPage) return;
+                albumKeyword = '';
+                if (albumSearchInput) albumSearchInput.value = '';
+                if (albumSearchClear) albumSearchClear.classList.remove('show');
+                if (albumHeaderSearch) albumHeaderSearch.classList.remove('active');
+                albumPrevArtist = !!(artistPage
+                    && artistPage.classList.contains('active'));
+                if (albumPrevArtist) {
+                    artistPage.classList.add('no-anim');
+                    artistPage.classList.remove('active');
+                    requestAnimationFrame(() => artistPage.classList.remove('no-anim'));
+                }
+                const id = albumId ? String(albumId) : '';
+                if (!id) { showToast('暂无专辑详情'); return; }
+                albumPrevFull = !!(fullPlayer && fullPlayer.classList.contains('active'));
+                albumPrevLyrics = !!(lyricsPage && lyricsPage.classList.contains('active'));
+                if (lyricsPage && lyricsPage.classList.contains('active')) {
+                    lyricsPage.classList.add('no-anim');
+                    lyricsPage.classList.remove('active');
+                }
+                if (fullPlayer && fullPlayer.classList.contains('active')) {
+                    fullPlayer.classList.add('no-anim');
+                    closeFullPlayer();
+                    void fullPlayer.offsetWidth;
+                }
+                requestAnimationFrame(() => {
+                    if (fullPlayer) fullPlayer.classList.remove('no-anim');
+                    if (lyricsPage) lyricsPage.classList.remove('no-anim');
+                });
+                if (plSelectMode) exitPlaylistSelectMode();
+                if (selectMode) exitSelectMode();
+                albumPage.classList.add('active');
+                if (fabStack) fabStack.classList.remove('show');
+                syncHeaderHeight();
+                syncFavPageOffset();
+                scheduleScrollOverscrollPad();
+                if (albumScroll) albumScroll.scrollTop = 0;
+                loadAlbumPage(id, albumName, artistName, presetCover, src);
+            }
+            function closeAlbumPage(skipRestore) {
+                if (!albumPage) return;
+                const restoreArtist = albumPrevArtist;
+                albumPrevArtist = false;
+                if (!skipRestore && restoreArtist && artistPage) {
+                    artistPage.classList.add('no-anim');
+                    artistPage.classList.add('active');
+                    requestAnimationFrame(() => artistPage.classList.remove('no-anim'));
+                }
+                albumPage.classList.remove('active');
+                albumReqSeq++;
+                albumCtx = null;
+                albumKeyword = '';
+                if (albumSearchInput) {
+                    albumSearchInput.value = '';
+                    albumSearchInput.blur();
+                }
+                if (albumSearchClear) albumSearchClear.classList.remove('show');
+                if (albumHeaderSearch) albumHeaderSearch.classList.remove('active');
+                const restoreFull = albumPrevFull;
+                const restoreLyrics = albumPrevLyrics;
+                albumPrevFull = false;
+                albumPrevLyrics = false;
+                if (!skipRestore && (restoreFull || restoreLyrics)) {
+                    albumPage.style.zIndex = restoreLyrics ? '3150' : '3050';
+                    fullPlayer.classList.add('no-anim');
+                    if (lyricsPage) lyricsPage.classList.add('no-anim');
+                    openFullPlayer();
+                    if (restoreLyrics && lyricsPage) lyricsPage.classList.add('active');
+                    void fullPlayer.offsetWidth;
+                    requestAnimationFrame(() => {
+                        fullPlayer.classList.remove('no-anim');
+                        if (lyricsPage) lyricsPage.classList.remove('no-anim');
+                    });
+                    setTimeout(() => { albumPage.style.zIndex = ''; }, 440);
+                }
+                if (fabStack && activeTab === 'mine' && !(mineKeyword || '').trim()
+                    && !plSelectMode && !anyOverlayOpen()) {
+                    fabStack.classList.add('show');
+                }
+                syncFavPageOffset();
+            }
+            function setAlbumCover(url) {
+                if (!albumPageCover || !albumPageCoverImg) return;
+                const u = (url || '').trim();
+                if (u) {
+                    albumPageCoverImg.src = normalizeCoverUrl(u);
+                    albumPageCover.classList.remove('no-cover');
+                } else {
+                    albumPageCoverImg.removeAttribute('src');
+                    albumPageCover.classList.add('no-cover');
+                }
+            }
+            async function loadAlbumPage(id, name, artistName, presetCover, src) {
+                albumCtx = {
+                    id: String(id), name: name || '专辑',
+                    src: src === 'kuwo' ? 'kuwo' : 'netease',
+                    artistName: artistName || '', songs: [],
+                    year: 0, size: 0
+                };
+                if (albumPageTitle) albumPageTitle.textContent = name || '专辑';
+                if (albumNameEl) albumNameEl.textContent = name || '专辑';
+                renderAlbumSub(0);
+                setAlbumCover(presetCover || '');
+                if (albumList) {
+                    albumList.innerHTML = '<div class="loading">' +
+                        '<svg viewBox="0 0 24 24" aria-hidden="true">' +
+                        '<circle class="ring-track" cx="12" cy="12" r="9"></circle>' +
+                        '<circle class="ring-arc" cx="12" cy="12" r="9"></circle></svg>' +
+                        '<span>加载中...</span></div>';
+                }
+                const seq = ++albumReqSeq;
+                try {
+                    const d = albumCtx.src === 'kuwo'
+                        ? await fetchKuwoAlbumDetail(id)
+                        : await fetchAlbumDetailNetstart(id);
+                    if (seq !== albumReqSeq) return;
+                    if (!d) throw new Error('未找到该专辑');
+                    const year = d.publishTime
+                        ? new Date(d.publishTime).getFullYear() : 0;
+                    albumCtx = {
+                        id: d.id, name: d.name || name,
+                        src: albumCtx.src,
+                        artistName: d.artistsname || artistName,
+                        songs: d.songs || [],
+                        year: year,
+                        size: d.size || (d.songs || []).length
+                    };
+                    if (albumPageTitle) albumPageTitle.textContent = d.name || name || '专辑';
+                    if (albumNameEl) albumNameEl.textContent = d.name || name || '专辑';
+                    setAlbumCover(d.picUrl || presetCover || '');
+                    renderAlbumSongs();
+                } catch (e) {
+                    if (seq !== albumReqSeq) return;
+                    if (albumList) {
+                        albumList.innerHTML = '<div class="loading error"><span>加载失败：' +
+                            esc((e && e.message) || '') + '</span></div>';
+                    }
+                }
+            }
+            function renderAlbumSub(matched) {
+                if (!albumSubEl || !albumCtx) return;
+                const parts = [];
+                if (albumCtx.artistName) parts.push(albumCtx.artistName);
+                if (albumCtx.year) parts.push(albumCtx.year + ' 年');
+                const total = albumCtx.size || (albumCtx.songs || []).length;
+                const kw = (albumKeyword || '').trim();
+                if (kw) {
+                    const shown = typeof matched === 'number'
+                        ? matched : (albumCtx.songs || []).length;
+                    parts.push(shown + ' / ' + total + ' 首');
+                } else if (total) {
+                    parts.push(total + ' 首');
+                }
+                albumSubEl.textContent = parts.join(' · ');
+            }
+            function renderAlbumSongs() {
+                if (!albumList || !albumCtx) return;
+                const allSongs = albumCtx.songs || [];
+                if (!allSongs.length) {
+                    albumList.innerHTML = '<div class="loading"><span>暂无歌曲</span></div>';
+                    renderAlbumSub(0);
+                    return;
+                }
+                const kw = (albumKeyword || '').trim().toLowerCase();
+                const songs = kw ? allSongs.filter((song) => {
+                    const hay = ((song.name || '') + ' ' +
+                        (song.artistsname || '')).toLowerCase();
+                    return hay.indexOf(kw) >= 0;
+                }) : allSongs;
+                if (!songs.length) {
+                    albumList.innerHTML = '<div class="loading"><span>没有找到匹配的歌曲</span></div>';
+                    renderAlbumSub(0);
+                    return;
+                }
+                renderAlbumSub(songs.length);
+                albumList.innerHTML = songs.map((song, idx) => {
+                    const playing = currentSong
+                        && String(currentSong.id) === String(song.id);
+                    return `
+                        <div class="fav-item${playing ? ' playing' : ''}"
+                             data-index="${idx}" data-song-id="${esc(song.id)}">
+                            <div class="fav-item-index">${idx + 1}</div>
+                            <div class="fav-item-cover-wrap">
+                                <img class="fav-item-cover" alt="">
+                                <i class="fas fa-music fav-item-cover-fallback" aria-hidden="true"></i>
+                            </div>
+                            <div class="fav-item-info">
+                                <div class="fav-item-title">${esc(song.name || '未知歌曲')}</div>
+                                <div class="fav-item-artist">${esc(song.artistsname || '未知歌手')}</div>
+                            </div>
+                            <button class="song-more-btn" data-id="${esc(song.id)}" aria-label="更多" title="更多">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                        </div>`;
+                }).join('');
+                const rowCtx = {
+                    from: 'album',
+                    playlistId: '',
+                    getSongs: () => songs,
+                    rerender: () => renderAlbumSongs()
+                };
+                albumList.querySelectorAll('.fav-item').forEach((rowEl, i) => {
+                    const song = songs[i];
+                    rowEl.addEventListener('click', (e) => {
+                        if (e.target.closest('.song-more-btn')) return;
+                        if (selectMode) { toggleSelect(song.id); return; }
+                        setQueue(songs.map(s => ({ ...s })), 'album', {
+                            albumId: albumCtx ? albumCtx.id : '',
+                            albumName: albumCtx ? albumCtx.name : ''
+                        });
+                        playSong(i);
+                    });
+                    const moreBtn = rowEl.querySelector('.song-more-btn');
+                    if (moreBtn) {
+                        moreBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            if (selectMode) { toggleSelect(song.id); return; }
+                            openSongMore(song, 'album', '', rowCtx);
+                        });
+                    }
+                    bindLongPress(rowEl, () => {
+                        if (navigator.vibrate) { try { navigator.vibrate(14); } catch (_) {} }
+                        if (selectMode) { toggleSelect(song.id); return; }
+                        openSongMore(song, 'album', '', rowCtx);
+                    });
+                });
+                hydrateCovers(albumList, songs);
+                watchListCovers(albumList, songs);
+                syncScrollOverscrollPad(albumScroll);
             }
             function setArtistAvatar(url) {
                 if (!artistAvatar || !artistAvatarImg) return;
@@ -7415,6 +7865,66 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         artistName: artistCtx.name
                     });
                     playSong(0);
+                });
+            }
+            if (albumBackBtn) {
+                albumBackBtn.addEventListener('click', () => closeAlbumPage());
+            }
+            if (albumHeaderPlay) {
+                albumHeaderPlay.addEventListener('click', () => {
+                    if (!albumCtx || !albumCtx.songs.length) return;
+                    setQueue(albumCtx.songs.map(s => ({ ...s })), 'album', {
+                        albumId: albumCtx.id,
+                        albumName: albumCtx.name
+                    });
+                    playSong(0);
+                });
+            }
+            if (albumSearchToggle) {
+                albumSearchToggle.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (albumHeaderSearch.classList.contains('active')) {
+                        albumHeaderSearch.classList.remove('active');
+                        albumSearchClear.classList.remove('show');
+                        albumSearchInput.blur();
+                    } else {
+                        albumHeaderSearch.classList.add('active');
+                        albumSearchInput.focus();
+                    }
+                    syncHeaderHeight();
+                });
+            }
+            if (albumSearchInput) {
+                albumSearchInput.addEventListener('input', () => {
+                    albumKeyword = albumSearchInput.value;
+                    renderAlbumSongs();
+                });
+            }
+            bindInputClear(albumSearchInput, albumSearchClear, () => {
+                albumKeyword = '';
+                renderAlbumSongs();
+                albumSearchInput.focus();
+            });
+            if (albumShareBtn) {
+                albumShareBtn.addEventListener('click', () => {
+                    const name = (albumCtx && albumCtx.name)
+                        || (albumNameEl && albumNameEl.textContent.trim()) || '';
+                    if (!name) { showToast('未知专辑'); return; }
+                    const params = new URLSearchParams({ album: name });
+                    if (albumCtx && albumCtx.artistName) {
+                        params.set('artist', albumCtx.artistName);
+                    }
+                    const link = location.origin + location.pathname
+                        + '?' + params.toString();
+                    copyTextToClipboard(link).then(ok => {
+                        showToast(ok ? '专辑链接已复制' : '复制失败');
+                    });
+                });
+            }
+            if (albumMoreBtn) {
+                albumMoreBtn.addEventListener('click', () => {
+                    if (!albumCtx || !albumCtx.id) return;
+                    loadAlbumPage(albumCtx.id, albumCtx.name, albumCtx.artistName, '', albumCtx.src);
                 });
             }
             if (artistScroll) {
@@ -7996,14 +8506,16 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 ctx.rerender && ctx.rerender();
             }
             function commitSortMove(fromIdx, toIdx) {
-                if (!sortCtx) return;
-                if (sortCtx.move) sortCtx.move(fromIdx, toIdx);
-                sortCtx.persist && sortCtx.persist();
-                refreshSortList();
+                const ctx = sortCtx || (selectMode ? selectCtx : null);
+                if (!ctx || !ctx.move) return;
+                ctx.move(fromIdx, toIdx);
+                ctx.persist && ctx.persist();
+                refreshSortList(ctx);
             }
-            function refreshSortList() {
-                if (!sortCtx) return;
-                sortCtx.rerender && sortCtx.rerender();
+            function refreshSortList(ctx) {
+                const c = ctx || sortCtx;
+                if (!c) return;
+                c.rerender && c.rerender();
             }
             function moveArrayItem(arr, from, to) {
                 if (from === to || from < 0 || from >= arr.length) return false;
@@ -8093,8 +8605,9 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     el !== rowEl && el !== placeholder &&
                     el.dataset && el.dataset.index != null);
                 const computeDropIdx = () => {
-                    const len = (sortCtx && sortCtx.getSongs)
-                        ? sortCtx.getSongs().length : 0;
+                    const dctx = sortCtx || (selectMode ? selectCtx : null);
+                    const len = (dctx && dctx.getSongs)
+                        ? dctx.getSongs().length : 0;
                     const unit = rowH > 0 ? rowH : 1;
                     const delta = Math.round(((curY - startY) + scrollDelta) / unit);
                     return Math.max(0, Math.min(fromIdx + delta, Math.max(0, len - 1)));
@@ -8452,23 +8965,77 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 '卸载应用或清除浏览器数据后，上述本地数据将被一并删除，且无法恢复。',
                 '播放与搜索时，本应用会向第三方公开接口发起请求以获取歌曲信息，请求内容不包含你的个人信息。'
             ];
+            function kuwoIdPartsOf(song) {
+                const s = String((song && song.id != null) ? song.id : (song || ''));
+                if (s.indexOf('kw_') !== 0) return null;
+                let raw = s.slice(3);
+                try {
+                    raw = decodeURIComponent(raw);
+                } catch (_) {
+                    return null;
+                }
+                const p = raw.split('|');
+                return {
+                    name: p[0] || '',
+                    artist: p[1] || '',
+                    sec: (Number(song && song.duration) || 0) / 1000
+                };
+            }
+            function kuwoMidOfSong(song) {
+                if (!song || typeof song !== 'object') return '';
+                const cached = String(song.kwid || '').replace(/^MUSIC_/, '');
+                if (cached) return cached;
+                const p = kuwoIdPartsOf(song);
+                if (!p) return '';
+                const key = normName(p.name) + '|' + normName(p.artist);
+                const mid = kuwoIdMap.get(key);
+                return mid ? String(mid).replace(/^MUSIC_/, '') : '';
+            }
+            function readableSongId(song) {
+                const s = String((song && song.id != null) ? song.id : (song || ''));
+                if (s.indexOf('kw_') !== 0) return s;
+                const mid = kuwoMidOfSong(song);
+                return mid ? 'kw_' + mid : 'kw_…';
+            }
             function showSongIdDialog(song) {
                 if (!song || song.id == null) return;
                 const id = String(song.id);
-                const html = '歌曲 ID 是「' + esc(id) + '」';
+                const shown = readableSongId(song);
+                const html = '歌曲 ID 是「' + esc(shown) + '」';
+                const uid = 'song-id-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+                if (id.indexOf('kw_') === 0 && !kuwoMidOfSong(song)) {
+                    const p = kuwoIdPartsOf(song);
+                    if (p && p.name) {
+                        kuwoResolveMid(p).then(hit => {
+                            const el = document.getElementById(uid);
+                            if (!el) return;
+                            if (!hit || !hit.mid) {
+                                el.textContent = '歌曲 ID 是「kw_未找到」';
+                                return;
+                            }
+                            kuwoIdMap.set(normName(p.name) + '|' + normName(p.artist), hit.mid);
+                            song.kwid = String(hit.mid);
+                            el.textContent = '歌曲 ID 是「kw_' + hit.mid + '」';
+                        }).catch(() => {
+                            const el = document.getElementById(uid);
+                            if (el) el.textContent = '歌曲 ID 是「kw_未找到」';
+                        });
+                    }
+                }
                 if (!window.mdui || !window.mdui.dialog) {
                     window.alert(html);
                     return;
                 }
                 mdui.dialog({
                     title: '歌曲 ID',
-                    content: html,
+                    content: '<span id="' + uid + '">' + html + '</span>',
                     buttons: [
                         {
                             text: '复制',
                             close: true,
                             onClick: () => {
-                                copyTextToClipboard(id).then(ok => {
+                                const val = readableSongId(song);
+                                copyTextToClipboard(val === 'kw_…' ? id : val).then(ok => {
                                     showToast(ok ? '已复制歌曲ID' : '复制失败');
                                 });
                             }
@@ -8899,6 +9466,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }, ctx || {});
                 if (firstId != null) selectedIds.add(String(firstId));
                 document.body.classList.add('select-mode');
+                document.body.classList.toggle('select-sort',
+                    !!(selectCtx.move && SORTABLE_FROM[selectCtx.from]));
                 document.body.classList.toggle('select-from-chart', selectCtx.from === 'chart');
                 syncSelectBar();
                 selectCtx.rerender && selectCtx.rerender();
@@ -8907,6 +9476,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 selectMode = false;
                 selectedIds.clear();
                 document.body.classList.remove('select-mode');
+                document.body.classList.remove('select-sort');
                 document.body.classList.remove('select-from-chart');
                 syncSelectBar();
                 selectCtx.rerender && selectCtx.rerender();
@@ -9100,13 +9670,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         <i class="fas fa-download"></i>
                         <span>下载</span>
                     </div>`;
-                if (SORTABLE_FROM[f]) {
-                    html += `
-                    <div class="menu-item" data-act="sort">
-                        <i class="fas fa-bars"></i>
-                        <span>调整位置</span>
-                    </div>`;
-                }
                 html += (f === 'playlist' || f === 'fav' || f === 'history') ? `
                     <div class="menu-item danger" data-act="del">
                         <i class="fas fa-trash-alt"></i>
@@ -9125,17 +9688,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     dlItem.addEventListener('click', () => {
                         closeSheet(selectMoreMenu);
                         downloadSongs(getSelectedSongs(), '已选歌曲');
-                    });
-                }
-                const sortItem = selectMoreMenu.querySelector('[data-act="sort"]');
-                if (sortItem) {
-                    sortItem.addEventListener('click', () => {
-                        const sctx = selectCtx;
-                        closeSheet(selectMoreMenu);
-                        if (sctx) {
-                            exitSelectMode();
-                            enterSortMode(sctx.from, sctx);
-                        }
                     });
                 }
                 const delItem = selectMoreMenu.querySelector('[data-act="del"]');
@@ -9376,19 +9928,24 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (!picurl) { cb(null); return; }
                 const cached = discTintCache.get(picurl);
                 if (cached !== undefined) { cb(cached); return; }
-                const im = new Image();
-                if (!/^data:/i.test(picurl)) im.crossOrigin = 'anonymous';
-                im.onload = () => {
-                    const tint = (im.naturalWidth > 0) ? extractDominantTint(im) : null;
+                const src = normalizeCoverUrl(picurl);
+                const done = (tint) => {
                     if (discTintCache.size > 120) discTintCache.clear();
                     discTintCache.set(picurl, tint);
                     cb(tint);
                 };
-                im.onerror = () => {
-                    discTintCache.set(picurl, null);
-                    cb(null);
+                const load = (url, onFail) => {
+                    const im = new Image();
+                    if (!/^data:/i.test(url)) im.crossOrigin = 'anonymous';
+                    im.onload = () => done(im.naturalWidth > 0 ? extractDominantTint(im) : null);
+                    im.onerror = onFail;
+                    im.src = url;
                 };
-                im.src = picurl;
+                load(src, () => {
+                    if (/^data:/i.test(src)) { done(null); return; }
+                    load(CF_PROXY + '?key=' + encodeURIComponent(CF_PROXY_KEY) +
+                        '&url=' + encodeURIComponent(src), () => done(null));
+                });
             }
             function updateDiscGlow(picurl) {
                 const wrap = document.getElementById('album-cover-wrap');
@@ -9719,6 +10276,81 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     pumpCoverQueue();
                 }
             }
+            const albumSizeCache = new Map();
+            function isSingleAlbumCandidate(album, name) {
+                const a = String(album || '').trim();
+                if (!a) return false;
+                if (/(^|[\s\-–—])single$/i.test(a)) return true;
+                const na = normName(a);
+                const nn = normName(name);
+                return !!na && !!nn && na === nn;
+            }
+            const albumSizePending = new Map();
+            function albumSizeOf(album, artist) {
+                const key = normName(album) + '|' + normName(artist);
+                if (albumSizeCache.has(key)) {
+                    return Promise.resolve(albumSizeCache.get(key));
+                }
+                if (albumSizePending.has(key)) return albumSizePending.get(key);
+                const p = albumSearch(album, artist).then((list) => {
+                    const hit = pickAlbumRow(list, album, artist);
+                    const size = Number(hit && hit.size);
+                    const val = (hit && isFinite(size) && size > 0) ? size : null;
+                    if (val !== null) albumSizeCache.set(key, val);
+                    albumSizePending.delete(key);
+                    return val;
+                }).catch(() => {
+                    albumSizePending.delete(key);
+                    return null;
+                });
+                albumSizePending.set(key, p);
+                return p;
+            }
+            function applyArtistLine(el, song) {
+                if (!el) return;
+                const artist = (song && song.artistsname) || '未知歌手';
+                const album = String((song && song.album) || '').trim();
+                const tag = String((song && song.id) || '');
+                el.dataset.lineTag = tag;
+                el.textContent = artistLineOf(song);
+                if (!album) return;
+                albumSizeOf(album, artist).then((size) => {
+                    if (el.dataset.lineTag !== tag) return;
+                    if (size === 1) el.textContent = artist;
+                });
+            }
+            function verifyAlbumSpans(root) {
+                if (!root) return;
+                root.querySelectorAll('.song-album[data-album]').forEach((el) => {
+                    const album = el.getAttribute('data-album') || '';
+                    const name = el.getAttribute('data-name') || '';
+                    const artist = el.getAttribute('data-artist') || '';
+                    if (!isSingleAlbumCandidate(album, name)) return;
+                    const key = normName(album) + '|' + normName(artist);
+                    if (albumSizeCache.has(key)) {
+                        if (albumSizeCache.get(key) === 1) el.remove();
+                        return;
+                    }
+                    albumSearch(album, artist).then((list) => {
+                        const hit = pickAlbumRow(list, album, artist);
+                        if (!hit) return;
+                        const size = Number(hit.size);
+                        if (!isFinite(size)) return;
+                        albumSizeCache.set(key, size);
+                        if (size === 1) el.remove();
+                    }).catch(() => {});
+                });
+            }
+            function songMetaParts(song, from) {
+                const artist = String((song && song.artistsname) || '未知歌手')
+                    .replace(/，/g, '/')
+                    .replace(/,(?=\S)/g, '/');
+                const album = String((song && song.album) || '').trim();
+                return {
+                    artist: artist,
+                    album: (from === 'chart' && album) ? album : ''
+                };
+            }
             function renderSongList(songs, target, opts) {
                 const root = target || songList;
                 const options = opts || {};
@@ -9732,6 +10364,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
                 const frag = document.createDocumentFragment();
                 songs.forEach((song, idx) => {
+                    const meta = songMetaParts(song, from);
                     const li = document.createElement('li');
                     li.className = 'song-item' + (selectedIds.has(String(song.id)) ? ' selected' : '');
                     li.dataset.index = idx;
@@ -9748,7 +10381,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         </div>
                         <div class="song-details">
                             <div class="song-title">${esc(song.name || '未知歌曲')}</div>
-                            <div class="song-artist">${esc(song.artistsname || '未知歌手')}</div>
+                            <div class="song-artist">${esc(meta.artist)}${meta.album ? `<span class="song-album" data-album="${esc(meta.album)}" data-name="${esc(song.name || '')}" data-artist="${esc(meta.artist)}"> - ${esc(meta.album)}</span>` : ''}</div>
                         </div>
                         <div class="song-duration">${formatTime((song.duration || 0) / 1000)}</div>
                         ${showMore ? `
@@ -9761,7 +10394,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         </button>` : ''}
                     `;
                     li.addEventListener('click', (e) => {
-                        if (e.target.closest('.song-fav-btn') || e.target.closest('.song-more-btn')) return;
+                        if (e.target.closest('button')) return;
                         if (selectMode) { toggleSelect(song.id); return; }
                         setQueue(songs, from || 'chart', {
                             playlistId: from === 'playlist' ? (plId || '') : '',
@@ -9799,6 +10432,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 });
                 root.innerHTML = '';
                 root.appendChild(frag);
+                verifyAlbumSpans(root);
                 bindFavButtons(root, songs);
                 syncFavUI();
                 if (currentSong) markPlayingRow(currentSong.id);
@@ -9835,8 +10469,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 });
             }
             async function searchMvs(keyword) {
-                const url = ARTIST_API + '/search?keywords=' + encodeURIComponent(keyword) +
-                    '&type=1004&limit=50';
+                const url = NETEASE_API + '/v1/search/get?type=1004&limit=50&s=' +
+                    encodeURIComponent(keyword);
                 const d = await fetchDirectOrProxy(url, { directFirst: true, timeout: 14000 });
                 const list = (d && d.result && d.result.mvs) || [];
                 return list.map(m => ({
@@ -9906,7 +10540,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     for (let i = 0; i < need.length; i += CHUNK) {
                         const part = need.slice(i, i + CHUNK);
                         try {
-                            const url = ARTIST_API + '/song/detail?ids=' + part.join(',');
+                            const url = NETEASE_API + '/song/detail/?ids=' +
+                                encodeURIComponent('[' + part.join(',') + ']');
                             const d = await fetchDirectOrProxy(url,
                                 { directFirst: true, timeout: 14000 });
                             const rows = (d && d.songs) || [];
@@ -9961,7 +10596,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         </div>
                         <div class="result-info">
                             <div class="result-title">${esc(song.name)}</div>
-                            <div class="result-artist">${esc(song.artistsname)} - ${esc(song.album)}</div>
+                            <div class="result-artist">${esc(song.artistsname)}${song.album ? `<span class="song-album" data-album="${esc(song.album)}" data-name="${esc(song.name || '')}" data-artist="${esc(song.artistsname || '')}"> - ${esc(song.album)}</span>` : ''}</div>
                         </div>
                         <button class="song-fav-btn" data-id="${esc(song.id)}" aria-label="收藏" title="收藏/取消收藏">
                             <i class="far fa-heart"></i>
@@ -9971,7 +10606,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         </button>
                     `;
                     div.addEventListener('click', (e) => {
-                        if (e.target.closest('.song-fav-btn') || e.target.closest('.song-more-btn')) return;
+                        if (e.target.closest('button')) return;
                         if (selectMode) { toggleSelect(song.id); return; }
                         setQueue(renderedSongs, 'search');
                         playSong(idx);
@@ -10004,6 +10639,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 syncFavUI();
                 hydrateCovers(resultsList, currentSongs);
                 watchListCovers(resultsList, currentSongs);
+                verifyAlbumSpans(resultsList);
                 syncScrollOverscrollPad(resultsList);
                 batchHydrateCovers(currentSongs);
             }
@@ -10065,17 +10701,24 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             function parseLyrics(raw) {
                 const lines = raw.split('\n');
                 const result = [];
-                const timeRegex = /\[(\d{2}):(\d{2})\.(\d{2,3})\]/g;
+                const off = /\[offset:\s*([+-]?\d+)\s*\]/i.exec(raw);
+                const offset = off ? parseInt(off[1]) / 1000 : 0;
+                const timeRegex = /\[(\d{1,2}):(\d{2})(?:[.:](\d{1,3}))?\]/g;
                 lines.forEach(line => {
                     let match;
                     const times = [];
                     while ((match = timeRegex.exec(line)) !== null) {
-                        const sec = parseInt(match[1]) * 60 + parseInt(match[2]) + parseInt(match[3]) / 1000;
+                        const frac = match[3]
+                            ? parseInt((match[3] + '000').slice(0, 3)) / 1000
+                            : 0;
+                        const sec = parseInt(match[1]) * 60 + parseInt(match[2]) + frac;
                         times.push(sec);
                     }
-                    const text = line.replace(timeRegex, '').trim();
+                    const text = line.replace(timeRegex, '').replace(/\(\d+,\d+,\d+\)/g, '').trim();
                     if (text && times.length > 0) {
-                        times.forEach(t => result.push({ time: t, text }));
+                        times.forEach(t => result.push({
+                            time: Math.max(0, t + offset), text
+                        }));
                     }
                 });
                 result.sort((a, b) => a.time - b.time);
@@ -10168,15 +10811,36 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             const XFABE_BASE = 'https://node.api.xfabe.com/api/wangyi';
             const GD_BASE = 'https://music-api.gdstudio.xyz/api.php';
             const METING_BASE = 'https://api.qijieya.cn/meting/';
+            const KUWO_API = 'https://oiapi.net/api/Kuwo';
+            const MIGU_API = 'https://oiapi.net/api/MiGu_Music';
+            const KUWO_LRC_API = 'https://m.kuwo.cn/newh5/singles/songinfoandlrc?musicId=';
+            const kuwoIdMap = new Map();
             const NETEASE_SEARCH = 'https://music.163.com/api/search/get?s=';
             const ARTIST_API = 'https://apis.netstart.cn/music';
+            const NETEASE_API = 'https://music.163.com/api';
+            const NETEASE_API_ALT = 'https://interface.music.163.com/api';
             const ARTIST_PAGE_SIZE = 100;
+            async function fetchNeteaseJson(path, opts) {
+                const conf = opts ||
+                    { directFirst: true, directTimeout: 6000, timeout: 16000 };
+                let last = null;
+                for (const base of [NETEASE_API, NETEASE_API_ALT]) {
+                    try {
+                        const d = await fetchDirectOrProxy(base + path, conf);
+                        if (d && (d.code === undefined || d.code === 200)) return d;
+                        last = d;
+                    } catch (e) {
+                        last = e;
+                    }
+                }
+                if (last instanceof Error) throw last;
+                return last || null;
+            }
             async function searchArtistNetstart(name) {
                 const key = (name || '').trim();
                 if (!key) return null;
-                const url = ARTIST_API + '/search?keywords=' + encodeURIComponent(key) +
-                    '&type=100&limit=10';
-                const d = await fetchDirectOrProxy(url,
+                const d = await fetchNeteaseJson(
+                    '/v1/search/get?type=100&limit=10&s=' + encodeURIComponent(key),
                     { directFirst: true, directTimeout: 6000, timeout: 14000 });
                 const list = (d && d.result && d.result.artists) || [];
                 if (!list.length) return null;
@@ -10192,10 +10856,9 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 };
             }
             async function fetchArtistSongsNetstart(id, offset, limit) {
-                const url = ARTIST_API + '/artist/songs?id=' + encodeURIComponent(id) +
-                    '&limit=' + (limit || ARTIST_PAGE_SIZE) + '&offset=' + (offset || 0) +
-                    '&order=hot';
-                const d = await fetchDirectOrProxy(url,
+                const d = await fetchNeteaseJson(
+                    '/v1/artist/songs?id=' + encodeURIComponent(id) +
+                    '&limit=' + (limit || ARTIST_PAGE_SIZE) + '&offset=' + (offset || 0),
                     { directFirst: true, directTimeout: 6000, timeout: 16000 });
                 return {
                     songs: (d && Array.isArray(d.songs)) ? d.songs : [],
@@ -10205,19 +10868,288 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             }
             async function fetchArtistDetailNetstart(id) {
                 if (!id) return null;
-                const url = ARTIST_API + '/artist/detail?id=' + encodeURIComponent(id);
-                const d = await fetchDirectOrProxy(url,
+                const d = await fetchNeteaseJson(
+                    '/v1/artist/' + encodeURIComponent(id),
                     { directFirst: true, directTimeout: 6000, timeout: 14000 });
-                const a = (d && d.data && d.data.artist) || null;
+                const a = (d && d.artist) || null;
                 if (!a) return null;
                 return {
                     id: a.id != null ? String(a.id) : String(id),
                     name: a.name || '',
-                    picUrl: normalizeCoverUrl(a.cover || a.avatar || a.picUrl || ''),
+                    picUrl: normalizeCoverUrl(a.picUrl || a.cover || a.avatar || ''),
                     alias: Array.isArray(a.alias) ? a.alias : [],
                     musicSize: a.musicSize || 0,
                     albumSize: a.albumSize || 0
                 };
+            }
+            async function albumSearch(albumName, artistName) {
+                const name = String(albumName || '').trim();
+                const artist = String(artistName || '').trim();
+                const ask = async (q) => {
+                    const d = await fetchDirectOrProxy(
+                        NETEASE_API + '/v1/search/get?type=10&limit=20&s=' +
+                        encodeURIComponent(q),
+                        { directFirst: true, timeout: 12000 });
+                    return (d && d.result && d.result.albums) || [];
+                };
+                const clean = name
+                    .replace(/[（(【\[].*?[)）】\]]/g, ' ')
+                    .replace(/\s+/g, ' ').trim() || name;
+                const queries = [];
+                if (artist) queries.push((clean + ' ' + artist).trim());
+                queries.push(clean);
+                if (clean !== name) {
+                    if (artist) queries.push((name + ' ' + artist).trim());
+                    queries.push(name);
+                }
+                for (const q of queries) {
+                    try {
+                        const list = await ask(q);
+                        if (list.length) return list;
+                    } catch (_) {}
+                }
+                return [];
+            }
+            function pickAlbumRow(list, albumName, artistName) {
+                const want = normName(albumName);
+                const arts = artistTokensOf(artistName);
+                const sameName = (a) => !!want && normName(a && a.name) === want;
+                const rawKey = (a) => String((a && a.artist && a.artist.name) || '')
+                    .replace(/\s/g, '').toLowerCase();
+                const strictArtist = (a) => {
+                    if (!arts.length) return true;
+                    const got = normName(a && a.artist && a.artist.name);
+                    if (!got) return false;
+                    return arts.some(b => got === b ||
+                        got.indexOf(b) >= 0 || b.indexOf(got) >= 0);
+                };
+                const looseArtist = (a) => {
+                    if (!arts.length) return true;
+                    const rk = rawKey(a);
+                    const got = normName(a && a.artist && a.artist.name);
+                    return arts.some(b => (b && rk.indexOf(b) >= 0) ||
+                        (got && b && (got.indexOf(b) >= 0 || b.indexOf(got) >= 0)));
+                };
+                let hit = list.find(a => sameName(a) && strictArtist(a)) ||
+                    list.find(a => sameName(a) && looseArtist(a));
+                if (!hit) {
+                    const same = list.filter(a => sameName(a) && looseArtist(a));
+                    same.sort((a, b) => (Number(b && b.size) || 0) -
+                        (Number(a && a.size) || 0));
+                    hit = same[0] || null;
+                }
+                if (!hit) {
+                    hit = list.find((a) => {
+                        const n = normName(a && a.name);
+                        if (!n || !want) return false;
+                        if (n.indexOf(want) < 0 && want.indexOf(n) < 0) return false;
+                        return looseArtist(a);
+                    }) || null;
+                }
+                return hit;
+            }
+            async function findAlbumIdByName(albumName, artistName) {
+                const name = String(albumName || '').trim();
+                if (!name) return '';
+                const list = await albumSearch(name, artistName);
+                const hit = pickAlbumRow(list, name, artistName);
+                return hit && hit.id != null ? String(hit.id) : '';
+            }
+            async function resolveAlbumIdForSong(song) {
+                if (!song) return '';
+                if (song.albumId) return String(song.albumId);
+                const name = String(song.name || '').trim();
+                const artist = String(song.artistsname ||
+                    (song.artists || []).map(a => a.name).join('/') || '').trim();
+                const wantAlbum = normName(song.album || '');
+                if (song.album) {
+                    try {
+                        const aid = await findAlbumIdByName(song.album, artist);
+                        if (aid) return aid;
+                    } catch (_) {}
+                }
+                if (name) {
+                    try {
+                        const rows = await neteaseSearchSongs(
+                            artist ? name + ' ' + artist : name, 15);
+                        const hit = pickNeteaseLrcRow(rows, name, artist);
+                        if (hit && hit.albumId) {
+                            const got = normName(hit.album);
+                            const ok = !wantAlbum || !got ||
+                                got === wantAlbum ||
+                                got.indexOf(wantAlbum) >= 0 ||
+                                wantAlbum.indexOf(got) >= 0;
+                            if (ok) return String(hit.albumId);
+                        }
+                    } catch (_) {}
+                }
+                return '';
+            }
+            async function kuwoAlbumSearch(albumName, artistName) {
+                const name = String(albumName || '').trim();
+                if (!name) return '';
+                const clean = name
+                    .replace(/[（(【\[].*?[)）】\]]/g, ' ')
+                    .replace(/\s+/g, ' ').trim() || name;
+                const artist = String(artistName || '').trim();
+                const ask = async (q) => {
+                    const raw = await proxiedText(
+                        'https://search.kuwo.cn/r.s?all=' + encodeURIComponent(q) +
+                        '&ft=album&pn=0&rn=10&rformat=json&encoding=utf8', 9000);
+                    const d = parseKuwoList(raw);
+                    return (d && d.albumlist) || [];
+                };
+                let list = [];
+                try {
+                    list = await ask((clean + ' ' + artist).trim());
+                } catch (_) {}
+                if (!list.length) {
+                    try { list = await ask(clean); } catch (_) {}
+                }
+                const want = normName(clean);
+                const arts = artistTokensOf(artist);
+                const scoreOf = (a) => {
+                    const n = normName(a && (a.name || a.album));
+                    let sc = 0;
+                    if (n && n === want) sc += 100;
+                    else if (n && want && (n.indexOf(want) >= 0 ||
+                        want.indexOf(n) >= 0)) sc += 40;
+                    else return -1;
+                    const got = normName(a && a.artist);
+                    const raw = String((a && a.artist) || '').toLowerCase();
+                    if (arts.length) {
+                        const hit = arts.some(b => got === b ||
+                            (got && (got.indexOf(b) >= 0 ||
+                                b.indexOf(got) >= 0)) || raw.indexOf(b) >= 0);
+                        sc += hit ? 25 : -10;
+                    }
+                    return sc;
+                };
+                let best = null;
+                let bestScore = -1;
+                list.forEach((a) => {
+                    const sc = scoreOf(a);
+                    if (sc > bestScore) { bestScore = sc; best = a; }
+                });
+                return bestScore >= 0 && best && best.albumid != null
+                    ? String(best.albumid) : '';
+            }
+            async function fetchKuwoAlbumDetail(id) {
+                if (!id) return null;
+                const raw = await proxiedText(
+                    'https://search.kuwo.cn/r.s?stype=albuminfo&albumid=' +
+                    encodeURIComponent(id) + '&encoding=utf8&rformat=json', 10000);
+                const d = parseKuwoList(raw);
+                if (!d || (!d.name && !d.musiclist)) return null;
+                const cover = normalizeCoverUrl(d.hts_img || d.img || '');
+                const albumName = kuwoText(d.name || '');
+                const albumArtist = kuwoText(d.artist || d.fartist || '');
+                const songs = ((d.musiclist) || []).map((x) => {
+                    const nm = kuwoText(x.name);
+                    const ar = kuwoText(x.artist || albumArtist);
+                    const rid = String(x.musicrid || x.id || '')
+                        .replace(/^MUSIC_/, '');
+                    if (rid) kuwoIdMap.set(normName(nm) + '|' + normName(ar), rid);
+                    return {
+                        id: 'kw_' + encodeURIComponent(nm + '|' + ar),
+                        name: nm,
+                        artistsname: ar,
+                        artists: ar.split(/[\/&,、]/).map(n => ({ name: n.trim() }))
+                            .filter(a => a.name),
+                        album: albumName,
+                        albumId: '',
+                        albumSrc: 'kuwo',
+                        albumKuwoId: String(d.albumid || id),
+                        kwid: rid,
+                        duration: (Number(x.duration) || 0) * 1000,
+                        picurl: cover,
+                        picId: '',
+                        picIdExact: false
+                    };
+                });
+                const pub = String(d.pub || '');
+                const stamp = pub ? Date.parse(pub.replace(/-/g, '/')) : 0;
+                return {
+                    id: String(d.albumid || id),
+                    name: albumName || '专辑',
+                    picUrl: cover,
+                    publishTime: isFinite(stamp) ? stamp : 0,
+                    size: Number(d.songnum) || songs.length,
+                    company: kuwoText(d.company || ''),
+                    description: kuwoText(d.info || ''),
+                    artistsname: albumArtist,
+                    artists: albumArtist ? [{ name: albumArtist }] : [],
+                    songs: songs
+                };
+            }
+            async function resolveAlbumForSong(song) {
+                if (!song) return null;
+                if (song.albumSrc === 'kuwo' && song.albumKuwoId) {
+                    return { src: 'kuwo', id: String(song.albumKuwoId) };
+                }
+                if (song.albumId) return { src: 'netease', id: String(song.albumId) };
+                const artist = String(song.artistsname ||
+                    (song.artists || []).map(a => a.name).join('/') || '').trim();
+                try {
+                    const nid = await resolveAlbumIdForSong(song);
+                    if (nid) return { src: 'netease', id: nid };
+                } catch (_) {}
+                let albumName = String(song.album || '').trim();
+                if (!albumName) {
+                    const q = (String(song.name || '') + ' ' + artist).trim();
+                    if (q) {
+                        try {
+                            const d = await fetchDirectOrProxy(
+                                KUWO_API + '?msg=' + encodeURIComponent(q) + '&n=1',
+                                { timeout: 6000, directFirst: true });
+                            const x = Array.isArray(d && d.data)
+                                ? d.data[0] : (d && d.data);
+                            albumName = kuwoText(x && x.album);
+                        } catch (_) {}
+                    }
+                }
+                if (albumName) {
+                    try {
+                        const kid = await kuwoAlbumSearch(albumName, artist);
+                        if (kid) return { src: 'kuwo', id: kid };
+                    } catch (_) {}
+                }
+                return null;
+            }
+            async function fetchAlbumDetailNetstart(id) {
+                if (!id) return null;
+                const urls = [
+                    NETEASE_API + '/v1/album/' + encodeURIComponent(id),
+                    'https://interface.music.163.com/api/v1/album/' +
+                        encodeURIComponent(id)
+                ];
+                for (const url of urls) {
+                    let d = null;
+                    try {
+                        d = await fetchDirectOrProxy(url,
+                            { directFirst: true, directTimeout: 6000, timeout: 16000 });
+                    } catch (_) {
+                        d = null;
+                    }
+                    const a = (d && d.album) || null;
+                    if (!a) continue;
+                    const songs = ((d && d.songs) || [])
+                        .map(r => mapNeteaseRecord(r, r.id));
+                    const artists = normalizeArtistList(a.artists, '');
+                    return {
+                        id: String(a.id || id),
+                        name: a.name || '',
+                        picUrl: normalizeCoverUrl(a.picUrl || ''),
+                        publishTime: a.publishTime || 0,
+                        size: a.size || songs.length,
+                        company: a.company || '',
+                        description: a.description || '',
+                        artistsname: artists.map(x => x.name).filter(Boolean).join('/'),
+                        artists: artists,
+                        songs: songs
+                    };
+                }
+                return null;
             }
             function exactPicIdsFrom(raw) {
                 const out = [];
@@ -10403,6 +11335,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     artistsname: arts.map(a => a.name).filter(Boolean).join('/'),
                     artists: arts,
                     album: al.name || '',
+                    albumId: al.id != null ? String(al.id) : '',
                     duration: neteaseRowDuration(row),
                     picurl: picUrl ? normalizeCoverUrl(picUrl) : '',
                     picId: picId,
@@ -10423,6 +11356,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         artistsname: arts.map(a => a.name).join('/'),
                         artists: arts,
                         album: (s.album && s.album.name) || '',
+                        albumId: (s.album && s.album.id != null) ? String(s.album.id) : '',
                         duration: s.duration || 0,
                         picurl: '',
                         picId: (s.album && s.album.picId) ? String(s.album.picId) : '',
@@ -10431,6 +11365,170 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 });
                 if (!rows.length) throw new Error('网易云搜索无结果');
                 return rows;
+            }
+            function kuwoText(s) {
+                return String(s || '')
+                    .replace(/&nbsp;/g, ' ')
+                    .replace(/&amp;/g, '&')
+                    .replace(/&lt;/g, '<')
+                    .replace(/&gt;/g, '>')
+                    .replace(/&quot;/g, '"')
+                    .replace(/&#39;|&apos;/g, "'")
+                    .trim();
+            }
+            function parseKuwoList(text) {
+                const s = String(text || '').trim();
+                if (!s) return null;
+                try { return JSON.parse(s); } catch (_) {}
+                try { return JSON.parse(s.replace(/'/g, '"')); } catch (_) {}
+                return null;
+            }
+            async function kuwoSearchTask(q) {
+                const listUrl = 'http://search.kuwo.cn/r.s?all=' + encodeURIComponent(q) +
+                    '&ft=music&itemset=web_2013&client=kt&pn=0&rn=30&rformat=json&encoding=utf8';
+                const bestUrl = KUWO_API + '?msg=' + encodeURIComponent(q) + '&n=1';
+                const [bestR, listR] = await Promise.allSettled([
+                    fetchDirectOrProxy(bestUrl, { timeout: 7000, directFirst: true }),
+                    proxiedText(listUrl, 8000)
+                ]);
+                const rows = [];
+                const seen = new Set();
+                const pushRow = (rawName, rawArtist, album, durSec, pic, mid) => {
+                    const name = kuwoText(rawName);
+                    const artist = kuwoText(rawArtist);
+                    if (!name) return;
+                    const k = normName(name) + '|' + normName(artist);
+                    if (seen.has(k)) return;
+                    seen.add(k);
+                    const kwid = String(mid || '').replace(/^MUSIC_/, '');
+                    if (kwid) kuwoIdMap.set(k, kwid);
+                    rows.push({
+                        id: 'kw_' + encodeURIComponent(name + '|' + artist),
+                        kwid: kwid,
+                        name: name,
+                        artistsname: artist,
+                        artists: artist.split(/[\/&,、]/)
+                            .map(n => ({ name: n.trim() })).filter(a => a.name),
+                        album: kuwoText(album),
+                        duration: (Number(durSec) || 0) * 1000,
+                        picurl: pic || '',
+                        picId: '',
+                        picIdExact: !!pic
+                    });
+                };
+                if (bestR.status === 'fulfilled') {
+                    const x = bestR.value && bestR.value.data;
+                    if (x && x.song) pushRow(x.song, x.singer, x.album, x.time, x.picture, x.id);
+                }
+                if (listR.status === 'fulfilled') {
+                    const d = parseKuwoList(listR.value);
+                    ((d && d.abslist) || []).forEach(x => {
+                        const pic = x.web_albumpic_short
+                            ? 'https://img1.kuwo.cn/star/albumcover/' +
+                              String(x.web_albumpic_short).replace(/^\//, '')
+                            : '';
+                        pushRow(x.NAME || x.SONGNAME, x.ARTIST || x.AARTIST,
+                            x.ALBUM, x.DURATION, pic, x.MUSICRID);
+                    });
+                }
+                if (!rows.length) return await kuwoSearchLegacy(q);
+                if (!VERSION_BAD.test(q)) {
+                    rows.sort((a, b) => {
+                        const ba = VERSION_BAD.test(a.name) ? 1 : 0;
+                        const bb = VERSION_BAD.test(b.name) ? 1 : 0;
+                        if (ba !== bb) return ba - bb;
+                        return (a.picurl ? 0 : 1) - (b.picurl ? 0 : 1);
+                    });
+                }
+                return rows;
+            }
+            async function kuwoSearchLegacy(q) {
+                const d = await fetchDirectOrProxy(
+                    KUWO_API + '?msg=' + encodeURIComponent(q),
+                    { timeout: 8000, directFirst: true });
+                const text = String((d && d.message) || '');
+                const rows = [];
+                const seen = new Set();
+                text.split('\n').forEach(line => {
+                    const m = line.match(/^\s*\d+\.\s*(.+?)\s*——\s*(.+?)\s*$/);
+                    if (!m) return;
+                    const name = m[1].trim();
+                    const artist = m[2].trim();
+                    if (!name) return;
+                    const k = normName(name) + '|' + normName(artist);
+                    if (seen.has(k)) return;
+                    seen.add(k);
+                    rows.push({
+                        id: 'kw_' + encodeURIComponent(name + '|' + artist),
+                        name: name,
+                        artistsname: artist,
+                        artists: [{ name: artist }],
+                        album: '',
+                        duration: 0,
+                        picurl: '',
+                        picId: '',
+                        picIdExact: true
+                    });
+                });
+                if (!rows.length) throw new Error('酷我搜索无结果');
+                return rows;
+            }
+            const HEAD_GRACE_MS = 1200;
+            const VERSION_BAD = /(live|现场|演唱会|伴奏|纯音乐|钢琴|吉他|翻唱|cover|remix|dj|片段|铃声|试听|女声|童声|karaoke|instrumental)/i;
+            function artistTokensOf(s) {
+                return String(s || '').split(/[\/&,、;；]/)
+                    .map(t => normName(t)).filter(Boolean);
+            }
+            function pickNameHead(rows, q) {
+                const list = (rows || []).slice(0, 6);
+                if (!list.length) return null;
+                const qn = normName(q);
+                const qBad = VERSION_BAD.test(q);
+                let best = list[0];
+                let bestScore = -Infinity;
+                list.forEach((r, i) => {
+                    const n = normName(r.name);
+                    let sc = -i * 2;
+                    if (n && n.length >= 2 &&
+                        (qn === n || qn.indexOf(n) >= 0 || n.indexOf(qn) >= 0)) sc += 40;
+                    if (VERSION_BAD.test(String(r.name || ''))) {
+                        if (!qBad) sc -= 50;
+                    } else {
+                        sc += 10;
+                    }
+                    const d = Number(r.duration) || 0;
+                    if (d && (d < 60000 || d > 600000)) sc -= 30;
+                    if (sc > bestScore) { bestScore = sc; best = r; }
+                });
+                return best;
+            }
+            function isHeadCovered(head, songs) {
+                const name = normName(head && head.name);
+                const arts = artistTokensOf(head && head.artistsname);
+                if (!name || !arts.length) return false;
+                return songs.some(s => {
+                    if (normName(s.name) !== name) return false;
+                    return artistTokensOf(s.artistsname).some(a => arts.indexOf(a) >= 0);
+                });
+            }
+            function insertSearchHead(head, songs) {
+                const key = normName(head.name) + '|' + normName(head.artistsname);
+                for (let i = songs.length - 1; i >= 0; i--) {
+                    const s = songs[i];
+                    if (normName(s.name) + '|' + normName(s.artistsname) === key) {
+                        songs.splice(i, 1);
+                    }
+                }
+                songs.unshift(head);
+            }
+            function refreshSearchAfterHead(q, songs) {
+                const hit = resultsCache.song;
+                if (hit && hit.query === q) hit.data = songs;
+                if (resultsQuery !== q || resultsTab !== 'song') return;
+                if (!searchResults || !searchResults.classList.contains('active')) return;
+                if (isPlaying) return;
+                if (resultsList && resultsList.scrollTop > 40) return;
+                renderSongResults(songs);
             }
             async function searchSongs(q) {
                 const xfabeTask = async () => {
@@ -10454,27 +11552,60 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     if (!rows.length) throw new Error('xfabe 搜索无结果');
                     return rows;
                 };
-                const songs = await (async () => {
+                const neteaseTask = async () => {
                     try {
                         const rows = await gdSearchTask(q)();
                         if (rows.some(s => s.picIdExact)) return rows;
                         try {
                             return await xfabeTask();
                         } catch (e2) {
-                            console.warn('xfabe 搜索失败，转网易云：', e2 && e2.message);
                             return await neteaseSearchSongs(q, 50);
                         }
                     } catch (e) {
-                        console.warn('搜索 gdstudio 失败，转 xfabe：', e && e.message);
+                        console.warn('gdstudio 搜索失败，转 xfabe：', e && e.message);
                         try {
                             return await xfabeTask();
                         } catch (e2) {
-                            console.warn('xfabe 搜索失败，转网易云：', e2 && e2.message);
                             return await neteaseSearchSongs(q, 50);
                         }
                     }
-                })();
-                try { await enrichPicIds(songs); } catch (_) {}
+                };
+                const headTask = async () => {
+                    try {
+                        const rows = await kuwoSearchTask(q);
+                        return pickNameHead(rows, q);
+                    } catch (e) {
+                        console.warn('酷我搜索失败：', e && e.message);
+                        return null;
+                    }
+                };
+                const headP = headTask();
+                const songs = (await neteaseTask().catch(() => [])) || [];
+                let head;
+                if (!songs.length) {
+                    head = await headP.catch(() => null);
+                } else {
+                    head = await Promise.race([
+                        headP,
+                        new Promise((res) => setTimeout(() => res(undefined), HEAD_GRACE_MS))
+                    ]);
+                }
+                if (head === undefined) {
+                    headP.then((late) => {
+                        if (!late || isHeadCovered(late, songs)) return;
+                        insertSearchHead(late, songs);
+                        refreshSearchAfterHead(q, songs);
+                    }).catch(() => {});
+                } else if (head && !isHeadCovered(head, songs)) {
+                    insertSearchHead(head, songs);
+                }
+                if (!songs.length) throw new Error('搜索无结果');
+                try {
+                    await enrichPicIds(songs.filter(s => {
+                        const sid = String(s.id);
+                        return sid.indexOf('kw_') !== 0;
+                    }));
+                } catch (_) {}
                 return songs;
             }
             const NETEASE_SUGGEST = 'https://music.163.com/api/search/suggest/keyword?s=';
@@ -10585,8 +11716,15 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     esc(word.slice(i, i + q.length)) + '</em>' +
                     esc(word.slice(i + q.length));
             }
+            let gdTrialCache = null;
             function gdPlayTask(id, allowTrial) {
                 return async () => {
+                    const key = String(id);
+                    if (allowTrial && gdTrialCache && gdTrialCache.id === key) {
+                        const c = gdTrialCache;
+                        gdTrialCache = null;
+                        return { url: c.url, br: c.br, size: c.size };
+                    }
                     const d = await fetchDirectOrProxy(
                         GD_BASE + '?types=url&source=netease&id=' +
                         encodeURIComponent(id),
@@ -10596,6 +11734,10 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         throw new Error('gdstudio 返回的地址不是音频');
                     }
                     if (!allowTrial && isTrialClipUrl(d.url)) {
+                        gdTrialCache = {
+                            id: key, url: d.url,
+                            br: d.br || 0, size: d.size || 0
+                        };
                         throw new Error('gdstudio 只返回试听片段');
                     }
                     return { url: d.url, br: d.br || 0, size: d.size || 0 };
@@ -10611,6 +11753,27 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (/\/api\/wangyi\//i.test(u)) return false;
                 if (/music\.163\.com\/song\/media\/outer\/url/i.test(u)) return false;
                 return true;
+            }
+            function probeAudioUrl(url, ms) {
+                return new Promise((resolve) => {
+                    if (!url) { resolve(false); return; }
+                    const audio = document.createElement('audio');
+                    let settled = false;
+                    const finish = (ok) => {
+                        if (settled) return;
+                        settled = true;
+                        clearTimeout(timer);
+                        audio.removeAttribute('src');
+                        try { audio.load(); } catch (_) {}
+                        resolve(ok);
+                    };
+                    const timer = setTimeout(() => finish(false), ms || 2500);
+                    audio.preload = 'metadata';
+                    audio.addEventListener('loadedmetadata', () => finish(true), { once: true });
+                    audio.addEventListener('error', () => finish(false), { once: true });
+                    audio.src = url;
+                    try { audio.load(); } catch (_) {}
+                });
             }
             function isTrialClipUrl(u) {
                 if (!u || typeof u !== 'string') return false;
@@ -10632,8 +11795,15 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     if (timer) clearTimeout(timer);
                 });
             }
+            let metingTrialCache = null;
             function metingPlayTask(id, allowTrial) {
                 return async () => {
+                    const key = String(id);
+                    if (allowTrial && metingTrialCache && metingTrialCache.id === key) {
+                        const c = metingTrialCache;
+                        metingTrialCache = null;
+                        return { url: c.url, br: 0, size: 0 };
+                    }
                     const api = METING_BASE + '?type=url&id=' +
                         encodeURIComponent(id);
                     const res = await withTimeout(fetch(api, {
@@ -10652,28 +11822,176 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         throw new Error('meting 地址不可用');
                     }
                     if (!allowTrial && isTrialClipUrl(finalUrl)) {
+                        metingTrialCache = { id: key, url: finalUrl };
                         throw new Error('meting 只返回试听片段');
                     }
                     try { await res.arrayBuffer(); } catch (_) {}
                     return { url: finalUrl, br: 0, size: 0 };
                 };
             }
-            async function playUrlOf(id) {
-                try {
-                    return await metingPlayTask(id, false)();
-                } catch (e) {
-                    console.warn('meting 失败，转 gdstudio：', e && e.message);
+            function normName(s) {
+                return String(s || '')
+                    .replace(/[（(【\[].*?[)）】\]]/g, '')
+                    .replace(/[\s·・\-—_]/g, '')
+                    .toLowerCase();
+            }
+            function miguTimeToSec(t) {
+                const p = String(t || '').split(':').map(Number);
+                if (p.length === 3 && p.every(n => isFinite(n))) {
+                    return p[0] * 3600 + p[1] * 60 + p[2];
+                }
+                if (p.length === 2 && p.every(n => isFinite(n))) {
+                    return p[0] * 60 + p[1];
+                }
+                return 0;
+            }
+            async function miguPlayTask(name, artist, expectSec) {
+                const want = normName(name);
+                if (!want) throw new Error('咪咕缺少歌名');
+                const bad = /live|现场|演唱会|伴奏|纯音乐|dj|remix|翻唱|cover/i;
+                if (bad.test(String(name))) throw new Error('咪咕跳过非原版');
+                const key = (String(name) + ' ' + String(artist || '')).trim();
+                let lastErr = null;
+                for (let n = 1; n <= 3; n++) {
+                    try {
+                        const d = await fetchDirectOrProxy(
+                            MIGU_API + '?msg=' + encodeURIComponent(key) + '&n=' + n,
+                            { timeout: 7000, directFirst: true });
+                        const x = d && d.data;
+                        if (!x || !x.url) {
+                            lastErr = new Error('咪咕未返回地址');
+                            continue;
+                        }
+                        const got = normName(x.song);
+                        if (got && got !== want && got.indexOf(want) < 0 && want.indexOf(got) < 0) {
+                            lastErr = new Error('咪咕歌名不符：' + x.song);
+                            continue;
+                        }
+                        if (bad.test(String(x.song || ''))) {
+                            lastErr = new Error('咪咕非原版：' + x.song);
+                            continue;
+                        }
+                        const sec = miguTimeToSec(x.time);
+                        if (expectSec > 0 && sec > 0 && Math.abs(sec - expectSec) > 6) {
+                            lastErr = new Error('咪咕时长不符：' + x.time);
+                            continue;
+                        }
+                        let u = String(x.url);
+                        if (/^http:\/\//i.test(u)) u = u.replace(/^http:/i, 'https:');
+                        if (!isUsableAudioUrl(u)) {
+                            lastErr = new Error('咪咕地址不可用');
+                            continue;
+                        }
+                        return { url: u, br: 128000, pay: '免费音乐', from: 'migu' };
+                    } catch (e) {
+                        lastErr = e;
+                    }
+                }
+                throw lastErr || new Error('咪咕无可用结果');
+            }
+            async function kuwoPlayTask(name, artist, expectSec) {
+                const raw = String(name || '').trim();
+                const plain = raw.replace(/[（(【\[].*?[)）】\]]/g, ' ').replace(/\s+/g, ' ').trim();
+                const keys = [];
+                const first = (raw + ' ' + String(artist || '')).trim();
+                if (first) keys.push(first);
+                const second = (plain + ' ' + String(artist || '')).trim();
+                if (plain && second !== first) keys.push(second);
+                let lastErr = null;
+                for (const key of keys) {
+                    try {
+                        const d = await fetchDirectOrProxy(
+                            KUWO_API + '?msg=' + encodeURIComponent(key) + '&n=1',
+                            { timeout: 8000, directFirst: true });
+                        const x = d && d.data;
+                        if (!x) throw new Error('酷我未返回结果');
+                        const want = normName(name);
+                        const got = normName(x.song);
+                        if (want && got && want.indexOf(got) < 0 && got.indexOf(want) < 0) {
+                            throw new Error('酷我歌名不符：' + x.song);
+                        }
+                        const sec = Number(x.time) || 0;
+                        if (expectSec > 0 && sec > 0 && Math.abs(sec - expectSec) > 15) {
+                            throw new Error('酷我时长不符：' + x.time);
+                        }
+                        const metaKey = normName(name) + '|' + normName(artist || '');
+                        const rid = String(x.id || '').replace(/^MUSIC_/, '');
+                        if (rid) kuwoIdMap.set(metaKey, rid);
+                        let u = String(x.url || '');
+                        if (!u) throw new Error('酷我未返回地址');
+                        if (/^http:\/\//i.test(u)) u = u.replace(/^http:/i, 'https:');
+                        if (!isUsableAudioUrl(u)) throw new Error('酷我地址不可用');
+                        if (!(await probeAudioUrl(u, 2500))) {
+                            throw new Error('酷我地址已失效');
+                        }
+                        return {
+                            url: u,
+                            br: (Number(x.bitrate) || 128) * 1000,
+                            pay: '免费音乐',
+                            from: 'kuwo'
+                        };
+                    } catch (e) {
+                        lastErr = e;
+                    }
+                }
+                throw lastErr || new Error('酷我无可用结果');
+            }
+            async function playUrlOf(id, hint) {
+                const sid = String(id);
+                const isByName = sid.indexOf('kw_') === 0;
+                let name = hint && hint.name ? String(hint.name) : '';
+                let artist = hint && hint.artistsname ? String(hint.artistsname) : '';
+                let dur = hint && hint.duration ? Number(hint.duration) : 0;
+                if (sid.indexOf('kw_') === 0) {
+                    const parts = decodeURIComponent(sid.slice(3)).split('|');
+                    if (!name && parts[0]) name = parts[0];
+                    if (!artist && parts[1]) artist = parts[1];
+                }
+                const metaOf = async () => {
+                    if (!name && !isByName) {
+                        const row = await fetchNeteaseDetail(id);
+                        if (row) {
+                            name = row.name || '';
+                            dur = neteaseRowDuration(row);
+                            const ar = row.ar || row.artists;
+                            if (!artist && Array.isArray(ar)) {
+                                artist = ar.map(a => a.name).filter(Boolean).join('/');
+                            }
+                        }
+                    }
+                    if (!name) throw new Error('缺少歌名');
+                    return { name, artist, dur };
+                };
+                if (!isByName) {
+                    try {
+                        return await metingPlayTask(id, false)();
+                    } catch (e) {
+                        console.warn('meting 失败，转 gdstudio：', e && e.message);
+                    }
+                    try {
+                        return await gdPlayTask(id)();
+                    } catch (e) {
+                        console.warn('gdstudio 失败，转试听源：', e && e.message);
+                    }
+                    try {
+                        return await metingPlayTask(id, true)();
+                    } catch (e) {
+                        console.warn('meting 试听失败，转酷我：', e && e.message);
+                    }
                 }
                 try {
-                    return await gdPlayTask(id)();
+                    const m = await metaOf();
+                    return await kuwoPlayTask(m.name, m.artist, m.dur > 0 ? m.dur / 1000 : 0);
                 } catch (e) {
-                    console.warn('gdstudio 失败，转试听源：', e && e.message);
+                    console.warn('酷我失败：', e && e.message);
                 }
                 try {
-                    return await metingPlayTask(id, true)();
+                    const m = await metaOf();
+                    return await miguPlayTask(m.name, m.artist, m.dur > 0 ? m.dur / 1000 : 0);
                 } catch (e) {
-                    console.warn('meting 试听失败，转 gdstudio 试听：', e && e.message);
+                    console.warn('咪咕失败：', e && e.message);
                 }
+                if (isByName) throw new Error('该曲暂无可播放源');
                 return previewPlayUrl(id);
             }
             async function gdCoverTask(id, picId) {
@@ -10691,6 +12009,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                        '&ids=%5B' + sid + '%5D';
             }
             async function neteaseCoverTask(id) {
+                if (!/^\d+$/.test(String(id))) throw new Error('非网易云歌曲');
                 const d = await fetchDirectOrProxy(coverDetailUrl(id), {
                     timeout: RACE_TIMEOUT,
                     directTimeout: DIRECT_TIMEOUT
@@ -10712,6 +12031,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             }
             const detailMemo = new Map();
             async function fetchNeteaseDetail(id) {
+                if (!/^\d+$/.test(String(id))) return null;
                 const key = String(id);
                 if (detailMemo.has(key)) return detailMemo.get(key);
                 let row = null;
@@ -10798,6 +12118,326 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 };
                 return primaryThenRace(byNetease, [byXfabe, byGd], '封面');
             }
+            async function proxiedText(target, timeoutMs) {
+                const ctrl = new AbortController();
+                const timer = setTimeout(() => ctrl.abort(), timeoutMs || 9000);
+                try {
+                    const res = await fetch(CF_PROXY + '?key=' + CF_PROXY_KEY +
+                        '&url=' + encodeURIComponent(target), { signal: ctrl.signal });
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    return await res.text();
+                } finally {
+                    clearTimeout(timer);
+                }
+            }
+            function kuwoMetaOf(id) {
+                const s = String(id || '');
+                const song = (currentSong && String(currentSong.id) === s) ? currentSong : null;
+                const sec = (song && Number(song.duration)) ? Number(song.duration) / 1000 : 0;
+                if (s.indexOf('kw_') === 0) {
+                    const p = decodeURIComponent(s.slice(3)).split('|');
+                    return { name: p[0] || '', artist: p[1] || '', sec: sec };
+                }
+                return {
+                    name: (song && song.name) || '',
+                    artist: (song && (song.artistsname ||
+                        (song.artists || []).map(a => a.name).join('/'))) || '',
+                    sec: sec
+                };
+            }
+            async function kuwoResolveMid(meta) {
+                const wantName = normName(meta.name);
+                if (!wantName) return '';
+                const wantArts = artistTokensOf(meta.artist);
+                const qBad = VERSION_BAD.test(String(meta.name || ''));
+                const expectSec = Number(meta.sec) || 0;
+                const cands = [];
+                const push = (rawName, rawArtist, rawMid, rawSec) => {
+                    const nm = kuwoText(rawName);
+                    const ar = kuwoText(rawArtist);
+                    const mid = String(rawMid || '').replace(/^MUSIC_/, '');
+                    const n = normName(nm);
+                    if (!mid || !n) return;
+                    let sc = 0;
+                    if (n === wantName) sc += 100;
+                    else if (n.indexOf(wantName) >= 0 || wantName.indexOf(n) >= 0) sc += 35;
+                    else return;
+                    const arts = artistTokensOf(ar);
+                    if (wantArts.length && arts.length) {
+                        const hit = arts.some(a => wantArts.some(
+                            b => a === b || a.indexOf(b) >= 0 || b.indexOf(a) >= 0));
+                        sc += hit ? 40 : -30;
+                    }
+                    if (VERSION_BAD.test(nm) && !qBad) sc -= 60;
+                    const sec = Number(rawSec) || 0;
+                    if (expectSec > 0 && sec > 0) {
+                        const diff = Math.abs(sec - expectSec);
+                        if (diff > 15) sc -= 55;
+                        else if (diff <= 4) sc += 15;
+                    }
+                    cands.push({ mid: mid, sc: sc, sec: sec });
+                };
+                try {
+                    const q = (meta.name + ' ' + (meta.artist || '')).trim();
+                    const raw = await proxiedText(
+                        'http://search.kuwo.cn/r.s?all=' + encodeURIComponent(q) +
+                        '&ft=music&itemset=web_2013&client=kt&pn=0&rn=15&rformat=json&encoding=utf8', 8000);
+                    const d = parseKuwoList(raw);
+                    ((d && (d.abslist || d.musiclist)) || []).forEach(x => push(
+                        x.NAME || x.SONGNAME || x.name,
+                        x.ARTIST || x.AARTIST || x.artist,
+                        x.MUSICRID || x.musicrid || x.id,
+                        x.DURATION || x.duration));
+                } catch (_) {}
+                if (!cands.length) {
+                    try {
+                        const d = await fetchDirectOrProxy(
+                            KUWO_API + '?msg=' + encodeURIComponent(
+                                (meta.name + ' ' + (meta.artist || '')).trim()) + '&n=5',
+                            { timeout: 7000, directFirst: true });
+                        const arr = Array.isArray(d && d.data) ? d.data : (d && d.data ? [d.data] : []);
+                        arr.forEach(x => push(x.song, x.singer, x.id, x.time));
+                    } catch (_) {}
+                }
+                cands.sort((a, b) => b.sc - a.sc);
+                return cands.length && cands[0].sc > 0 ? cands[0] : null;
+            }
+            async function kuwoLrcOf(id) {
+                const meta = kuwoMetaOf(id);
+                if (!meta.name) throw new Error('缺少歌名');
+                const key = normName(meta.name) + '|' + normName(meta.artist);
+                let mid = kuwoIdMap.get(key);
+                if (!mid) {
+                    const hit = await kuwoResolveMid(meta);
+                    if (hit) {
+                        const sec = Number(hit.sec) || 0;
+                        if (meta.sec > 0 && sec > 0 && Math.abs(sec - meta.sec) > 12) {
+                            throw new Error('酷我版本时长不符');
+                        }
+                        mid = hit.mid;
+                    }
+                }
+                if (!mid) throw new Error('酷我无匹配歌曲');
+                mid = String(mid).replace(/^MUSIC_/, '');
+                kuwoIdMap.set(key, mid);
+                const d = await fetchDirectOrProxy(
+                    KUWO_LRC_API + encodeURIComponent(mid),
+                    { timeout: 7000, directFirst: true });
+                const list = (d && d.data && d.data.lrclist) || [];
+                const rows = [];
+                list.forEach(x => {
+                    const t = Number(x && x.time);
+                    const text = String((x && x.lineLyric) || '').trim();
+                    if (!isFinite(t) || !text) return;
+                    rows.push({ time: t, text: text });
+                });
+                rows.sort((a, b) => a.time - b.time);
+                if (!rows.length) throw new Error('酷我无歌词');
+                return { rows: rows, trans: [], timed: true };
+            }
+            function pickNeteaseLrcRow(rows, name, artist, expectSec) {
+                const wantName = normName(name);
+                const wantArts = artistTokensOf(artist);
+                const qBad = VERSION_BAD.test(String(name || ''));
+                const wantSec = Number(expectSec) || 0;
+                let best = null;
+                let bestScore = -Infinity;
+                (rows || []).forEach((r, i) => {
+                    const n = normName(r.name);
+                    if (!n || !wantName) return;
+                    let sc = -i * 1.5;
+                    if (n === wantName) sc += 100;
+                    else if (n.indexOf(wantName) >= 0 || wantName.indexOf(n) >= 0) sc += 40;
+                    else return;
+                    const got = artistTokensOf(r.artistsname);
+                    if (wantArts.length && got.length) {
+                        const hit = got.some(a => wantArts.some(
+                            b => a === b || a.indexOf(b) >= 0 || b.indexOf(a) >= 0));
+                        sc += hit ? 30 : -20;
+                    }
+                    if (VERSION_BAD.test(String(r.name || '')) && !qBad) sc -= 60;
+                    const sec = (Number(r.duration) || 0) / 1000;
+                    if (wantSec > 0 && sec > 0) {
+                        const diff = Math.abs(sec - wantSec);
+                        if (diff > 20) sc -= 70;
+                        else if (diff <= 5) sc += 25;
+                    }
+                    if (sc > bestScore) { bestScore = sc; best = r; }
+                });
+                return bestScore >= 0 ? best : null;
+            }
+            function artistOverlap(a, b) {
+                const A = artistTokensOf(a);
+                const B = artistTokensOf(b);
+                if (!A.length || !B.length) return false;
+                return A.some(x => B.some(y => x === y || x.indexOf(y) >= 0 || y.indexOf(x) >= 0));
+            }
+            function lyricHitAcceptable(hit, artist, expectSec) {
+                if (!hit) return false;
+                if (artistOverlap(hit.artistsname, artist)) return true;
+                const sec = (Number(hit.duration) || 0) / 1000;
+                if (expectSec > 0 && sec > 0) return Math.abs(sec - expectSec) <= 8;
+                return false;
+            }
+            const TRAD_SIMP = {
+                '東': '东', '樂': '乐', '聲': '声', '鋼': '钢', '鳳': '凤', '雲': '云',
+                '夢': '梦', '愛': '爱', '淚': '泪', '時': '时', '間': '间', '後': '后',
+                '來': '来', '麼': '么', '這': '这', '裡': '里', '裏': '里', '為': '为',
+                '與': '与', '無': '无', '聽': '听', '說': '说', '話': '话', '記': '记',
+                '憶': '忆', '願': '愿', '遠': '远', '還': '还', '開': '开', '關': '关',
+                '門': '门', '舊': '旧', '長': '长', '飛': '飞', '傷': '伤', '離': '离',
+                '別': '别', '誰': '谁', '對': '对', '錯': '错', '過': '过', '經': '经',
+                '歷': '历', '獨': '独', '個': '个', '們': '们', '會': '会', '當': '当',
+                '發': '发', '現': '现', '實': '实', '際': '际', '樣': '样', '點': '点',
+                '總': '总', '結': '结', '夠': '够', '讓': '让', '從': '从', '帶': '带',
+                '給': '给', '傳': '传', '聞': '闻', '陽': '阳', '藍': '蓝', '綠': '绿',
+                '紅': '红', '覺': '觉', '歲': '岁', '華': '华', '葉': '叶', '語': '语',
+                '詩': '诗', '書': '书', '畫': '画', '劍': '剑', '俠': '侠', '歸': '归',
+                '鳥': '鸟', '魚': '鱼', '車': '车', '馬': '马', '萬': '万', '與': '与'
+            };
+            function toSimpText(s) {
+                return String(s || '').replace(/[\u4e00-\u9fa5]/g,
+                    (c) => TRAD_SIMP[c] || c);
+            }
+            function nameCharBag(s) {
+                const bag = new Set();
+                toSimpText(String(s || '')
+                    .replace(/[（(【\[].*?[)）】\]]/g, '')
+                    .replace(/[\s·・\-—_]/g, '')
+                    .toLowerCase()).split('').forEach(c => bag.add(c));
+                return bag;
+            }
+            function nameSimilar(a, b) {
+                const A = nameCharBag(a), B = nameCharBag(b);
+                if (!A.size || !B.size) return 0;
+                let hit = 0;
+                A.forEach(c => { if (B.has(c)) hit++; });
+                return hit / (A.size + B.size - hit);
+            }
+            const QQ_SEARCH = 'https://c.y.qq.com/soso/fcgi-bin/client_search_cp?format=json&p=1&n=';
+            const QQ_LRC = 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg?format=json&nobase64=1&g_tk=5381&songmid=';
+            function decodeHtmlEntities(s) {
+                const t = String(s || '');
+                if (t.indexOf('&') < 0) return t;
+                const ta = document.createElement('textarea');
+                ta.innerHTML = t;
+                return ta.value;
+            }
+            async function qqSearchSongs(q, n) {
+                const d = await fetchDirectOrProxy(
+                    QQ_SEARCH + (n || 15) + '&w=' + encodeURIComponent(q),
+                    { timeout: 12000, proxyFirst: true });
+                const list = (((d || {}).data || {}).song || {}).list || [];
+                return list.map(x => ({
+                    id: x.songmid,
+                    name: x.songname || x.title || '',
+                    artistsname: (x.singer || []).map(v => v.name).join('/'),
+                    duration: (Number(x.interval) || 0) * 1000,
+                    album: x.albumname || ''
+                }));
+            }
+            function rankQqLrcRows(rows, name, artist, expectSec) {
+                const wantName = normName(name);
+                const wantArts = artistTokensOf(artist);
+                const qBad = VERSION_BAD.test(String(name || ''));
+                const wantSec = Number(expectSec) || 0;
+                const cands = [];
+                (rows || []).forEach((r, i) => {
+                    const n = normName(r.name);
+                    if (!n || !wantName) return;
+                    const sim = nameSimilar(r.name, name);
+                    let sc = -i * 1.5;
+                    if (n === wantName) sc += 100;
+                    else if (n.indexOf(wantName) >= 0 || wantName.indexOf(n) >= 0) sc += 45;
+                    else if (sim >= 0.62) sc += Math.round(sim * 80);
+                    else return;
+                    const got = artistTokensOf(r.artistsname);
+                    const artistHit = wantArts.length && got.length && got.some(
+                        a => wantArts.some(b => a === b ||
+                            a.indexOf(b) >= 0 || b.indexOf(a) >= 0));
+                    if (artistHit) sc += 30;
+                    else if (wantArts.length && got.length) sc -= 15;
+                    if (VERSION_BAD.test(String(r.name || '')) && !qBad) sc -= 45;
+                    const sec = (Number(r.duration) || 0) / 1000;
+                    if (wantSec > 0 && sec > 0) {
+                        const diff = Math.abs(sec - wantSec);
+                        if (diff <= 5) sc += 30;
+                        else if (diff <= 20) sc += 10;
+                        else sc -= Math.min(120, Math.round(diff * 1.5));
+                    }
+                    if (sc > 0) cands.push({ row: r, sc: sc });
+                });
+                cands.sort((a, b) => b.sc - a.sc);
+                return cands;
+            }
+            async function qqLrcOf(mid) {
+                const d = await fetchDirectOrProxy(
+                    QQ_LRC + encodeURIComponent(mid),
+                    { timeout: 10000, forceProxy: true });
+                const raw = decodeHtmlEntities(d && d.lyric);
+                if (!raw) throw new Error('QQ 未返回歌词');
+                const rows = parseLyrics(raw);
+                if (!rows.length) throw new Error('歌词解析为空');
+                const trans = transRowsOf(decodeHtmlEntities(d && d.trans), rows);
+                return { rows, trans };
+            }
+            async function thirdPartyLrcOf(id) {
+                const meta = kuwoMetaOf(id);
+                if (!meta.name) throw new Error('缺少歌名');
+                const wantSec = Number(meta.sec) || 0;
+                const clean = String(meta.name)
+                    .replace(/[（(【\[].*?[)）】\]]/g, '').trim() || meta.name;
+                const queries = [];
+                if (meta.artist) queries.push(clean + ' ' + meta.artist);
+                queries.push(clean);
+                if (clean !== meta.name) queries.push(meta.name);
+                const batches = await Promise.all(queries.map(q =>
+                    qqSearchSongs(q, 15).catch(() => [])));
+                const byId = new Map();
+                batches.forEach(rows => {
+                    rankQqLrcRows(rows, meta.name, meta.artist, wantSec)
+                        .forEach(c => {
+                            const old = byId.get(c.row.id);
+                            if (!old || c.sc > old.sc) byId.set(c.row.id, c);
+                        });
+                });
+                const cands = Array.from(byId.values())
+                    .sort((a, b) => b.sc - a.sc);
+                for (const c of cands.slice(0, 4)) {
+                    try {
+                        const got = await qqLrcOf(c.row.id);
+                        if (lyricTooShort(got.rows, wantSec)) continue;
+                        return got;
+                    } catch (_) {}
+                }
+                return await neteaseLrcFallbackByMeta(id);
+            }
+            async function neteaseLrcFallbackByMeta(id) {
+                const song = (currentSong && String(currentSong.id) === String(id))
+                    ? currentSong : null;
+                const name = song && song.name;
+                const artist = song && (song.artistsname ||
+                    (song.artists || []).map(a => a.name).join('/'));
+                const expectSec = (Number(song && song.duration) || 0) / 1000;
+                if (!name) throw new Error('缺少歌名');
+                const canVerify = !!(artist && artistTokensOf(artist).length) || expectSec > 0;
+                const queries = [];
+                if (artist) queries.push(name + ' ' + artist);
+                queries.push(name);
+                for (const q of queries) {
+                    let rows = [];
+                    try {
+                        rows = await neteaseSearchSongs(q, 15);
+                    } catch (_) {
+                        rows = [];
+                    }
+                    const hit = pickNeteaseLrcRow(rows, name, artist, expectSec);
+                    if (!hit) continue;
+                    if (canVerify && !lyricHitAcceptable(hit, artist, expectSec)) continue;
+                    return await fetchNeteaseLrc(hit.id);
+                }
+                throw new Error('网易无匹配歌词');
+            }
             async function fetchGdLrc(id) {
                 const d = await fetchDirectOrProxy(
                     GD_BASE + '?types=lyric&source=netease&id=' +
@@ -10807,17 +12447,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const rows = parseLyrics(d.lyric);
                 if (!rows.length) throw new Error('歌词解析为空');
                 const rawTrans = pickTransRaw(d);
-                const trans = transRowsOf(rawTrans, rows);
-                return { rows, trans };
-            }
-            async function fetchXfabeLrc(id) {
-                const d = await xfabeGet(XFABE_BASE + '/lyrics?id=' +
-                    encodeURIComponent(id));
-                const raw = d.data && d.data.lyric;
-                if (!raw) throw new Error('xfabe 未返回歌词');
-                const rows = parseLyrics(raw);
-                if (!rows.length) throw new Error('歌词解析为空');
-                const rawTrans = pickTransRaw(d.data) || pickTransRaw(d);
                 const trans = transRowsOf(rawTrans, rows);
                 return { rows, trans };
             }
@@ -10852,6 +12481,36 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             const CREDIT_PREFIX = /^\s*(作词|作曲|编曲|制作人|监制|出品|出品人|录音|录音室|录音师|人声录音|混音|母带|吉他|贝斯|鼓|键盘|钢琴|弦乐|和声|合声|配唱|program|producer|lyricist|composer|arranger|mixing|mastering|recording|guitar|bass|drums|piano|strings|vocal|chorus|op|sp|词版权|曲版权|词曲版权)\s*[:：]/i;
             function isCreditLine(text) {
                 return !!text && CREDIT_PREFIX.test(text);
+            }
+            const PURE_LRC_RE = /(纯音乐|pure\s*music)/i;
+            const PURE_LRC_TAIL = /(欣赏|试听|enjoy)/i;
+            function isPureLrcText(text) {
+                const s = String(text || '').trim();
+                if (!s || s.length > 60) return false;
+                if (/^(纯音乐|instrumental)$/i.test(s)) return true;
+                return PURE_LRC_RE.test(s) && PURE_LRC_TAIL.test(s);
+            }
+            function lyricTooShort(rows, sec) {
+                if (!(sec > 40) || !rows || rows.length < 6) return false;
+                const last = Number(rows[rows.length - 1] && rows[rows.length - 1].time);
+                if (!isFinite(last) || last <= 0) return false;
+                return last < sec * 0.45;
+            }
+            function lyricTooLong(rows) {
+                const sec = (currentSong && Number(currentSong.duration))
+                    ? Number(currentSong.duration) / 1000 : 0;
+                if (!(sec > 0) || !rows || rows.length === 0) return false;
+                const last = Number(rows[rows.length - 1] && rows[rows.length - 1].time);
+                if (!isFinite(last)) return false;
+                return last > sec + 20;
+            }
+            function isPureLrcRows(rows) {
+                if (!rows || rows.length === 0) return false;
+                const texts = rows.map(r => String((r && r.text) || '').trim()).filter(Boolean);
+                if (texts.length === 0) return true;
+                const body = texts.filter(t => !isCreditLine(t));
+                if (body.length === 0) return true;
+                return body.every(isPureLrcText);
             }
             function alignTranslation(transRows, rows) {
                 if (!transRows || transRows.length === 0 || rows.length === 0) return [];
@@ -10901,7 +12560,13 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (!raw || typeof raw !== 'string' || !raw.trim()) return [];
                 const parsed = parseLyrics(raw);
                 if (parsed.length > 0) return alignTranslation(parsed, rows);
-                const plain = raw.split('\n').map(t => t.trim()).filter(Boolean);
+                const yrcRows = parseYRC(raw);
+                if (yrcRows.length > 0) return alignTranslation(yrcRows, rows);
+                const plain = raw.split('\n')
+                    .map(t => t.replace(/\(\d+,\d+,\d+\)/g, '')
+                        .replace(/\[\d{1,2}:\d{2}(?:[.:]\d{1,3})?\]/g, '')
+                        .trim())
+                    .filter(Boolean);
                 if (plain.length === 0) return [];
                 const lyricRows = rows.filter(r => !isCreditLine(r.text));
                 if (lyricRows.length === 0) return [];
@@ -10914,32 +12579,39 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             let neteaseLyricMemo = new Map();
             function neteaseLyric(id) {
                 const key = String(id);
+                if (!/^\d+$/.test(key)) return Promise.reject(new Error('非网易云歌曲'));
                 if (neteaseLyricMemo.has(key)) return neteaseLyricMemo.get(key);
                 const p = fetchDirectOrProxy(
                     YRC_ORIGIN + encodeURIComponent(id),
-                    { forceProxy: true }
+                    { forceProxy: true, timeout: 6000 }
                 ).then(d => {
                     if (!d || d.code !== 200) {
                         throw new Error((d && d.msg) || '接口返回异常');
                     }
                     return d;
-                }).catch(e => {
+                }).catch((e) => {
                     neteaseLyricMemo.delete(key);
                     throw e;
                 });
                 neteaseLyricMemo.set(key, p);
                 return p;
             }
-            async function fetchYRC(id) {
+            async function fetchNeteaseBest(id) {
                 const data = await neteaseLyric(id);
-                const transRaw = (data.ytlrc && data.ytlrc.lyric) ||
-                                 pickTransRaw(data);
                 const rawYrc = data.yrc && data.yrc.lyric;
-                if (!rawYrc) throw new Error('该曲无逐字歌词');
-                const rows = parseYRC(rawYrc);
-                if (rows.length === 0) throw new Error('逐字歌词解析为空');
-                const trans = transRowsOf(transRaw, rows);
-                return { rows, trans, timed: true };
+                if (rawYrc) {
+                    const rows = parseYRC(rawYrc);
+                    if (rows.length) {
+                        const transRaw = (data.ytlrc && data.ytlrc.lyric) ||
+                                         pickTransRaw(data);
+                        return {
+                            rows,
+                            trans: transRowsOf(transRaw, rows),
+                            timed: true
+                        };
+                    }
+                }
+                return await fetchNeteaseLrc(id);
             }
             async function fetchNeteaseLrc(id) {
                 const data = await neteaseLyric(id);
@@ -10954,6 +12626,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 return { rows, trans, timed: false };
             }
             const lyricCache = new Map();
+            const lyricInflight = new Map();
             const LYRIC_CACHE_MAX = 30;
             function cacheLyrics(id, entry) {
                 lyricCache.set(id, entry);
@@ -10963,59 +12636,88 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             }
             async function loadLyrics(id) {
                 lyricsId = id;
-                lyricsData = [];
-                lyricsLines = [];
-                lyricsLineOffsets = [];
-                activeLyricIdx = -1;
-                lyricsHasTiming = false;
-                lyricsTrans = [];
-                syncTransButtons();
-                setLyricsPlaceholder('歌词加载中...', false);
-                const hit = lyricCache.get(id);
-                if (hit) {
-                    lyricsData = hit.rows;
-                    lyricsTrans = hit.trans || [];
-                    lyricsHasTiming = hit.timed !== false;
+                const key = String(id);
+                const applyEntry = (entry) => {
+                    lyricsData = entry.rows;
+                    lyricsTrans = entry.trans || [];
+                    lyricsHasTiming = entry.timed !== false;
                     renderLyrics();
                     syncTransButtons();
-                    return;
-                }
-                const show = (picked) => {
-                    if (lyricsId !== id) return false;
-                    lyricsData = picked.rows;
-                    lyricsTrans = picked.trans || [];
-                    lyricsHasTiming = picked.timed !== false;
-                    renderLyrics();
-                    syncTransButtons();
-                    return true;
                 };
-                const tasks = [
-                    () => fetchYRC(id),
-                    () => fetchNeteaseLrc(id),
-                    () => fetchXfabeLrc(id),
-                    () => fetchGdLrc(id)
-                ];
-                for (const run of tasks) {
+                const hit = lyricCache.get(id);
+                if (hit) { applyEntry(hit); return; }
+                const pending = lyricInflight.get(key);
+                if (pending) {
+                    await pending.catch(() => {});
                     if (lyricsId !== id) return;
-                    try {
-                        const picked = await run();
-                        if (!picked || !picked.rows || picked.rows.length === 0) {
-                            continue;
-                        }
-                        if (show(picked)) {
-                            cacheLyrics(id, {
-                                rows: picked.rows,
-                                trans: picked.trans || [],
-                                timed: picked.timed !== false
-                            });
-                            return;
-                        }
-                        return;
-                    } catch (_) {
-                    }
+                    const got = lyricCache.get(id);
+                    if (got) { applyEntry(got); return; }
                 }
-                if (lyricsId !== id) return;
-                setLyricsPlaceholder('暂无歌词', true);
+                const task = (async () => {
+                    lyricsData = [];
+                    lyricsLines = [];
+                    lyricsLineOffsets = [];
+                    activeLyricIdx = -1;
+                    lyricsHasTiming = false;
+                    lyricsTrans = [];
+                    syncTransButtons();
+                    setLyricsPlaceholder('歌词加载中...', false);
+                    const show = (picked) => {
+                        if (lyricsId !== id) return false;
+                        lyricsData = picked.rows;
+                        lyricsTrans = picked.trans || [];
+                        lyricsHasTiming = picked.timed !== false;
+                        renderLyrics();
+                        syncTransButtons();
+                        return true;
+                    };
+                    const jobs = [];
+                    if (key.indexOf('kw_') === 0) {
+                        jobs.push({ pri: 4, run: () => thirdPartyLrcOf(id) });
+                        jobs.push({ pri: 1, run: () => kuwoLrcOf(id), delay: 900 });
+                    } else if (/^\d+$/.test(key)) {
+                        const sameSong = currentSong && String(currentSong.id) === key;
+                        const fromOther = sameSong &&
+                            (currentSong.audioFrom === 'kuwo' || currentSong.audioFrom === 'migu');
+                        jobs.push({ pri: 4, run: () => fetchNeteaseBest(id) });
+                        jobs.push({ pri: 1, run: () => kuwoLrcOf(id),
+                            delay: fromOther ? 900 : 600 });
+                        jobs.push({ pri: 0, run: () => fetchGdLrc(id), delay: 1200 });
+                        jobs.push({ pri: 0, run: () => neteaseLrcFallbackByMeta(id), delay: 4200 });
+                    } else {
+                        jobs.push({ pri: 2, run: () => thirdPartyLrcOf(id) });
+                        jobs.push({ pri: 1, run: () => kuwoLrcOf(id), delay: 900 });
+                    }
+                    let bestPri = -1;
+                    let sawPure = false;
+                    const run = (job) => Promise.resolve().then(job.run).then((picked) => {
+                        if (!picked || !picked.rows || picked.rows.length === 0) return;
+                        if (isPureLrcRows(picked.rows)) { sawPure = true; return; }
+                        if (lyricTooLong(picked.rows)) return;
+                        if (job.pri < bestPri) return;
+                        bestPri = job.pri;
+                        cacheLyrics(id, {
+                            rows: picked.rows,
+                            trans: picked.trans || [],
+                            timed: picked.timed !== false
+                        });
+                        if (lyricsId !== id) return;
+                        show(picked);
+                    }).catch(() => {});
+                    await Promise.all(jobs.map((job) => job.delay
+                        ? new Promise((res) => setTimeout(() => {
+                            run(job).then(res, res);
+                        }, job.delay))
+                        : run(job)));
+                    if (lyricsId !== id || bestPri >= 0) return;
+                    setLyricsPlaceholder(sawPure ? '纯音乐，请欣赏' : '暂无歌词', true);
+                })();
+                lyricInflight.set(key, task);
+                try {
+                    await task;
+                } finally {
+                    if (lyricInflight.get(key) === task) lyricInflight.delete(key);
+                }
             }
             function buildLyricsInto(container) {
                 if (!container) return [];
@@ -11171,13 +12873,15 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     }
                 }
             }
+            const LYRIC_SEEK_EPS = 0.08;
             function findLyricIndex(t) {
                 const arr = lyricsData;
                 if (arr.length === 0) return -1;
+                const tt = t + LYRIC_SEEK_EPS;
                 let lo = 0, hi = arr.length - 1, ans = -1;
                 while (lo <= hi) {
                     const mid = (lo + hi) >> 1;
-                    if (arr[mid].time <= t) {
+                    if (arr[mid].time <= tt) {
                         ans = mid;
                         lo = mid + 1;
                     } else {
@@ -12087,16 +13791,16 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
                 setCoverSrc(miniCoverWrap, miniCover, song.picurl);
                 miniSongTitle.textContent = song.name || '未知歌曲';
-                miniSongArtist.textContent = song.artistsname || '未知歌手';
+                applyArtistLine(miniSongArtist, song);
                 setCoverSrc(albumCoverBox, albumCover, song.picurl);
                 updateDiscGlow(song.picurl);
                 if (!swipeSettling) refreshSwipePeeks();
                 preloadSwipePeeks();
                 if (!song.picurl) backfillCoverFor(song);
                 fullSongName.textContent = song.name || '未知歌曲';
-                fullArtistName.textContent = song.artistsname || '未知歌手';
+                applyArtistLine(fullArtistName, song);
                 lyricsSongName.textContent = song.name || '未知歌曲';
-                lyricsArtistName.textContent = song.artistsname || '未知歌手';
+                applyArtistLine(lyricsArtistName, song);
                 updateMediaMetadata(song);
                 showMiniPlayer();
                 resetCoverSpin();
@@ -12117,12 +13821,13 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (!url) {
                     song.url = '';
                     try {
-                        const got = await withTimeout(playUrlOf(song.id), URL_WAIT_MS,
+                        const got = await withTimeout(playUrlOf(song.id, song), URL_WAIT_MS,
                             '获取播放地址超时');
                         url = got.url;
                         song.url = url;
                         song.br = got.br || 0;
                         song.pay = '免费音乐';
+                        song.audioFrom = got.from || 'netease';
                     } catch (e) {
                         console.error('获取播放地址失败:', e);
                         song.url = '';
@@ -12326,7 +14031,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         retryingSongId = '';
                         failPlayback(song, why);
                     };
-                    playUrlOf(song.id).then((got) => {
+                    playUrlOf(song.id, song).then((got) => {
                         if (myToken !== playSongToken) return;
                         if (!got || !got.url) { bail('播放出错'); return; }
                         song.url = got.url;
@@ -12693,8 +14398,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
                 if (!list || !list.length) return false;
                 const curId = currentSong ? String(currentSong.id) : '';
-                const sig = list.map(s => String(s.id)).join(',');
                 const oldSig = currentSongs.map(s => String(s.id)).join(',');
+                const sig = list.map(s => String(s.id)).join(',');
                 currentSongs = list;
                 if (sig !== oldSig) {
                     shuffleBag = [];
@@ -12961,7 +14666,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     if (!currentSong && currentSongs.length === 0) return;
                     restoreSeekTime = time;
                     const dur = (currentSong.duration || 0) / 1000;
-                    if (dur > 0) progress.style.width = ((time / dur) * 100) + '%';
+                    if (dur > 0) progress.style.width = Math.min(100, (time / dur) * 100) + '%';
                     currentTimeEl.textContent = formatTime(time);
                     if (isAnyLyricsVisible()) {
                         lyricsLayoutDirty = true;
@@ -12969,19 +14674,30 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     } else {
                         syncActiveLyricOnly(time);
                     }
+                    saveLastPlayback();
                     return;
                 }
-                try { currentAudio.currentTime = time; } catch (_) {}
+                const dur = audioDuration(currentAudio);
+                const target = dur > 0 ? Math.min(time, Math.max(0, dur - 0.05)) : time;
+                let at = target;
+                try {
+                    currentAudio.currentTime = target;
+                    const got = currentAudio.currentTime;
+                    if (isFinite(got) && Math.abs(got - target) < 2) at = got;
+                } catch (_) {}
+                pendingSeekTime = null;
                 resetSmoothTime();
                 isLyricsScrolling = true;
                 clearTimeout(scrollTimeout);
-                const dur = audioDuration(currentAudio);
                 if (dur > 0) {
-                    progress.style.width = ((time / dur) * 100) + '%';
+                    progress.style.width = Math.min(100, (at / dur) * 100) + '%';
                 }
-                currentTimeEl.textContent = formatTime(time);
+                currentTimeEl.textContent = formatTime(at);
                 lyricsLayoutDirty = true;
-                updateLyrics(time);
+                updateLyrics(Math.abs(at - target) > 0.5 ? at : target);
+                if (!isPlaying) holdMediaPosition();
+                syncMediaPositionState(true);
+                saveLastPlayback();
                 if (isPlaying && isAnyLyricsVisible()) lyricsTick();
             }
             searchBtn.addEventListener('click', () => {
@@ -13414,7 +15130,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             const OVERSCROLL_PAD_OFF = [favScroll, plScroll, historyScroll];
             function syncScrollOverscrollPad(container) {
                 if (!container) return;
-                const pads = container.querySelectorAll(':scope > .scroll-overscroll-pad');
+                const pads = Array.from(
+                    container.querySelectorAll(':scope > .scroll-overscroll-pad'));
                 if (pads.length === 0) return;
                 pads.forEach(p => p.classList.remove('pad-on'));
                 if (OVERSCROLL_PAD_OFF.indexOf(container) > -1) return;
@@ -13424,7 +15141,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (contentH > availH + 1) return;
                 const pad = Math.round(availH * OVERSCROLL_PAD_RATIO);
                 container.style.setProperty('--scroll-pad', pad + 'px');
-                pads.forEach(p => p.classList.add('pad-on'));
+                const bottomPad = pads[pads.length - 1];
+                if (bottomPad) bottomPad.classList.add('pad-on');
             }
             function clearScrollOverscrollPad(container) {
                 if (!container) return;
@@ -13444,7 +15162,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (h) reads.push([document.documentElement, '--header-h', h.offsetHeight]);
                 const rh = document.querySelector('.search-results-header');
                 if (rh) reads.push([document.documentElement, '--results-header-h', rh.offsetHeight]);
-                [favPage, playlistPage, historyPage, artistPage, aboutPage, sleepPage].forEach(page => {
+                [favPage, playlistPage, historyPage, artistPage, albumPage, aboutPage, sleepPage].forEach(page => {
                     if (!page) return;
                     const fh = page.querySelector('.fav-header');
                     if (fh) reads.push([page, '--fav-header-h', fh.offsetHeight]);
@@ -13468,7 +15186,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         });
                     });
                     ro.observe(h);
-                    [favPage, playlistPage, historyPage, artistPage, aboutPage, sleepPage]
+                    [favPage, playlistPage, historyPage, artistPage, albumPage, aboutPage, sleepPage]
                         .forEach(page => {
                             const fh = page && page.querySelector('.fav-header');
                             if (fh) ro.observe(fh);
@@ -14203,13 +15921,13 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const target = currentSong;
                 setCoverSrc(miniCoverWrap, miniCover, target.picurl);
                 miniSongTitle.textContent = target.name || '未知歌曲';
-                miniSongArtist.textContent = target.artistsname || '未知歌手';
+                applyArtistLine(miniSongArtist, target);
                 setCoverSrc(albumCoverBox, albumCover, target.picurl);
                 updateDiscGlow(target.picurl);
                 fullSongName.textContent = target.name || '未知歌曲';
-                fullArtistName.textContent = target.artistsname || '未知歌手';
+                applyArtistLine(fullArtistName, target);
                 lyricsSongName.textContent = target.name || '未知歌曲';
-                lyricsArtistName.textContent = target.artistsname || '未知歌手';
+                applyArtistLine(lyricsArtistName, target);
                 const t = saved.currentTime || 0;
                 const dur = (target.duration || 0) / 1000;
                 if (dur > 0 && t > 0) {
@@ -14346,6 +16064,25 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                             } catch (e) {
                                 showToast('歌曲加载失败');
                                 restoreLastPlayback();
+                            }
+                            return;
+                        }
+                        const albumName = get('album');
+                        if (albumName) {
+                            await new Promise((res) => setTimeout(res, 300));
+                            try {
+                                const picked = await resolveAlbumForSong({
+                                    album: albumName,
+                                    artistsname: get('artist')
+                                });
+                                if (picked && picked.id) {
+                                    openAlbumPage(picked.id, albumName,
+                                        get('artist'), '', picked.src);
+                                } else {
+                                    showToast('未找到该专辑：' + albumName);
+                                }
+                            } catch (_) {
+                                showToast('未找到该专辑：' + albumName);
                             }
                             return;
                         }
