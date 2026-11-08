@@ -11280,6 +11280,25 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 return changed;
             }
             const KUWO_NOTICE_FILE = /\/588957081\.mp3(?:$|\?)/i;
+            async function kuwoAlbumOfMid(name, artist, mid) {
+                const q = (String(name || '').trim() + ' ' +
+                    String(artist || '').trim()).trim();
+                if (!q) return null;
+                try {
+                    const d = await fetchDirectOrProxy(
+                        KUWO_API + '?msg=' + encodeURIComponent(q) + '&n=1',
+                        { timeout: 7000, directFirst: true });
+                    const x = d && d.data;
+                    if (!x) return null;
+                    const rid = String(x.id || '').replace(/^MUSIC_/, '');
+                    if (mid && rid && rid !== String(mid)) return null;
+                    return {
+                        pic: x.picture || '',
+                        album: kuwoText(x.album),
+                        sec: Number(x.time) || 0
+                    };
+                } catch (_) { return null; }
+            }
             async function kuwoSongByMid(mid) {
                 const m = String(mid || '').replace(/^MUSIC_/, '').trim();
                 if (!/^\d+$/.test(m)) return null;
@@ -11309,9 +11328,20 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
                 const name = kuwoText(info && (info.songName || info.name)) || lrcName;
                 const artist = kuwoText(info && info.artist) || lrcArtist;
-                const album = kuwoText(info && info.album);
-                const sec = Number(info && info.duration) || 0;
-                const pic = (info && (info.pic || info.albumpic)) || '';
+                let album = kuwoText(info && info.album);
+                let sec = Number(info && info.duration) || 0;
+                let pic = (info && (info.pic || info.albumpic)) || '';
+                if (name && (!pic || /starheads/i.test(pic) || !album || !sec)) {
+                    const extra = await kuwoAlbumOfMid(name, artist, m);
+                    if (extra) {
+                        if (extra.pic && !/kw-www\/img\/logo/i.test(extra.pic) &&
+                            (!pic || /starheads/i.test(pic))) {
+                            pic = extra.pic;
+                        }
+                        if (!album) album = extra.album;
+                        if (!sec) sec = extra.sec;
+                    }
+                }
                 return {
                     id: 'kw_' + m,
                     kwid: m,
@@ -11950,7 +11980,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
                 throw lastErr || new Error('咪咕无可用结果');
             }
-            async function kuwoPlayTask(name, artist, expectSec) {
+            async function kuwoPlayTask(name, artist, expectSec, wantMid) {
                 const raw = String(name || '').trim();
                 const plain = raw.replace(/[（(【\[].*?[)）】\]]/g, ' ').replace(/\s+/g, ' ').trim();
                 const keys = [];
@@ -11977,6 +12007,9 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         }
                         const metaKey = normName(name) + '|' + normName(artist || '');
                         const rid = String(x.id || '').replace(/^MUSIC_/, '');
+                        if (wantMid && rid && String(wantMid) !== rid) {
+                            throw new Error('酷我版本不符：' + x.song);
+                        }
                         if (rid) kuwoIdMap.set(metaKey, rid);
                         let u = String(x.url || '');
                         if (!u) throw new Error('酷我未返回地址');
@@ -12016,6 +12049,9 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     if (info.duration < 35 && (!want || want > 60)) {
                         throw new Error('酷我只返回提示音');
                     }
+                    if (want > 30 && Math.abs(info.duration - want) > 25) {
+                        throw new Error('酷我返回了其它版本');
+                    }
                 }
                 return { url: u, br: 128000, pay: '免费音乐', from: 'kuwo' };
             }
@@ -12036,7 +12072,10 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         (got.indexOf(want) >= 0 || want.indexOf(got) >= 0)) sc += 45;
                     else sc += Math.round(nameSimilar(got, want) * 60);
                     const ra = artistTokensOf(r.artistsname);
-                    if (arts.length && ra.some(t => arts.indexOf(t) >= 0)) sc += 30;
+                    if (arts.length) {
+                        if (!ra.some(t => arts.indexOf(t) >= 0)) return;
+                        sc += 30;
+                    }
                     const sec = (Number(r.duration) || 0) / 1000;
                     if (expectSec > 0 && sec > 0) {
                         sc -= Math.min(80, Math.abs(sec - expectSec) * 1.2);
@@ -12071,7 +12110,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         console.warn('酷我mid播放失败：', e && e.message);
                         if (name) {
                             try {
-                                return await kuwoPlayTask(name, artist, expectSec);
+                                return await kuwoPlayTask(name, artist, expectSec,
+                                    sid.slice(3));
                             } catch (_) {}
                             try {
                                 return await neteasePlayByName(name, artist, expectSec);
