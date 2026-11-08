@@ -11279,14 +11279,20 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 });
                 return changed;
             }
+            const KUWO_NOTICE_FILE = /\/588957081\.mp3(?:$|\?)/i;
             async function kuwoSongByMid(mid) {
                 const m = String(mid || '').replace(/^MUSIC_/, '').trim();
                 if (!/^\d+$/.test(m)) return null;
                 let info = null, lrcName = '', lrcArtist = '';
-                for (let i = 0; i < 6; i++) {
+                for (let i = 0; i < 3; i++) {
                     try {
-                        const d = await fetchOne(u => u,
-                            KUWO_LRC_API + m + '&httpsStatus=1', 6000);
+                        const viaProxy = i > 0;
+                        const d = await fetchOne(viaProxy
+                            ? (u => CF_PROXY + '?key=' + CF_PROXY_KEY +
+                                '&url=' + encodeURIComponent(u))
+                            : (u => u),
+                            KUWO_LRC_API + m + '&httpsStatus=1',
+                            viaProxy ? 9000 : 6000);
                         const data = d && d.data;
                         const si = data && data.songinfo;
                         const line = String(((data && data.lrclist) || [])
@@ -11525,6 +11531,26 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 });
                 return best;
             }
+            function mergeKuwoRows(q, rows, songs) {
+                if (!rows || !rows.length) return;
+                const qn = normName(q);
+                const qBad = VERSION_BAD.test(q);
+                const have = new Set(songs.map(
+                    s => normName(s.name) + '|' + normName(s.artistsname)));
+                let added = 0;
+                rows.forEach((r) => {
+                    if (added >= 12) return;
+                    const n = normName(r.name);
+                    if (!n) return;
+                    if (!(n === qn || n.indexOf(qn) >= 0 || qn.indexOf(n) >= 0)) return;
+                    if (!qBad && VERSION_BAD.test(String(r.name || ''))) return;
+                    const k = normName(r.name) + '|' + normName(r.artistsname);
+                    if (have.has(k)) return;
+                    have.add(k);
+                    songs.push(r);
+                    added++;
+                });
+            }
             function isHeadCovered(head, songs) {
                 const name = normName(head && head.name);
                 const arts = artistTokensOf(head && head.artistsname);
@@ -11596,7 +11622,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const headTask = async () => {
                     try {
                         const rows = await kuwoSearchTask(q);
-                        return pickNameHead(rows, q);
+                        return { head: pickNameHead(rows, q), rows: rows };
                     } catch (e) {
                         console.warn('酷我搜索失败：', e && e.message);
                         return null;
@@ -11615,12 +11641,18 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
                 if (head === undefined) {
                     headP.then((late) => {
-                        if (!late || isHeadCovered(late, songs)) return;
-                        insertSearchHead(late, songs);
+                        if (!late) return;
+                        if (late.head && !isHeadCovered(late.head, songs)) {
+                            insertSearchHead(late.head, songs);
+                        }
+                        mergeKuwoRows(q, late.rows, songs);
                         refreshSearchAfterHead(q, songs);
                     }).catch(() => {});
-                } else if (head && !isHeadCovered(head, songs)) {
-                    insertSearchHead(head, songs);
+                } else if (head) {
+                    if (head.head && !isHeadCovered(head.head, songs)) {
+                        insertSearchHead(head.head, songs);
+                    }
+                    mergeKuwoRows(q, head.rows, songs);
                 }
                 if (!songs.length) throw new Error('搜索无结果');
                 try {
@@ -11777,26 +11809,32 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (/music\.163\.com\/song\/media\/outer\/url/i.test(u)) return false;
                 return true;
             }
-            function probeAudioUrl(url, ms) {
+            function probeAudioInfo(url, ms) {
                 return new Promise((resolve) => {
-                    if (!url) { resolve(false); return; }
+                    if (!url) { resolve({ ok: false, duration: 0 }); return; }
                     const audio = document.createElement('audio');
                     let settled = false;
-                    const finish = (ok) => {
+                    const finish = (ok, duration) => {
                         if (settled) return;
                         settled = true;
                         clearTimeout(timer);
+                        const d = Number(duration) || 0;
                         audio.removeAttribute('src');
                         try { audio.load(); } catch (_) {}
-                        resolve(ok);
+                        resolve({ ok: ok, duration: d > 0 && isFinite(d) ? d : 0 });
                     };
-                    const timer = setTimeout(() => finish(false), ms || 2500);
+                    const timer = setTimeout(() => finish(false, 0), ms || 2500);
                     audio.preload = 'metadata';
-                    audio.addEventListener('loadedmetadata', () => finish(true), { once: true });
-                    audio.addEventListener('error', () => finish(false), { once: true });
+                    audio.addEventListener('loadedmetadata', () => {
+                        finish(true, audio.duration);
+                    }, { once: true });
+                    audio.addEventListener('error', () => finish(false, 0), { once: true });
                     audio.src = url;
                     try { audio.load(); } catch (_) {}
                 });
+            }
+            function probeAudioUrl(url, ms) {
+                return probeAudioInfo(url, ms).then((r) => r.ok);
             }
             function isTrialClipUrl(u) {
                 if (!u || typeof u !== 'string') return false;
@@ -11944,8 +11982,12 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         if (!u) throw new Error('酷我未返回地址');
                         if (/^http:\/\//i.test(u)) u = u.replace(/^http:/i, 'https:');
                         if (!isUsableAudioUrl(u)) throw new Error('酷我地址不可用');
-                        if (!(await probeAudioUrl(u, 2500))) {
-                            throw new Error('酷我地址已失效');
+                        if (KUWO_NOTICE_FILE.test(u)) throw new Error('酷我版权受限');
+                        const uInfo = await probeAudioInfo(u, 2500);
+                        if (!uInfo.ok) throw new Error('酷我地址已失效');
+                        if (uInfo.duration > 0 && uInfo.duration < 35 &&
+                            (!expectSec || expectSec > 60)) {
+                            throw new Error('酷我只返回提示音');
                         }
                         return {
                             url: u,
@@ -11959,15 +12001,56 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
                 throw lastErr || new Error('酷我无可用结果');
             }
-            async function kuwoMidPlayTask(mid) {
+            async function kuwoMidPlayTask(mid, expectSec) {
                 const rid = 'MUSIC_' + String(mid || '').replace(/^MUSIC_/, '');
                 const txt = (await proxiedText(
                     'https://antiserver.kuwo.cn/anti.s?type=convert_url&format=mp3' +
                     '&response=url&rid=' + rid, 9000)).trim();
                 const u = txt.replace(/^http:/i, 'https:');
                 if (!/^https?:\/\//i.test(u)) throw new Error('酷我未返回地址');
-                if (!(await probeAudioUrl(u, 2500))) throw new Error('酷我地址已失效');
+                if (KUWO_NOTICE_FILE.test(u)) throw new Error('酷我版权受限');
+                const info = await probeAudioInfo(u, 3000);
+                if (!info.ok) throw new Error('酷我地址已失效');
+                if (info.duration > 0) {
+                    const want = Number(expectSec) || 0;
+                    if (info.duration < 35 && (!want || want > 60)) {
+                        throw new Error('酷我只返回提示音');
+                    }
+                }
                 return { url: u, br: 128000, pay: '免费音乐', from: 'kuwo' };
+            }
+            async function neteasePlayByName(name, artist, expectSec) {
+                const clean = String(name || '')
+                    .replace(/[（(【\[].*?[)）】\]]/g, ' ').trim();
+                const q = (clean + ' ' + String(artist || '')).trim();
+                if (!q) throw new Error('缺少歌名');
+                const rows = await neteaseSearchSongs(q, 20);
+                const want = normName(clean);
+                const arts = artistTokensOf(artist);
+                let best = null, bestSc = -Infinity;
+                rows.forEach((r) => {
+                    const got = normName(r.name);
+                    let sc = 0;
+                    if (got && got === want) sc += 100;
+                    else if (want && got &&
+                        (got.indexOf(want) >= 0 || want.indexOf(got) >= 0)) sc += 45;
+                    else sc += Math.round(nameSimilar(got, want) * 60);
+                    const ra = artistTokensOf(r.artistsname);
+                    if (arts.length && ra.some(t => arts.indexOf(t) >= 0)) sc += 30;
+                    const sec = (Number(r.duration) || 0) / 1000;
+                    if (expectSec > 0 && sec > 0) {
+                        sc -= Math.min(80, Math.abs(sec - expectSec) * 1.2);
+                    }
+                    if (VERSION_BAD.test(String(r.name || '')) &&
+                        !VERSION_BAD.test(String(name || ''))) sc -= 45;
+                    if (sc > bestSc) { bestSc = sc; best = r; }
+                });
+                if (!best || bestSc < 60) throw new Error('未找到匹配音源');
+                try {
+                    return await gdPlayTask(best.id)();
+                } catch (_) {
+                    return await metingPlayTask(best.id, false)();
+                }
             }
             async function playUrlOf(id, hint) {
                 const sid = String(id);
@@ -11981,14 +12064,20 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     if (!artist && parts[1]) artist = parts[1];
                 }
                 if (/^kw_\d+$/.test(sid)) {
+                    const expectSec = dur > 0 ? dur / 1000 : 0;
                     try {
-                        return await kuwoMidPlayTask(sid.slice(3));
+                        return await kuwoMidPlayTask(sid.slice(3), expectSec);
                     } catch (e) {
                         console.warn('酷我mid播放失败：', e && e.message);
                         if (name) {
                             try {
-                                return await kuwoPlayTask(name, artist,
-                                    dur > 0 ? dur / 1000 : 0);
+                                return await kuwoPlayTask(name, artist, expectSec);
+                            } catch (_) {}
+                            try {
+                                return await neteasePlayByName(name, artist, expectSec);
+                            } catch (_) {}
+                            try {
+                                return await miguPlayTask(name, artist, expectSec);
                             } catch (_) {}
                         }
                         throw new Error('该曲暂无可播放源');
