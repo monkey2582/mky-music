@@ -408,7 +408,7 @@ body.tab-bar-hidden .tab-bar { transform:translateY(100%);opacity:0;pointer-even
 .settings-volume { display:flex;align-items:center;gap:10px; }
 .settings-vol-icon { display:flex;align-items:center;justify-content:center;width:20px;height:20px;padding:0;
   border:none;background:transparent;color:var(--text-muted);font-size:13px;cursor:pointer; }
-.settings-vol-icon svg,.mv-vol-icon svg,.mv-vol-mini svg { height:1.1em;width:auto;display:block; }
+.settings-vol-icon svg,.mv-vol-icon svg,.mv-vol-mini svg { height:1.1em;width:1.1em;display:block; }
 .settings-volume input[type=range] { width:118px;height:6px;-webkit-appearance:none;appearance:none;background:linear-gradient(to right,var(--primary) 0%,var(--primary) var(--vol-pct, 100%),var(--surface-hover) var(--vol-pct, 100%),var(--surface-hover) 100%);border-radius:999px;outline:none;cursor:pointer; }
 .settings-volume input[type=range]::-webkit-slider-thumb { -webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.42),0 0 0 1px rgba(0,0,0,0.06);border:none;cursor:pointer; }
 .settings-volume input[type=range]::-moz-range-thumb { width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.42),0 0 0 1px rgba(0,0,0,0.06);border:none;cursor:pointer; }
@@ -756,6 +756,7 @@ body.pl-select-mode .header,body.pl-select-mode .fav-header,body.pl-select-mode 
 .key-hud { position:fixed;top:calc(16px + env(safe-area-inset-top,0px));right:16px;z-index:4000;display:flex;align-items:center;gap:8px;max-width:66vw;padding:10px 14px;border-radius:10px;background:var(--glass-panel-heavy);-webkit-backdrop-filter:blur(var(--glass-blur-bar)) saturate(var(--glass-saturate));backdrop-filter:blur(var(--glass-blur-bar)) saturate(var(--glass-saturate));border:1px solid var(--glass-edge-heavy);box-shadow:var(--shadow-popover);color:var(--text-primary);font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;opacity:0;transform:translateY(-10px);pointer-events:none;transition:opacity 0.18s ease,transform 0.18s ease; }
 .key-hud.show { opacity:1;transform:translateY(0); }
 .key-hud i { font-size:14px; }
+.key-hud svg { height:1.1em;width:1.1em;display:block; }
 .key-hud span { white-space:nowrap; }
 .import-progress { position:fixed;left:50%;top:76px;transform:translate(-50%,-14px);z-index:4900;min-width:210px;max-width:82vw;padding:12px 16px;border-radius:16px;background:var(--popover-toast);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--border-popover);box-shadow:var(--shadow-popover);color:var(--text-primary);opacity:0;pointer-events:none;transition:opacity 0.28s,transform 0.28s cubic-bezier(0.22,1,0.36,1); }
 .import-progress.show { opacity:1;transform:translate(-50%,0); }
@@ -2665,13 +2666,31 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const at = playHistory.findIndex(s => String(s.id) === key);
                 if (at >= 0) {
                     const item = playHistory[at];
-                    if (!item.picurl) {
-                        const cover = song.picurl || knownPicurlOf(song.id);
-                        if (cover) {
-                            item.picurl = cover;
-                            persistPlayHistory();
-                            renderPlayHistoryPage();
+                    let changed = false;
+                    ['name', 'artistsname', 'album'].forEach((k) => {
+                        const v = song[k];
+                        if (v && v !== item[k]) {
+                            item[k] = v;
+                            changed = true;
                         }
+                    });
+                    if (song.duration &&
+                        Number(song.duration) !== Number(item.duration || 0)) {
+                        item.duration = song.duration;
+                        changed = true;
+                    }
+                    if (song.artists && song.artists.length) {
+                        item.artists = song.artists;
+                        changed = true;
+                    }
+                    const cover = song.picurl || knownPicurlOf(song.id);
+                    if (cover && cover !== item.picurl) {
+                        item.picurl = cover;
+                        changed = true;
+                    }
+                    if (changed) {
+                        persistPlayHistory();
+                        renderPlayHistoryPage();
                     }
                     return;
                 }
@@ -5951,6 +5970,42 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const s = u.trim();
                 return /^http:\/\//i.test(s) ? 'https://' + s.slice(7) : s;
             }
+            async function neteaseMvOf(mvid) {
+                const id = String(mvid || '').trim();
+                if (!id) return { src: '', title: '', cover: '' };
+                const paths = [
+                    '/mv/' + encodeURIComponent(id) + '/?from=web',
+                    '/m/mv/' + encodeURIComponent(id) + '/?from=web',
+                    '/mv/' + encodeURIComponent(id) + '/',
+                    '/mv/' + encodeURIComponent(id)
+                ];
+                const pick = (html, prop) => {
+                    const tags = String(html || '').match(/<meta\b[^>]*>/gi) || [];
+                    for (const t of tags) {
+                        if (t.indexOf('"' + prop + '"') < 0) continue;
+                        const c = t.match(/content="([^"]*)"/i);
+                        if (c) return c[1];
+                    }
+                    return '';
+                };
+                for (const p of paths) {
+                    try {
+                        const html = await proxiedText(
+                            'https://music.163.com' + p, 8000);
+                        let src = pick(html, 'og:video');
+                        if (!src) continue;
+                        try { src = decodeURIComponent(src); } catch (_) {}
+                        src = normalizeVideoUrl(src);
+                        if (!/^https?:\/\//i.test(src)) continue;
+                        return {
+                            src: src,
+                            title: pick(html, 'og:title'),
+                            cover: normalizeCoverUrl(pick(html, 'og:image'))
+                        };
+                    } catch (_) {}
+                }
+                return { src: '', title: '', cover: '' };
+            }
             async function findMvId(song) {
                 const kw = ((song.name || '') + ' ' + (song.artistsname || '')).trim();
                 if (!kw) return '';
@@ -6047,25 +6102,12 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         title = (song && song.name) || '';
                         artist = (song && song.artistsname) || '';
                     }
-                    if (!title || !artist) {
-                        try {
-                            const info = await fetchDirectOrProxy(
-                                ARTIST_API + '/mv/detail?mvid=' + encodeURIComponent(mvid),
-                                { directFirst: true, timeout: 12000 });
-                            const row = (info && info.data) || {};
-                            if (!title) title = row.name || row.title || '';
-                            if (!artist) artist = row.artistName || row.artist || '';
-                        } catch (_) {}
-                        if (seq !== mvReqSeq) return;
-                    }
-                    const url = ARTIST_API + '/mv/url?id=' + encodeURIComponent(mvid);
-                    const d = await fetchDirectOrProxy(url,
-                        { directFirst: true, timeout: 15000 });
+                    const meta = await neteaseMvOf(mvid);
                     if (seq !== mvReqSeq) return;
-                    const data = (d && d.data) || {};
-                    const src = normalizeVideoUrl(data.url);
+                    if (!title) title = meta.title || '';
+                    const src = meta.src;
                     if (!src) throw new Error('mv-no-url');
-                    if (mvInfoName) mvInfoName.textContent = title;
+                    if (mvInfoName) mvInfoName.textContent = title || 'MV';
                     if (mvInfoArtist) mvInfoArtist.textContent = artist;
                     currentMvMeta = { id: mvid, name: title, artist: artist };
                     mvVideo.src = src;
@@ -6194,8 +6236,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             }
             let mvLastVolume = 1;
             function mvSyncVolIcon() {
-                if (!mvVolIcon || !mvVideo) return;
-                const v = mvVideo.muted ? 0 : mvVideo.volume;
+                if (!mvVolIcon) return;
+                const v = mvVideo ? (mvVideo.muted ? 0 : mvVideo.volume) : getVolume();
                 if (v > 0.001) mvLastVolume = v;
                 mvVolIcon.innerHTML = volumeIconMarkup(v);
                 if (mvVolMini) mvVolMini.innerHTML = volumeIconMarkup(v);
@@ -7656,6 +7698,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 let mvVolTimer = 0;
                 mvVol.addEventListener('mouseenter', () => {
                     clearTimeout(mvVolTimer);
+                    mvSyncVolIcon();
                     if (mvVolPop) mvVolPop.classList.add('show');
                     mvPokeBar();
                 });
@@ -7688,6 +7731,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         mvCloseVolPop();
                     } else {
                         mvVolLocked = true;
+                        mvSyncVolIcon();
                         mvVolPop.classList.add('show');
                     }
                     mvPokeBar();
@@ -11338,7 +11382,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (!/^\d+$/.test(m)) return null;
                 let info = null;
                 let lrcLine = '';
-                for (let i = 0; i < 3; i++) {
+                for (let i = 0; i < 4; i++) {
                     try {
                         const viaProxy = i > 0;
                         const d = await fetchOne(viaProxy
@@ -11354,7 +11398,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                             lrcLine = String(((data && data.lrclist) || [])
                                 .map(x => (x && x.lineLyric) || '')[0] || '');
                         }
-                        if (info && lrcLine) break;
+                        if (info || lrcLine) break;
                     } catch (_) {}
                     await new Promise(r => setTimeout(r, 200));
                 }
@@ -15125,8 +15169,9 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             let keyHudTimer = null;
             function showKeyHud(text, icon) {
                 if (!keyHudEl) { showToast(text); return; }
-                keyHudEl.innerHTML = (icon ? '<i class="' + icon + '"></i>' : '')
-                    + '<span>' + text + '</span>';
+                const iconHtml = !icon ? ''
+                    : (icon.charAt(0) === '<' ? icon : '<i class="' + icon + '"></i>');
+                keyHudEl.innerHTML = iconHtml + '<span>' + text + '</span>';
                 keyHudEl.classList.add('show');
                 clearTimeout(keyHudTimer);
                 keyHudTimer = setTimeout(() => keyHudEl.classList.remove('show'), 1100);
@@ -15156,11 +15201,12 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const v = Math.max(0, Math.min(1, getVolume() + delta));
                 setVolume(v);
                 showKeyHud('音量:' + Math.round(v * 100) + '%',
-                    delta > 0 ? 'fas fa-volume-high' : 'fas fa-volume-low');
+                    volumeIconMarkup(v));
             }
-            function keySeekBy(delta) {
+            function keySeekBy(delta, silent) {
                 if (placeholderMode) { showPlaceholderTip(); return; }
                 seekBySeconds(delta);
+                if (silent) return;
                 const cur = currentAudio ? currentAudio.currentTime
                     : (pendingSeekTime === null ? 0 : pendingSeekTime);
                 showKeyHud((delta > 0 ? '快进 ' : '快退 ')
@@ -15272,7 +15318,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 progressBar.addEventListener('wheel', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    keySeekBy(e.deltaY < 0 ? 5 : -5);
+                    keySeekBy(e.deltaY < 0 ? 5 : -5, true);
                 }, { passive: false });
             }
             if (settingsVolume) {
@@ -15282,8 +15328,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     const v = Math.max(0, Math.min(1,
                         getVolume() + (e.deltaY < 0 ? 0.02 : -0.02)));
                     setVolume(v);
-                    showKeyHud('音量:' + Math.round(v * 100) + '%',
-                        e.deltaY < 0 ? 'fas fa-volume-high' : 'fas fa-volume-low');
                 }, { passive: false });
             }
             document.addEventListener('contextmenu', (e) => {
@@ -16246,6 +16290,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 renderFavorites();
                 syncFavUI();
                 hideMiniPlayer();
+                syncVolumeIcons();
+                mvSyncVolIcon();
                 activeTab = 'chart';
                 activeChart = CHARTS[0];
                 renderChartChips();
