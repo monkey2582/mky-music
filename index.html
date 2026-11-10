@@ -308,7 +308,7 @@
             };
         })();
     </script>
-    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/mdui@0.4.3/dist/css/mdui.min.css" />
     <script src="https://fastly.jsdelivr.net/npm/mdui@0.4.3/dist/js/mdui.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/nosleep.js@0.12.0/dist/NoSleep.min.js"></script>
@@ -448,8 +448,7 @@ body.mine-tab .search-btn { display:none; }
 .mine-sub { font-size:12px;color:var(--text-secondary); }
 .mine-actions { display:flex;align-items:center;gap:2px;flex-shrink:0; }
 .act-btn { width:34px;height:34px;border:none;background:transparent;color:var(--text-secondary);border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.2s,color 0.2s,transform 0.15s; }
-.act-btn:hover { color:var(--text-primary); }
-.act-btn:active { transform:scale(0.9); }
+.act-btn:active { opacity:0.6;transform:scale(0.9); }
 .mine-empty { text-align:center;color:var(--text-secondary);font-size:13px;padding:30px 0; }
 .fab-stack { position:fixed;right:18px;bottom:calc(var(--tab-height) + var(--bottom-stack) + 18px);z-index:2300;opacity:0;transform:scale(0.72);pointer-events:none;transition:opacity 0.24s ease,transform 0.26s cubic-bezier(0.22,1,0.36,1); }
 body.mine-tab .fab-stack.show { opacity:1;transform:scale(1);pointer-events:all; }
@@ -469,17 +468,15 @@ body.mine-tab .fab-stack.show { opacity:1;transform:scale(1);pointer-events:all;
 .search-field .search-input { width:100%;padding-right:42px; }
 .input-clear { position:absolute;right:10px;top:50%;transform:translateY(-50%) scale(0.7);width:22px;height:22px;border:none;border-radius:50%;background:var(--surface-highlight);color:var(--text-secondary);font-size:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;opacity:0;pointer-events:none;transition:opacity 0.18s,transform 0.18s,background 0.18s,color 0.18s; }
 .input-clear.show { opacity:1;pointer-events:all;transform:translateY(-50%) scale(1); }
-@media (hover:hover)and (pointer:fine) { .input-clear.show:hover { color:var(--text-primary); } }
-.input-clear.show:active { color:var(--text-primary);transform:translateY(-50%) scale(0.86); }
+.input-clear.show:active { opacity:0.7;color:var(--text-primary);transform:translateY(-50%) scale(0.86); }
 .search-input { flex:1;background:var(--glass-panel);-webkit-backdrop-filter:blur(var(--glass-blur-soft)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-soft)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));border:1px solid var(--glass-edge);border-radius:60px;padding:12px 22px;color:var(--text-primary);font-size:15px;outline:none;transition:border-color 0.22s,box-shadow 0.22s; }
 .search-input:focus { background:var(--surface-input-focus);border-color:rgba(233,30,99,0.30);box-shadow:0 0 0 3px rgba(233,30,99,0.08); }
 .search-input::placeholder { color:var(--text-faint); }
 .search-btn { background:var(--primary);border:none;border-radius:60px;width:46px;height:46px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;flex-shrink:0;box-shadow:0 4px 16px rgba(233,30,99,0.25); }
-.search-btn:hover { transform:scale(1.05);box-shadow:0 6px 24px rgba(233,30,99,0.35); }
+.search-btn:active { opacity:0.7;transform:scale(0.96); }
 .search-btn i { font-size:17px;color:#fff; }
 .fav-entry-btn { position:relative;background:var(--surface-hover-strong);border:1px solid var(--border-strong);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-radius:60px;width:46px;height:46px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:transform 0.2s,background 0.2s,box-shadow 0.2s;color:var(--primary); }
-.fav-entry-btn:hover { transform:scale(1.05);box-shadow:0 4px 20px rgba(233,30,99,0.25); }
-.fav-entry-btn:active { transform:scale(0.95); }
+.fav-entry-btn:active { opacity:0.7;transform:scale(0.95); }
 .fav-entry-btn i { font-size:16px; }
 html:not(.no-glass).theme-switch,html:not(.no-glass).theme-switch *,html:not(.no-glass).theme-switch *::before,html:not(.no-glass).theme-switch *::after { transition:none!important; }
 html.no-glass,html.no-glass *,html.no-glass *::before,html.no-glass *::after { -webkit-backdrop-filter:none!important;backdrop-filter:none!important; }
@@ -496,15 +493,13 @@ html.no-glass .pl-pick-check { transition:all 0.2s; }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .search-history { background:var(--bg-popover); } }
 .history-header { padding:9px 18px;min-height:40px;box-sizing:border-box;font-size:13px;color:var(--text-secondary);display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-subtle);position:sticky;top:0;background:var(--popover-solid);z-index:2;border-radius:16px 16px 0 0; }
 .clear-history { width:22px;height:22px;flex-shrink:0;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;line-height:1;color:var(--text-secondary);opacity:0.6;cursor:pointer;background:transparent;border:none;padding:0;user-select:none;transition:color 0.2s,opacity 0.2s,background 0.2s; }
-.clear-history:hover { opacity:1;color:#ff4d6d; }
-.clear-history:active { transform:scale(0.92); }
+.clear-history:active { opacity:0.6;transform:scale(0.92); }
 .search-history-item { padding:11px 18px;cursor:pointer;transition:background 0.15s;font-size:14px;color:var(--text-secondary);display:flex;align-items:center;gap:10px; }
 .search-history-item:hover { background:var(--surface-card); }
 .search-history-item .sh-icon { font-size:11px;opacity:0.45;flex-shrink:0; }
 .search-history-item .sh-text { flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
 .sh-del { flex-shrink:0;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;color:var(--text-secondary);opacity:0.45;background:transparent;border:none;cursor:pointer;transition:color 0.2s,opacity 0.2s; }
-.sh-del:hover { opacity:1;color:#fff; }
-.sh-del:active { transform:scale(0.88); }
+.sh-del:active { opacity:0.6;transform:scale(0.88); }
 .suggest-item .sh-text em { font-style:normal;font-weight:600;color:var(--primary); }
 .suggest-item.suggest-fallback .sh-text { color:var(--primary);font-weight:600; }
 .search-history-empty { padding:22px 18px;text-align:center;font-size:13px;color:var(--text-secondary);opacity:0.6; }
@@ -541,9 +536,8 @@ body.has-mini-player .main-content { padding-bottom:calc(var(--tab-height) + env
 .fav-title { font-size:16px;font-weight:600;flex:1;min-width:0;overflow-x:auto;overflow-y:hidden;white-space:nowrap;scrollbar-width:none;-ms-overflow-style:none; }
 .fav-title::-webkit-scrollbar { display:none; }
 #fav-summary-cover .mine-cover-fallback { font-size:26px; }
-.fav-icon-btn { flex-shrink:0;width:30px;height:30px;padding:0;border:none;background:none;color:var(--text-primary);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;border-radius:0;transition:opacity 0.18s,transform 0.15s; }
-.fav-icon-btn:hover { opacity:0.7; }
-.fav-icon-btn:active { transform:scale(0.9); }
+.fav-icon-btn { flex-shrink:0;width:30px;height:30px;padding:0;border:none;background:none;color:var(--text-primary);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;border-radius:50%;transition:opacity 0.18s,transform 0.15s; }
+.fav-icon-btn:active { opacity:0.6;transform:scale(0.9); }
 .fav-play-btn i { margin-left:2px; }
 .fav-header { display:flex;flex-direction:column;gap:0;padding:14px 16px;background:var(--glass-panel-strong);-webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));border-bottom:1px solid var(--glass-edge);flex-shrink:0; }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .fav-header { background:var(--bg-body); } }
@@ -599,7 +593,7 @@ body.has-mini-player .main-content { padding-bottom:calc(var(--tab-height) + env
 .mv-bar .progress-bar { flex:1;min-width:0; }
 #mv-progress::before { content:"";position:absolute;left:0;right:0;top:-11px;bottom:-11px; }
 .mv-btn { flex-shrink:0;width:32px;height:32px;padding:0;border:none;border-radius:50%;background:none;color:rgba(255,255,255,0.92);font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:color 0.2s; }
-.mv-btn:hover { color:#fff; }
+.mv-btn:active { opacity:0.6;transform:scale(0.92); }
 .mv-time { flex-shrink:0;min-width:36px;text-align:center;font-size:12px;color:rgba(255,255,255,0.68);font-variant-numeric:tabular-nums; }
 .mv-vol { position:relative;flex-shrink:0;display:flex;align-items:center; }
 .mv-vol-icon { font-size:14px;display:flex;align-items:center;justify-content:center; }
@@ -627,9 +621,8 @@ body.has-mini-player .main-content { padding-bottom:calc(var(--tab-height) + env
 .mv-info-name { font-size:18px;font-weight:600;color:var(--text-primary);max-width:100%;overflow-x:auto;white-space:nowrap; }
 .mv-info-artist { font-size:14px;color:var(--text-secondary);max-width:100%;overflow-x:auto;white-space:nowrap; }
 .mv-info-actions { display:flex;align-items:center;gap:8px;flex-shrink:0; }
-.mv-info-btn { display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;padding:0;border:none;background:none;color:var(--text-primary);font-size:16px;line-height:1;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity 0.18s, color 0.18s; }
-.mv-info-btn:hover { opacity:0.7; }
-.mv-info-btn:active { opacity:0.5; }
+.mv-info-btn { display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;padding:0;border:none;background:none;color:var(--text-primary);font-size:16px;line-height:1;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity 0.18s,transform 0.15s; }
+.mv-info-btn:active { opacity:0.5;transform:scale(0.92); }
 .mv-related { width:100%;max-width:960px;display:flex;flex-direction:column;gap:12px;align-self:stretch; }
 .mv-related[hidden] { display:none; }
 .mv-related-title { font-size:13px;font-weight:600;color:var(--text-secondary); }
@@ -678,21 +671,10 @@ body.has-mini-player .main-content { padding-bottom:calc(var(--tab-height) + env
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .fav-item.dragging { background:var(--bg-body);opacity:0.96; } .fav-item.dragging::before { display:none; } .about-page { background:var(--bg-overlay); } }
 .fav-list.dragging-active { position:relative;user-select:none; }
 .drag-handle { display:none; }
-.sort-mode .drag-handle { display:flex; }
 .select-sort .drag-handle { display:flex; }
 .select-sort .song-more-btn { display:none; }
 .sort-placeholder { box-sizing:border-box;border:1.5px dashed transparent;border-radius:14px;background:transparent;margin-bottom:6px;pointer-events:none;transition:border-color 0.18s ease,background-color 0.18s ease; }
 .sort-placeholder.show { border-color:var(--border-check);background:var(--surface-hover); }
-.sort-mode .song-more-btn { display:none; }
-.sort-mode .fav-item,.sort-mode .song-item { cursor:default; }
-.sort-actions { display:none; }
-.sort-mode .fav-header-row .sort-actions { display:flex;align-items:center;gap:8px;margin-left:auto; }
-.sort-text-btn { flex-shrink:0;height:32px;padding:0 12px;border:none;border-radius:9px;background:none;color:var(--text-secondary);font-family:inherit;font-size:14px;line-height:1;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background 0.18s,color 0.18s,transform 0.15s; }
-.sort-text-btn:hover { color:var(--text-primary); }
-.sort-text-btn:active { transform:scale(0.94); }
-.sort-text-btn.sort-done-btn { color:var(--primary);font-weight:600; }
-.sort-text-btn.sort-done-btn:hover { color:var(--primary); }
-.sort-mode .fav-header-row>.fav-icon-btn { display:none; }
 .fav-icon-btn[hidden] { display:none; }
 .fav-item-cover-wrap { position:relative;width:46px;height:46px;border-radius:10px;overflow:hidden;flex-shrink:0;background:var(--surface-input);box-shadow:var(--shadow-thumb); }
 .fav-item-cover { position:absolute;inset:0;width:100%;height:100%;border-radius:10px;object-fit:cover;display:none; }
@@ -740,6 +722,10 @@ body.placeholder-mode .main-control-btn.add-pl-btn { color:var(--text-secondary)
 .sel-count { font-size:13px;color:var(--text-secondary);margin-left:4px; }
 .sel-done { margin-left:auto;padding:6px 2px;background:none;border:none;font-family:inherit;font-size:14.5px;font-weight:600;color:var(--primary);cursor:pointer; }
 .sel-done:active { opacity:0.6; }
+.sel-end { flex-shrink:0;margin-left:auto;display:flex;align-items:center;gap:14px; }
+.sel-cancel { flex-shrink:0;padding:6px 2px;background:none;border:none;font-family:inherit;font-size:14.5px;color:var(--text-secondary);cursor:pointer; }
+.sel-cancel:active { opacity:0.6; }
+.sel-cancel[hidden] { display:none; }
 #select-bar,#pl-select-bar { display:flex;flex-direction:row;align-items:stretch;gap:0;min-height:52px;max-height:none;overflow:visible;left:0;right:0;padding:0;border-radius:0;border-left:none;border-right:none;border-bottom:none;background:var(--glass-panel-strong);-webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));box-shadow:var(--inset-highlight);bottom:calc(var(--tab-height) + env(safe-area-inset-bottom,0px));transform:translateY(16px); }
 #select-bar.active,#pl-select-bar.active { transform:translateY(0); }
 body.has-mini-player #select-bar,body.has-mini-player #pl-select-bar { bottom:calc(var(--tab-height) + env(safe-area-inset-bottom,0px) + var(--mini-height)); }
@@ -781,7 +767,6 @@ body.tab-bar-hidden .mini-player { bottom:0; }
 .mini-song-artist { font-size:12px;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
 .player-controls { display:flex;align-items:center;gap:6px;flex-shrink:0; }
 .control-btn { background:none;border:none;color:var(--text-primary);font-size:18px;cursor:pointer;width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:background 0.2s,transform 0.15s; }
-.control-btn:hover { }
 .player-header .control-btn { font-size:15px;width:32px;height:32px;line-height:1;filter:drop-shadow(0 1px 4px rgba(0,0,0,0.55)); }
 #full-player .player-song-name,#full-player .player-artist-name { text-shadow:0 1px 6px rgba(0,0,0,0.6),0 0 18px rgba(0,0,0,0.4); }
 #trans-btn-desk.active,#lyrics-trans-btn.active { color:var(--primary); }
@@ -793,11 +778,9 @@ body.tab-bar-hidden .mini-player { bottom:0; }
 #lyrics-trans-btn { display:flex; }
 @media (min-width:900px),(min-width:640px)and (max-height:500px) { #trans-btn-desk { display:flex; } #lyrics-trans-btn { display:none; } }
 #lyrics-trans-btn[hidden],#trans-btn-desk[hidden] { display:none!important; }
-.control-btn:active { transform:scale(0.90); }
+.control-btn:active { opacity:0.6;transform:scale(0.90); }
 .control-btn.play-pause { background:var(--primary);color:#fff;box-shadow:0 4px 16px rgba(233,30,99,0.25); }
-.control-btn.play-pause:hover { background:#d81b60; }
 #mini-play-btn { position:relative;background:none;border:none;box-shadow:none;color:var(--text-primary);width:34px;height:34px; }
-#mini-play-btn:hover { background:none; }
 #mini-play-btn i { position:relative;z-index:1;font-size:13px; }
 #mini-play-btn i.fa-play { transform:translateX(1px); }
 .mini-ring { position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);pointer-events:none; }
@@ -914,14 +897,11 @@ body.tab-bar-hidden .mini-player { bottom:0; }
 .time-info { display:flex;justify-content:space-between;margin-top:9px;font-size:12px;color:var(--text-secondary);opacity:0.75;font-variant-numeric:tabular-nums; }
 .player-main-controls { display:flex;justify-content:center;align-items:center;gap:var(--ctrl-gap, 18px);margin:0;padding:0 0 6px;flex-wrap:nowrap;width:100%;max-width:100%; }
 .main-control-btn { background:none;border:none;color:var(--text-primary);font-size:20px;cursor:pointer;width:var(--ctrl-size, 48px);height:var(--ctrl-size, 48px);flex:0 0 auto;min-width:0;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:background 0.2s,transform 0.15s,color 0.2s; }
-.main-control-btn:hover { background:var(--surface-hover-strong); }
-.main-control-btn:active { transform:scale(0.90); }
+.main-control-btn:active { opacity:0.6;transform:scale(0.90); }
 .main-control-btn.play-pause { background:linear-gradient(135deg,#ff2d78,var(--primary));color:#fff;width:calc(var(--ctrl-size, 48px) + 14px);height:calc(var(--ctrl-size, 48px) + 14px);font-size:26px;box-shadow:0 8px 30px rgba(233,30,99,0.42); }
-.main-control-btn.play-pause:hover { background:linear-gradient(135deg,#ff4185,#d81b60); }
 .main-control-btn.fav-btn.active { color:var(--primary); }
 .main-control-btn.fav-btn.active i { text-shadow:0 0 16px var(--primary-glow); }
 .main-control-btn.add-pl-btn { display:none;font-size:19px;color:var(--text-secondary); }
-.main-control-btn.add-pl-btn:hover { color:var(--text-primary); }
 .main-control-btn.lyrics-word-btn { font-weight:600; }
 .lyrics-word { font-size:19px;line-height:1;letter-spacing:1px;font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;transform:translateY(-1px); }
 .main-control-btn.lyrics-word-btn:active .lyrics-word { transform:translateY(-1px) scale(0.94); }
@@ -982,8 +962,7 @@ html.no-glass .lyrics-veil-blur-3 { -webkit-backdrop-filter:blur(18px) saturate(
 .search-results-header::before { content:"";position:absolute;inset:0;z-index:-1;background:var(--glass-panel-strong);-webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));border-bottom:1px solid var(--glass-edge); }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .search-results-header { background:var(--bg-body); } .search-results-header::before { display:none; } }
 .back-btn { background:none;border:none;color:var(--text-primary);font-size:15px;cursor:pointer;width:30px;height:30px;padding:0;display:flex;align-items:center;justify-content:center;line-height:1;flex-shrink:0;border-radius:50%;transition:transform 0.15s,background 0.2s; }
-.back-btn:hover { background:var(--surface-hover-strong); }
-.back-btn:active { transform:scale(0.90); }
+.back-btn:active { opacity:0.6;transform:scale(0.90); }
 .results-search-wrap { flex:1 1 auto;min-width:0;display:flex;gap:8px;position:relative; }
 .results-search-wrap .search-history { top:calc(100% + 10px);left:-38px;right:0;width:auto;min-width:260px;max-width:none; }
 .results-search-wrap .search-field { flex:1;min-width:80px; }
@@ -1098,8 +1077,7 @@ html.no-glass .lyrics-veil-blur-3 { -webkit-backdrop-filter:blur(18px) saturate(
 .pl-summary-sub { font-size:12.5px;color:var(--text-secondary); }
 .pl-play-all { width:62px;height:40px;border:1.5px solid var(--primary);background:transparent;color:var(--primary);font-size:14px;padding:0;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform 0.16s,background 0.2s,color 0.2s; }
 .pl-play-all i { margin-left:2px; }
-.pl-play-all:hover { background:var(--primary);color:#fff; }
-.pl-play-all:active { transform:scale(0.92); }
+.pl-play-all:active { opacity:0.65;transform:scale(0.92); }
 .sheet { position:fixed;left:12px;right:12px;bottom:calc(var(--tab-height) + var(--bottom-stack) + 12px);background:var(--glass-panel-heavy);-webkit-backdrop-filter:blur(var(--glass-blur-bar)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-bar)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));border:1px solid var(--glass-edge-heavy);border-radius:20px;box-shadow:var(--shadow-popover),var(--inset-highlight);z-index:3200;padding:8px;opacity:0;transform:translateY(16px) scale(0.97);pointer-events:none;transition:opacity 0.28s cubic-bezier(0.25,0.46,0.45,0.94),transform 0.28s cubic-bezier(0.25,0.46,0.45,0.94);max-height:62vh;overflow-y:auto; }
 #pl-select-more-menu { bottom:calc(var(--tab-height) + var(--bottom-stack) + 56px); }
 body.select-from-chart #select-more-menu { bottom:calc(var(--tab-height) + env(safe-area-inset-bottom,0px) + 74px); }
@@ -1951,10 +1929,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
     </div>
     <div class="sheet" id="song-more-menu"></div>
     <div class="sheet" id="entry-more-menu"></div>
-    <div class="sort-actions" id="sort-actions">
-        <button class="sort-text-btn" id="sort-cancel" type="button">取消</button>
-        <button class="sort-text-btn sort-done-btn" id="sort-done" type="button">完成</button>
-    </div>
     <div class="sheet" id="pl-picker-sheet">
         <div class="sheet-title">添加到歌单</div>
         <div id="pl-picker-body"></div>
@@ -2100,7 +2074,10 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             <span>全选</span>
         </button>
         <span class="sel-count" id="select-count">已选 0 首</span>
-        <button class="sel-done" id="select-done" type="button">完成</button>
+        <div class="sel-end">
+            <button class="sel-cancel" id="select-cancel" type="button" hidden>取消</button>
+            <button class="sel-done" id="select-done" type="button">完成</button>
+        </div>
     </div>
     <div class="select-bar" id="select-bar">
         <button class="select-act" id="select-fav" type="button" disabled>
@@ -2279,6 +2256,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             const selectMoreBtn = $('#select-more');
             const selectMoreMenu = $('#select-more-menu');
             const selectDoneBtn = $('#select-done');
+            const selectCancelBtn = $('#select-cancel');
             const plSelectBar = $('#pl-select-bar');
             const plSelectTopbar = $('#pl-select-topbar');
             const plSelectCountEl = $('#pl-select-count');
@@ -2407,9 +2385,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             const songMoreMenu = $('#song-more-menu');
             const playerMoreMenu = $('#player-more-menu');
             const playerMoreBtn = $('#player-more-btn');
-            const sortActions = $('#sort-actions');
-            const sortDoneBtn = $('#sort-done');
-            const sortCancelBtn = $('#sort-cancel');
             const entryMoreMenu = $('#entry-more-menu');
             const plPickerSheet = $('#pl-picker-sheet');
             const artistPickerSheet = $('#artist-picker-sheet');
@@ -3841,12 +3816,12 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 bindSystemTheme();
                 syncThemeChips();
             }
-            function showToast(msg) {
+            function showToast(msg, ms) {
                 if (!toastEl) return;
                 toastEl.textContent = msg;
                 toastEl.classList.add('show');
                 clearTimeout(toastTimer);
-                toastTimer = setTimeout(() => toastEl.classList.remove('show'), 1800);
+                toastTimer = setTimeout(() => toastEl.classList.remove('show'), ms || 1800);
             }
             function showImportProgress(text, done, total) {
                 if (!importProgressEl) return;
@@ -4070,7 +4045,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (!favList) return;
                 const kw = (keyword === undefined ? favKeyword : keyword).trim();
                 favKeyword = kw;
-                if (kw && isSortMode()) exitSortMode(true);
                 const lower = kw.toLowerCase();
                 const list = kw
                     ? favorites.filter(s =>
@@ -4108,7 +4082,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     favList.innerHTML = `
                         <div class="fav-empty">
                             <i class="fas fa-search"></i>
-                            <p>没有找到「${kw}」<br>换个关键词试试</p>
+                            <p>没有找到「${esc(kw)}」<br>换个关键词试试</p>
                         </div>`;
                     clearScrollOverscrollPad(favScroll);
                     return;
@@ -4125,7 +4099,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     div.addEventListener('click', (e) => {
                         if (e.target.closest('.song-more-btn')) return;
                         if (e.target.closest('.drag-handle')) return;
-                        if (isSortMode()) return;
                         if (selectMode) { toggleSelect(song.id); return; }
                         setQueue(favorites.map(f => ({ ...f, pay: '免费音乐' })), 'fav');
                         playSong(realIdx);
@@ -4134,6 +4107,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     const favSelectCtx = {
                         from: 'fav',
                         getSongs: () => favorites,
+                        orderIds: () => favorites.map(s => String(s.id)),
                         rerender: () => renderFavorites(favKeyword),
                         move: (fromIdx, toIdx) => moveArrayItem(favorites, fromIdx, toIdx),
                         restoreOrder: (ids) => restoreArrayOrder(favorites, ids),
@@ -4197,7 +4171,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 scheduleScrollOverscrollPad();
             }
             function closeFavPage() {
-                if (isSortMode()) exitSortMode(true);
                 favPage.classList.remove('active');
                 favKeyword = '';
                 if (favSearchInput) {
@@ -5461,9 +5434,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     if (!code || !/^MKY-[A-Z0-9]+$/i.test(code)) throw new Error('bad-code');
                 } catch (_) {
                     const text = valid.map(p => buildShareText(p.name, p.ids)).join(',');
-                    copyTextToClipboard(text).then(done => {
-                        showToast(done ? '分享服务不可用（可能被广告拦截插件阻挡），已复制歌单文本' : '分享失败');
-                    });
+                    copyTextToClipboard(text).catch(() => {});
+                    showToast('分享码生成失败，请尝试关闭广告拦截插件后重试', 3200);
                     return;
                 }
                 if (o.onCode) o.onCode(code, secret, fp);
@@ -6502,7 +6474,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 $$('.sheet').forEach(s => { if (s !== except) s.classList.remove('active'); });
             }
             document.addEventListener('click', (e) => {
-                if (isSortMode()) return;
                 const selectSheetOpen = (selectMoreMenu && selectMoreMenu.classList.contains('active'))
                     || (plSelectMoreMenu && plSelectMoreMenu.classList.contains('active'));
                 if (selectSheetOpen && !e.target.closest('.sheet')
@@ -6832,7 +6803,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
             }
             function closePlaylistPage() {
-                if (isSortMode()) exitSortMode(true);
                 playlistPage.classList.remove('active');
                 openedPlaylistId = null;
                 if (fabStack && activeTab === 'mine' && !(mineKeyword || '').trim()
@@ -8194,7 +8164,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     plSummaryCover.classList.add('no-cover');
                 }
                 const kw = plKeyword.trim().toLowerCase();
-                if (kw && isSortMode()) exitSortMode(true);
                 const shown = kw
                     ? pl.songs.filter(s =>
                         String(s.name || '').toLowerCase().includes(kw) ||
@@ -8222,7 +8191,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     rowEl.addEventListener('click', (e) => {
                         if (e.target.closest('.song-more-btn')) return;
                         if (e.target.closest('.drag-handle')) return;
-                        if (isSortMode()) return;
                         if (selectMode) { toggleSelect(song.id); return; }
                         setQueue(shown.map(s => ({ ...s, pay: s.pay || '免费音乐' })), 'playlist', { playlistId: openedPlaylistId });
                         playSong(i);
@@ -8231,6 +8199,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         from: 'playlist',
                         playlistId: pl.id,
                         getSongs: () => shown,
+                        orderIds: () => pl.songs.map(s => String(s.id)),
                         rerender: () => renderPlaylistDetail(),
                         move: (fromIdx, toIdx) => moveArrayItem(pl.songs, fromIdx, toIdx),
                         restoreOrder: (ids) => restoreArrayOrder(pl.songs, ids),
@@ -8286,7 +8255,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
             }
             function closeHistoryPage() {
-                if (isSortMode()) exitSortMode(true);
                 historyPage.classList.remove('active');
                 if (fabStack && activeTab === 'mine' && !(mineKeyword || '').trim()
                     && !plSelectMode && !anyOverlayOpen()) {
@@ -8305,6 +8273,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 return {
                     from: 'history',
                     getSongs: () => playHistory,
+                    orderIds: () => playHistory.map(s => String(s.id)),
                     rerender: () => renderPlayHistoryPage(),
                     move: (fromIdx, toIdx) => moveArrayItem(playHistory, fromIdx, toIdx),
                     restoreOrder: (ids) => restoreArrayOrder(playHistory, ids),
@@ -8315,7 +8284,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             }
             function renderPlayHistoryPage() {
                 if (!historyPageList) return;
-                if ((historyKeyword || '').trim() && isSortMode()) exitSortMode(true);
                 if (historySummaryCover) {
                     const img = historySummaryCover.querySelector('img');
                     const cov = historyCover();
@@ -8373,7 +8341,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     rowEl.addEventListener('click', (e) => {
                         if (e.target.closest('.drag-handle')) return;
                         if (e.target.closest('.song-more-btn')) return;
-                        if (isSortMode()) return;
                         if (selectMode) { toggleSelect(song.id); return; }
                         playHistoryAsQueue(playHistory.indexOf(song));
                     });
@@ -8402,33 +8369,17 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 setQueue(playHistory.map(s => ({ ...s, pay: s.pay || '免费音乐' })), 'history');
                 playSong(Math.max(0, Math.min(startIdx, currentSongs.length - 1)));
             }
-            let sortCtx = null;
-            let sortSnapshot = null;
             const SORTABLE_FROM = { history: true, playlist: true, fav: true };
-            function isSortMode() { return !!sortCtx; }
-            function exitSortMode(keep) {
-                if (!sortCtx) return;
-                const ctx = sortCtx;
-                sortCtx = null;
-                if (!keep && sortSnapshot && ctx.restoreOrder) {
-                    ctx.restoreOrder(sortSnapshot);
-                }
-                sortSnapshot = null;
-                ctx.persist && ctx.persist();
-                document.body.classList.remove('sort-mode');
-                ctx.rerender && ctx.rerender();
-            }
             function commitSortMove(fromIdx, toIdx) {
-                const ctx = sortCtx || (selectMode ? selectCtx : null);
+                const ctx = selectMode ? selectCtx : null;
                 if (!ctx || !ctx.move) return;
                 ctx.move(fromIdx, toIdx);
                 ctx.persist && ctx.persist();
                 refreshSortList(ctx);
             }
             function refreshSortList(ctx) {
-                const c = ctx || sortCtx;
-                if (!c) return;
-                c.rerender && c.rerender();
+                if (!ctx) return;
+                ctx.rerender && ctx.rerender();
             }
             function moveArrayItem(arr, from, to) {
                 if (from === to || from < 0 || from >= arr.length) return false;
@@ -8443,15 +8394,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     const ra = rank.has(String(a.id)) ? rank.get(String(a.id)) : 1e9;
                     const rb = rank.has(String(b.id)) ? rank.get(String(b.id)) : 1e9;
                     return ra - rb;
-                });
-            }
-            if (sortDoneBtn) {
-                sortDoneBtn.addEventListener('click', () => exitSortMode(true));
-            }
-            if (sortCancelBtn) {
-                sortCancelBtn.addEventListener('click', () => {
-                    exitSortMode(false);
-                    showToast('已还原顺序');
                 });
             }
             function bindSortDrag(handle, rowEl, listEl, scroller) {
@@ -8470,11 +8412,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 let phVisible = false;
                 let lastMovePos = 0;
                 let refY = 0;
-                let pressTimer = null;
-                let pressFired = false;
-                let pressStartX = 0;
-                let pressStartY = 0;
-                const SORT_PRESS_MS = 180;
                 const PH_IDLE_MS = 300;
                 const MOVE_EPS = 10;
                 const HIDE_EPS = 8;
@@ -8518,7 +8455,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     el !== rowEl && el !== placeholder &&
                     el.dataset && el.dataset.index != null);
                 const computeDropIdx = () => {
-                    const dctx = sortCtx || (selectMode ? selectCtx : null);
+                    const dctx = selectMode ? selectCtx : null;
                     const len = (dctx && dctx.getSongs)
                         ? dctx.getSongs().length : 0;
                     const unit = rowH > 0 ? rowH : 1;
@@ -8661,8 +8598,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     const finalIdx = dropIdx;
                     const targetTop = placeholder
                         ? placeholder.getBoundingClientRect().top : null;
-                    pressFired = true;
-                    setTimeout(() => { pressFired = false; }, 320);
                     if (targetTop != null && finalIdx !== fromIdx) {
                         rowEl.style.transition =
                             'transform 0.2s cubic-bezier(0.22,1,0.36,1)';
@@ -8679,40 +8614,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 };
                 handle.addEventListener('mousedown', onDown);
                 handle.addEventListener('touchstart', onDown, { passive: false });
-                const clearPress = () => {
-                    if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; }
-                };
-                rowEl.addEventListener('pointerdown', (e) => {
-                    if (!isSortMode()) return;
-                    if (e.pointerType === 'mouse' && e.button !== 0) return;
-                    if (e.target.closest('.drag-handle')) return;
-                    if (e.target.closest('.song-more-btn')) return;
-                    pressFired = false;
-                    pressStartX = e.clientX;
-                    pressStartY = e.clientY;
-                    clearPress();
-                    pressTimer = setTimeout(() => {
-                        pressTimer = null;
-                        pressFired = true;
-                        if (navigator.vibrate) { try { navigator.vibrate(14); } catch (_) {} }
-                        onDown(e);
-                    }, SORT_PRESS_MS);
-                });
-                rowEl.addEventListener('pointermove', (e) => {
-                    if (!pressTimer) return;
-                    if (Math.abs(e.clientX - pressStartX) > 12
-                        || Math.abs(e.clientY - pressStartY) > 12) clearPress();
-                });
-                rowEl.addEventListener('pointerup', clearPress);
-                rowEl.addEventListener('pointercancel', clearPress);
-                rowEl.addEventListener('pointerleave', clearPress);
-                rowEl.addEventListener('click', (e) => {
-                    if (pressFired) {
-                        pressFired = false;
-                        e.preventDefault();
-                        e.stopImmediatePropagation();
-                    }
-                }, true);
             }
             if (historyBackBtn) historyBackBtn.addEventListener('click', closeHistoryPage);
             if (historyHeaderPlay) {
@@ -9367,12 +9268,13 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
             }
             let selectMode = false;
+            let selectSnapshot = null;
             const selectedIds = new Set();
             let selectCtx = { from: 'chart', playlistId: '', getSongs: null, rerender: null };
             let songBatchPicker = [];
             let selectEnteredAt = 0;
             function enterSelectMode(ctx, firstId) {
-                if (isSortMode()) exitSortMode(true);
+                const wasSelect = selectMode;
                 selectMode = true;
                 selectEnteredAt = performance.now();
                 if (plSelectMode) exitPlaylistSelectMode();
@@ -9381,13 +9283,24 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }, ctx || {});
                 if (firstId != null) selectedIds.add(String(firstId));
                 document.body.classList.add('select-mode');
-                document.body.classList.toggle('select-sort',
-                    !!(selectCtx.move && SORTABLE_FROM[selectCtx.from]));
+                const sortable = !!(selectCtx.move && SORTABLE_FROM[selectCtx.from]);
+                document.body.classList.toggle('select-sort', sortable);
+                if (selectCancelBtn) selectCancelBtn.hidden = !sortable;
+                if (!wasSelect) {
+                    selectSnapshot = (sortable && selectCtx.orderIds)
+                        ? selectCtx.orderIds() : null;
+                }
                 document.body.classList.toggle('select-from-chart', selectCtx.from === 'chart');
                 syncSelectBar();
                 selectCtx.rerender && selectCtx.rerender();
             }
-            function exitSelectMode() {
+            function exitSelectMode(keep) {
+                if (!keep && selectSnapshot) {
+                    if (selectCtx.restoreOrder) selectCtx.restoreOrder(selectSnapshot);
+                    selectCtx.persist && selectCtx.persist();
+                }
+                selectSnapshot = null;
+                if (selectCancelBtn) selectCancelBtn.hidden = true;
                 selectMode = false;
                 selectedIds.clear();
                 document.body.classList.remove('select-mode');
@@ -9493,7 +9406,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 };
                 el.addEventListener('pointerdown', (e) => {
                     if (e.pointerType === 'mouse' && e.button !== 0) return;
-                    if (isSortMode()) return;
                     if (shouldStart && !shouldStart(e.target)) return;
                     fired = false;
                     startX = e.clientX;
@@ -9539,6 +9451,12 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             }
             if (selectDoneBtn) {
                 selectDoneBtn.addEventListener('click', () => exitSelectMode());
+            }
+            if (selectCancelBtn) {
+                selectCancelBtn.addEventListener('click', () => {
+                    exitSelectMode(false);
+                    showToast('已还原顺序');
+                });
             }
             if (selectMoreBtn) {
                 selectMoreBtn.addEventListener('click', () => openSelectMoreMenu());
@@ -15317,7 +15235,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }, { passive: false });
             }
             document.addEventListener('contextmenu', (e) => {
-                if (isSortMode() || selectMode || plSelectMode) return;
+                if (selectMode || plSelectMode) return;
                 if (keyboardTypingTarget(e.target)) return;
                 const row = e.target.closest(
                     '.song-item, .result-item, .fav-item, .mine-row');
