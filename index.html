@@ -10046,6 +10046,19 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     imgEl.src = url;
                 };
                 const tasks = [];
+                if (/^kw_\d+$/.test(String(song.id))) {
+                    tasks.push(() => {
+                        kuwoCoverByMid(String(song.id).slice(3)).then(u => {
+                            if (u) return u;
+                            return kuwoRelatedCover(song.name, song.artistsname);
+                        }).then(u => {
+                            if (!u) throw new Error('无酷我封面');
+                            if (tried.has(u)) throw new Error('重复封面');
+                            markCoverTried(key, u);
+                            loadIntoEl(u, next);
+                        }).catch(() => next());
+                    });
+                }
                 const detail = coverDetailUrl(song.id);
                 if (!tried.has(detail)) {
                     tasks.push(() => {
@@ -11385,11 +11398,14 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 for (let i = 0; i < 4; i++) {
                     try {
                         const viaProxy = i > 0;
+                        // 代理会缓存 data:null 的 200 响应，重试时加随机参数绕过
+                        const target = KUWO_LRC_API + m + '&httpsStatus=1' +
+                            (i > 1 ? '&_r=' + Date.now() + '_' + i : '');
                         const d = await fetchOne(viaProxy
                             ? (u => CF_PROXY + '?key=' + CF_PROXY_KEY +
                                 '&url=' + encodeURIComponent(u))
                             : (u => u),
-                            KUWO_LRC_API + m + '&httpsStatus=1',
+                            target,
                             viaProxy ? 9000 : 6000);
                         const data = d && d.data;
                         const si = data && data.songinfo;
@@ -11414,19 +11430,23 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         if (!artist) artist = t.artist;
                     }
                 }
-                if (!name || !artist || !album || !sec || !pic ||
-                    /starheads|kw-www\/img\/logo/i.test(pic)) {
+                const badPic = (u) => !u || /starheads|kw-www\/img\/logo/i.test(u);
+                if (badPic(pic)) pic = '';
+                if (!name || !artist || !album || !sec || !pic) {
                     const row = await kuwoRowByMid(m, name, artist);
                     if (row) {
                         if (!name) name = row.name;
                         if (!artist) artist = row.artist;
                         if (!album) album = row.album;
                         if (!sec) sec = row.sec;
-                        if (row.pic &&
-                            (!pic || /starheads|kw-www\/img\/logo/i.test(pic))) {
-                            pic = row.pic;
-                        }
+                        if (!pic && row.pic) pic = row.pic;
                     }
+                }
+                if (!pic) {
+                    try { pic = await kuwoCoverByMid(m, true); } catch (_) {}
+                }
+                if (!pic && name) {
+                    try { pic = await kuwoRelatedCover(name, artist); } catch (_) {}
                 }
                 return {
                     id: 'kw_' + m,
@@ -12366,12 +12386,85 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             function normalizeCoverUrl(u) {
                 if (!u || typeof u !== 'string') return u;
                 let s = u.trim();
-                if (/^http:\/\//i.test(s)) s = 'https://' + s.slice(7);
+                if (s.indexOf('//') === 0) s = 'https:' + s;
+                if (/^\/?(star|albumcover)\//i.test(s)) {
+                    s = 'https://img1.kuwo.cn/' + s.replace(/^\//, '');
+                }
+                // 酷我 kwcdn 不支持 HTTPS，换成同路径的 img1.kuwo.cn
+                s = s.replace(/^https?:\/\/(img\d)\.kwcdn\.kuwo\.cn\//i,
+                    'https://$1.kuwo.cn/');
+                if (/^http:\/\//i.test(s) && !/\.kwcdn\.kuwo\.cn\//i.test(s)) {
+                    s = 'https://' + s.slice(7);
+                }
                 if (!/music\.126\.net\//i.test(s)) return s;
                 const base = s.split('?')[0];
                 return base + '?param=300y300';
             }
+
+            async function kuwoCoverByMid(mid, skipSonginfo) {
+                const m = String(mid || '').replace(/\D/g, '');
+                if (!m) return '';
+                const pick = (u) => {
+                    const s = String(u || '').trim().split(/\s+/)[0];
+                    if (!/^https?:\/\/\S+\/star\/albumcover\//i.test(s)) return '';
+                    return normalizeCoverUrl(s);
+                };
+                try {
+                    const txt = await proxiedText(
+                        'https://artistpicserver.kuwo.cn/pic.web?corp=kuwo' +
+                        '&type=rid_pic&pictype=500&size=500&rid=' + m, 7000);
+                    const hit = pick(txt);
+                    if (hit) return hit;
+                } catch (_) {}
+                if (skipSonginfo) return '';
+                try {
+                    const d = await fetchOne(u => CF_PROXY + '?key=' +
+                        CF_PROXY_KEY + '&url=' + encodeURIComponent(u),
+                        KUWO_LRC_API + m + '&httpsStatus=1', 9000);
+                    const si = d && d.data && d.data.songinfo;
+                    return pick(si && si.pic);
+                } catch (_) {}
+                return '';
+            }
+            async function kuwoRelatedCover(name, artist) {
+                const clean = String(name || '')
+                    .replace(/[（(【\[].*?[)）】\]]/g, '').trim();
+                if (!clean) return '';
+                const nn = normName(clean);
+                const at = artistTokensOf(artist);
+                const qs = [];
+                if (artist) qs.push(clean + ' ' + artist);
+                qs.push(clean);
+                for (const q of qs) {
+                    try {
+                        const d = parseKuwoList(
+                            await proxiedText(kuwoSearchUrlOld(q), 9000));
+                        for (const x of (d && d.abslist) || []) {
+                            if (normName(kuwoText(x.NAME || x.SONGNAME)) !== nn) continue;
+                            if (at.length) {
+                                const rt = artistTokensOf(
+                                    kuwoText(x.ARTIST || x.AARTIST));
+                                if (!at.some(t => rt.indexOf(t) >= 0)) continue;
+                            }
+                            const short = String(x.web_albumpic_short || '')
+                                .replace(/^\//, '');
+                            if (!short) continue;
+                            return normalizeCoverUrl(
+                                'https://img1.kuwo.cn/star/albumcover/' + short);
+                        }
+                    } catch (_) {}
+                }
+                return '';
+            }
             async function coverOf(id, picId, song) {
+                if (/^kw_\d+$/.test(String(id))) {
+                    let url = await kuwoCoverByMid(String(id).slice(3));
+                    if (!url && song) {
+                        url = await kuwoRelatedCover(song.name, song.artistsname);
+                    }
+                    if (!url) throw new Error('酷我未返回封面');
+                    return { url };
+                }
                 const byNetease = async () => {
                     const r = await neteaseCoverTask(id);
                     if (song && r.picId) {
