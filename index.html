@@ -4611,10 +4611,15 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             function addSongToPlaylist(plId, song) {
                 const pl = getPlaylist(plId);
                 if (!pl || !song || !song.id) return false;
-                if (isSongInPlaylist(pl, song)) return false;
                 const snap = { ...song };
                 if (!snap.picurl) snap.picurl = knownPicurlOf(song.id);
-                pl.songs.push(snap);
+                const idx = pl.songs.findIndex(s => String(s.id) === String(song.id));
+                if (idx >= 0) {
+                    const old = pl.songs[idx];
+                    if (!snap.picurl && old && old.picurl) snap.picurl = old.picurl;
+                    pl.songs.splice(idx, 1);
+                }
+                pl.songs.unshift(snap);
                 persistPlaylists();
                 if (snap.picurl) {
                     broadcastCover(snap.id, snap.picurl);
@@ -5021,13 +5026,21 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (!text) return null;
                 if (/[\r\n]/.test(text)) return null;
                 const segs = [];
-                const re = /([^\[\],，]*)\[([0-9,\s，]*)\]/g;
+                const re = /([^\[\],，]*)\[([^\]]*)\]/g;
                 let m;
                 while ((m = re.exec(text)) !== null) {
                     const name = m[1].trim();
-                    const ids = m[2].split(/[,，\s]+/)
-                        .map(x => x.trim())
-                        .filter(x => /^\d+$/.test(x));
+                    const ids = [];
+                    let bad = false;
+                    m[2].split(/[,，\s]+/).forEach(x => {
+                        x = x.trim();
+                        if (!x) return;
+                        if (/^\d+$/.test(x)) ids.push(x);
+                        else if (/^kw_[^\s,，\[\]]+$/i.test(x)) {
+                            ids.push(x.replace(/^KW_/, 'kw_'));
+                        } else bad = true;
+                    });
+                    if (bad) continue;
                     if (ids.length || name) segs.push({ name: name, ids: ids });
                 }
                 if (!segs.length) return null;
@@ -5093,13 +5106,20 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const uniq = [];
                 const seen = new Set();
                 (ids || []).forEach(x => {
-                    const k = String(x);
+                    const k = String(x).replace(/^KW_/, 'kw_');
                     if (!seen.has(k)) { seen.add(k); uniq.push(k); }
                 });
                 const out = [];
+                let done = 0;
+                const tick = (n) => {
+                    done += n;
+                    if (onProgress) onProgress(Math.min(done, uniq.length), uniq.length);
+                };
+                const neteaseIds = uniq.filter(id => /^\d+$/.test(id));
+                const kuwoIds = uniq.filter(id => /^kw_/i.test(id));
                 const BATCH = 50;
-                for (let i = 0; i < uniq.length; i += BATCH) {
-                    const chunk = uniq.slice(i, i + BATCH);
+                for (let i = 0; i < neteaseIds.length; i += BATCH) {
+                    const chunk = neteaseIds.slice(i, i + BATCH);
                     let list = [];
                     try {
                         const url = 'https://music.163.com/api/song/detail/?ids=' +
@@ -5118,11 +5138,31 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         const row = byId.get(id);
                         if (row) out.push(mapNeteaseRecord(row, id));
                     });
-                    if (onProgress) {
-                        onProgress(Math.min(i + BATCH, uniq.length), uniq.length);
-                    }
+                    tick(chunk.length);
                 }
-                return out;
+                const KUWO_CONC = 4;
+                for (let i = 0; i < kuwoIds.length; i += KUWO_CONC) {
+                    const chunk = kuwoIds.slice(i, i + KUWO_CONC);
+                    const rows = await Promise.all(chunk.map(id =>
+                        (async () => {
+                            if (/^kw_\d+$/i.test(id)) return await kuwoSongByMid(id.slice(3));
+                            return await searchSongById(id);
+                        })().catch(() => null)));
+                    rows.forEach((r, idx) => {
+                        if (!r || !r.name) return;
+                        r.id = chunk[idx];
+                        out.push(r);
+                    });
+                    tick(chunk.length);
+                }
+                const bySong = new Map();
+                out.forEach(s => bySong.set(String(s.id), s));
+                return uniq.map(id => {
+                    const s = bySong.get(id);
+                    if (!s) return null;
+                    if (String(s.id) !== id) s.id = id;
+                    return s;
+                }).filter(Boolean);
             }
             function importSegments(segments, onProgress) {
                 const allIds = [];
@@ -5243,8 +5283,13 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const out = [];
                 const seen = new Set();
                 (songs || []).forEach(s => {
-                    const id = String((s && s.id) != null ? s.id : '');
-                    if (!id || seen.has(id)) return;
+                    let id = String((s && s.id) != null ? s.id : '');
+                    if (!id) return;
+                    if (/^kw_/i.test(id) && !/^kw_\d+$/i.test(id)) {
+                        const mid = String((s && s.kwid) || '').replace(/^MUSIC_/, '');
+                        if (/^\d+$/.test(mid)) id = 'kw_' + mid;
+                    }
+                    if (seen.has(id)) return;
                     seen.add(id);
                     out.push(id);
                 });
@@ -9626,7 +9671,9 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                             showToast('已从「' + pl.name + '」移除 ' + removed + ' 首');
                         } else {
                             let added = 0;
-                            songs.forEach(s => { if (addSongToPlaylist(plId, s)) added++; });
+                            for (let i = songs.length - 1; i >= 0; i--) {
+                                if (addSongToPlaylist(plId, songs[i])) added++;
+                            }
                             rowEl.classList.add('on');
                             showToast(added > 0
                                 ? ('已把 ' + added + ' 首加入「' + pl.name + '」')
@@ -10451,6 +10498,18 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 syncScrollOverscrollPad(resultsList);
                 batchHydrateCovers(currentSongs);
             }
+            function parseIdQuery(q) {
+                const s = String(q || '').trim();
+                let m = /^kw[_\s:\-]*(\d{3,})$/i.exec(s);
+                if (m) return { kind: 'kuwo', mid: m[1] };
+                m = /^MUSIC_(\d{3,})$/i.exec(s);
+                if (m) return { kind: 'kuwo', mid: m[1] };
+                m = /(?:musicId=|play_detail\/)(\d{3,})/i.exec(s);
+                if (m) return { kind: 'kuwo', mid: m[1] };
+                m = /^(\d{4,})$/.exec(s);
+                if (m) return { kind: 'any', id: m[1] };
+                return null;
+            }
             async function doSearch(query, opts) {
                 const q = query.trim();
                 if (!q) {
@@ -10473,6 +10532,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     return;
                 }
                 setResultsContent('<div class="loading"><svg viewBox="0 0 24 24" aria-hidden="true"><circle class="ring-track" cx="12" cy="12" r="9"></circle><circle class="ring-arc" cx="12" cy="12" r="9"></circle></svg><span>搜索中...</span></div>');
+                const idQuery = parseIdQuery(q);
                 try {
                     if (resultsTab === 'mv') {
                         const mvs = await searchMvs(q);
@@ -10481,18 +10541,30 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         renderMvResults(mvs);
                         return;
                     }
-                    const isIdQuery = /^\d{4,}$/.test(q);
                     let songs;
-                    if (isIdQuery) {
-                        const [idHit, keywordList] = await Promise.all([
-                            searchSongById(q).catch(() => null),
-                            searchSongs(q).catch(() => [])
+                    if (idQuery) {
+                        const lookupMid = idQuery.kind === 'kuwo' ? idQuery.mid : idQuery.id;
+                        const [idHit, kwHit, keywordList] = await Promise.all([
+                            idQuery.kind === 'kuwo' ? null
+                                : withTimeoutOrNull(searchSongById(idQuery.id), 6000),
+                            withTimeoutOrNull(kuwoSongByMid(lookupMid, 2), 11000),
+                            idQuery.kind === 'kuwo' ? []
+                                : withTimeoutOrNull(searchSongs(q), 8000)
                         ]);
                         if (searchToken !== searchSeq) return;
-                        const rest = (keywordList || []).filter(s =>
-                            !idHit || String(s.id) !== String(idHit.id));
-                        songs = idHit ? [idHit].concat(rest) : rest;
-                        if (!songs.length) throw new Error('搜索无结果');
+                        const heads = [];
+                        if (kwHit && kwHit.name) heads.push(kwHit);
+                        if (idHit && !heads.some(s =>
+                            String(s.id) === String(idHit.id))) heads.push(idHit);
+                        const headIds = new Set(heads.map(s => String(s.id)));
+                        const kwMid = kwHit ? String(kwHit.kwid || '') : '';
+                        const rest = (keywordList || []).filter(s => {
+                            if (headIds.has(String(s.id))) return false;
+                            if (kwMid && String(s.kwid || '') === kwMid) return false;
+                            return true;
+                        });
+                        songs = heads.concat(rest);
+                        if (!songs.length) throw new Error('ID 无结果');
                     } else {
                         songs = await searchSongs(q);
                     }
@@ -10502,7 +10574,11 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 } catch (e) {
                     if (searchToken !== searchSeq) return;
                     console.error('搜索失败:', e);
-                    setResultsContent('<div class="result-item" style="text-align:center;color:var(--text-secondary);">搜索失败，请稍后再试</div>');
+                    const emptyTip = idQuery
+                        ? '未找到该 ID 对应的歌曲，请检查后重试'
+                        : '搜索失败，请稍后再试';
+                    setResultsContent('<div class="result-item" style="text-align:center;color:var(--text-secondary);">' +
+                        emptyTip + '</div>');
                     syncScrollOverscrollPad(resultsList);
                 }
             }
@@ -11220,23 +11296,25 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
                 return null;
             }
-            async function kuwoSongByMid(mid) {
+            async function kuwoSongByMid(mid, maxTry) {
                 const m = String(mid || '').replace(/^MUSIC_/, '').trim();
                 if (!/^\d+$/.test(m)) return null;
                 let info = null;
                 let lrcLine = '';
-                for (let i = 0; i < 4; i++) {
+                const tries = Math.max(1, maxTry || 4);
+                for (let i = 0; i < tries; i++) {
                     try {
                         const viaProxy = i > 0;
                         // 代理会缓存 data:null 的 200 响应，重试时加随机参数绕过
-                        const target = KUWO_LRC_API + m + '&httpsStatus=1' +
-                            (i > 1 ? '&_r=' + Date.now() + '_' + i : '');
+                        const target = KUWO_LRC_API + m +
+                            (i === 0 ? '' : '&httpsStatus=1') +
+                            (i > 0 ? '&_r=' + Date.now() + '_' + i : '');
                         const d = await fetchOne(viaProxy
                             ? (u => CF_PROXY + '?key=' + CF_PROXY_KEY +
                                 '&url=' + encodeURIComponent(u))
                             : (u => u),
                             target,
-                            viaProxy ? 9000 : 6000);
+                            viaProxy ? 7000 : 3000);
                         const data = d && d.data;
                         const si = data && data.songinfo;
                         if (!info && si && (si.songName || si.name)) info = si;
@@ -11310,7 +11388,16 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 } catch (_) {}
                 if (!mid) return null;
                 const song = await kuwoSongByMid(mid);
-                if (song && !song.name) song.name = name;
+                if (!song) return null;
+                if (!song.name) song.name = name;
+                if (!VERSION_BAD.test(name) && VERSION_BAD.test(song.name)) {
+                    const alt = await kuwoResolveMid(
+                        { name: name, artist: artist, sec: 0 }, { cleanOnly: true });
+                    if (alt && alt.mid) {
+                        const clean = await kuwoSongByMid(alt.mid);
+                        if (clean && clean.name && !VERSION_BAD.test(clean.name)) return clean;
+                    }
+                }
                 if (song && artist &&
                     (!song.artistsname || song.artistsname === '未知歌手')) {
                     song.artistsname = artist;
@@ -12355,7 +12442,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     sec: sec
                 };
             }
-            async function kuwoResolveMid(meta) {
+            async function kuwoResolveMid(meta, opts) {
+                const cleanOnly = !!(opts && opts.cleanOnly);
                 const wantName = normName(meta.name);
                 if (!wantName) return '';
                 const wantArts = artistTokensOf(meta.artist);
@@ -12385,7 +12473,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         if (diff > 15) sc -= 55;
                         else if (diff <= 4) sc += 15;
                     }
-                    cands.push({ mid: mid, sc: sc, sec: sec });
+                    cands.push({ mid: mid, sc: sc, sec: sec, bad: VERSION_BAD.test(nm) });
                 };
                 try {
                     const q = (meta.name + ' ' + (meta.artist || '')).trim();
@@ -12399,7 +12487,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         x.MUSICRID || x.musicrid || x.id,
                         x.DURATION || x.duration));
                 } catch (_) {}
-                if (!cands.length) {
+                if (!cands.length || cleanOnly) {
                     try {
                         const d = await fetchDirectOrProxy(
                             KUWO_API + '?msg=' + encodeURIComponent(
@@ -12410,6 +12498,10 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     } catch (_) {}
                 }
                 cands.sort((a, b) => b.sc - a.sc);
+                if (cleanOnly) {
+                    const pick = cands.find(c => !c.bad && c.sc >= 100);
+                    return pick || null;
+                }
                 return cands.length && cands[0].sc > 0 ? cands[0] : null;
             }
             async function kuwoLrcOf(id) {
