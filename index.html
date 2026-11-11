@@ -8854,7 +8854,12 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const s = String((song && song.id != null) ? song.id : (song || ''));
                 if (s.indexOf('kw_') !== 0) return s;
                 const mid = kuwoMidOfSong(song);
-                return mid ? 'kw_' + mid : 'kw_…';
+                if (mid) return 'kw_' + mid;
+                const p = kuwoIdPartsOf(song);
+                if (p && p.name && !/^\d+$/.test(p.name)) {
+                    return 'kw_' + p.name + (p.artist ? '|' + p.artist : '');
+                }
+                return s;
             }
             function showSongIdDialog(song) {
                 if (!song || song.id == null) return;
@@ -8862,14 +8867,14 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const shown = readableSongId(song);
                 const html = '歌曲 ID 是「' + esc(shown) + '」';
                 const uid = 'song-id-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
-                if (id.indexOf('kw_') === 0 && !kuwoMidOfSong(song)) {
+                if (id.indexOf('kw_') === 0 && !/^kw_\d+$/i.test(id) && !kuwoMidOfSong(song)) {
                     const p = kuwoIdPartsOf(song);
                     if (p && p.name) {
                         kuwoResolveMid(p).then(hit => {
                             const el = document.getElementById(uid);
                             if (!el) return;
                             if (!hit || !hit.mid) {
-                                el.textContent = '歌曲 ID 是「kw_未找到」';
+                                el.textContent = '歌曲 ID 是「' + readableSongId(song) + '」';
                                 return;
                             }
                             kuwoIdMap.set(normName(p.name) + '|' + normName(p.artist), hit.mid);
@@ -8877,7 +8882,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                             el.textContent = '歌曲 ID 是「kw_' + hit.mid + '」';
                         }).catch(() => {
                             const el = document.getElementById(uid);
-                            if (el) el.textContent = '歌曲 ID 是「kw_未找到」';
+                            if (el) el.textContent = '歌曲 ID 是「' + readableSongId(song) + '」';
                         });
                     }
                 }
@@ -8894,7 +8899,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                             close: true,
                             onClick: () => {
                                 const val = readableSongId(song);
-                                copyTextToClipboard(val === 'kw_…' ? id : val).then(ok => {
+                                copyTextToClipboard(val).then(ok => {
                                     showToast(ok ? '已复制歌曲ID' : '复制失败');
                                 });
                             }
@@ -8905,7 +8910,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                             onClick: () => {
                                 const val = readableSongId(song);
                                 const link = 'https://mky-music.pages.dev/?mid=' +
-                                    encodeURIComponent(val === 'kw_…' ? id : val);
+                                    encodeURIComponent(val);
                                 copyTextToClipboard(link).then(ok => {
                                     showToast(ok ? '已复制链接' : '复制失败');
                                 });
