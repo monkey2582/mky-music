@@ -870,12 +870,11 @@ body.tab-bar-hidden .mini-player { bottom:0; }
 .cover-lyric { width:100%;max-width:100%;margin:18px 0 0;padding:4px 2px;text-align:center;cursor:pointer;height:23px;overflow:hidden;-webkit-mask-image:linear-gradient(to right,transparent 0,#000 var(--cover-fade, 34px),#000 calc(100% - var(--cover-fade, 34px)),transparent 100%);mask-image:linear-gradient(to right,transparent 0,#000 var(--cover-fade, 34px),#000 calc(100% - var(--cover-fade, 34px)),transparent 100%);scrollbar-width:none;-ms-overflow-style:none; }
 .cover-lyric::-webkit-scrollbar { display:none; }
 .cover-lyric-scroll { position:relative;display:flex;flex-direction:column;width:max-content;min-width:100%;will-change:transform; }
-.cover-lyric-line { display:block;flex-shrink:0;width:max-content;min-width:100%;height:23px;line-height:23px;font-size:14px;color:var(--lyric-dim);white-space:nowrap;text-align:center;--scan:0%;background-image:linear-gradient(90deg,var(--lyric-bright) 0,var(--lyric-bright) var(--scan),var(--lyric-cover-dim) var(--scan),var(--lyric-cover-dim) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:var(--lyric-dim); }
-@supports (color: color-mix(in srgb,red 50%,blue)) { .cover-lyric-line.fading { background-image:linear-gradient(90deg,var(--lyric-bright) 0,var(--lyric-bright) calc(var(--scan) - 0.4em),color-mix(in srgb,var(--lyric-bright) 70%,var(--lyric-cover-dim)) var(--scan),var(--lyric-cover-dim) calc(var(--scan) + 0.4em),var(--lyric-cover-dim) 100%); } }
+.cover-lyric-line { display:block;flex-shrink:0;width:max-content;min-width:100%;height:23px;line-height:23px;font-size:14px;color:var(--lyric-dim);white-space:nowrap;text-align:center;--scan:-1em;background-image:linear-gradient(90deg,var(--lyric-bright) 0,var(--lyric-bright) var(--scan),var(--lyric-cover-dim) var(--scan),var(--lyric-cover-dim) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:var(--lyric-dim); }
+@supports (color: color-mix(in srgb,red 50%,blue)) { .cover-lyric-line { background-image:linear-gradient(90deg,var(--lyric-bright) 0,var(--lyric-bright) calc(var(--scan) - 0.5em),color-mix(in srgb,var(--lyric-bright) 70%,var(--lyric-cover-dim)) var(--scan),var(--lyric-cover-dim) calc(var(--scan) + 0.5em),var(--lyric-cover-dim) 100%); } }
 .cover-lyric.has-line .cover-lyric-line { color:var(--lyric-bright); }
-.cover-lyric .lyric-seg { --scan:0%;background-image:linear-gradient(90deg,var(--lyric-bright) 0,var(--lyric-bright) var(--scan),var(--lyric-cover-dim) var(--scan),var(--lyric-cover-dim) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:var(--lyric-dim); }
-@supports (color: color-mix(in srgb,red 50%,blue)) { .cover-lyric .lyric-seg.fading { background-image:linear-gradient(90deg,var(--lyric-bright) 0,var(--lyric-bright) calc(var(--scan) - 0.4em),color-mix(in srgb,var(--lyric-bright) 70%,var(--lyric-cover-dim)) var(--scan),var(--lyric-cover-dim) calc(var(--scan) + 0.4em),var(--lyric-cover-dim) 100%); } }
-@supports not ((-webkit-background-clip: text) or (background-clip: text)) { .cover-lyric .lyric-seg { background-image:none;color:var(--lyric-bright);-webkit-text-fill-color:currentColor; } }
+.cover-lyric-line > span { display:inline-block;--scan:-1em;background-image:linear-gradient(90deg,var(--lyric-bright) 0,var(--lyric-bright) var(--scan),var(--lyric-cover-dim) var(--scan),var(--lyric-cover-dim) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent; }
+@supports (color: color-mix(in srgb,red 50%,blue)) { .cover-lyric-line > span { background-image:linear-gradient(90deg,var(--lyric-bright) 0,var(--lyric-bright) calc(var(--scan) - 0.5em),color-mix(in srgb,var(--lyric-bright) 70%,var(--lyric-cover-dim)) var(--scan),var(--lyric-cover-dim) calc(var(--scan) + 0.5em),var(--lyric-cover-dim) 100%); } }
 @supports not ((-webkit-mask-image: linear-gradient(#000,#000)) or (mask-image: linear-gradient(#000,#000))) { .cover-lyric { -webkit-mask-image:none;mask-image:none; } }
 .cover-lyric-scroll { transition:filter 0.42s ease,opacity 0.42s ease; }
 .cover-lyric.has-line .cover-lyric-scroll { filter:blur(0);opacity:1; }
@@ -947,8 +946,8 @@ html.no-glass .lyrics-veil-blur-3 { -webkit-backdrop-filter:blur(18px) saturate(
 .lyrics-line.active .lyric-trans { color:var(--text-primary);opacity:0.9; }
 .lyrics-line .lyric-trans[hidden] { display:none; }
 .lyrics-line .lyric-main,.lyrics-line .lyric-trans { pointer-events:none; }
-.lyric-seg { --scan:100%;background-image:linear-gradient(90deg,var(--lyric-active) 0,var(--lyric-active) var(--scan),var(--lyric-pending) var(--scan),var(--lyric-pending) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:var(--lyric-pending); }
-@supports (color: color-mix(in srgb,red 50%,blue)) { .lyric-seg.fading { background-image:linear-gradient(90deg,var(--lyric-active) 0,var(--lyric-active) calc(var(--scan) - 0.4em),color-mix(in srgb,var(--lyric-active) 45%,var(--lyric-pending)) var(--scan),var(--lyric-pending) calc(var(--scan) + 0.4em),var(--lyric-pending) 100%); } }
+.lyric-seg { --scan:-1em;background-image:linear-gradient(90deg,var(--lyric-active) 0,var(--lyric-active) var(--scan),var(--lyric-pending) var(--scan),var(--lyric-pending) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:var(--lyric-pending); }
+@supports (color: color-mix(in srgb,red 50%,blue)) { .lyric-seg { background-image:linear-gradient(90deg,var(--lyric-active) 0,var(--lyric-active) calc(var(--scan) - 0.5em),color-mix(in srgb,var(--lyric-active) 45%,var(--lyric-pending)) var(--scan),var(--lyric-pending) calc(var(--scan) + 0.5em),var(--lyric-pending) 100%); } }
 @supports not ((-webkit-background-clip: text) or (background-clip: text)) { .lyric-seg { background-image:none;color:var(--lyric-active);-webkit-text-fill-color:currentColor; } }
 .search-results { position:fixed;inset:0;bottom:0;background:var(--bg-overlay);z-index:600;display:none;flex-direction:column;opacity:0;transform:translateY(16px);transition:opacity 0.3s,transform 0.3s; }
 .search-results.active { display:flex;opacity:1;transform:translateY(0); }
@@ -4234,7 +4233,9 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                             artists: song.artists || [],
                             album: song.album || '',
                             picurl: song.picurl || '',
-                            duration: song.duration || 0
+                            duration: song.duration || 0,
+                            url: (song.url && isUsableAudioUrl(song.url) &&
+                                !isTrialClipUrl(song.url)) ? song.url : ''
                         },
                         currentTime: t,
                         wasPlaying: isPlaying,
@@ -8909,8 +8910,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                             close: true,
                             onClick: () => {
                                 const val = readableSongId(song);
-                                const link = 'https://mky-music.pages.dev/?mid=' +
-                                    encodeURIComponent(val);
+                                const link = location.href.split(/[?#]/)[0] +
+                                    '?mid=' + encodeURIComponent(val);
                                 copyTextToClipboard(link).then(ok => {
                                     showToast(ok ? '已复制链接' : '复制失败');
                                 });
@@ -10621,8 +10622,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (playerLyricsInner) playerLyricsInner.innerHTML = html;
                 if (coverLyricText) {
                     coverLyricText.textContent = text;
-                    coverLyricText.style.setProperty('--scan', '0%');
-                    coverLyricText.classList.remove('fading');
+                    coverLyricText.style.setProperty('--scan', '-1em');
                 }
                 coverLyricShownIdx = -1;
                 coverLyricShownPlaceholder = text;
@@ -11951,7 +11951,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     const api = METING_BASE + '?type=url&id=' +
                         encodeURIComponent(id);
                     const res = await withTimeout(fetch(api, {
-                        headers: { Range: 'bytes=0-1' },
                         cache: 'no-store'
                     }), 8000, 'meting 超时');
                     if (!res.ok && res.status !== 206) {
@@ -11969,7 +11968,12 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         metingTrialCache = { id: key, url: finalUrl };
                         throw new Error('meting 只返回试听片段');
                     }
-                    try { await res.arrayBuffer(); } catch (_) {}
+                    try {
+                        if (res.body && res.body.cancel) {
+                            const cp = res.body.cancel();
+                            if (cp && typeof cp.catch === 'function') cp.catch(() => {});
+                        }
+                    } catch (_) {}
                     return { url: finalUrl, br: 0, size: 0 };
                 };
             }
@@ -12144,7 +12148,58 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     return await metingPlayTask(best.id, false)();
                 }
             }
-            async function playUrlOf(id, hint) {
+            const PLAY_URL_TTL = 8 * 60 * 1000;
+            const playUrlTaskCache = new Map();
+            function forgetPlayUrl(id) {
+                playUrlTaskCache.delete(String(id));
+            }
+            function prefetchPlayUrl(song) {
+                if (!song || !song.id || canUseSongUrl(song)) return;
+                if (document.visibilityState === 'hidden') return;
+                const c = navigator.connection || navigator.mozConnection ||
+                    navigator.webkitConnection;
+                if (c && (c.saveData || /2g/i.test(String(c.effectiveType || '')))) return;
+                playUrlOf(song.id, song).catch(() => {});
+            }
+            function playUrlOf(id, hint) {
+                const key = String(id);
+                const hit = playUrlTaskCache.get(key);
+                if (hit && Date.now() - hit.at < PLAY_URL_TTL) return hit.p;
+                const rec = { at: Date.now(), p: null };
+                rec.p = resolvePlayUrl(id, hint).then((got) => {
+                    if (!got || !isUsableAudioUrl(got.url) || isTrialClipUrl(got.url)) {
+                        if (playUrlTaskCache.get(key) === rec) playUrlTaskCache.delete(key);
+                    }
+                    return got;
+                });
+                if (playUrlTaskCache.size > 200) {
+                    const oldest = playUrlTaskCache.keys().next().value;
+                    if (oldest !== undefined) playUrlTaskCache.delete(oldest);
+                }
+                playUrlTaskCache.set(key, rec);
+                rec.p.catch(() => {
+                    if (playUrlTaskCache.get(key) === rec) playUrlTaskCache.delete(key);
+                });
+                return rec.p;
+            }
+            function firstPlayable(tasks) {
+                return new Promise((resolve, reject) => {
+                    let left = tasks.length;
+                    let lastErr = null;
+                    if (!left) { reject(new Error('无可用音源')); return; }
+                    tasks.forEach((task) => {
+                        Promise.resolve().then(task).then((got) => {
+                            if (!got || !got.url) throw new Error('未返回播放地址');
+                            resolve(got);
+                        }).catch((err) => {
+                            lastErr = err;
+                            left--;
+                            if (left === 0) reject(lastErr || new Error('无可用音源'));
+                        });
+                    });
+                });
+            }
+            async function resolvePlayUrl(id, hint) {
                 const sid = String(id);
                 const isByName = sid.indexOf('kw_') === 0;
                 let name = hint && hint.name ? String(hint.name) : '';
@@ -12192,20 +12247,28 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     return { name, artist, dur };
                 };
                 if (!isByName) {
+                    let metingDone = false;
                     try {
-                        return await metingPlayTask(id, false)();
+                        return await firstPlayable([
+                            () => metingPlayTask(id, false)().then((got) => {
+                                metingDone = true;
+                                return got;
+                            }),
+                            async () => {
+                                await new Promise((r) => setTimeout(r, 1200));
+                                if (metingDone) throw new Error('已有可用音源');
+                                return gdPlayTask(id)();
+                            }
+                        ]);
                     } catch (e) {
-                        console.warn('meting 失败，转 gdstudio：', e && e.message);
+                        console.warn('在线音源失败，转试听源：', e && e.message);
                     }
-                    try {
-                        return await gdPlayTask(id)();
-                    } catch (e) {
-                        console.warn('gdstudio 失败，转试听源：', e && e.message);
-                    }
-                    try {
-                        return await metingPlayTask(id, true)();
-                    } catch (e) {
-                        console.warn('meting 试听失败，转酷我：', e && e.message);
+                    if (metingTrialCache && metingTrialCache.id === String(id)) {
+                        try {
+                            return await metingPlayTask(id, true)();
+                        } catch (e) {
+                            console.warn('meting 试听失败，转酷我：', e && e.message);
+                        }
                     }
                 }
                 try {
@@ -13088,7 +13151,35 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     showTranslation = saved === null ? true : saved === '1';
                 } catch (_) { showTranslation = true; }
             }
+            let lyricScanHold = 0;
+            let lyricScanHoldAt = 0;
+            const LYRIC_SCAN_HOLD_MAX = 2200;
+            function armLyricScanHold(t) {
+                lyricScanHold = t > 0 ? t : 0;
+                lyricScanHoldAt = performance.now();
+            }
+            function lyricScanTimeAt(currentTime) {
+                if (!(lyricScanHold > 0)) return currentTime;
+                if (!isPlaying) {
+                    lyricScanHold = 0;
+                    return currentTime;
+                }
+                const elapsedMs = performance.now() - lyricScanHoldAt;
+                if (elapsedMs > LYRIC_SCAN_HOLD_MAX) {
+                    lyricScanHold = 0;
+                    return currentTime;
+                }
+                const elapsed = elapsedMs / 1000;
+                const expect = lyricScanHold + elapsed;
+                if (currentTime < lyricScanHold - 0.3) return lyricScanHold;
+                if (currentTime > expect + 0.35) return expect;
+                if (elapsed > 0.9 && Math.abs(currentTime - expect) < 0.3) {
+                    lyricScanHold = 0;
+                }
+                return currentTime;
+            }
             function renderLyrics() {
+                lyricScanHold = 0;
                 lyricsLines = [];
                 lyricsLineOffsets = [];
                 activeLyricIdx = -1;
@@ -13364,17 +13455,13 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         && coverLyricViewportW > 0) return;
                 } else if (coverLyricShownIdx < 0
                     && coverLyricShownPlaceholder === '暂无歌词') return;
-                if (line && hasCharTiming(line)) {
-                    coverLyricText.classList.remove('fading');
-                    coverLyricText.innerHTML = '';
-                    line.chars.forEach(c => coverLyricText.appendChild(makeLyricSeg(c.c)));
-                } else {
-                    coverLyricText.textContent = text || '暂无歌词';
-                }
+                coverLyricText.innerHTML = '';
+                const inner = document.createElement('span');
+                inner.textContent = text || '暂无歌词';
+                coverLyricText.appendChild(inner);
                 coverLyricShownIdx = line ? idx : -1;
                 coverLyricShownPlaceholder = text || '暂无歌词';
-                coverLyricText.style.setProperty('--scan', '0%');
-                coverLyricText.classList.remove('fading');
+                coverLyricText.style.setProperty('--scan', '-1em');
                 resetCoverLyricScroll();
                 invalidateCoverLyricMetrics();
                 primeCoverLyricMetrics();
@@ -13397,17 +13484,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 return joined === (row.text || '').trim();
             }
             function coverLineProgress(row, idx, currentTime) {
-                if (hasCharTiming(row)) {
-                    let done = 0;
-                    for (const c of row.chars) {
-                        if (currentTime >= c.t + c.d) done += 1;
-                        else if (currentTime > c.t) {
-                            done += (currentTime - c.t) / Math.max(0.001, c.d);
-                            break;
-                        } else break;
-                    }
-                    return Math.max(0, Math.min(1, done / row.chars.length));
-                }
+                if (hasCharTiming(row)) return charProgressOf(row, currentTime);
                 const next = lyricsData[idx + 1];
                 return next
                     ? Math.max(0, Math.min(1,
@@ -13476,20 +13553,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 let p = 0;
                 if (line) {
                     p = coverLineProgress(line, idx, currentTime);
-                    if (hasCharTiming(line)) {
-                        const segs = coverLyricText.querySelectorAll('.lyric-seg');
-                        if (segs.length === line.chars.length) {
-                            for (let i = 0; i < segs.length; i++) {
-                                const c = line.chars[i];
-                                setScan(segs[i], Math.max(0, Math.min(1,
-                                    (currentTime - c.t) / Math.max(0.001, c.d))));
-                            }
-                        } else {
-                            setScan(coverLyricText, p);
-                        }
-                    } else {
-                        setScan(coverLyricText, p);
-                    }
+                    setScan(coverLyricText.firstElementChild || coverLyricText, p);
                 } else if (!coverLyricScroll) {
                     return;
                 }
@@ -13542,6 +13606,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             }
             function updateLyrics(currentTime) {
                 if (!isFinite(currentTime) || currentTime < 0) return;
+                currentTime = lyricScanTimeAt(currentTime);
                 const wantPage = lyricsPage.classList.contains('active');
                 const wantDesk = isDeskLyricsVisible();
                 const wantCover = isCoverLyricActive();
@@ -13580,19 +13645,38 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (wantPage) followLyricsCenter();
                 if (wantDesk) followDeskLyricsCenter();
             }
+            function charProgressOf(row, t) {
+                let total = 0;
+                let done = 0;
+                for (let i = 0; i < row.chars.length; i++) {
+                    const c = row.chars[i];
+                    const len = (c.c || '').length || 1;
+                    total += len;
+                    if (t >= c.t + c.d) done += len;
+                    else if (t > c.t) {
+                        done += len * Math.max(0, Math.min(1,
+                            (t - c.t) / Math.max(0.001, c.d)));
+                    }
+                }
+                return total > 0 ? Math.max(0, Math.min(1, done / total)) : 0;
+            }
             function updateLyricScan(currentTime, wantPage, wantDesk) {
                 const idx = activeLyricIdx;
                 if (idx < 0 || idx >= lyricsLines.length) return;
                 const line = lyricsData[idx];
                 if (!line) return;
-                const start = line.time;
-                const next = lyricsData[idx + 1];
-                const p = next
-                    ? (currentTime - start) / Math.max(0.001, next.time - start)
-                    : 1;
-                const progress = Math.max(0, Math.min(1, p));
-                if (wantPage) applySegmentScan(lyricsLines[idx], currentTime, progress);
-                if (wantDesk) applySegmentScan(deskLyricLineAt(idx), currentTime, progress);
+                let progress;
+                if (hasCharTiming(line)) {
+                    progress = charProgressOf(line, currentTime);
+                } else {
+                    const next = lyricsData[idx + 1];
+                    progress = next
+                        ? Math.max(0, Math.min(1,
+                            (currentTime - line.time) / Math.max(0.001, next.time - line.time)))
+                        : 1;
+                }
+                if (wantPage) applySegmentScan(lyricsLines[idx], progress);
+                if (wantDesk) applySegmentScan(deskLyricLineAt(idx), progress);
             }
             function splitLyricIntoSegments(el) {
                 if (!el) return;
@@ -13601,13 +13685,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (main.dataset.rawText == null) main.dataset.rawText = main.textContent;
                 const raw = main.dataset.rawText;
                 if (!raw) return;
-                const idx = parseInt(el.dataset.idx);
-                const row = lyricsData[idx];
-                if (lyricsHasTiming && row && row.chars && row.chars.length > 0) {
-                    main.innerHTML = '';
-                    row.chars.forEach(c => main.appendChild(makeLyricSeg(c.c)));
-                    return;
-                }
                 main.textContent = raw;
                 if (raw.length < 2) {
                     main.innerHTML = '';
@@ -13657,22 +13734,11 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (!main || main.dataset.rawText == null) return;
                 if (main.querySelector('.lyric-seg')) main.textContent = main.dataset.rawText;
             }
-            function applySegmentScan(el, currentTime, progress) {
+            function applySegmentScan(el, progress) {
                 if (!el) return;
                 const main = lyricMainOf(el);
                 const segs = main.querySelectorAll(':scope > .lyric-seg');
                 if (segs.length === 0) return;
-                const idx = parseInt(el.dataset.idx);
-                const row = lyricsData[idx];
-                if (hasCharTiming(row) && row.chars.length === segs.length) {
-                    for (let i = 0; i < segs.length; i++) {
-                        const c = row.chars[i];
-                        const p = Math.max(0, Math.min(1,
-                            (currentTime - c.t) / Math.max(0.001, c.d)));
-                        setScan(segs[i], p);
-                    }
-                    return;
-                }
                 let total = 0;
                 segs.forEach(s => { total += s.textContent.length; });
                 if (total === 0) return;
@@ -13683,14 +13749,26 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     consumed -= len;
                 });
             }
+            let scanMetricsEpoch = 0;
+            function scanMetricsOf(el) {
+                const m = el.__scanM;
+                if (m && m.epoch === scanMetricsEpoch && m.w > 0) return m;
+                const fs = parseFloat(getComputedStyle(el).fontSize) || 19;
+                const out = {
+                    epoch: scanMetricsEpoch,
+                    w: el.offsetWidth,
+                    band: fs * 0.5
+                };
+                el.__scanM = out;
+                return out;
+            }
             function setScan(el, p) {
-                const val = (p * 100).toFixed(1) + '%';
+                const m = scanMetricsOf(el);
+                if (!(m.w > 0)) return;
+                const x = -m.band + p * (m.w + m.band * 2);
+                const val = x.toFixed(1) + 'px';
                 if (el.style.getPropertyValue('--scan') !== val) {
                     el.style.setProperty('--scan', val);
-                }
-                const fading = p > 0 && p < 1;
-                if (el.classList.contains('fading') !== fading) {
-                    el.classList.toggle('fading', fading);
                 }
             }
             function followDeskLyricsCenter() {
@@ -13871,6 +13949,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }, 200);
             }
             let playSongToken = 0;
+            let discAnimTo = -1;
+            let discAnimSeq = 0;
             let playStarting = false;
             let staleUrlRetrying = false;
             let retryingSongId = '';
@@ -14013,6 +14093,12 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 switchDisc(back ? 1 : -1);
             }
             async function playSong(index, seekTo, fromFallback, keepPaused) {
+                if (discAnimTo === index) {
+                    discAnimTo = -1;
+                } else if (canDiscAnim(index)) {
+                    animateDiscTo(index, seekTo, fromFallback, keepPaused);
+                    return;
+                }
                 const myToken = ++playSongToken;
                 shuffleNextId = '';
                 staleUrlRetrying = false;
@@ -14297,6 +14383,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     staleRetryCount.set(sid, used + 1);
                     staleUrlRetrying = true;
                     retryingSongId = sid;
+                    forgetPlayUrl(sid);
                     playAttemptSeq++;
                     song.url = '';
                     if (myAudio === currentAudio) {
@@ -14944,6 +15031,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (!isFinite(time) || time < 0) return;
                 if (!currentAudio) {
                     if (!currentSong && currentSongs.length === 0) return;
+                    armLyricScanHold(time);
                     restoreSeekTime = time;
                     const dur = (currentSong.duration || 0) / 1000;
                     if (dur > 0) progress.style.width = Math.min(100, (time / dur) * 100) + '%';
@@ -14965,6 +15053,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     const got = currentAudio.currentTime;
                     if (isFinite(got) && Math.abs(got - target) < 2) at = got;
                 } catch (_) {}
+                armLyricScanHold(target);
                 pendingSeekTime = null;
                 resetSmoothTime();
                 isLyricsScrolling = true;
@@ -15515,6 +15604,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     scheduleScrollOverscrollPad();
                     if (selectMode) syncSelectBarOffset();
                     lyricsLayoutDirty = true;
+                    scanMetricsEpoch++;
                     if (!isAnyLyricsVisible()) { stopLyricsTick(); return; }
                     if (resizeIdleTimer) clearTimeout(resizeIdleTimer);
                     resizeIdleTimer = setTimeout(() => {
@@ -15600,6 +15690,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             let dragCommitTs = 0;
             function commitDragSeek(t) {
                 dragCommitTs = Date.now();
+                lyricScanHold = 0;
                 if (currentAudio) {
                     try { currentAudio.currentTime = t; } catch (_) {}
                     if (!isPlaying) holdMediaPosition();
@@ -15846,6 +15937,54 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             function isDesktopPointer() {
                 return typeof window.matchMedia === 'function'
                     && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+            }
+            function canDiscAnim(index) {
+                if (!currentSong || !currentSongs || currentSongs.length < 2) return false;
+                if (!(index >= 0 && index < currentSongs.length)) return false;
+                if (String(currentSongs[index].id) === String(currentSong.id)) return false;
+                if (!fullPlayer || !fullPlayer.classList.contains('active')) return false;
+                if (document.visibilityState !== 'visible') return false;
+                if (swipeSettling || !albumCoverWrap) return false;
+                return peekGap() >= 80;
+            }
+            function animateDiscTo(index, seekTo, fromFallback, keepPaused) {
+                const dir = index > currentIndex ? -1 : 1;
+                const peeking = dir < 0 ? albumPeekNext : albumPeekPrev;
+                const cover = albumCoverWrap;
+                const gap = peekGap();
+                const seq = ++discAnimSeq;
+                discAnimTo = index;
+                refreshSwipePeeks();
+                if (peeking && currentSongs[index]) {
+                    setPeekCover(peeking, currentSongs[index].picurl || '');
+                }
+                cover.style.transform = 'translateX(' + (dir < 0 ? -gap : gap) + 'px)';
+                cover.style.setProperty('--disc-veil', '0');
+                if (albumCoverShadow) albumCoverShadow.style.opacity = '0';
+                if (albumCoverBox) albumCoverBox.style.opacity = '0';
+                if (peeking) peeking.style.opacity = '1';
+                setTimeout(() => {
+                    if (seq !== discAnimSeq) return;
+                    cover.classList.add('swipe-reset');
+                    adoptPeekTint(peeking);
+                    void cover.offsetWidth;
+                    cover.classList.remove('swipe-reset');
+                    playSong(index, seekTo, fromFallback, keepPaused);
+                    requestAnimationFrame(() => requestAnimationFrame(() => {
+                        if (seq !== discAnimSeq) return;
+                        cover.classList.add('swipe-reset');
+                        cover.style.transform = '';
+                        cover.style.removeProperty('--disc-veil');
+                        if (albumCoverShadow) albumCoverShadow.style.opacity = '';
+                        if (albumCoverBox) albumCoverBox.style.opacity = '';
+                        if (albumPeekPrev) albumPeekPrev.style.opacity = '';
+                        if (albumPeekNext) albumPeekNext.style.opacity = '';
+                        void cover.offsetWidth;
+                        cover.classList.remove('swipe-reset');
+                        discAnimTo = -1;
+                        refreshSwipePeeks();
+                    }));
+                }, 340);
             }
             function switchDisc(dir) {
                 if (swipeSettling) return;
@@ -16176,10 +16315,11 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
                 exitPlaceholderMode();
                 const song = { ...saved.song, pay: '免费音乐' };
-                delete song.url;
+                if (song.url && !canUseSongUrl(song)) song.url = '';
                 lastSong = saved.prevSong && saved.prevSong.id
                     ? { ...saved.prevSong, pay: '免费音乐' }
                     : null;
+                prefetchPlayUrl(song);
                 if (!currentSongs.length) {
                     const queueOk = await restoreQueue();
                     if (!queueOk) {
@@ -16199,6 +16339,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     currentSong = song;
                 }
                 const target = currentSong;
+                if (song.url && !canUseSongUrl(target)) target.url = song.url;
                 setCoverSrc(miniCoverWrap, miniCover, target.picurl);
                 miniSongTitle.textContent = target.name || '未知歌曲';
                 miniSongArtist.textContent = (target && target.artistsname) || '未知歌手';
