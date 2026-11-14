@@ -324,9 +324,7 @@
 .mdui-dialog-actions { padding:12px 14px 14px; }
 .mdui-dialog-actions .mdui-btn { font-size:14px;font-weight:600;letter-spacing:0;text-transform:none;border-radius:11px;padding:0 14px;min-width:64px;height:36px;line-height:36px; }
 .mdui-dialog-actions .mdui-btn-bold { color:#fff;background:var(--primary); }
-.mdui-dialog-actions .mdui-btn-bold:hover { }
 .mdui-dialog-actions .mdui-btn:not(.mdui-btn-bold) { color:var(--text-secondary); }
-.mdui-dialog-actions .mdui-btn:not(.mdui-btn-bold):hover { }
 .mdui-overlay { background:var(--mask);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px); }
 .mdui-dialog-prompt .mdui-dialog-actions .mdui-btn-bold { color:#fff;background:var(--primary); }
 .mdui-dialog-prompt .mdui-dialog-actions .mdui-btn-bold:hover { opacity:0.88; }
@@ -449,11 +447,9 @@ body.mine-tab .search-btn { display:none; }
 .mine-actions { display:flex;align-items:center;gap:2px;flex-shrink:0; }
 .act-btn { width:34px;height:34px;border:none;background:transparent;color:var(--text-secondary);border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.2s,color 0.2s,transform 0.15s; }
 .act-btn:active { opacity:0.6;transform:scale(0.9); }
-.mine-empty { text-align:center;color:var(--text-secondary);font-size:13px;padding:30px 0; }
 .fab-stack { position:fixed;right:18px;bottom:calc(var(--tab-height) + var(--bottom-stack) + 18px);z-index:2300;opacity:0;transform:scale(0.72);pointer-events:none;transition:opacity 0.24s ease,transform 0.26s cubic-bezier(0.22,1,0.36,1); }
 body.mine-tab .fab-stack.show { opacity:1;transform:scale(1);pointer-events:all; }
 .fab-new-pl { width:52px;height:52px;padding:0;border:none;border-radius:50%;background:var(--primary);color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-float);transition:background 0.2s,transform 0.15s; }
-.fab-new-pl:hover { }
 .fab-new-pl:active { transform:scale(0.92); }
 .fab-new-pl i { pointer-events:none; }
 .glass { background:var(--glass-bg);backdrop-filter:blur(var(--glass-blur));-webkit-backdrop-filter:blur(var(--glass-blur));border:1px solid var(--glass-border);box-shadow:var(--glass-shadow); }
@@ -1167,7 +1163,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
 </head>
 <body>
     <header class="header">
-        <div class="search-container" id="song-search-container">
+        <div class="search-container">
             <div class="search-field" id="song-search-field">
                 <input type="text" class="search-input" id="search-input" placeholder="搜索歌曲..." autocomplete="off" />
                 <button class="input-clear" id="search-input-clear" aria-label="清除" title="清除">
@@ -1321,7 +1317,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
         </section>
     </main>
     <div class="fab-stack" id="fab-stack">
-        <button class="fab-new-pl" id="fab-new-pl" aria-label="新建歌单" title="新建歌单">
+        <button class="fab-new-pl" id="fab-new-pl" aria-label="新建或导入歌单" title="新建或导入歌单">
             <i class="fas fa-plus"></i>
         </button>
     </div>
@@ -1334,15 +1330,15 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
         <div class="tab-items" id="tab-items">
             <button class="tab-item active" data-tab="chart">
                 <span class="tab-icon"><i class="fas fa-chart-bar"></i></span>
-                <span class="tab-label">榜单</span>
+                <span>榜单</span>
             </button>
             <button class="tab-item" data-tab="mine">
                 <span class="tab-icon"><i class="fas fa-list-ul"></i></span>
-                <span class="tab-label">歌单</span>
+                <span>歌单</span>
             </button>
             <button class="tab-item" data-tab="settings">
                 <span class="tab-icon"><i class="fas fa-gear"></i></span>
-                <span class="tab-label">设置</span>
+                <span>设置</span>
             </button>
         </div>
     </nav>
@@ -1544,8 +1540,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             </div>
         </div>
         <div class="results-list" id="results-list">
-            <div class="scroll-overscroll-pad" id="results-pad-top" aria-hidden="true"></div>
-            <div class="scroll-overscroll-pad" id="results-pad-bottom" aria-hidden="true"></div>
+            <div class="scroll-overscroll-pad" aria-hidden="true"></div>
+            <div class="scroll-overscroll-pad" aria-hidden="true"></div>
         </div>
     </div>
     <div class="fav-page" id="fav-page">
@@ -1555,7 +1551,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     <i class="fas fa-chevron-left"></i>
                 </button>
                 <div class="fav-title">我的收藏</div>
-                <button class="fav-icon-btn mode-toggle-btn" id="fav-mode-btn"
+                <button class="fav-icon-btn mode-toggle-btn"
                         aria-label="播放模式" title="播放模式">
                     <svg class="mode-icon-svg" viewBox="0 0 24 24" aria-hidden="true"></svg>
                 </button>
@@ -1605,7 +1601,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     <i class="fas fa-chevron-left"></i>
                 </button>
                 <div class="fav-title" id="pl-page-title">歌单</div>
-                <button class="fav-icon-btn mode-toggle-btn" id="pl-mode-btn"
+                <button class="fav-icon-btn mode-toggle-btn"
                         aria-label="播放模式" title="播放模式">
                     <svg class="mode-icon-svg" viewBox="0 0 24 24" aria-hidden="true"></svg>
                 </button>
@@ -1655,7 +1651,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     <i class="fas fa-chevron-left"></i>
                 </button>
                 <div class="fav-title">播放历史</div>
-                <button class="fav-icon-btn mode-toggle-btn" id="history-mode-btn"
+                <button class="fav-icon-btn mode-toggle-btn"
                         aria-label="播放模式" title="播放模式">
                     <svg class="mode-icon-svg" viewBox="0 0 24 24" aria-hidden="true"></svg>
                 </button>
@@ -1708,7 +1704,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     <i class="fas fa-chevron-left"></i>
                 </button>
                 <div class="fav-title" id="artist-page-title">歌手</div>
-                <button class="fav-icon-btn mode-toggle-btn" id="artist-mode-btn"
+                <button class="fav-icon-btn mode-toggle-btn"
                         aria-label="播放模式" title="播放模式">
                     <svg class="mode-icon-svg" viewBox="0 0 24 24" aria-hidden="true"></svg>
                 </button>
@@ -1741,7 +1737,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
         </div>
         <div class="fav-scroll" id="artist-scroll">
             <div class="scroll-overscroll-pad" aria-hidden="true"></div>
-            <div class="pl-summary" id="artist-summary">
+            <div class="pl-summary">
                 <div class="pl-summary-cover no-cover" id="artist-avatar">
                     <img alt="">
                     <div class="mine-cover-fallback"><i class="fas fa-user"></i></div>
@@ -1762,7 +1758,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     <i class="fas fa-chevron-left"></i>
                 </button>
                 <div class="fav-title" id="album-page-title">专辑</div>
-                <button class="fav-icon-btn mode-toggle-btn" id="album-mode-btn"
+                <button class="fav-icon-btn mode-toggle-btn"
                         aria-label="播放模式" title="播放模式">
                     <svg class="mode-icon-svg" viewBox="0 0 24 24" aria-hidden="true"></svg>
                 </button>
@@ -1795,7 +1791,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
         </div>
         <div class="fav-scroll" id="album-scroll">
             <div class="scroll-overscroll-pad" aria-hidden="true"></div>
-            <div class="pl-summary" id="album-summary">
+            <div class="pl-summary">
                 <div class="pl-summary-cover no-cover" id="album-page-cover">
                     <img alt="">
                     <div class="mine-cover-fallback"><i class="fas fa-compact-disc"></i></div>
@@ -1819,9 +1815,9 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             </div>
         </div>
         <div class="about-body">
-            <div class="about-logo" id="about-logo" role="button" tabindex="0" aria-label="MKY音乐"><svg class="brand-disc" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="bdisc-sheen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.34" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.46" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.54" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.66" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient><clipPath id="bdisc-clip"><circle cx="32" cy="32" r="30"/></clipPath></defs><g class="disc-spin"><circle cx="32" cy="32" r="30" fill="#141418"/><circle cx="32" cy="32" r="30" fill="none" stroke="#ffffff" stroke-opacity=".14" stroke-width="2.6"/><circle cx="32" cy="32" r="21" fill="none" stroke="#ffffff" stroke-opacity=".10" stroke-width="1.5"/><circle cx="32" cy="32" r="14" fill="none" stroke="#ffffff" stroke-opacity=".08" stroke-width="1.5"/><circle cx="32" cy="32" r="12" fill="#e91e63"/><circle cx="32" cy="32" r="3.4" fill="#141418"/><g clip-path="url(#bdisc-clip)"><rect class="disc-sheen" x="-16" y="-16" width="96" height="96" fill="url(#bdisc-sheen)"/></g></g></svg></div>
+            <div class="about-logo" id="about-logo" role="button" tabindex="0" aria-label="MKY音乐"><svg class="brand-disc" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="bdisc-sheen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.34" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.46" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.54" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.66" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient><clipPath id="bdisc-clip"><circle cx="32" cy="32" r="30"/></clipPath></defs><g class="disc-spin"><circle cx="32" cy="32" r="30" fill="#141418"/><circle cx="32" cy="32" r="30" fill="none" stroke="#ffffff" stroke-opacity=".14" stroke-width="2.6"/><circle cx="32" cy="32" r="21" fill="none" stroke="#ffffff" stroke-opacity=".10" stroke-width="1.5"/><circle cx="32" cy="32" r="14" fill="none" stroke="#ffffff" stroke-opacity=".08" stroke-width="1.5"/><circle cx="32" cy="32" r="12" fill="#e91e63"/><circle cx="32" cy="32" r="3.4" fill="#141418"/><g clip-path="url(#bdisc-clip)"><rect x="-16" y="-16" width="96" height="96" fill="url(#bdisc-sheen)"/></g></g></svg></div>
             <div class="about-name">MKY音乐</div>
-            <div class="about-version">版本 2.9</div>
+            <div class="about-version">版本 3.0</div>
             <div class="about-slogan">把每一处细节听懂<br>把听歌这件事做好</div>
             <div class="about-links">
                 <div class="about-legal">
@@ -4163,6 +4159,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 renderFavorites('');
                 favPage.classList.add('active');
                 if (fabStack) fabStack.classList.remove('show');
+                if (favScroll) favScroll.scrollTop = 0;
                 adoptFavQueue();
                 syncHeaderHeight();
                 syncFavPageOffset();
@@ -4932,8 +4929,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         !kw && !plSelectMode && !anyOverlayOpen());
                 }
                 if (rows.length === 0) {
-                    mineList.innerHTML = '<div class="mine-empty">没有找到叫「'
-                        + esc(mineKeyword.trim()) + '」的歌单</div>';
+                    mineList.innerHTML = emptySearchHtml(mineKeyword);
                     return;
                 }
                 mineList.innerHTML = rows.map(row => {
@@ -5249,8 +5245,825 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     showToast(msg);
                 });
             }
+            const QQ_PLAYLIST_API = 'https://u.y.qq.com/cgi-bin/musicu.fcg';
+            const IMPORT_MAX_SONGS = 800;
+            const IMPORT_PLATFORM_NAMES = {
+                qq: 'QQ音乐',
+                kugou: '酷狗音乐',
+                kuwo: '酷我音乐',
+                netease: '网易云音乐'
+            };
+            let importPlaylistBusy = false;
+
+            function importProxyGet(url, timeout) {
+                return fetchOneRaw(
+                    u => CF_PROXY + '?key=' + CF_PROXY_KEY + '&url=' +
+                        encodeURIComponent(u),
+                    url, timeout || 15000);
+            }
+
+            const IMPORT_KW_REF = 'https://h5app.kuwo.cn/';
+            const IMPORT_KW_ORG = 'https://h5app.kuwo.cn';
+
+            async function importProxyFinalUrl(url, timeout) {
+                const ctrl = new AbortController();
+                const timer = setTimeout(() => ctrl.abort(), timeout || 12000);
+                try {
+                    const res = await fetch(
+                        CF_PROXY + '?key=' + encodeURIComponent(CF_PROXY_KEY) +
+                        '&url=' + encodeURIComponent(url),
+                        { signal: ctrl.signal });
+                    return res.headers.get('X-Final-Url') || '';
+                } catch (_) {
+                    return '';
+                } finally {
+                    clearTimeout(timer);
+                }
+            }
+
+            function importProxyJson(url, timeout, ref, org) {
+                let target = CF_PROXY + '?key=' + encodeURIComponent(CF_PROXY_KEY) +
+                    '&url=' + encodeURIComponent(url);
+                if (ref) target += '&ref=' + encodeURIComponent(ref);
+                if (org) target += '&org=' + encodeURIComponent(org);
+                return fetchOne(u => u, target, timeout || 15000);
+            }
+
+            function importFirstUrl(s, hostRe) {
+                const re = /https?:\/\/[^\s"'<>]+/ig;
+                let m;
+                while ((m = re.exec(s))) {
+                    if (hostRe.test(m[0])) return m[0];
+                }
+                return '';
+            }
+
+            function importLinkDirect(raw) {
+                const s = String(raw || '').trim();
+                if (!s) return null;
+                let m;
+
+                if (/163cn\.tv|music\.163\.com|y\.music\.163\.com/i.test(s)) {
+                    m = /[?&#]id=(\d{4,})/.exec(s) || /playlist\/(\d{4,})/.exec(s);
+                    if (m) return { platform: 'netease', id: m[1] };
+                    const url = importFirstUrl(s, /163cn\.tv|music\.163\.com|y\.music\.163\.com/i);
+                    if (url) return { platform: 'netease', short: url };
+                    return null;
+                }
+
+                if (/kuwo\.cn/i.test(s)) {
+                    m = /[?&]playlistId=(\d{3,})/i.exec(s)
+                        || /playlist_detail\/(\d{3,})/i.exec(s)
+                        || /[?&]pid=(\d{3,})/i.exec(s);
+                    if (m) return {
+                        platform: 'kuwo',
+                        id: m[1],
+                        source: (/[?&]source=(\d+)/i.exec(s) || [])[1] || '',
+                        bodian: /h5app\.kuwo\.cn|bodian/i.test(s)
+                    };
+                    const url = importFirstUrl(s, /kuwo\.cn/i);
+                    if (url) return { platform: 'kuwo', short: url };
+                    return null;
+                }
+
+                if (/kugou\.com/i.test(s)) {
+                    m = /special\/single\/(\d{3,})/i.exec(s)
+                        || /songlist\/(\d{3,})/i.exec(s)
+                        || /plist\/list\/(\d{3,})/i.exec(s)
+                        || /[?&](?:listid|specialid)=(\d{3,})/i.exec(s);
+                    if (m) return { platform: 'kugou', id: m[1] };
+                    const url = importFirstUrl(s, /kugou\.com/i);
+                    if (url) return { platform: 'kugou', short: url };
+                    return null;
+                }
+
+                if (/qq\.com|QQ音乐/i.test(s)) {
+                    m = /(?:ryqq|n\/yqq)\/playlist\/(\d{5,})/i.exec(s)
+                        || /taoge\.html[^\s"'<>]*?[?&]id=(\d{5,})/i.exec(s)
+                        || /[?&]disstid=(\d{5,})/i.exec(s)
+                        || /[?&]id=(\d{5,})/i.exec(s);
+                    if (m) return { platform: 'qq', id: m[1] };
+                    const url = importFirstUrl(s, /qq\.com/i);
+                    if (url) return { platform: 'qq', short: url };
+                    return null;
+                }
+                return null;
+            }
+
+            async function resolveImportLink(raw) {
+                const direct = importLinkDirect(raw);
+                if (!direct) return null;
+                if (direct.id) return direct;
+                if (!direct.short) return null;
+                let html = '';
+                try {
+                    html = await importProxyGet(direct.short, 14000);
+                } catch (_) {
+                    return null;
+                }
+                if (direct.platform === 'qq') {
+                    const m = /(?:disstid["'\s:=]+|playlist\/|taoge\.html[^"'<>]*?[?&]id=)(\d{5,})/i.exec(html);
+                    if (m) return { platform: 'qq', id: m[1] };
+                } else if (direct.platform === 'kugou') {
+                    const finalUrl = await importProxyFinalUrl(direct.short, 12000);
+                    const gm = /global_specialid=(collection_[0-9_]+)/i.exec(finalUrl) ||
+                        /global_specialid=(collection_[0-9_]+)/i.exec(html);
+                    if (gm) return { platform: 'kugou', id: gm[1] };
+                    const sm = /[?&]specialid=(-?\d{3,})/i.exec(finalUrl) ||
+                        /(?:listid=|specialid=|\/special\/single\/)(\d{3,})/i.exec(html);
+                    if (sm && String(sm[1]).charAt(0) !== '-') {
+                        return { platform: 'kugou', id: sm[1] };
+                    }
+                } else if (direct.platform === 'netease') {
+                    const m = /playlist[^"'<>]*?[?&]id=(\d{4,})/i.exec(html)
+                        || /[?&]id=(\d{4,})/.exec(html);
+                    if (m) return { platform: 'netease', id: m[1] };
+                } else if (direct.platform === 'kuwo') {
+                    const m = /playlistId=(\d{3,})/i.exec(html)
+                        || /playlist_detail\/(\d{3,})/.exec(html);
+                    if (m) return { platform: 'kuwo', id: m[1], bodian: true };
+                }
+                return null;
+            }
+
+            function fetchQQPlaylistViaMeting(disstid) {
+                const url = METING_BASE + '?type=playlist&server=tencent&id=' +
+                    encodeURIComponent(disstid);
+                return withTimeout(fetch(url, { cache: 'no-store' }), 15000, '歌单读取超时')
+                    .then(res => {
+                        if (!res.ok) throw new Error('歌单读取失败');
+                        return res.json();
+                    })
+                    .then(arr => {
+                        const songs = (Array.isArray(arr) ? arr : []).map(x => ({
+                            name: String((x && x.name) || '').trim(),
+                            artist: String((x && x.artist) || '').trim(),
+                            sec: 0
+                        })).filter(x => x.name);
+                        if (!songs.length) throw new Error('歌单为空');
+                        return { title: '', cover: '', songs: songs };
+                    });
+            }
+
+            async function fetchQQPlaylist(disstid) {
+                const info = { title: '', cover: '', songs: [] };
+                try {
+                    // QQ 接口单次最多返回 30 首，song_num 传更大也只给 30
+                    const num = 30;
+                    for (let begin = 0; begin < IMPORT_MAX_SONGS; begin += num) {
+                        const payload = {
+                            req_0: {
+                                module: 'music.srfDissInfo.aiDissInfo',
+                                method: 'uniform_get_Dissinfo',
+                                param: {
+                                    disstid: Number(disstid),
+                                    enc_host_uin: '',
+                                    tag: 1,
+                                    userinfo: 1,
+                                    song_begin: begin,
+                                    song_num: num
+                                }
+                            }
+                        };
+                        const url = QQ_PLAYLIST_API + '?format=json&data=' +
+                            encodeURIComponent(JSON.stringify(payload));
+                        const d = await importProxyJson(url, 16000);
+                        const data = d && d.req_0 && d.req_0.data;
+                        if (!data || (data.code && data.code !== 0)) {
+                            throw new Error((data && data.msg) || '歌单读取失败');
+                        }
+                        const di = data.dirinfo || {};
+                        if (!info.title) {
+                            info.title = String(di.title || '').trim();
+                            info.cover = String(di.picurl || '');
+                        }
+                        const total = Number(di.songnum) || 0;
+                        if (!info.expected) info.expected = total;
+                        const list = data.songlist || [];
+                        list.forEach(x => {
+                            const name = String(x.name || x.title || '').trim();
+                            if (!name) return;
+                            const artist = (x.singer || [])
+                                .map(a => String((a && a.name) || '').trim())
+                                .filter(Boolean).join('/');
+                            info.songs.push({
+                                name: name,
+                                artist: artist,
+                                sec: Number(x.interval) || 0
+                            });
+                        });
+                        if (!list.length ||
+                            (total > 0 && info.songs.length >= total) ||
+                            info.songs.length >= IMPORT_MAX_SONGS) break;
+                    }
+                } catch (e) {
+                    if (info.songs.length) return info;
+                    const fallback = await fetchQQPlaylistViaMeting(disstid);
+                    if (fallback.songs.length) return fallback;
+                    throw e;
+                }
+                return info;
+            }
+
+            // 酷狗新版歌单接口的签名：md5(key + 按 key 排序的 k=v 直接拼接 + key)
+            const KG_SIGN_KEY = 'NVPh5oo715z5DIWAeQlhMDsWXXQV4hwt';
+
+            function md5Hex(str) {
+                const bytes = [];
+                for (let i = 0; i < str.length; i++) {
+                    let c = str.charCodeAt(i);
+                    if (c < 128) {
+                        bytes.push(c);
+                    } else if (c < 2048) {
+                        bytes.push(192 | (c >> 6), 128 | (c & 63));
+                    } else if (c < 55296 || c >= 57344) {
+                        bytes.push(224 | (c >> 12), 128 | ((c >> 6) & 63), 128 | (c & 63));
+                    } else {
+                        i++;
+                        c = 65536 + (((c & 1023) << 10) | (str.charCodeAt(i) & 1023));
+                        bytes.push(240 | (c >> 18), 128 | ((c >> 12) & 63),
+                            128 | ((c >> 6) & 63), 128 | (c & 63));
+                    }
+                }
+                const bitLen = bytes.length * 8;
+                bytes.push(0x80);
+                while (bytes.length % 64 !== 56) bytes.push(0);
+                for (let i = 0; i < 4; i++) bytes.push((bitLen >>> (i * 8)) & 255);
+                const hi = Math.floor(bitLen / 4294967296);
+                for (let i = 0; i < 4; i++) bytes.push((hi >>> (i * 8)) & 255);
+
+                let a0 = 1732584193, b0 = -271733879, c0 = -1732584194, d0 = 271733878;
+                const S = [7, 12, 17, 22, 5, 9, 14, 20, 4, 11, 16, 23, 6, 10, 15, 21];
+                const K = [];
+                for (let i = 0; i < 64; i++) {
+                    K[i] = Math.floor(Math.abs(Math.sin(i + 1)) * 4294967296) | 0;
+                }
+                for (let off = 0; off < bytes.length; off += 64) {
+                    const M = [];
+                    for (let i = 0; i < 16; i++) {
+                        M[i] = bytes[off + i * 4] | (bytes[off + i * 4 + 1] << 8) |
+                            (bytes[off + i * 4 + 2] << 16) | (bytes[off + i * 4 + 3] << 24);
+                    }
+                    let A = a0, B = b0, C = c0, D = d0;
+                    for (let i = 0; i < 64; i++) {
+                        let F, g;
+                        if (i < 16) { F = (B & C) | (~B & D); g = i; }
+                        else if (i < 32) { F = (D & B) | (~D & C); g = (5 * i + 1) % 16; }
+                        else if (i < 48) { F = B ^ C ^ D; g = (3 * i + 5) % 16; }
+                        else { F = C ^ (B | ~D); g = (7 * i) % 16; }
+                        F = (F + A + K[i] + M[g]) | 0;
+                        A = D;
+                        D = C;
+                        C = B;
+                        const s = S[(i >> 4) * 4 + (i % 4)];
+                        B = (B + ((F << s) | (F >>> (32 - s)))) | 0;
+                    }
+                    a0 = (a0 + A) | 0;
+                    b0 = (b0 + B) | 0;
+                    c0 = (c0 + C) | 0;
+                    d0 = (d0 + D) | 0;
+                }
+                const hex = n => {
+                    let s = '';
+                    for (let i = 0; i < 4; i++) {
+                        s += ((n >>> (i * 8)) & 255).toString(16).padStart(2, '0');
+                    }
+                    return s;
+                };
+                return hex(a0) + hex(b0) + hex(c0) + hex(d0);
+            }
+
+            function kugouSignedUrl(gid, page, pagesize) {
+                const t = Date.now();
+                const p = {
+                    appid: 1058,
+                    clientver: 20000,
+                    srcappid: 2919,
+                    clienttime: t,
+                    mid: md5Hex(String(t)),
+                    uuid: t,
+                    dfid: '-',
+                    uid: 0,
+                    token: '',
+                    type: 0,
+                    module: 'playlist',
+                    page: page,
+                    pagesize: pagesize,
+                    global_collection_id: gid
+                };
+                const raw = Object.keys(p).sort().map(k => k + '=' + p[k]).join('');
+                p.signature = md5Hex(KG_SIGN_KEY + raw + KG_SIGN_KEY);
+                return 'https://pubsongscdn.kugou.com/v2/get_other_list_file?' +
+                    Object.keys(p).map(k => k + '=' + encodeURIComponent(p[k])).join('&');
+            }
+
+            async function fetchKugouCollection(gid) {
+                const info = { title: '', cover: '', songs: [] };
+                for (let page = 1; page <= 40; page++) {
+                    const d = await importProxyJson(kugouSignedUrl(gid, page, 30), 16000,
+                        'https://activity.kugou.com/', 'https://activity.kugou.com');
+                    const data = d && d.data;
+                    const list = (data && data.info) || [];
+                    if (!list.length) break;
+                    const total = Number(data.count) || 0;
+                    if (!info.expected) info.expected = total;
+                    list.forEach(x => {
+                        const song = kugouSongFromRow(x);
+                        if (!song) return;
+                        info.songs.push(song);
+                        if (!info.cover && x.cover) info.cover = String(x.cover);
+                    });
+                    if ((total > 0 && info.songs.length >= total) ||
+                        info.songs.length >= IMPORT_MAX_SONGS) break;
+                }
+                if (!info.songs.length) throw new Error('歌单为空或不可见');
+                return info;
+            }
+
+            function parseKugouFilename(filename) {
+                const s = String(filename || '').trim();
+                const i = s.indexOf(' - ');
+                if (i > 0) {
+                    return { artist: s.slice(0, i).trim(), name: s.slice(i + 3).trim() };
+                }
+                return { artist: '', name: s };
+            }
+
+            function kugouSongFromRow(x) {
+                const p = parseKugouFilename(x.name || x.filename || x.songname || '');
+                if (!p.name) return null;
+                const singer = (x.singerinfo || [])
+                    .map(s => s && s.name).filter(Boolean).join('/');
+                const ms = Number(x.timelen) || 0;
+                return {
+                    name: p.name,
+                    artist: singer || x.singername || p.artist,
+                    sec: ms ? Math.round(ms / 1000) : (Number(x.duration) || 0)
+                };
+            }
+
+            async function fetchKugouPlaylist(id) {
+                if (/^collection_/i.test(String(id || ''))) {
+                    return await fetchKugouCollection(id);
+                }
+                const info = { title: '', cover: '', songs: [] };
+                for (let page = 1; page <= 20; page++) {
+                    const url = 'https://mobileservice.kugou.com/api/v3/special/song?specialid=' +
+                        encodeURIComponent(id) + '&page=' + page +
+                        '&pagesize=100&version=8000&plat=0&area_code=1';
+                    const d = await importProxyJson(url, 16000);
+                    const data = d && d.data;
+                    const list = (data && data.info) || [];
+                    if (!list.length) break;
+                    const total = Number(data.total) || 0;
+                    if (!info.expected) info.expected = total;
+                    list.forEach(x => {
+                        const song = kugouSongFromRow(x);
+                        if (song) info.songs.push(song);
+                    });
+                    if ((total > 0 && info.songs.length >= total) ||
+                        info.songs.length >= IMPORT_MAX_SONGS) break;
+                }
+                if (!info.songs.length) throw new Error('歌单为空或不可见');
+                try {
+                    const html = await importProxyGet(
+                        'https://www.kugou.com/yy/special/single/' + id + '.html', 12000);
+                    const m = /<title>([^<]*)<\/title>/i.exec(html);
+                    if (m) {
+                        info.title = m[1].replace(/_精选集[\s\S]*$/, '').trim();
+                    }
+                } catch (_) {}
+                return info;
+            }
+
+            function kuwoSongFromRow(row) {
+                const mid = String(row.id || row.rid || '').replace(/^MUSIC_/, '');
+                if (!/^\d+$/.test(mid)) return null;
+                const name = kuwoText(row.name || row.NAME || row.songname || '');
+                if (!name) return null;
+                const artist = kuwoText(row.artist || row.ARTIST || row.singername || '');
+                const album = kuwoText(row.album || row.ALBUM || row.albumname || '');
+                const sec = Number(row.duration || row.DURATION) || 0;
+                const pic = row.albumPic || row.albumpic || row.pic || '';
+                return {
+                    id: 'kw_' + mid,
+                    kwid: mid,
+                    name: name,
+                    artistsname: artist || '未知歌手',
+                    artists: artist ? artist.split(/[\/&,、]/)
+                        .map(n => ({ name: n.trim() }))
+                        .filter(a => a.name) : [],
+                    album: album,
+                    duration: sec * 1000,
+                    picurl: pic ? normalizeCoverUrl(pic) : '',
+                    picId: '',
+                    picIdExact: !!pic
+                };
+            }
+
+            async function kuwoMusicList(target) {
+                try {
+                    const d = await fetchOne(u => u, target, 9000);
+                    if (d && (d.code === 200 || d.code === undefined)) return d;
+                } catch (_) {}
+                return await importProxyJson(target, 16000, IMPORT_KW_REF, IMPORT_KW_ORG);
+            }
+
+            async function fetchKuwoBodian(id, opts) {
+                const src = String((opts && opts.source) || '5');
+                const info = { title: '', cover: '', songs: [] };
+                const loadInfo = source => importProxyJson(
+                    'https://bd-api.kuwo.cn/api/service/playlist/info/' +
+                    encodeURIComponent(id) + '?source=' + encodeURIComponent(source),
+                    16000, IMPORT_KW_REF, IMPORT_KW_ORG);
+                let useSrc = src;
+                let head = await loadInfo(src);
+                let d = head && head.data;
+                if ((!d || !d.name || Number(d.musicCount) <= 1) && src !== '5') {
+                    useSrc = '5';
+                    head = await loadInfo('5');
+                    d = head && head.data;
+                }
+                if (!d || !d.name) throw new Error('歌单不存在或未公开');
+                info.title = String(d.name || '').trim();
+                info.cover = String(d.pic || '');
+                const total = Number(d.musicCount) || 0;
+                info.expected = total;
+                const seen = new Set();
+                let fetched = 0;
+                for (let pn = 1; pn <= 10; pn++) {
+                    const url = 'https://bd-api.kuwo.cn/api/service/playlist/' +
+                        encodeURIComponent(id) + '/musicList?source=' +
+                        encodeURIComponent(useSrc) + '&pn=' + pn + '&rn=200';
+                    const page = await kuwoMusicList(url);
+                    const list = (page && page.data && page.data.list) || [];
+                    if (!list.length) break;
+                    fetched += list.length;
+                    list.forEach(row => {
+                        const song = kuwoSongFromRow(row);
+                        if (!song || seen.has(song.kwid)) return;
+                        seen.add(song.kwid);
+                        info.songs.push(song);
+                    });
+                    if (total > 0 && fetched >= total) break;
+                    if (info.songs.length >= IMPORT_MAX_SONGS) break;
+                }
+                if (!info.songs.length) throw new Error('歌单为空或不可见');
+                return info;
+            }
+
+            async function fetchKuwoNpl(id) {
+                const info = { title: '', cover: '', songs: [] };
+                const base = 'https://nplserver.kuwo.cn/pl.svc?op=getlistinfo&pid=' +
+                    encodeURIComponent(id) +
+                    '&pn=0&rn=100&encode=utf8&keyset=pl2012&identity=kuwo' +
+                    '&pcmp4=1&vipver=MUSIC_9.1.0.0_W1&newver=1';
+                const d = await importProxyJson(base, 16000);
+                if (!d) throw new Error('歌单读取失败');
+                info.title = String(d.title || '').trim();
+                // 酷我旧接口对不存在的 pid 会返回一条“占位”曲目（歌名 Original），
+                // 歌单名为空。宁可报错，也不要把这条假数据导进用户歌单。
+                if (!info.title) throw new Error('歌单不存在或未公开');
+                info.expected = Number(d.total) || 0;
+                info.cover = String(d.pic || '');
+                const total = Number(d.total) || 0;
+                (d.musiclist || []).forEach(row => {
+                    const song = kuwoSongFromRow(row);
+                    if (song) info.songs.push(song);
+                });
+                for (let pn = 1; pn <= 40 && total > info.songs.length; pn++) {
+                    if (info.songs.length >= IMPORT_MAX_SONGS) break;
+                    const page = await importProxyJson(
+                        base.replace('&pn=0&', '&pn=' + pn + '&'), 16000);
+                    const list = (page && page.musiclist) || [];
+                    if (!list.length) break;
+                    list.forEach(row => {
+                        const song = kuwoSongFromRow(row);
+                        if (song) info.songs.push(song);
+                    });
+                }
+                if (!info.songs.length) throw new Error('歌单为空或不可见');
+                return info;
+            }
+
+            async function fetchKuwoPlaylist(id, opts) {
+                // 波点歌单（h5app 分享出来的）和旧版歌单是两套 id，
+                // 拿波点 id 去查旧接口会命中一条同号的无关单曲，不能回退。
+                const order = (opts && opts.bodian) ? ['bd'] : ['npl', 'bd'];
+                let lastErr = null;
+                for (const mode of order) {
+                    try {
+                        const info = mode === 'bd'
+                            ? await fetchKuwoBodian(id, opts)
+                            : await fetchKuwoNpl(id);
+                        if (info && info.songs.length) return info;
+                    } catch (e) {
+                        lastErr = e;
+                    }
+                }
+                if (opts && opts.bodian) {
+                    throw new Error('酷我歌单读取失败，可能未公开或仅限 App 内查看');
+                }
+                throw lastErr || new Error('歌单为空或不可见');
+            }
+
+            const NETEASE_PL_BASES = [
+                'https://interface.music.163.com/api',
+                'https://music.163.com/api'
+            ];
+
+            async function fetchNeteasePlaylistViaMeting(id, cause) {
+                const pair = await Promise.all([
+                    fetchOne(u => u,
+                        METING_BASE + '?type=playlist&server=netease&id=' +
+                        encodeURIComponent(id), 16000).catch(() => null),
+                    importProxyGet('https://music.163.com/m/playlist?id=' +
+                        encodeURIComponent(id), 12000).catch(() => '')
+                ]);
+                const list = Array.isArray(pair[0]) ? pair[0] : [];
+                if (!list.length) {
+                    if (cause && cause.message === '网易云风控拦截') {
+                        throw new Error('网易云风控拦截，请稍后重试');
+                    }
+                    throw new Error('歌单读取失败，可能未公开');
+                }
+                const songs = [];
+                const seen = new Set();
+                list.forEach(x => {
+                    const m = /[?&]id=(\d+)/.exec(String((x && x.url) || ''));
+                    const sid = m ? m[1] : '';
+                    const name = String((x && x.name) || '').trim();
+                    if (!sid || !name || seen.has(sid)) return;
+                    seen.add(sid);
+                    const arts = String((x && x.artist) || '').split('/')
+                        .map(s => s.trim()).filter(Boolean);
+                    const pm = /[?&]id=([\w]+)/.exec(String((x && x.pic) || ''));
+                    const picId = pm ? pm[1] : '';
+                    songs.push({
+                        id: sid,
+                        name: name,
+                        artistsname: arts.join('/') || '未知歌手',
+                        artists: arts.map(n => ({ name: n })),
+                        album: '',
+                        albumId: '',
+                        duration: 0,
+                        picurl: picId
+                            ? METING_BASE + '?server=netease&type=pic&id=' +
+                                picId + '&param=300y300'
+                            : '',
+                        picId: picId,
+                        picIdExact: false
+                    });
+                });
+                if (!songs.length) throw new Error('歌单读取失败，可能未公开');
+                const tm = /<title>([^<]*)<\/title>/i.exec(String(pair[1] || ''));
+                const title = tm
+                    ? tm[1].replace(/\s*-\s*歌单\s*-\s*网易云音乐\s*$/, '').trim()
+                    : '';
+                return {
+                    title: title || '网易云歌单',
+                    cover: songs[0].picurl || '',
+                    songs: songs,
+                    expected: list.length
+                };
+            }
+
+            async function fetchNeteasePlaylist(id) {
+                const info = { title: '', cover: '', songs: [] };
+                let pl = null;
+                let base = '';
+                let lastErr = null;
+                for (const b of NETEASE_PL_BASES) {
+                    try {
+                        const d = await importProxyJson(
+                            b + '/v6/playlist/detail?id=' +
+                            encodeURIComponent(id) + '&n=1000&s=0', 16000);
+                        if (d && d.playlist) {
+                            pl = d.playlist;
+                            base = b;
+                            break;
+                        }
+                        lastErr = new Error(
+                            d && d.code === -462 ? '网易云风控拦截' : '歌单读取失败');
+                    } catch (e) {
+                        lastErr = e;
+                    }
+                }
+                if (!pl) return await fetchNeteasePlaylistViaMeting(id, lastErr);
+                info.title = String(pl.name || '').trim();
+                info.cover = String(pl.coverImgUrl || '');
+                info.expected = Number(pl.trackCount) || 0;
+                const pick = (t) => {
+                    const arts = t.ar || t.artists || [];
+                    const al = t.al || t.album || {};
+                    return {
+                        id: t.id,
+                        name: String(t.name || '').trim(),
+                        artistsname: arts.map(a => String((a && a.name) || '').trim())
+                            .filter(Boolean).join('/') || '未知歌手',
+                        artists: arts.map(a => ({ name: String((a && a.name) || '').trim() }))
+                            .filter(a => a.name),
+                        album: String(al.name || ''),
+                        albumId: al.id != null ? String(al.id) : '',
+                        duration: Number(t.dt || t.duration) || 0,
+                        picurl: String(al.picUrl || ''),
+                        picId: '',
+                        picIdExact: !!al.picUrl
+                    };
+                };
+                (pl.tracks || []).forEach(t => {
+                    if (!t || !t.id || !t.name) return;
+                    info.songs.push(pick(t));
+                });
+                const ids = (pl.trackIds || [])
+                    .map(x => Number(x && x.id))
+                    .filter(x => x > 0);
+                if (ids.length > info.songs.length) {
+                    const got = new Set(info.songs.map(s => String(s.id)));
+                    const rest = ids.filter(x => !got.has(String(x)));
+                    for (let i = 0; i < rest.length; i += 200) {
+                        if (info.songs.length >= IMPORT_MAX_SONGS) break;
+                        try {
+                            const d = await importProxyJson(
+                                base + '/song/detail?ids=[' +
+                                rest.slice(i, i + 200).join(',') + ']', 16000);
+                            (d && d.songs || []).forEach(t => {
+                                if (t && t.id && t.name) info.songs.push(pick(t));
+                            });
+                        } catch (_) {}
+                    }
+                }
+                if (info.songs.length > IMPORT_MAX_SONGS) {
+                    info.songs = info.songs.slice(0, IMPORT_MAX_SONGS);
+                }
+                if (!info.songs.length) throw new Error('歌单为空或不可见');
+                return info;
+            }
+
+            function importCandScore(x, meta) {
+                const want = normName(meta.name);
+                const n = normName(x && x.name);
+                if (!n) return -1;
+                let sc = 0;
+                if (n === want) sc += 100;
+                else if (n.indexOf(want) >= 0 || want.indexOf(n) >= 0) sc += 45;
+                else return -1;
+                const wantArts = artistTokensOf(meta.artist);
+                const arts = artistTokensOf(x.artistsname || '');
+                if (wantArts.length && arts.length && arts.some(a => wantArts.some(
+                    b => a === b || a.indexOf(b) >= 0 || b.indexOf(a) >= 0))) {
+                    sc += 40;
+                }
+                const qBad = VERSION_BAD.test(String(meta.name || ''));
+                if (VERSION_BAD.test(String(x.name || '')) && !qBad) sc -= 60;
+                const wantSec = Number(meta.sec) || 0;
+                const sec = (Number(x.duration) || 0) / 1000;
+                if (wantSec > 0 && sec > 0) {
+                    const diff = Math.abs(sec - wantSec);
+                    if (diff > 15) sc -= 55;
+                    else if (diff <= 4) sc += 15;
+                }
+                return sc;
+            }
+
+            function qqNeteaseBest(rows, meta) {
+                let best = null;
+                let bestSc = 0;
+                (rows || []).forEach(x => {
+                    const sc = importCandScore(x, meta);
+                    if (sc > bestSc) {
+                        bestSc = sc;
+                        best = x;
+                    }
+                });
+                return bestSc > 0 ? best : null;
+            }
+
+            async function matchImportSong(meta) {
+                const sec = Number(meta.sec) || 0;
+                const [hit, neRows] = await Promise.all([
+                    kuwoResolveMid({
+                        name: meta.name,
+                        artist: meta.artist,
+                        sec: sec
+                    }).catch(() => null),
+                    neteaseSearchSongs(
+                        (meta.name + ' ' + meta.artist).trim(), 12).catch(() => null)
+                ]);
+                let kuwoSong = null;
+                let kuwoSc = -1;
+                if (hit && hit.mid && hit.sc > 0) {
+                    const dur = Number(hit.sec) || 0;
+                    if (!(sec > 0 && dur > 0 && Math.abs(dur - sec) > 12)) {
+                        const song = await kuwoSongByMid(hit.mid).catch(() => null);
+                        if (song && song.name) {
+                            kuwoSong = song;
+                            kuwoSc = Number(hit.sc) || 0;
+                        }
+                    }
+                }
+                const neBest = neRows && neRows.length
+                    ? qqNeteaseBest(neRows, meta) : null;
+                if (kuwoSong) {
+                    if (!neBest) return kuwoSong;
+                    return kuwoSc >= importCandScore(neBest, meta) ? kuwoSong : neBest;
+                }
+                return neBest;
+            }
+
+            async function mapWithLimit(items, limit, task, onProgress) {
+                const out = new Array(items.length).fill(null);
+                let next = 0;
+                let done = 0;
+                const run = async () => {
+                    while (true) {
+                        const i = next++;
+                        if (i >= items.length) return;
+                        try {
+                            out[i] = await task(items[i], i);
+                        } catch (_) {
+                            out[i] = null;
+                        }
+                        done++;
+                        if (onProgress) onProgress(done, items.length);
+                    }
+                };
+                const n = Math.max(1, Math.min(limit || 3, items.length));
+                await Promise.all(Array.from({ length: n }, run));
+                return out;
+            }
+
+            function dedupeSongs(arr) {
+                const seen = new Set();
+                const out = [];
+                (arr || []).forEach(song => {
+                    const key = String((song && song.id) || '');
+                    if (!key || seen.has(key)) return;
+                    seen.add(key);
+                    out.push(song);
+                });
+                return out;
+            }
+
+            async function importPlaylistFromLink(raw) {
+                if (importPlaylistBusy) {
+                    showToast('正在导入，请稍候');
+                    return;
+                }
+                importPlaylistBusy = true;
+                showImportProgress('正在读取歌单', 0, 0);
+                try {
+                    const link = await resolveImportLink(raw);
+                    if (!link) throw new Error('没认出歌单链接');
+                    const platformName = IMPORT_PLATFORM_NAMES[link.platform] || '歌单';
+                    let info;
+                    if (link.platform === 'qq') {
+                        info = await fetchQQPlaylist(link.id);
+                    } else if (link.platform === 'kugou') {
+                        info = await fetchKugouPlaylist(link.id);
+                    } else if (link.platform === 'kuwo') {
+                        info = await fetchKuwoPlaylist(link.id, link);
+                    } else {
+                        info = await fetchNeteasePlaylist(link.id);
+                    }
+                    if (info.songs.length > IMPORT_MAX_SONGS) {
+                        info.songs = info.songs.slice(0, IMPORT_MAX_SONGS);
+                    }
+                    let list = [];
+                    let miss = 0;
+                    if (link.platform === 'kuwo' || link.platform === 'netease') {
+                        list = dedupeSongs(info.songs);
+                        miss = info.songs.length - list.length;
+                        showImportProgress('正在整理歌曲', info.songs.length, info.songs.length);
+                    } else {
+                        const matched = await mapWithLimit(info.songs, 4,
+                            meta => matchImportSong(meta),
+                            (done, total) => showImportProgress('正在匹配歌曲', done, total));
+                        list = dedupeSongs(matched);
+                        miss = info.songs.length - list.length;
+                    }
+                    if (!list.length) throw new Error('没有匹配到可播放的歌曲');
+                    const pl = createPlaylist(info.title || (platformName + '歌单'));
+                    pl.songs = list;
+                    persistPlaylists();
+                    renderMinePage();
+                    hideImportProgress();
+                    const expected = Math.max(Number(info.expected) || 0, info.songs.length);
+                    const unavailable = Math.max(0, expected - info.songs.length);
+                    showToast('已导入 ' + list.length + ' 首到「' + pl.name + '」' +
+                        (unavailable > 0 ? '，' + unavailable + ' 首暂不可播' : '') +
+                        (miss > 0 ? '，' + miss + ' 首未找到' : ''), 3600);
+                } catch (e) {
+                    hideImportProgress();
+                    showToast('导入失败：' + ((e && e.message) || '网络异常'), 3200);
+                } finally {
+                    importPlaylistBusy = false;
+                }
+            }
+
             function startCreatePlaylist() {
-                openNameDialog('新建歌单', '', (val) => {
+                openNameDialog('新建 / 导入歌单', '', (val) => {
+                    if (importLinkDirect(val)) { importPlaylistFromLink(val); return; }
                     const shareCodes = extractShareCodes(val);
                     if (shareCodes.length) { importShareCodes(shareCodes); return; }
                     const segs = parsePlaylistShare(val);
@@ -6557,7 +7370,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             }
             function openNameDialog(title, initial, cb) {
                 const label = esc(title || '新建歌单');
-                const isCreate = /新建/.test(String(title || ''));
+                const isCreate = /新建|导入/.test(String(title || ''));
                 const maxLen = isCreate ? 4096 : 15;
                 if (!window.mdui || !window.mdui.prompt) {
                     const raw = window.prompt(title || '新建歌单', initial || '');
@@ -6832,6 +7645,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (plHeaderSearch) plHeaderSearch.classList.remove('active');
                 playlistPage.classList.add('active');
                 if (fabStack) fabStack.classList.remove('show');
+                if (plScroll) plScroll.scrollTop = 0;
                 adoptPlaylistQueue(pl);
                 syncHeaderHeight();
                 syncFavPageOffset();
@@ -7251,7 +8065,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (!albumList || !albumCtx) return;
                 const allSongs = albumCtx.songs || [];
                 if (!allSongs.length) {
-                    albumList.innerHTML = '<div class="loading"><span>暂无歌曲</span></div>';
+                    albumList.innerHTML = emptyStateHtml('fas fa-music', '暂无歌曲');
                     renderAlbumSub(0);
                     return;
                 }
@@ -7262,7 +8076,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     return hay.indexOf(kw) >= 0;
                 }) : allSongs;
                 if (!songs.length) {
-                    albumList.innerHTML = '<div class="loading"><span>没有找到匹配的歌曲</span></div>';
+                    albumList.innerHTML = emptySearchHtml(albumKeyword);
                     renderAlbumSub(0);
                     return;
                 }
@@ -7436,7 +8250,9 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         || (s.artistsname || '').toLowerCase().includes(kw));
                 renderArtistSub(shown.length);
                 if (!shown.length) {
-                    showArtistState(kw ? '没找到匹配的歌曲' : '暂无歌曲', !!kw);
+                    artistList.innerHTML = kw
+                        ? emptySearchHtml(artistKeyword)
+                        : emptyStateHtml('fas fa-microphone', '暂无歌曲');
                     return;
                 }
                 artistList.innerHTML = shown.map((song, idx) => {
@@ -7777,13 +8593,15 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 artistSearchToggle.addEventListener('click', (e) => {
                     e.stopPropagation();
                     if (artistHeaderSearch.classList.contains('active')) {
-                        artistHeaderSearch.classList.remove('active');
-                        artistSearchClear.classList.remove('show');
-                        artistSearchInput.blur();
-                    } else {
-                        artistHeaderSearch.classList.add('active');
-                        artistSearchInput.focus();
+                        collapseHeaderSearch(artistHeaderSearch, artistSearchInput,
+                            artistSearchClear, () => {
+                                artistKeyword = '';
+                                renderArtistSongs();
+                            });
+                        return;
                     }
+                    artistHeaderSearch.classList.add('active');
+                    artistSearchInput.focus();
                     syncHeaderHeight();
                 });
             }
@@ -7864,13 +8682,15 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 albumSearchToggle.addEventListener('click', (e) => {
                     e.stopPropagation();
                     if (albumHeaderSearch.classList.contains('active')) {
-                        albumHeaderSearch.classList.remove('active');
-                        albumSearchClear.classList.remove('show');
-                        albumSearchInput.blur();
-                    } else {
-                        albumHeaderSearch.classList.add('active');
-                        albumSearchInput.focus();
+                        collapseHeaderSearch(albumHeaderSearch, albumSearchInput,
+                            albumSearchClear, () => {
+                                albumKeyword = '';
+                                renderAlbumSongs();
+                            });
+                        return;
                     }
+                    albumHeaderSearch.classList.add('active');
+                    albumSearchInput.focus();
                     syncHeaderHeight();
                 });
             }
@@ -8194,13 +9014,31 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
                 syncFavPageOffset();
             }
+            function emptyStateHtml(icon, html) {
+                return '<div class="fav-empty"><i class="' + icon + '"></i><p>'
+                    + html + '</p></div>';
+            }
+
+            function emptySearchHtml(kw) {
+                return emptyStateHtml('fas fa-search', '没有找到「'
+                    + esc(String(kw || '').trim()) + '」<br>换个关键词试试');
+            }
+
             function renderPlaylistDetail() {
                 if (!openedPlaylistId) return;
                 const pl = getPlaylist(openedPlaylistId);
                 if (!pl) { closePlaylistPage(); return; }
                 plPageTitle.textContent = pl.name;
                 plSummaryName.textContent = pl.name;
-                plSummarySub.textContent = pl.songs.length + ' 首';
+                const kw = plKeyword.trim().toLowerCase();
+                const shown = kw
+                    ? pl.songs.filter(s =>
+                        String(s.name || '').toLowerCase().includes(kw) ||
+                        String(s.artistsname || '').toLowerCase().includes(kw))
+                    : pl.songs;
+                plSummarySub.textContent = kw
+                    ? `${shown.length} / ${pl.songs.length} 首`
+                    : pl.songs.length + ' 首';
                 const cover = playlistCover(pl);
                 if (cover) {
                     plSummaryCover.querySelector('img').src = cover;
@@ -8209,16 +9047,10 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     plSummaryCover.querySelector('img').removeAttribute('src');
                     plSummaryCover.classList.add('no-cover');
                 }
-                const kw = plKeyword.trim().toLowerCase();
-                const shown = kw
-                    ? pl.songs.filter(s =>
-                        String(s.name || '').toLowerCase().includes(kw) ||
-                        String(s.artistsname || '').toLowerCase().includes(kw))
-                    : pl.songs;
                 if (shown.length === 0) {
-                    plList.innerHTML = '<div class="mine-empty">'
-                        + (kw ? '没找到匹配的歌曲' : '歌单还是空的，去搜索页加几首吧')
-                        + '</div>';
+                    plList.innerHTML = kw
+                        ? emptySearchHtml(plKeyword)
+                        : emptyStateHtml('fas fa-music', '歌单还是空的，去搜索页加几首吧');
                     syncScrollOverscrollPad(plScroll);
                     return;
                 }
@@ -8281,6 +9113,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (historyHeaderSearch) historyHeaderSearch.classList.remove('active');
                 historyPage.classList.add('active');
                 if (fabStack) fabStack.classList.remove('show');
+                if (historyScroll) historyScroll.scrollTop = 0;
                 adoptHistoryQueue();
                 renderPlayHistoryPage();
                 syncHeaderHeight();
@@ -8357,17 +9190,14 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         : playHistory.length + ' 首';
                 }
                 if (playHistory.length === 0) {
-                    historyPageList.innerHTML = `
-                        <div class="mine-empty">
-                            还没有播放记录<br>随便听一首就有了
-                        </div>`;
+                    historyPageList.innerHTML = emptyStateHtml(
+                        'fas fa-history', '还没有播放记录<br>随便听一首就有了');
                     syncScrollOverscrollPad(historyScroll);
                     return;
                 }
                 const shown = historyFiltered();
                 if (shown.length === 0) {
-                    historyPageList.innerHTML =
-                        '<div class="mine-empty">没找到匹配的歌曲</div>';
+                    historyPageList.innerHTML = emptySearchHtml(historyKeyword);
                     syncScrollOverscrollPad(historyScroll);
                     return;
                 }
@@ -8672,13 +9502,15 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 historySearchToggle.addEventListener('click', (e) => {
                     e.stopPropagation();
                     if (historyHeaderSearch.classList.contains('active')) {
-                        historyHeaderSearch.classList.remove('active');
-                        historySearchClear.classList.remove('show');
-                        historySearchInput.blur();
-                    } else {
-                        historyHeaderSearch.classList.add('active');
-                        historySearchInput.focus();
+                        collapseHeaderSearch(historyHeaderSearch, historySearchInput,
+                            historySearchClear, () => {
+                                historyKeyword = '';
+                                renderPlayHistoryPage();
+                            });
+                        return;
                     }
+                    historyHeaderSearch.classList.add('active');
+                    historySearchInput.focus();
                     syncHeaderHeight();
                 });
             }
@@ -8979,11 +9811,10 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 syncHeaderHeight();
             }
             function closePlSearch() {
-                if (!plHeaderSearch) return;
-                plHeaderSearch.classList.remove('active');
-                if (plSearchClear) plSearchClear.classList.remove('show');
-                if (plSearchInput) plSearchInput.blur();
-                syncHeaderHeight();
+                collapseHeaderSearch(plHeaderSearch, plSearchInput, plSearchClear, () => {
+                    plKeyword = '';
+                    renderPlaylistDetail();
+                });
             }
             if (plSearchToggle) {
                 plSearchToggle.addEventListener('click', (e) => {
@@ -10354,7 +11185,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             }
             function renderMvResults(list) {
                 if (!list || !list.length) {
-                    setResultsContent('<div class="result-item" style="text-align:center;color:var(--text-secondary);">没有找到相关 MV</div>');
+                    setResultsContent(emptyStateHtml('fas fa-search', '没有找到相关 MV'));
                     syncScrollOverscrollPad(resultsList);
                     return;
                 }
@@ -10437,7 +11268,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             }
             function renderSongResults(songs) {
                 if (!songs || !songs.length) {
-                    setResultsContent('<div class="result-item" style="text-align:center;color:var(--text-secondary);">没有找到相关歌曲</div>');
+                    setResultsContent(emptyStateHtml('fas fa-search', '没有找到相关歌曲'));
                     syncScrollOverscrollPad(resultsList);
                     return;
                 }
@@ -11440,12 +12271,29 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     picIdExact: !!picId
                 };
             }
-            const NETEASE_SEARCH_FULL = 'https://music.163.com/api/search/get?s=';
+            const NETEASE_SEARCH_BASES = [
+                'https://interface.music.163.com/api',
+                'https://music.163.com/api'
+            ];
             async function neteaseSearchSongs(q, limit) {
-                const url = NETEASE_SEARCH_FULL + encodeURIComponent(q) +
-                    '&type=1&limit=' + (limit || 50);
-                const d = await fetchDirectOrProxy(url, { timeout: RACE_TIMEOUT });
-                const list = (d && d.result && d.result.songs) || [];
+                let list = [];
+                let lastErr = null;
+                for (const base of NETEASE_SEARCH_BASES) {
+                    try {
+                        const d = await fetchDirectOrProxy(
+                            base + '/search/get?s=' + encodeURIComponent(q) +
+                            '&type=1&limit=' + (limit || 50),
+                            { timeout: RACE_TIMEOUT });
+                        if (d && d.code === -462) {
+                            lastErr = new Error('网易云风控拦截');
+                            continue;
+                        }
+                        list = (d && d.result && d.result.songs) || [];
+                        if (list.length) break;
+                    } catch (e) {
+                        lastErr = e;
+                    }
+                }
                 const rows = list.map(s => {
                     const arts = normalizeArtistList(s.artists, '');
                     return {
@@ -15524,6 +16372,16 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     scope.style.setProperty(name, val);
                 }
             }
+            function collapseHeaderSearch(header, input, clear, reset) {
+                if (header) header.classList.remove('active');
+                if (input) {
+                    input.value = '';
+                    input.blur();
+                }
+                if (clear) clear.classList.remove('show');
+                if (reset) reset();
+                syncHeaderHeight();
+            }
             function syncHeaderHeight() {
                 bindHeaderResize();
                 const reads = [];
@@ -16141,7 +16999,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             favSearchInput.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
                     e.stopPropagation();
-                    clearFavSearch();
                     closeFavSearch();
                 }
             });
@@ -16155,15 +17012,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 syncHeaderHeight();
             }
             function closeFavSearch() {
-                favHeaderSearch.classList.remove('active');
-                favSearchClear.classList.remove('show');
-                favSearchInput.blur();
-                syncHeaderHeight();
-            }
-            function clearFavSearch() {
-                favSearchInput.value = '';
-                favSearchClear.classList.remove('show');
-                renderFavorites('');
+                collapseHeaderSearch(favHeaderSearch, favSearchInput, favSearchClear,
+                    () => renderFavorites(''));
             }
             let lyricsDownTarget = null;
             function isTouchDragging(el) {
