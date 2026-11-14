@@ -13442,16 +13442,53 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     KUWO_LRC_API + encodeURIComponent(mid),
                     { timeout: 7000, directFirst: true });
                 const list = (d && d.data && d.data.lrclist) || [];
-                const rows = [];
+                const groups = [];
                 list.forEach(x => {
                     const t = Number(x && x.time);
                     const text = String((x && x.lineLyric) || '').trim();
                     if (!isFinite(t) || !text) return;
-                    rows.push({ time: t, text: text });
+                    const last = groups[groups.length - 1];
+                    if (last && Math.abs(last.time - t) < 0.02) last.lines.push(text);
+                    else groups.push({ time: t, lines: [text] });
                 });
-                rows.sort((a, b) => a.time - b.time);
+                groups.sort((a, b) => a.time - b.time);
+                const hanShare = (s) => {
+                    const arr = Array.from(s);
+                    if (!arr.length) return 0;
+                    return arr.filter(c => /[\u4e00-\u9fff]/.test(c)).length / arr.length;
+                };
+                const isZh = (s) => !/[\u3040-\u30ff\uac00-\ud7af]/.test(s)
+                    && hanShare(s) >= 0.3;
+                const rows = [];
+                const trans = [];
+                const addRow = (time, text) => {
+                    rows.push({ time: time, text: text });
+                    trans.push('');
+                };
+                groups.forEach(g => {
+                    const lines = g.lines;
+                    if (lines.length === 1) {
+                        const s = lines[0];
+                        const prev = rows[rows.length - 1];
+                        if (isZh(s) && prev && !isZh(prev.text)) trans[rows.length - 1] = s;
+                        else addRow(g.time, s);
+                        return;
+                    }
+                    const a = lines[0], b = lines[1];
+                    const az = isZh(a), bz = isZh(b);
+                    if (!az && bz) {
+                        addRow(g.time, a);
+                        trans[rows.length - 1] = b;
+                    } else if (az && !bz) {
+                        const prev = rows[rows.length - 1];
+                        if (prev && !isZh(prev.text)) trans[rows.length - 1] = a;
+                        addRow(g.time, b);
+                    } else {
+                        addRow(g.time, a);
+                    }
+                });
                 if (!rows.length) throw new Error('酷我无歌词');
-                return { rows: rows, trans: [], timed: true };
+                return { rows: rows, trans: trans, timed: true };
             }
             function pickNeteaseLrcRow(rows, name, artist, expectSec) {
                 const wantName = normName(name);
@@ -13630,7 +13667,20 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
                 return await neteaseLrcFallbackByMeta(id);
             }
-            async function neteaseLrcFallbackByMeta(id) {
+            const neteaseMetaMemo = new Map();
+            function neteaseLrcFallbackByMeta(id) {
+                const key = String(id);
+                const hit = neteaseMetaMemo.get(key);
+                if (hit) return hit;
+                const p = fetchNeteaseByMeta(id);
+                neteaseMetaMemo.set(key, p);
+                const clear = () => {
+                    if (neteaseMetaMemo.get(key) === p) neteaseMetaMemo.delete(key);
+                };
+                p.then(clear, clear);
+                return p;
+            }
+            async function fetchNeteaseByMeta(id) {
                 const song = (currentSong && String(currentSong.id) === String(id))
                     ? currentSong : null;
                 const name = song && song.name;
@@ -13652,7 +13702,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     const hit = pickNeteaseLrcRow(rows, name, artist, expectSec);
                     if (!hit) continue;
                     if (canVerify && !lyricHitAcceptable(hit, artist, expectSec)) continue;
-                    return await fetchNeteaseLrc(hit.id);
+                    return await fetchNeteaseBest(hit.id);
                 }
                 throw new Error('网易无匹配歌词');
             }
@@ -13891,6 +13941,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     };
                     const jobs = [];
                     if (key.indexOf('kw_') === 0) {
+                        jobs.push({ pri: 5, run: () => neteaseLrcFallbackByMeta(id), delay: 200 });
                         jobs.push({ pri: 4, run: () => thirdPartyLrcOf(id) });
                         jobs.push({ pri: 1, run: () => kuwoLrcOf(id), delay: 900 });
                     } else if (/^\d+$/.test(key)) {
