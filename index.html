@@ -11384,7 +11384,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         const [idHit, kwHit, keywordList] = await Promise.all([
                             idQuery.kind === 'kuwo' ? null
                                 : withTimeoutOrNull(searchSongById(idQuery.id), 6000),
-                            withTimeoutOrNull(kuwoSongByMid(lookupMid, 2), 11000),
+                            withTimeoutOrNull(kuwoSongByMid(lookupMid, 3), 20000),
                             idQuery.kind === 'kuwo' ? []
                                 : withTimeoutOrNull(searchSongs(q), 8000)
                         ]);
@@ -11414,8 +11414,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     const emptyTip = idQuery
                         ? '未找到该 ID 对应的歌曲，请检查后重试'
                         : '搜索失败，请稍后再试';
-                    setResultsContent('<div class="result-item" style="text-align:center;color:var(--text-secondary);">' +
-                        emptyTip + '</div>');
+                    setResultsContent(emptyStateHtml('fas fa-search', emptyTip));
                     syncScrollOverscrollPad(resultsList);
                 }
             }
