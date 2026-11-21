@@ -13560,7 +13560,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     if (wantArts.length && arts.length) {
                         const hit = arts.some(a => wantArts.some(
                             b => a === b || a.indexOf(b) >= 0 || b.indexOf(a) >= 0));
-                        sc += hit ? 40 : -30;
+                        if (!hit) return;
+                        sc += 40;
                     }
                     if (VERSION_BAD.test(nm) && !qBad) sc -= 60;
                     const sec = Number(rawSec) || 0;
@@ -13710,6 +13711,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             function lyricHitAcceptable(hit, artist, expectSec) {
                 if (!hit) return false;
                 if (artistOverlap(hit.artistsname, artist)) return true;
+                if (artist && artistTokensOf(artist).length) return false;
                 const sec = (Number(hit.duration) || 0) / 1000;
                 if (expectSec > 0 && sec > 0) return Math.abs(sec - expectSec) <= 8;
                 return false;
@@ -13837,6 +13839,13 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         });
                 });
                 const cands = Array.from(byId.values())
+                    .filter(c => {
+                        const wantArts = artistTokensOf(meta.artist);
+                        if (!wantArts.length) return true;
+                        const got = artistTokensOf(c.row.artistsname);
+                        return !got.length || got.some(a => wantArts.some(
+                            b => a === b || a.indexOf(b) >= 0 || b.indexOf(a) >= 0));
+                    })
                     .sort((a, b) => b.sc - a.sc);
                 for (const c of cands.slice(0, 4)) {
                     try {
@@ -14121,9 +14130,9 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     };
                     const jobs = [];
                     if (key.indexOf('kw_') === 0) {
-                        jobs.push({ pri: 5, run: () => neteaseLrcFallbackByMeta(id), delay: 200 });
-                        jobs.push({ pri: 4, run: () => thirdPartyLrcOf(id) });
-                        jobs.push({ pri: 1, run: () => kuwoLrcOf(id), delay: 900 });
+                        jobs.push({ pri: 5, run: () => kuwoLrcOf(id) });
+                        jobs.push({ pri: 4, run: () => neteaseLrcFallbackByMeta(id), delay: 600 });
+                        jobs.push({ pri: 3, run: () => thirdPartyLrcOf(id), delay: 900 });
                     } else if (/^\d+$/.test(key)) {
                         const sameSong = currentSong && String(currentSong.id) === key;
                         const fromOther = sameSong &&
