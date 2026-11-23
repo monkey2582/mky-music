@@ -13517,26 +13517,16 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const s = String(id || '');
                 const song = (currentSong && String(currentSong.id) === s) ? currentSong : null;
                 const sec = (song && Number(song.duration)) ? Number(song.duration) / 1000 : 0;
-                const name = (song && song.name) || '';
-                const artists = (song && Array.isArray(song.artists))
-                    ? song.artists.map(a => a && a.name).filter(Boolean).join('/')
-                    : '';
-                const artist = (song && (song.artistsname || artists)) || '';
-                if (s.indexOf('kw_') === 0) {
-                    const tail = s.slice(3);
-                    const numeric = tail.replace(/^MUSIC_/, '');
-                    if (/^\d+$/.test(numeric)) {
-                        return { name: name, artist: artist, sec: sec, mid: numeric };
-                    }
-                    const p = decodeURIComponent(tail).split('|');
-                    return {
-                        name: p[0] || '',
-                        artist: p[1] || '',
-                        sec: sec,
-                        mid: String((song && song.kwid) || '').replace(/^MUSIC_/, '')
-                    };
+                if (s.indexOf('kw_') === 0 && !/^\d+$/.test(s.slice(3))) {
+                    const p = decodeURIComponent(s.slice(3)).split('|');
+                    return { name: p[0] || '', artist: p[1] || '', sec: sec };
                 }
-                return { name: name, artist: artist, sec: sec, mid: '' };
+                return {
+                    name: (song && song.name) || '',
+                    artist: (song && (song.artistsname ||
+                        (song.artists || []).map(a => a.name).join('/'))) || '',
+                    sec: sec
+                };
             }
             async function kuwoResolveMid(meta, opts) {
                 const cleanOnly = !!(opts && opts.cleanOnly);
@@ -13560,8 +13550,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     if (wantArts.length && arts.length) {
                         const hit = arts.some(a => wantArts.some(
                             b => a === b || a.indexOf(b) >= 0 || b.indexOf(a) >= 0));
-                        if (!hit) return;
-                        sc += 40;
+                        sc += hit ? 40 : -30;
                     }
                     if (VERSION_BAD.test(nm) && !qBad) sc -= 60;
                     const sec = Number(rawSec) || 0;
@@ -13603,9 +13592,9 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             }
             async function kuwoLrcOf(id) {
                 const meta = kuwoMetaOf(id);
-                if (!meta.name && !meta.mid) throw new Error('缺少歌名');
+                if (!meta.name) throw new Error('缺少歌名');
                 const key = normName(meta.name) + '|' + normName(meta.artist);
-                let mid = meta.mid || kuwoIdMap.get(key);
+                let mid = kuwoIdMap.get(key);
                 if (!mid) {
                     const hit = await kuwoResolveMid(meta);
                     if (hit) {
@@ -13711,7 +13700,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             function lyricHitAcceptable(hit, artist, expectSec) {
                 if (!hit) return false;
                 if (artistOverlap(hit.artistsname, artist)) return true;
-                if (artist && artistTokensOf(artist).length) return false;
                 const sec = (Number(hit.duration) || 0) / 1000;
                 if (expectSec > 0 && sec > 0) return Math.abs(sec - expectSec) <= 8;
                 return false;
@@ -13839,13 +13827,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         });
                 });
                 const cands = Array.from(byId.values())
-                    .filter(c => {
-                        const wantArts = artistTokensOf(meta.artist);
-                        if (!wantArts.length) return true;
-                        const got = artistTokensOf(c.row.artistsname);
-                        return !got.length || got.some(a => wantArts.some(
-                            b => a === b || a.indexOf(b) >= 0 || b.indexOf(a) >= 0));
-                    })
                     .sort((a, b) => b.sc - a.sc);
                 for (const c of cands.slice(0, 4)) {
                     try {
@@ -14130,9 +14111,9 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     };
                     const jobs = [];
                     if (key.indexOf('kw_') === 0) {
-                        jobs.push({ pri: 5, run: () => kuwoLrcOf(id) });
-                        jobs.push({ pri: 4, run: () => neteaseLrcFallbackByMeta(id), delay: 600 });
-                        jobs.push({ pri: 3, run: () => thirdPartyLrcOf(id), delay: 900 });
+                        jobs.push({ pri: 5, run: () => neteaseLrcFallbackByMeta(id), delay: 200 });
+                        jobs.push({ pri: 4, run: () => thirdPartyLrcOf(id) });
+                        jobs.push({ pri: 1, run: () => kuwoLrcOf(id), delay: 900 });
                     } else if (/^\d+$/.test(key)) {
                         const sameSong = currentSong && String(currentSong.id) === key;
                         const fromOther = sameSong &&
