@@ -361,7 +361,6 @@
 .rate-reset:hover { background:var(--surface-hover-strong); }
 .lc-btn.lc-play:hover { background:#f0346f; }
 }
-
 .mdui-dialog { z-index:6000;background-color:var(--popover-dialog);color:var(--text-primary);border:1px solid var(--border-popover);border-radius:20px;box-shadow:var(--shadow-popover),var(--inset-highlight);max-width:360px; }
 .mdui-dialog-title { font-size:16px;font-weight:600;line-height:1.45;padding:22px 22px 6px;color:var(--text-primary); }
 .mdui-dialog-content { padding:0 22px 6px;font-size:14px;line-height:1.6;color:var(--text-secondary); }
@@ -668,7 +667,6 @@ body.has-mini-player .main-content { padding-bottom:calc(var(--tab-height) + env
   .mv-related { height:auto;max-height:none;min-height:0;align-self:stretch;overflow:hidden; }
   .mv-related-list { flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain; }
 }
-
 #history-page .fav-header { flex-shrink:0;padding:14px 16px; }
 #history-page .fav-scroll { padding-top:calc(var(--fav-header-h, 58px) + 8px);position:relative;z-index:1; }
 #history-page .pl-summary { padding:2px 16px 10px;gap:12px; }
@@ -858,9 +856,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
 @media (prefers-reduced-motion:reduce) { .album-cover-wrap::before, .album-cover-peek::before { animation:none; } }
 .album-cover-wrap::after, .album-cover-peek::after { content:"";position:absolute;inset:0;border-radius:50%;background:none;z-index:1;opacity:var(--disc-veil, 1);transition:opacity 0.28s ease; }
 .album-cover { position:relative;z-index:2;width:100%;height:100%;aspect-ratio:1 / 1;flex-shrink:0;border-radius:50%;background:repeating-radial-gradient(circle at 50% 50%,rgba(255,255,255,0.020) 0px,rgba(255,255,255,0.020) 1px,rgba(0,0,0,0) 1px,rgba(0,0,0,0) 3px),radial-gradient(circle at 50% 50%,#262626 0%,#202020 34%,#181818 70%,#111 100%),radial-gradient(circle at 50% 50%,rgba(0,0,0,0) 54%,rgba(0,0,0,0.34) 100%);box-shadow:0 0 0 1px rgba(255,255,255,0.16),0 0 30px 6px rgba(255,255,255,0.14);display:flex;align-items:center;justify-content:center;overflow:hidden;transform:rotate(0deg);will-change:transform; }
-
 .album-cover-peek-disc { position:relative;z-index:2;width:100%;height:100%;aspect-ratio:1 / 1;flex-shrink:0;border-radius:50%;background:repeating-radial-gradient(circle at 50% 50%,rgba(255,255,255,0.020) 0px,rgba(255,255,255,0.020) 1px,rgba(0,0,0,0) 1px,rgba(0,0,0,0) 3px),radial-gradient(circle at 50% 50%,#262626 0%,#202020 34%,#181818 70%,#111 100%),radial-gradient(circle at 50% 50%,rgba(0,0,0,0) 54%,rgba(0,0,0,0.34) 100%);box-shadow:0 0 0 1px rgba(255,255,255,0.16),0 0 30px 6px rgba(255,255,255,0.14);display:flex;align-items:center;justify-content:center; }
-
 .album-cover-img { position:relative;z-index:2;width:68%;height:68%;aspect-ratio:1 / 1;object-fit:cover;object-position:center;display:block;border-radius:50%;box-shadow:0 0 0 2px rgba(0,0,0,0.55),0 0 18px rgba(0,0,0,0.45); }
 .album-cover-peek { --disc-veil:1;position:absolute;left:50%;top:50%;width:100%;height:100%;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;z-index:2;border-radius:50%;box-shadow:0 30px 60px -26px rgba(0,0,0,0.7);transform:translate(-50%,-50%);transition:opacity 0.24s ease,transform 0.3s cubic-bezier(0.22,1,0.36,1);will-change:transform,opacity; }
 .album-cover-peek::before, .album-cover-peek::after { pointer-events:none; }
@@ -1022,14 +1018,14 @@ html.no-glass .lyrics-veil-blur-3 { -webkit-backdrop-filter:blur(18px) saturate(
 .about-page.has-player .cache-body, .about-page.has-player .sleep-body { padding-bottom:calc(var(--mini-height) + 24px + env(safe-area-inset-bottom,0px)); }
 .playlist-page.has-player { bottom:0; }
 .fav-page.no-anim, .playlist-page.no-anim, .about-page.no-anim, .search-results.no-anim, .sheet.no-anim, .full-player.no-anim, .lyrics-page.no-anim { transition:none!important; }
-.cache-body { flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(var(--fav-header-h, 62px) + 14px) 16px calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:10px; }
+.cache-body { flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(var(--fav-header-h, 62px) + 8px) 16px calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:0px; }
 .cache-body>* { flex-shrink:0; }
-.cache-tip { font-size:12.5px;color:var(--text-secondary);padding:0 4px 4px; }
-.cache-item { display:flex;align-items:center;gap:12px;padding:14px 14px;border-radius:14px;background:var(--surface-input);border:1px solid var(--border-popover);cursor:pointer;transition:background 0.18s ease,border-color 0.18s ease; }
-.cache-item:active { background:var(--surface-input-focus); }
-.cache-check { position:absolute;opacity:0;width:0;height:0;pointer-events:none; }
-.cache-check-box { width:22px;height:22px;flex-shrink:0;border-radius:50%;border:1.6px solid var(--border-popover);display:grid;place-items:center;color:transparent;font-size:11px;transition:background 0.18s ease,border-color 0.18s ease,color 0.18s ease; }
-.cache-check:checked+.cache-check-box { background:var(--primary);border-color:var(--primary);color:#fff; }
+.cache-tip { font-size:12.5px;color:var(--text-secondary);padding:0 4px 10px; }
+.cache-item { display:flex;align-items:center;gap:12px;padding:11px 4px;cursor:pointer; }
+.cache-all-row { border-bottom:1px solid var(--border-popover);margin-bottom:6px; }
+.cache-check, .cache-all-check { position:absolute;opacity:0;width:0;height:0;pointer-events:none; }
+.cache-check-box { width:18px;height:18px;flex-shrink:0;border-radius:50%;border:1.4px solid var(--border-popover);display:grid;place-items:center;color:transparent;font-size:9px;transition:background 0.18s ease,border-color 0.18s ease,color 0.18s ease; }
+.cache-check:checked+.cache-check-box, .cache-all-check:checked+.cache-check-box { background:var(--primary);border-color:var(--primary);color:#fff; }
 .cache-item-info { display:flex;flex-direction:column;gap:3px;min-width:0; }
 .cache-item-title { font-size:14px;color:var(--text-primary); }
 .cache-item-sub { font-size:11.5px;color:var(--text-secondary); }
@@ -1176,7 +1172,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
 @media (min-width:640px)and (max-height:500px) { .player-content { gap:28px;padding:4px 24px 16px;margin-top:0; } .player-swipe-layer { gap:28px; } .player-left { flex:0 0 auto;width:auto;max-width:340px;--ctrl-size:42px;--ctrl-gap:12px;clip-path:inset(-160px -124px -160px -2000px); } .disc-stage { margin-top:0; } .album-cover-wrap { width:min(46vh,230px);height:auto;max-height:none;margin-top:0; } .player-panel { width:100%; } .player-main-controls { margin:0; } .main-control-btn { font-size:18px; } .main-control-btn.play-pause { font-size:20px; } .player-lyrics { height:min(84vh,100%); } .player-lyrics-inner .lyrics-line { font-size:16px;line-height:1.8; } .album-cover-wrap::before { inset:-18px;filter:blur(18px); } .player-header { padding:8px 16px; } .player-title { padding:0 96px; } .player-song-name { font-size:15px; } .player-artist-name { font-size:12px; } }
 @media (min-width:900px),(min-width:640px)and (max-height:500px) { .main-content { padding-left:calc(var(--side-tab-width) + 24px);padding-bottom:30px; } body.has-mini-player .main-content { padding-bottom:calc(var(--mini-height) + 24px); } .header { padding-left:calc(var(--side-tab-width) + 20px); } .mini-player { left:var(--side-tab-width);right:0;bottom:0; } .fab-stack { bottom:18px; } body.has-mini-player .fab-stack { bottom:calc(var(--mini-height) + 18px); } .player-header { padding:16px 32px; } .player-title { padding:0 100px; } .player-song-name { font-size:18px; } .player-artist-name { font-size:13.5px; } .fav-page, .playlist-page, .search-results, .about-page { left:var(--side-tab-width); } .about-page { display:none; } body.settings-tab .about-page { display:flex; } }
 @media (min-width:900px),(min-width:640px)and (max-height:500px) { body #select-bar, body #pl-select-bar { left:var(--side-tab-width);right:0;width:auto;padding:8px 10px;border:none;border-top:1px solid var(--glass-edge);border-radius:0;box-shadow:var(--inset-highlight);background:var(--glass-panel-strong);-webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur-strong)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));transform:translateY(16px);bottom:0; } body #select-bar.active, body #pl-select-bar.active { transform:translateY(0); } body.has-mini-player #select-bar, body.has-mini-player #pl-select-bar { bottom:var(--mini-height); } body .select-topbar { left:var(--side-tab-width); } }
-
 </style>
 </head>
 <body>
@@ -1841,7 +1836,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
         <div class="about-body">
             <div class="about-logo" id="about-logo" role="button" tabindex="0" aria-label="MKY音乐"><svg class="brand-disc" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="bdisc-sheen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.34" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.46" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.54" stop-color="#ffffff" stop-opacity="0.09"/><stop offset="0.66" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient><clipPath id="bdisc-clip"><circle cx="32" cy="32" r="30"/></clipPath></defs><g class="disc-spin"><circle cx="32" cy="32" r="30" fill="#141418"/><circle cx="32" cy="32" r="30" fill="none" stroke="#ffffff" stroke-opacity=".14" stroke-width="2.6"/><circle cx="32" cy="32" r="21" fill="none" stroke="#ffffff" stroke-opacity=".10" stroke-width="1.5"/><circle cx="32" cy="32" r="14" fill="none" stroke="#ffffff" stroke-opacity=".08" stroke-width="1.5"/><circle cx="32" cy="32" r="12" fill="#e91e63"/><circle cx="32" cy="32" r="3.4" fill="#141418"/><g clip-path="url(#bdisc-clip)"><rect x="-16" y="-16" width="96" height="96" fill="url(#bdisc-sheen)"/></g></g></svg></div>
             <div class="about-name">MKY音乐</div>
-            <div class="about-version">版本 3.0</div>
+            <div class="about-version">版本 3.1</div>
             <div class="about-slogan">把每一处细节听懂<br>把听歌这件事做好</div>
             <div class="about-links">
                 <div class="about-legal">
@@ -1871,6 +1866,13 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
         </div>
         <div class="cache-body" id="cache-body">
             <div class="cache-tip">选择要清除的内容，清除后无法恢复。</div>
+            <label class="cache-item cache-all-row">
+                <input type="checkbox" class="cache-all-check" id="cache-all-check" />
+                <span class="cache-check-box"><i class="fas fa-check"></i></span>
+                <span class="cache-item-info">
+                    <span class="cache-item-title">全选</span>
+                </span>
+            </label>
             <label class="cache-item">
                 <input type="checkbox" class="cache-check" data-cache="covers" />
                 <span class="cache-check-box"><i class="fas fa-check"></i></span>
@@ -2296,6 +2298,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             const cacheBackBtn = $('#cache-back-btn');
             const cacheClearBtn = $('#cache-clear-btn');
             const cacheBody = $('#cache-body');
+            const cacheAllCheck = $('#cache-all-check');
             const aboutBackBtn = $('#about-back-btn');
             const aboutLogo = $('#about-logo');
             const aboutTermsBtn = $('#about-terms-btn');
@@ -2666,7 +2669,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         /^(未知歌手|未知|佚名)$/.test(String(v || ''));
                     ['name', 'artistsname', 'album'].forEach((k) => {
                         const v = song[k];
-                        // 解析失败时不要把已有的正确歌手覆盖成“未知歌手”
                         if (k === 'artistsname' && unknownArtist(v)) return;
                         if (v && v !== item[k]) {
                             item[k] = v;
@@ -3262,7 +3264,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
                 syncVolumeIcons();
             }
-
             const FADE_KEY = 'mky_fade';
             function getVolume() {
                 try {
@@ -3306,18 +3307,15 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 } catch (_) {}
                 return true;
             }
-            function setFadeEnabled(on) {
-                try { MKYStore.set(FADE_KEY, on ? '1' : '0'); } catch (_) {}
+            function setToggleFlag(key, on) {
+                try { MKYStore.set(key, on ? '1' : '0'); } catch (_) {}
             }
             const GLASS_KEY = 'mky_glass';
-            function getGlassEnabled() {
+            function getToggleFlag(key) {
                 try {
-                    return MKYStore.get(GLASS_KEY) === '1';
+                    return MKYStore.get(key) === '1';
                 } catch (_) {}
                 return false;
-            }
-            function setGlassEnabled(on) {
-                try { MKYStore.set(GLASS_KEY, on ? '1' : '0'); } catch (_) {}
             }
             function applyGlass(on) {
                 document.documentElement.classList.toggle('no-glass', !on);
@@ -3490,11 +3488,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (!sleepPage) return;
                 saveSleepDraft();
                 sleepPage.classList.remove('active');
-                if (fabStack && activeTab === 'mine' && !(mineKeyword || '').trim()
-                    && !plSelectMode && !anyOverlayOpen()) {
-                    fabStack.classList.add('show');
-                }
-                syncFavPageOffset();
+                afterAuxPageClose();
             }
             function readSleepInputs() {
                 const h = clampInt(sleepCustomHour ? sleepCustomHour.value : '', 12);
@@ -3621,12 +3615,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             let noSleep = null;
             let awakeWanted = false;
             let awakeLock = null;
-            function getAwakeEnabled() {
-                try {
-                    return MKYStore.get(AWAKE_KEY) === '1';
-                } catch (_) {}
-                return false;
-            }
             function awakeSupported() {
                 if (typeof navigator !== 'undefined' && navigator.wakeLock
                     && typeof navigator.wakeLock.request === 'function') return true;
@@ -3788,10 +3776,10 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     });
                 }
                 if (settingsGlass) {
-                    settingsGlass.checked = getGlassEnabled();
+                    settingsGlass.checked = getToggleFlag(GLASS_KEY);
                     settingsGlass.addEventListener('change', () => {
                         clearSwitchDotOffset(settingsGlass);
-                        setGlassEnabled(settingsGlass.checked);
+                        setToggleFlag(GLASS_KEY, settingsGlass.checked);
                         applyGlass(settingsGlass.checked);
                         showToast(settingsGlass.checked ? '已开启毛玻璃' : '已关闭毛玻璃');
                     });
@@ -3801,14 +3789,14 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     settingsFade.checked = getFadeEnabled();
                     settingsFade.addEventListener('change', () => {
                         clearSwitchDotOffset(settingsFade);
-                        setFadeEnabled(settingsFade.checked);
+                        setToggleFlag(FADE_KEY, settingsFade.checked);
                         syncFadeDurations();
                         showToast(settingsFade.checked ? '已开启淡入淡出' : '已关闭淡入淡出');
                     });
                     bindSwitchDrag(settingsFade);
                 }
                 if (settingsAwake) {
-                    settingsAwake.checked = getAwakeEnabled();
+                    settingsAwake.checked = getToggleFlag(AWAKE_KEY);
                     awakeWanted = settingsAwake.checked;
                     if (awakeWanted) applyAwake(true);
                     settingsAwake.addEventListener('change', () => {
@@ -4156,14 +4144,17 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         String(song.id) === String(curId));
                 });
             }
-            function adoptFavQueue() {
-                if (!favorites.length) return;
-                const playingId = currentSong ? String(currentSong.id) : '';
-                setQueue(favorites.map(f => ({ ...f, pay: '免费音乐' })), 'fav');
+            function restoreQueueIndex(playingId) {
                 if (playingId) {
                     const at = currentSongs.findIndex(s => String(s.id) === playingId);
                     currentIndex = at;
                 }
+            }
+            function adoptFavQueue() {
+                if (!favorites.length) return;
+                const playingId = currentSong ? String(currentSong.id) : '';
+                setQueue(favorites.map(f => ({ ...f, pay: '免费音乐' })), 'fav');
+                restoreQueueIndex(playingId);
             }
             function openFavPage() {
                 favKeyword = '';
@@ -4191,11 +4182,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     favSearchInput.blur();
                 }
                 if (favHeaderSearch) favHeaderSearch.classList.remove('active');
-                if (fabStack && activeTab === 'mine' && !(mineKeyword || '').trim()
-                    && !plSelectMode && !anyOverlayOpen()) {
-                    fabStack.classList.add('show');
-                }
-                syncFavPageOffset();
+                afterAuxPageClose();
             }
             function anyOverlayOpen() {
                 return favPage.classList.contains('active') ||
@@ -4237,6 +4224,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const dur = currentAudio ? audioDuration(currentAudio) : 0;
                 if (dur > 0 && t >= dur - 0.5) t = 0;
                 const song = currentSong;
+                const saveDur = dur > 0 ? Math.round(dur * 1000)
+                    : (Number(song.duration) || 0);
                 try {
                     MKYStore.set(LAST_KEY, JSON.stringify({
                         song: {
@@ -4246,7 +4235,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                             artists: song.artists || [],
                             album: song.album || '',
                             picurl: song.picurl || '',
-                            duration: song.duration || 0,
+                            duration: saveDur,
                             url: (song.url && isUsableAudioUrl(song.url) &&
                                 !isTrialClipUrl(song.url)) ? song.url : ''
                         },
@@ -5273,17 +5262,14 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 netease: '网易云音乐'
             };
             let importPlaylistBusy = false;
-
             function importProxyGet(url, timeout) {
                 return fetchOneRaw(
                     u => CF_PROXY + '?key=' + CF_PROXY_KEY + '&url=' +
                         encodeURIComponent(u),
                     url, timeout || 15000);
             }
-
             const IMPORT_KW_REF = 'https://h5app.kuwo.cn/';
             const IMPORT_KW_ORG = 'https://h5app.kuwo.cn';
-
             async function importProxyFinalUrl(url, timeout) {
                 const ctrl = new AbortController();
                 const timer = setTimeout(() => ctrl.abort(), timeout || 12000);
@@ -5299,7 +5285,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     clearTimeout(timer);
                 }
             }
-
             function importProxyJson(url, timeout, ref, org) {
                 let target = CF_PROXY + '?key=' + encodeURIComponent(CF_PROXY_KEY) +
                     '&url=' + encodeURIComponent(url);
@@ -5307,7 +5292,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (org) target += '&org=' + encodeURIComponent(org);
                 return fetchOne(u => u, target, timeout || 15000);
             }
-
             function importFirstUrl(s, hostRe) {
                 const re = /https?:\/\/[^\s"'<>]+/ig;
                 let m;
@@ -5316,12 +5300,10 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
                 return '';
             }
-
             function importLinkDirect(raw) {
                 const s = String(raw || '').trim();
                 if (!s) return null;
                 let m;
-
                 if (/163cn\.tv|music\.163\.com|y\.music\.163\.com/i.test(s)) {
                     m = /[?&#]id=(\d{4,})/.exec(s) || /playlist\/(\d{4,})/.exec(s);
                     if (m) return { platform: 'netease', id: m[1] };
@@ -5329,7 +5311,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     if (url) return { platform: 'netease', short: url };
                     return null;
                 }
-
                 if (/kuwo\.cn/i.test(s)) {
                     m = /[?&]playlistId=(\d{3,})/i.exec(s)
                         || /playlist_detail\/(\d{3,})/i.exec(s)
@@ -5344,7 +5325,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     if (url) return { platform: 'kuwo', short: url };
                     return null;
                 }
-
                 if (/kugou\.com/i.test(s)) {
                     m = /special\/single\/(\d{3,})/i.exec(s)
                         || /songlist\/(\d{3,})/i.exec(s)
@@ -5355,7 +5335,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     if (url) return { platform: 'kugou', short: url };
                     return null;
                 }
-
                 if (/qq\.com|QQ音乐/i.test(s)) {
                     m = /(?:ryqq|n\/yqq)\/playlist\/(\d{5,})/i.exec(s)
                         || /taoge\.html[^\s"'<>]*?[?&]id=(\d{5,})/i.exec(s)
@@ -5368,7 +5347,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
                 return null;
             }
-
             async function resolveImportLink(raw) {
                 const direct = importLinkDirect(raw);
                 if (!direct) return null;
@@ -5404,7 +5382,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
                 return null;
             }
-
             function fetchQQPlaylistViaMeting(disstid) {
                 const url = METING_BASE + '?type=playlist&server=tencent&id=' +
                     encodeURIComponent(disstid);
@@ -5423,11 +5400,9 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         return { title: '', cover: '', songs: songs };
                     });
             }
-
             async function fetchQQPlaylist(disstid) {
                 const info = { title: '', cover: '', songs: [] };
                 try {
-                    // QQ 接口单次最多返回 30 首，song_num 传更大也只给 30
                     const num = 30;
                     for (let begin = 0; begin < IMPORT_MAX_SONGS; begin += num) {
                         const payload = {
@@ -5483,10 +5458,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
                 return info;
             }
-
-            // 酷狗新版歌单接口的签名：md5(key + 按 key 排序的 k=v 直接拼接 + key)
             const KG_SIGN_KEY = 'NVPh5oo715z5DIWAeQlhMDsWXXQV4hwt';
-
             function md5Hex(str) {
                 const bytes = [];
                 for (let i = 0; i < str.length; i++) {
@@ -5510,7 +5482,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 for (let i = 0; i < 4; i++) bytes.push((bitLen >>> (i * 8)) & 255);
                 const hi = Math.floor(bitLen / 4294967296);
                 for (let i = 0; i < 4; i++) bytes.push((hi >>> (i * 8)) & 255);
-
                 let a0 = 1732584193, b0 = -271733879, c0 = -1732584194, d0 = 271733878;
                 const S = [7, 12, 17, 22, 5, 9, 14, 20, 4, 11, 16, 23, 6, 10, 15, 21];
                 const K = [];
@@ -5551,7 +5522,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 };
                 return hex(a0) + hex(b0) + hex(c0) + hex(d0);
             }
-
             function kugouSignedUrl(gid, page, pagesize) {
                 const t = Date.now();
                 const p = {
@@ -5575,7 +5545,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 return 'https://pubsongscdn.kugou.com/v2/get_other_list_file?' +
                     Object.keys(p).map(k => k + '=' + encodeURIComponent(p[k])).join('&');
             }
-
             async function fetchKugouCollection(gid) {
                 const info = { title: '', cover: '', songs: [] };
                 for (let page = 1; page <= 40; page++) {
@@ -5598,7 +5567,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (!info.songs.length) throw new Error('歌单为空或不可见');
                 return info;
             }
-
             function parseKugouFilename(filename) {
                 const s = String(filename || '').trim();
                 const i = s.indexOf(' - ');
@@ -5607,7 +5575,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
                 return { artist: '', name: s };
             }
-
             function kugouSongFromRow(x) {
                 const p = parseKugouFilename(x.name || x.filename || x.songname || '');
                 if (!p.name) return null;
@@ -5620,7 +5587,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     sec: ms ? Math.round(ms / 1000) : (Number(x.duration) || 0)
                 };
             }
-
             async function fetchKugouPlaylist(id) {
                 if (/^collection_/i.test(String(id || ''))) {
                     return await fetchKugouCollection(id);
@@ -5654,7 +5620,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 } catch (_) {}
                 return info;
             }
-
             function kuwoSongFromRow(row) {
                 const mid = String(row.id || row.rid || '').replace(/^MUSIC_/, '');
                 if (!/^\d+$/.test(mid)) return null;
@@ -5679,7 +5644,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     picIdExact: !!pic
                 };
             }
-
             async function kuwoMusicList(target) {
                 try {
                     const d = await fetchOne(u => u, target, 9000);
@@ -5687,7 +5651,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 } catch (_) {}
                 return await importProxyJson(target, 16000, IMPORT_KW_REF, IMPORT_KW_ORG);
             }
-
             async function fetchKuwoBodian(id, opts) {
                 const src = String((opts && opts.source) || '5');
                 const info = { title: '', cover: '', songs: [] };
@@ -5730,7 +5693,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (!info.songs.length) throw new Error('歌单为空或不可见');
                 return info;
             }
-
             async function fetchKuwoNpl(id) {
                 const info = { title: '', cover: '', songs: [] };
                 const base = 'https://nplserver.kuwo.cn/pl.svc?op=getlistinfo&pid=' +
@@ -5740,8 +5702,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const d = await importProxyJson(base, 16000);
                 if (!d) throw new Error('歌单读取失败');
                 info.title = String(d.title || '').trim();
-                // 酷我旧接口对不存在的 pid 会返回一条“占位”曲目（歌名 Original），
-                // 歌单名为空。宁可报错，也不要把这条假数据导进用户歌单。
                 if (!info.title) throw new Error('歌单不存在或未公开');
                 info.expected = Number(d.total) || 0;
                 info.cover = String(d.pic || '');
@@ -5764,10 +5724,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (!info.songs.length) throw new Error('歌单为空或不可见');
                 return info;
             }
-
             async function fetchKuwoPlaylist(id, opts) {
-                // 波点歌单（h5app 分享出来的）和旧版歌单是两套 id，
-                // 拿波点 id 去查旧接口会命中一条同号的无关单曲，不能回退。
                 const order = (opts && opts.bodian) ? ['bd'] : ['npl', 'bd'];
                 let lastErr = null;
                 for (const mode of order) {
@@ -5785,12 +5742,10 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
                 throw lastErr || new Error('歌单为空或不可见');
             }
-
             const NETEASE_PL_BASES = [
                 'https://interface.music.163.com/api',
                 'https://music.163.com/api'
             ];
-
             async function fetchNeteasePlaylistViaMeting(id, cause) {
                 const pair = await Promise.all([
                     fetchOne(u => u,
@@ -5846,7 +5801,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     expected: list.length
                 };
             }
-
             async function fetchNeteasePlaylist(id) {
                 const info = { title: '', cover: '', songs: [] };
                 let pl = null;
@@ -5918,7 +5872,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (!info.songs.length) throw new Error('歌单为空或不可见');
                 return info;
             }
-
             function importCandScore(x, meta) {
                 const want = normName(meta.name);
                 const n = normName(x && x.name);
@@ -5944,7 +5897,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
                 return sc;
             }
-
             function qqNeteaseBest(rows, meta) {
                 let best = null;
                 let bestSc = 0;
@@ -5957,7 +5909,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 });
                 return bestSc > 0 ? best : null;
             }
-
             async function matchImportSong(meta) {
                 const sec = Number(meta.sec) || 0;
                 const [hit, neRows] = await Promise.all([
@@ -5989,7 +5940,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
                 return neBest;
             }
-
             async function mapWithLimit(items, limit, task, onProgress) {
                 const out = new Array(items.length).fill(null);
                 let next = 0;
@@ -6011,7 +5961,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 await Promise.all(Array.from({ length: n }, run));
                 return out;
             }
-
             function dedupeSongs(arr) {
                 const seen = new Set();
                 const out = [];
@@ -6023,7 +5972,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 });
                 return out;
             }
-
             async function importPlaylistFromLink(raw) {
                 if (importPlaylistBusy) {
                     showToast('正在导入，请稍候');
@@ -6079,7 +6027,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     importPlaylistBusy = false;
                 }
             }
-
             function startCreatePlaylist() {
                 openNameDialog('新建 / 导入歌单', '', (val) => {
                     if (importLinkDirect(val)) { importPlaylistFromLink(val); return; }
@@ -6841,6 +6788,32 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             async function neteaseMvOf(mvid) {
                 const id = String(mvid || '').trim();
                 if (!id) return { src: '', title: '', cover: '' };
+                const api = NETEASE_API + '/mv/detail?id=' + encodeURIComponent(id) +
+                    '&type=mp4';
+                try {
+                    const d = await fetchDirectOrProxy(api,
+                        { proxyFirst: true, timeout: 10000 });
+                    const data = (d && d.data) || {};
+                    const brs = data.brs || {};
+                    let src = '';
+                    for (const q of ['1080', '720', '480', '240']) {
+                        const u = normalizeVideoUrl(brs[q] || '');
+                        if (/^https?:\/\//i.test(u)) { src = u; break; }
+                    }
+                    if (!src) {
+                        const rest = Object.keys(brs)
+                            .map(k => normalizeVideoUrl(brs[k] || ''))
+                            .find(u => /^https?:\/\//i.test(u));
+                        if (rest) src = rest;
+                    }
+                    if (src) {
+                        return {
+                            src: src,
+                            title: data.name || '',
+                            cover: normalizeCoverUrl(data.cover || '')
+                        };
+                    }
+                } catch (_) {}
                 const paths = [
                     '/mv/' + encodeURIComponent(id) + '/?from=web',
                     '/m/mv/' + encodeURIComponent(id) + '/?from=web',
@@ -6859,7 +6832,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 for (const p of paths) {
                     try {
                         const html = await proxiedText(
-                            'https://music.163.com' + p, 8000);
+                            'https://music.163.com' + p + (p.indexOf('?') >= 0 ? '&' : '?') +
+                            '_t=' + Date.now(), 8000);
                         let src = pick(html, 'og:video');
                         if (!src) continue;
                         try { src = decodeURIComponent(src); } catch (_) {}
@@ -7129,9 +7103,9 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 mvSyncVolIcon();
                 mvPokeBar();
             }
-            function mvCloseVolPop() {
-                if (!mvVolPop || !mvVolPop.classList.contains('show')) return;
-                mvVolPop.classList.remove('show');
+            function mvClosePop(pop) {
+                if (!pop || !pop.classList.contains('show')) return;
+                pop.classList.remove('show');
                 mvPokeBar();
             }
             const MV_RATES = [2, 1.5, 1.25, 1, 0.75, 0.5];
@@ -7156,12 +7130,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 try { mvVideo.playbackRate = r; } catch (_) {}
                 if (mvRateLabel) mvRateLabel.textContent = mvRateText(r);
                 mvRenderRates();
-                mvCloseRatePop();
-                mvPokeBar();
-            }
-            function mvCloseRatePop() {
-                if (!mvRatePop || !mvRatePop.classList.contains('show')) return;
-                mvRatePop.classList.remove('show');
+                mvClosePop(mvRatePop);
                 mvPokeBar();
             }
             function mvSyncFullBtn() {
@@ -7708,19 +7677,12 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const playingId = currentSong ? String(currentSong.id) : '';
                 setQueue(pl.songs.map(s => ({ ...s, pay: s.pay || '免费音乐' })),
                     'playlist', { playlistId: pl.id });
-                if (playingId) {
-                    const at = currentSongs.findIndex(s => String(s.id) === playingId);
-                    currentIndex = at;
-                }
+                restoreQueueIndex(playingId);
             }
             function closePlaylistPage() {
                 playlistPage.classList.remove('active');
                 openedPlaylistId = null;
-                if (fabStack && activeTab === 'mine' && !(mineKeyword || '').trim()
-                    && !plSelectMode && !anyOverlayOpen()) {
-                    fabStack.classList.add('show');
-                }
-                syncFavPageOffset();
+                afterAuxPageClose();
             }
             function openSongInfo(song) {
                 if (!song || !artistPickerSheet) return;
@@ -8618,7 +8580,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 mvVol.addEventListener('mouseleave', () => {
                     clearTimeout(mvVolTimer);
                     mvVolTimer = setTimeout(() => {
-                        if (!mvVolLocked) mvCloseVolPop();
+                        if (!mvVolLocked) mvClosePop(mvVolPop);
                     }, 280);
                 });
                 mvVol.addEventListener('wheel', (e) => {
@@ -8641,7 +8603,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     const open = mvVolPop.classList.contains('show');
                     if (open && mvVolLocked) {
                         mvVolLocked = false;
-                        mvCloseVolPop();
+                        mvClosePop(mvVolPop);
                     } else {
                         mvVolLocked = true;
                         mvSyncVolIcon();
@@ -8671,7 +8633,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     e.stopPropagation();
                     if (!mvRatePop) return;
                     if (mvRatePop.classList.contains('show')) {
-                        mvCloseRatePop();
+                        mvClosePop(mvRatePop);
                     } else {
                         mvRenderRates();
                         mvRatePop.classList.add('show');
@@ -8683,13 +8645,13 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (mvRatePop && mvRatePop.classList.contains('show')
                     && !mvRatePop.contains(e.target)
                     && !(mvRateBtn && mvRateBtn.contains(e.target))) {
-                    mvCloseRatePop();
+                    mvClosePop(mvRatePop);
                 }
                 if (!mvVolPop || !mvVolPop.classList.contains('show')) return;
                 if (mvVolPop.contains(e.target)) return;
                 if (mvVolBtn && mvVolBtn.contains(e.target)) return;
                 mvVolLocked = false;
-                mvCloseVolPop();
+                mvClosePop(mvVolPop);
             }, true);
             if (mvVideo) {
                 mvVideo.addEventListener('click', mvToggleBar);
@@ -8913,14 +8875,17 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 syncHeaderHeight();
                 syncFavPageOffset();
             }
-            function closeCachePage() {
-                if (!cachePage) return;
-                cachePage.classList.remove('active');
+            function afterAuxPageClose() {
                 if (fabStack && activeTab === 'mine' && !(mineKeyword || '').trim()
                     && !plSelectMode && !anyOverlayOpen()) {
                     fabStack.classList.add('show');
                 }
                 syncFavPageOffset();
+            }
+            function closeCachePage() {
+                if (!cachePage) return;
+                cachePage.classList.remove('active');
+                afterAuxPageClose();
             }
             let failedIdsSet = null;
             function cacheChecks() {
@@ -8931,6 +8896,9 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const list = cacheChecks();
                 const btn = cacheClearBtn;
                 if (btn) btn.disabled = !list.some(c => c.checked);
+                if (cacheAllCheck) {
+                    cacheAllCheck.checked = list.length > 0 && list.every(c => c.checked);
+                }
             }
             function setCacheSub(key, text) {
                 const el = document.getElementById('cache-sub-' + key);
@@ -9164,22 +9132,16 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             function closeAboutPage() {
                 if (!aboutPage) return;
                 aboutPage.classList.remove('active');
-                if (fabStack && activeTab === 'mine' && !(mineKeyword || '').trim()
-                    && !plSelectMode && !anyOverlayOpen()) {
-                    fabStack.classList.add('show');
-                }
-                syncFavPageOffset();
+                afterAuxPageClose();
             }
             function emptyStateHtml(icon, html) {
                 return '<div class="fav-empty"><i class="' + icon + '"></i><p>'
                     + html + '</p></div>';
             }
-
             function emptySearchHtml(kw) {
                 return emptyStateHtml('fas fa-search', '没有找到「'
                     + esc(String(kw || '').trim()) + '」<br>换个关键词试试');
             }
-
             function renderPlaylistDetail() {
                 if (!openedPlaylistId) return;
                 const pl = getPlaylist(openedPlaylistId);
@@ -9284,10 +9246,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const playingId = currentSong ? String(currentSong.id) : '';
                 setQueue(playHistory.map(s => ({ ...s, pay: s.pay || '免费音乐' })),
                     'history');
-                if (playingId) {
-                    const at = currentSongs.findIndex(s => String(s.id) === playingId);
-                    currentIndex = at;
-                }
+                restoreQueueIndex(playingId);
             }
             function closeHistoryPage() {
                 navBack();
@@ -9792,7 +9751,11 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             if (cacheClearBtn) cacheClearBtn.addEventListener('click', runClearCache);
             if (cacheBody) {
                 cacheBody.addEventListener('change', (e) => {
-                    if (e.target && e.target.classList.contains('cache-check')) {
+                    if (e.target && e.target.classList.contains('cache-all-check')) {
+                        const on = !!e.target.checked;
+                        cacheChecks().forEach(c => { c.checked = on; });
+                        syncCachePage();
+                    } else if (e.target && e.target.classList.contains('cache-check')) {
                         syncCachePage();
                     }
                 });
@@ -11704,6 +11667,22 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             const METING_BASE = 'https://api.qijieya.cn/meting/';
             const KUWO_API = 'https://oiapi.net/api/Kuwo';
             const MIGU_API = 'https://oiapi.net/api/MiGu_Music';
+            async function oiapiKuwo(params, timeoutMs) {
+                const qs = Object.keys(params || {}).map(k =>
+                    encodeURIComponent(k) + '=' + encodeURIComponent(params[k])).join('&');
+                const target = KUWO_API + '?' + qs;
+                const proxyUrl = CF_PROXY + '?key=' + encodeURIComponent(CF_PROXY_KEY) +
+                    '&url=' + encodeURIComponent(target);
+                const d = await fetchOne(u => u, proxyUrl, timeoutMs || 4500);
+                if (!d || typeof d !== 'object' || (!d.data && !Array.isArray(d.data))) {
+                    throw new Error((d && d.message) || 'oiapi 酷我返回异常');
+                }
+                return d;
+            }
+            function asKuwoArray(data) {
+                if (Array.isArray(data)) return data;
+                return data && typeof data === 'object' ? [data] : [];
+            }
             const KUWO_LRC_API = 'https://m.kuwo.cn/newh5/singles/songinfoandlrc?musicId=';
             const kuwoIdMap = new Map();
             const NETEASE_SEARCH = 'https://music.163.com/api/search/get?s=';
@@ -11989,11 +11968,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     const q = (String(song.name || '') + ' ' + artist).trim();
                     if (q) {
                         try {
-                            const d = await fetchDirectOrProxy(
-                                KUWO_API + '?msg=' + encodeURIComponent(q) + '&n=1',
-                                { timeout: 6000, directFirst: true });
-                            const x = Array.isArray(d && d.data)
-                                ? d.data[0] : (d && d.data);
+                            const d = await oiapiKuwo({ msg: q, n: 1, br: 3 }, 4500);
+                            const x = asKuwoArray(d && d.data)[0];
                             albumName = kuwoText(x && x.album);
                         } catch (_) {}
                     }
@@ -12237,7 +12213,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (n) {
                     const a = normName(t.name);
                     const b = normName(t.artist);
-                    // 歌词首行两种顺序都有：歌名 - 歌手 / 歌手 - 歌名
                     if (a === n) return { name: name, artist: t.artist };
                     if (b === n) return { name: name, artist: t.name };
                     return null;
@@ -12311,7 +12286,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 for (let i = 0; i < tries; i++) {
                     try {
                         const viaProxy = i > 0;
-                        // 代理会缓存 data:null 的 200 响应，重试时加随机参数绕过
                         const target = KUWO_LRC_API + m +
                             (i === 0 ? '' : '&httpsStatus=1') +
                             (i > 0 ? '&_r=' + Date.now() + '_' + i : '');
@@ -12504,23 +12478,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const cacheKey = String(q || '').trim();
                 const cached = kuwoSearchCache.get(cacheKey);
                 if (cached && Date.now() - cached.at < 180000) return cached.rows;
-                const listUrl = 'http://search.kuwo.cn/r.s?all=' + encodeURIComponent(q) +
-                    '&ft=music&itemset=web_2013&client=kt&pn=0&rn=30&rformat=json&encoding=utf8';
-                const bestUrl = KUWO_API + '?msg=' + encodeURIComponent(q) + '&n=1';
-                const fetchBest = async () => {
-                    let lastErr = null;
-                    for (let i = 0; i < 2; i++) {
-                        try {
-                            return await fetchDirectOrProxy(bestUrl,
-                                { timeout: 6000, directFirst: true });
-                        } catch (e) { lastErr = e; }
-                    }
-                    throw lastErr || new Error('酷我搜索失败');
-                };
-                const [bestR, listR] = await Promise.allSettled([
-                    fetchBest(),
-                    proxiedText(listUrl, 8000)
-                ]);
+                let best = null;
+                try { best = await oiapiKuwo({ msg: q, limit: 3 }, 4000); } catch (_) {}
                 const rows = [];
                 const seen = new Set();
                 const pushRow = (rawName, rawArtist, album, durSec, pic, mid) => {
@@ -12546,20 +12505,11 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         picIdExact: !!pic
                     });
                 };
-                if (bestR.status === 'fulfilled') {
-                    const x = bestR.value && bestR.value.data;
-                    if (x && x.song) pushRow(x.song, x.singer, x.album, x.time, x.picture, x.id);
-                }
-                if (listR.status === 'fulfilled') {
-                    const d = parseKuwoList(listR.value);
-                    ((d && d.abslist) || []).forEach(x => {
-                        const pic = x.web_albumpic_short
-                            ? 'https://img1.kuwo.cn/star/albumcover/' +
-                              String(x.web_albumpic_short).replace(/^\//, '')
-                            : '';
-                        pushRow(x.NAME || x.SONGNAME, x.ARTIST || x.AARTIST,
-                            x.ALBUM, x.DURATION, pic, x.MUSICRID);
-                    });
+                if (best) {
+                    const d = best && best.data;
+                    const x = (d && Array.isArray(d.items) ? d.items : asKuwoArray(d))[0];
+                    if (x && x.song) pushRow(x.song, x.singer, x.album, x.time,
+                        x.picture, x.rid || x.id);
                 }
                 if (!rows.length) return await kuwoSearchLegacy(q);
                 if (!VERSION_BAD.test(q)) {
@@ -12577,18 +12527,14 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 return rows;
             }
             async function kuwoSearchLegacy(q) {
-                const d = await fetchDirectOrProxy(
-                    KUWO_API + '?msg=' + encodeURIComponent(q),
-                    { timeout: 8000, directFirst: true });
-                const text = String((d && d.message) || '');
+                let d = null;
+                try { d = await oiapiKuwo({ msg: q, page: 1, limit: 20 }, 5000); } catch (_) {}
                 const rows = [];
                 const seen = new Set();
-                text.split('\n').forEach(line => {
-                    const m = line.match(/^\s*\d+\.\s*(.+?)\s*——\s*(.+?)\s*$/);
-                    if (!m) return;
-                    const name = m[1].trim();
-                    const artist = m[2].trim();
+                const push = (rawName, rawArtist) => {
+                    const name = String(rawName || '').trim();
                     if (!name) return;
+                    const artist = String(rawArtist || '').trim();
                     const k = normName(name) + '|' + normName(artist);
                     if (seen.has(k)) return;
                     seen.add(k);
@@ -12596,13 +12542,19 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         id: 'kw_' + encodeURIComponent(name + '|' + artist),
                         name: name,
                         artistsname: artist,
-                        artists: [{ name: artist }],
+                        artists: artist.split(/[\/&,、]/)
+                            .map(n => ({ name: n.trim() })).filter(a => a.name),
                         album: '',
                         duration: 0,
                         picurl: '',
                         picId: '',
                         picIdExact: true
                     });
+                };
+                asKuwoArray(d && d.data).forEach(x => push(x.song, x.singer));
+                String((d && d.message) || '').split('\n').forEach(line => {
+                    const m = line.match(/^\s*\d+\.\s*(.+?)\s*——\s*(.+?)\s*$/);
+                    if (m) push(m[1], m[2]);
                 });
                 if (!rows.length) throw new Error('酷我搜索无结果');
                 return rows;
@@ -12612,29 +12564,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             function artistTokensOf(s) {
                 return String(s || '').split(/[\/&,、;；]/)
                     .map(t => normName(t)).filter(Boolean);
-            }
-            function pickNameHead(rows, q) {
-                const list = (rows || []).slice(0, 6);
-                if (!list.length) return null;
-                const qn = normName(q);
-                const qBad = VERSION_BAD.test(q);
-                let best = list[0];
-                let bestScore = -Infinity;
-                list.forEach((r, i) => {
-                    const n = normName(r.name);
-                    let sc = -i * 2;
-                    if (n && n.length >= 2 &&
-                        (qn === n || qn.indexOf(n) >= 0 || n.indexOf(qn) >= 0)) sc += 40;
-                    if (VERSION_BAD.test(String(r.name || ''))) {
-                        if (!qBad) sc -= 50;
-                    } else {
-                        sc += 10;
-                    }
-                    const d = Number(r.duration) || 0;
-                    if (d && (d < 60000 || d > 600000)) sc -= 30;
-                    if (sc > bestScore) { bestScore = sc; best = r; }
-                });
-                return best;
             }
             function mergeKuwoRows(q, rows, songs) {
                 if (!rows || !rows.length) return;
@@ -12662,7 +12591,10 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (!name || !arts.length) return false;
                 return songs.some(s => {
                     if (normName(s.name) !== name) return false;
-                    return artistTokensOf(s.artistsname).some(a => arts.indexOf(a) >= 0);
+                    if (!artistTokensOf(s.artistsname).some(a => arts.indexOf(a) >= 0)) {
+                        return false;
+                    }
+                    return !!s.picurl;
                 });
             }
             function insertSearchHead(head, songs) {
@@ -12726,7 +12658,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const headTask = async () => {
                     try {
                         const rows = await kuwoSearchTask(q);
-                        return { head: pickNameHead(rows, q), rows: rows };
+                        return { head: rows && rows[0], rows: rows };
                     } catch (e) {
                         console.warn('酷我搜索失败：', e && e.message);
                         return null;
@@ -13066,10 +12998,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 let lastErr = null;
                 for (const key of keys) {
                     try {
-                        const d = await fetchDirectOrProxy(
-                            KUWO_API + '?msg=' + encodeURIComponent(key) + '&n=1',
-                            { timeout: 8000, directFirst: true });
-                        const x = d && d.data;
+                        const d = await oiapiKuwo({ msg: key, n: 1, br: 3 }, 4500);
+                        const x = asKuwoArray(d && d.data)[0];
                         if (!x) throw new Error('酷我未返回结果');
                         const want = normName(name);
                         const got = normName(x.song);
@@ -13097,11 +13027,18 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                             (!expectSec || expectSec > 60)) {
                             throw new Error('酷我只返回提示音');
                         }
+                        const pic = normalizeCoverUrl(
+                            String(x.picture || x.pic || '')
+                                .trim().split(/\s+/)[0] || '');
+                        const realMs = sec > 0 ? Math.round(sec * 1000)
+                            : (uInfo.duration > 0 ? Math.round(uInfo.duration * 1000) : 0);
                         return {
                             url: u,
                             br: (Number(x.bitrate) || 128) * 1000,
+                            duration: realMs,
                             pay: '免费音乐',
-                            from: 'kuwo'
+                            from: 'kuwo',
+                            pic: /^https?:\/\//i.test(pic) ? pic : ''
                         };
                     } catch (e) {
                         lastErr = e;
@@ -13230,15 +13167,19 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
                 if (/^kw_\d+$/.test(sid)) {
                     const expectSec = dur > 0 ? dur / 1000 : 0;
+                    if (name) {
+                        try {
+                            return await kuwoPlayTask(name, artist, expectSec,
+                                sid.slice(3));
+                        } catch (e) {
+                            console.warn('酷我oiapi播放失败：', e && e.message);
+                        }
+                    }
                     try {
                         return await kuwoMidPlayTask(sid.slice(3), expectSec);
                     } catch (e) {
                         console.warn('酷我mid播放失败：', e && e.message);
                         if (name) {
-                            try {
-                                return await kuwoPlayTask(name, artist, expectSec,
-                                    sid.slice(3));
-                            } catch (_) {}
                             try {
                                 return await miguPlayTask(name, artist, expectSec);
                             } catch (_) {}
@@ -13361,8 +13302,16 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (!song || !song.id) return false;
                 const cur = Number(song.duration) || 0;
                 if (cur > 0) return false;
-                const row = await fetchNeteaseDetail(song.id);
-                const ms = neteaseRowDuration(row);
+                let ms = 0;
+                if (/^kw_/i.test(String(song.id))) {
+                    try {
+                        const hit = await searchSongById(song.id);
+                        ms = Number(hit && hit.duration) || 0;
+                    } catch (_) {}
+                } else {
+                    const row = await fetchNeteaseDetail(song.id);
+                    ms = neteaseRowDuration(row);
+                }
                 if (ms <= 0) return false;
                 song.duration = ms;
                 const idx = currentSongs.findIndex(
@@ -13401,7 +13350,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (/^\/?(star|albumcover)\//i.test(s)) {
                     s = 'https://img1.kuwo.cn/' + s.replace(/^\//, '');
                 }
-                // 酷我 kwcdn 不支持 HTTPS，换成同路径的 img1.kuwo.cn
                 s = s.replace(/^https?:\/\/(img\d)\.kwcdn\.kuwo\.cn\//i,
                     'https://$1.kuwo.cn/');
                 if (/^http:\/\//i.test(s) && !/\.kwcdn\.kuwo\.cn\//i.test(s)) {
@@ -13411,7 +13359,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const base = s.split('?')[0];
                 return base + '?param=300y300';
             }
-
             async function kuwoCoverByMid(mid, skipSonginfo) {
                 const m = String(mid || '').replace(/\D/g, '');
                 if (!m) return '';
@@ -13468,8 +13415,12 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 return '';
             }
             async function coverOf(id, picId, song) {
-                if (/^kw_\d+$/.test(String(id))) {
-                    let url = await kuwoCoverByMid(String(id).slice(3));
+                const kwMid = /^kw_(\d+)$/.exec(String(id))
+                    ? String(id).slice(3)
+                    : (song && /^\d+$/.test(String(song.kwid || '').replace(/^MUSIC_/, ''))
+                        ? String(song.kwid).replace(/^MUSIC_/, '') : '');
+                if (kwMid) {
+                    let url = await kuwoCoverByMid(kwMid);
                     if (!url && song) {
                         url = await kuwoRelatedCover(song.name, song.artistsname);
                     }
@@ -13561,26 +13512,10 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     }
                     cands.push({ mid: mid, sc: sc, sec: sec, bad: VERSION_BAD.test(nm) });
                 };
-                try {
-                    const q = (meta.name + ' ' + (meta.artist || '')).trim();
-                    const raw = await proxiedText(
-                        'http://search.kuwo.cn/r.s?all=' + encodeURIComponent(q) +
-                        '&ft=music&itemset=web_2013&client=kt&pn=0&rn=15&rformat=json&encoding=utf8', 8000);
-                    const d = parseKuwoList(raw);
-                    ((d && (d.abslist || d.musiclist)) || []).forEach(x => push(
-                        x.NAME || x.SONGNAME || x.name,
-                        x.ARTIST || x.AARTIST || x.artist,
-                        x.MUSICRID || x.musicrid || x.id,
-                        x.DURATION || x.duration));
-                } catch (_) {}
                 if (!cands.length || cleanOnly) {
                     try {
-                        const d = await fetchDirectOrProxy(
-                            KUWO_API + '?msg=' + encodeURIComponent(
-                                (meta.name + ' ' + (meta.artist || '')).trim()) + '&n=5',
-                            { timeout: 7000, directFirst: true });
-                        const arr = Array.isArray(d && d.data) ? d.data : (d && d.data ? [d.data] : []);
-                        arr.forEach(x => push(x.song, x.singer, x.id, x.time));
+                        const d = await oiapiKuwo({ msg: (meta.name + ' ' + (meta.artist || '')).trim(), n: 5, br: 3 }, 4500);
+                        asKuwoArray(d && d.data).forEach(x => push(x.song, x.singer, x.id, x.time));
                     } catch (_) {}
                 }
                 cands.sort((a, b) => b.sc - a.sc);
@@ -13942,6 +13877,25 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (!isFinite(last)) return false;
                 return last > sec + 20;
             }
+            function lyricBadTiming(rows) {
+                if (!rows || rows.length < 6) return false;
+                const seen = new Set();
+                let dup = 0;
+                rows.forEach(r => {
+                    const k = (Number(r.time) || 0).toFixed(1);
+                    if (seen.has(k)) dup++;
+                    else seen.add(k);
+                });
+                return dup > rows.length * 0.5;
+            }
+            function lyricCreditsOnly(rows) {
+                if (!rows || rows.length < 6) return false;
+                const body = rows.filter(r => {
+                    const t = String((r && r.text) || '').trim();
+                    return t && !isCreditLine(t) && !/^[^-]{1,24}\s*-\s*\S+/.test(t);
+                });
+                return body.length < 4;
+            }
             function isPureLrcRows(rows) {
                 if (!rows || rows.length === 0) return false;
                 const texts = rows.map(r => String((r && r.text) || '').trim()).filter(Boolean);
@@ -13961,10 +13915,13 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     if (ti < transRows.length &&
                         Math.abs(transRows[ti].time - t) <= TRANS_MATCH_TOL) {
                         if (!isCreditLine(rows[i].text)) out[i] = transRows[ti].text;
+                        ti++;
                     }
                 }
                 const hit = out.filter(t => !!t).length;
-                if (hit === 0 || hit / rows.length < 0.3) {
+                const bodyCount = rows.filter(r => !isCreditLine(r.text)).length;
+                if ((hit === 0 || hit / rows.length < 0.3) &&
+                    Math.abs(transRows.length - bodyCount) <= 2) {
                     const byIndex = new Array(rows.length).fill('');
                     let ok = 0;
                     for (let i = 0, k = 0; i < rows.length; i++) {
@@ -13985,6 +13942,10 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const direct = d.tlyric || d.translation || d.trans ||
                                d.translate || d.tlyricText;
                 if (typeof direct === 'string' && direct.trim()) return direct;
+                if (direct && typeof direct === 'object') {
+                    const v = direct.lyric || direct.text || direct.trans;
+                    if (typeof v === 'string' && v.trim()) return v;
+                }
                 const nests = [d.data, d.lyric, d.result, d.song];
                 for (const box of nests) {
                     if (!box || typeof box !== 'object') continue;
@@ -14008,11 +13969,45 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (plain.length === 0) return [];
                 const lyricRows = rows.filter(r => !isCreditLine(r.text));
                 if (lyricRows.length === 0) return [];
-                const fake = plain.map((text, i) => ({
-                    time: lyricRows[Math.min(i, lyricRows.length - 1)].time,
-                    text
-                }));
-                return alignTranslation(fake, rows);
+                if (Math.abs(plain.length - lyricRows.length) > 2) return [];
+                const out = new Array(rows.length).fill('');
+                let k = 0;
+                for (let i = 0; i < rows.length && k < plain.length; i++) {
+                    if (isCreditLine(rows[i].text)) continue;
+                    out[i] = plain[k++];
+                }
+                return out;
+            }
+            function transForRows(curRows, srcRows, srcTrans) {
+                if (!curRows || !curRows.length || !srcRows || !srcRows.length
+                    || !srcTrans) return null;
+                const out = new Array(curRows.length).fill('');
+                const used = new Set();
+                for (let i = 0; i < curRows.length; i++) {
+                    if (isCreditLine(curRows[i].text)) continue;
+                    const t = Number(curRows[i].time) || 0;
+                    let best = -1;
+                    let bestD = TRANS_MATCH_TOL + 0.0001;
+                    for (let j = 0; j < srcRows.length; j++) {
+                        if (used.has(j)) continue;
+                        const d = Math.abs((Number(srcRows[j].time) || 0) - t);
+                        if (d < bestD) { bestD = d; best = j; }
+                    }
+                    if (best >= 0 && srcTrans[best]) {
+                        out[i] = srcTrans[best];
+                        used.add(best);
+                    }
+                }
+                let hit = out.filter(Boolean).length;
+                if (hit === 0 && Math.abs(srcRows.length - curRows.length) <= 2) {
+                    let k = 0;
+                    for (let i = 0; i < curRows.length && k < srcTrans.length; i++) {
+                        if (isCreditLine(curRows[i].text)) continue;
+                        out[i] = srcTrans[k++] || '';
+                    }
+                    hit = out.filter(Boolean).length;
+                }
+                return hit > 0 ? out : null;
             }
             let neteaseLyricMemo = new Map();
             function neteaseLyric(id) {
@@ -14041,6 +14036,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     const rows = parseYRC(rawYrc);
                     if (rows.length) {
                         const transRaw = (data.ytlrc && data.ytlrc.lyric) ||
+                                         (data.tlyric && data.tlyric.lyric) ||
+                                         (data.rlyric && data.rlyric.lyric) ||
                                          pickTransRaw(data);
                         return {
                             rows,
@@ -14133,7 +14130,24 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         if (!picked || !picked.rows || picked.rows.length === 0) return;
                         if (isPureLrcRows(picked.rows)) { sawPure = true; return; }
                         if (lyricTooLong(picked.rows)) return;
-                        if (job.pri < bestPri) return;
+                        if (lyricBadTiming(picked.rows) || lyricCreditsOnly(picked.rows)) return;
+                        if (job.pri < bestPri) {
+                            const hasCur = lyricsTrans.some(t => !!t);
+                            const hasNew = (picked.trans || []).some(t => !!t);
+                            if (!hasCur && hasNew && lyricsId === id
+                                && lyricsData.length) {
+                                const merged = transForRows(
+                                    lyricsData, picked.rows, picked.trans);
+                                if (merged) {
+                                    lyricsTrans = merged;
+                                    applyTranslationText();
+                                    syncTransButtons();
+                                    const cached = lyricCache.get(id);
+                                    if (cached) cached.trans = merged;
+                                }
+                            }
+                            return;
+                        }
                         bestPri = job.pri;
                         cacheLyrics(id, {
                             rows: picked.rows,
@@ -14199,6 +14213,22 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     c.querySelectorAll('.lyrics-line > .lyric-trans').forEach(el => {
                         el.hidden = !(showTranslation && el.textContent);
                     });
+                }
+                lyricsLayoutDirty = true;
+                cacheLyricsOffsets();
+            }
+            function applyTranslationText() {
+                const lists = [lyricsContainer, playerLyricsInner];
+                for (const c of lists) {
+                    if (!c) continue;
+                    const lines = c.children;
+                    for (let i = 0; i < lines.length; i++) {
+                        const el = lines[i].querySelector('.lyric-trans');
+                        if (!el) continue;
+                        const t = lyricsTrans[i] || '';
+                        if (el.textContent !== t) el.textContent = t;
+                        el.hidden = !(showTranslation && t);
+                    }
                 }
                 lyricsLayoutDirty = true;
                 cacheLyricsOffsets();
@@ -15238,7 +15268,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 lyricsSongName.textContent = song.name || '未知歌曲';
                 lyricsArtistName.textContent = displayArtist(song);
                 updateMediaMetadata(song);
-                showMiniPlayer();
+                setMiniPlayerVisible(true);
                 resetCoverSpin();
                 syncFavUI();
                 markPlayingRow(song.id);
@@ -15264,6 +15294,19 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         song.br = got.br || 0;
                         song.pay = '免费音乐';
                         song.audioFrom = got.from || 'netease';
+                        if (got.pic && got.pic !== song.picurl) {
+                            song.picurl = got.pic;
+                            broadcastCover(song.id, got.pic);
+                        }
+                        if (got.duration > 0 && !(Number(song.duration) > 0)) {
+                            song.duration = got.duration;
+                            const qi = currentSongs.findIndex(
+                                s => String(s.id) === String(song.id));
+                            if (qi >= 0 && !(Number(currentSongs[qi].duration) > 0)) {
+                                currentSongs[qi].duration = got.duration;
+                            }
+                            totalTimeEl.textContent = formatTime(got.duration / 1000);
+                        }
                     } catch (e) {
                         console.error('获取播放地址失败:', e);
                         song.url = '';
@@ -15540,8 +15583,18 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 loadLyrics(song.id);
                 pushPlayHistory(song);
                 checkDur = setInterval(() => {
-                    if (currentAudio && audioDuration(currentAudio) > 0) {
-                        totalTimeEl.textContent = formatTime(audioDuration(currentAudio));
+                    const ad = currentAudio ? audioDuration(currentAudio) : 0;
+                    if (currentAudio && ad > 0) {
+                        totalTimeEl.textContent = formatTime(ad);
+                        if (!(Number(song.duration) > 0)) {
+                            const ms = Math.round(ad * 1000);
+                            song.duration = ms;
+                            const qi = currentSongs.findIndex(
+                                s => String(s.id) === String(song.id));
+                            if (qi >= 0 && !(Number(currentSongs[qi].duration) > 0)) {
+                                currentSongs[qi].duration = ms;
+                            }
+                        }
                         applySeek();
                         saveLastPlayback();
                         clearInterval(checkDur);
@@ -15613,15 +15666,14 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     }
                 }
             }
-            function showMiniPlayer() {
-                miniPlayer.classList.remove('hidden');
-                document.body.classList.add('has-mini-player');
-                if (typeof syncFavPageOffset === 'function') syncFavPageOffset();
-                updateBottomStack();
-            }
-            function hideMiniPlayer() {
-                miniPlayer.classList.add('hidden');
-                document.body.classList.remove('has-mini-player');
+            function setMiniPlayerVisible(on) {
+                if (on) {
+                    miniPlayer.classList.remove('hidden');
+                    document.body.classList.add('has-mini-player');
+                } else {
+                    miniPlayer.classList.add('hidden');
+                    document.body.classList.remove('has-mini-player');
+                }
                 if (typeof syncFavPageOffset === 'function') syncFavPageOffset();
                 updateBottomStack();
             }
@@ -17374,7 +17426,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 lyricsId = null;
                 setLyricsPlaceholder('暂无歌词', true);
                 syncFavUI();
-                showMiniPlayer();
+                setMiniPlayerVisible(true);
                 updatePlaceholderMetadata();
             }
             async function restoreLastPlayback() {
@@ -17437,7 +17489,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 syncFavUI();
                 renderSongListDebounced();
                 loadLyrics(target.id);
-                showMiniPlayer();
+                setMiniPlayerVisible(true);
                 refreshSwipePeeks();
                 preloadSwipePeeks();
             }
@@ -17487,7 +17539,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             function init() {
                 applyTheme(getThemeMode());
                 applyLyricsAlign(getLyricsAlign());
-                applyGlass(getGlassEnabled());
+                applyGlass(getToggleFlag(GLASS_KEY));
                 bindSystemTheme();
                 syncFadeDurations();
                 syncHeaderHeight();
@@ -17503,7 +17555,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 syncPlayModeUI();
                 renderFavorites();
                 syncFavUI();
-                hideMiniPlayer();
+                setMiniPlayerVisible(false);
                 syncVolumeIcons();
                 mvSyncVolIcon();
                 activeTab = 'chart';
