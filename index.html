@@ -801,10 +801,11 @@ body.tab-bar-hidden .mini-player { bottom:0; }
 @media (min-width:900px),(min-width:640px)and (max-height:500px) { #trans-btn-desk { display:flex; } #lyrics-trans-btn { display:none; } }
 #lyrics-trans-btn[hidden], #trans-btn-desk[hidden] { display:none!important; }
 .control-btn:active { opacity:0.6;transform:scale(0.90); }
-.control-btn.play-pause { background:var(--primary);color:#fff;box-shadow:0 4px 16px rgba(233,30,99,0.25); }
+.control-btn.play-pause { background:var(--primary);color:#fff;box-shadow:0 2px 6px rgba(233,30,99,0.18); }
 #mini-play-btn { position:relative;background:none;border:none;box-shadow:none;color:var(--text-primary);width:34px;height:34px; }
 #mini-play-btn i { position:relative;z-index:1;font-size:13px; }
 #mini-play-btn i.fa-play { transform:translateX(1px); }
+#play-btn i.fa-play { transform:translateX(1.5px); }
 .mini-ring { position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);pointer-events:none; }
 .mini-ring-track { fill:none;stroke:rgba(255, 255, 255, 0.18);stroke-width:1.2;stroke-linecap:round; }
 .mini-ring-arc { fill:none;stroke:#ffffff;stroke-width:1.2;stroke-linecap:round;stroke-dasharray:56.5;stroke-dashoffset:56.5;transition:stroke-dashoffset 0.25s linear; }
@@ -912,7 +913,7 @@ body.tab-bar-hidden .mini-player { bottom:0; }
 .player-main-controls { display:flex;justify-content:center;align-items:center;gap:var(--ctrl-gap, 18px);margin:0;padding:0 0 6px;flex-wrap:nowrap;width:100%;max-width:100%; }
 .main-control-btn { background:none;border:none;color:var(--text-primary);font-size:20px;cursor:pointer;width:var(--ctrl-size, 48px);height:var(--ctrl-size, 48px);flex:0 0 auto;min-width:0;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:background 0.2s,transform 0.15s,color 0.2s; }
 .main-control-btn:active { opacity:0.6;transform:scale(0.90); }
-.main-control-btn.play-pause { background:linear-gradient(135deg,#ff2d78,var(--primary));color:#fff;width:calc(var(--ctrl-size, 48px) + 14px);height:calc(var(--ctrl-size, 48px) + 14px);font-size:26px;box-shadow:0 8px 30px rgba(233,30,99,0.42); }
+.main-control-btn.play-pause { background:var(--primary);color:#fff;width:calc(var(--ctrl-size, 48px) + 14px);height:calc(var(--ctrl-size, 48px) + 14px);font-size:26px;box-shadow:0 3px 12px rgba(233,30,99,0.30); }
 .main-control-btn.fav-btn.active { color:var(--primary); }
 .main-control-btn.fav-btn.active i { text-shadow:0 0 16px var(--primary-glow); }
 .main-control-btn.add-pl-btn { display:none;font-size:19px;color:var(--text-secondary); }
@@ -1166,7 +1167,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
 .lyrics-controls { position:absolute;right:20px;bottom:calc(20px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:var(--surface-control);border:1px solid var(--border-control);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:var(--shadow-float);z-index:3150; }
 .lc-btn { width:40px;height:40px;border:none;border-radius:50%;background:transparent;color:var(--text-control);font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.2s ease,transform 0.15s ease,color 0.2s ease; }
 .lc-btn:active { transform:scale(0.92); }
-.lc-btn.lc-play { width:46px;height:46px;background:var(--primary);color:#fff;font-size:18px;box-shadow:0 6px 20px rgba(233,30,99,0.42); }
+.lc-btn.lc-play { width:46px;height:46px;background:var(--primary);color:#fff;font-size:18px;box-shadow:0 3px 10px rgba(233,30,99,0.28); }
 @media (max-width:400px) { .lyrics-controls { right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px)); } .lc-btn { width:36px;height:36px;font-size:15px; } .lc-btn.lc-play { width:42px;height:42px;font-size:16px; } }
 @media (min-width:900px),(min-width:640px)and (max-height:500px) { .player-content { flex-direction:row;align-items:center;justify-content:center;gap:48px;padding:0 56px;overflow:visible;margin-top:0; } .player-swipe-layer { flex-direction:row;justify-content:center;align-items:center;gap:48px;flex:0 1 auto;width:auto; } .player-left { flex:0 1 420px;width:420px;max-width:420px;min-width:0;margin-top:0;clip-path:inset(-160px -148px -160px -2000px); } .disc-stage { margin-top:calc(-24px + var(--disc-lift, -80px)); } .album-cover-wrap { width:min(100%,34vh,260px);height:auto;max-height:none;margin-top:calc(-24px + var(--disc-lift, -80px)); } .progress-container { max-width:370px; } .album-cover-wrap::before, .album-cover-peek::before { inset:-24px;filter:blur(22px); } .player-lyrics { display:block;max-width:460px;height:min(68vh,560px); } .player-lyrics-inner { padding:12px 8px; } .player-lyrics-inner .lyrics-line { font-size:18px;line-height:1.9; } #lyrics-btn { display:none; } .cover-lyric { display:none; } .main-control-btn.add-pl-btn { display:flex;color:var(--text-primary); } .sheet { left:50%;right:auto;width:min(420px,calc(100vw - 48px));bottom:calc(var(--bottom-stack) + 12px);transform:translate(-50%,16px) scale(0.97); } #pl-select-more-menu { bottom:calc(var(--bottom-stack) + 56px); } .sheet.active { transform:translate(-50%,0) scale(1); } #rate-sheet, .sheet.sheet-dock-left { left:24px;right:auto;width:min(340px,calc(100vw - 48px));bottom:auto;top:50%;transform:translateY(calc(-50% + 16px)) scale(0.97);max-height:min(62vh,520px); } .sheet.sheet-dock-left { left:calc(var(--side-tab-width) + 72px); } #rate-sheet.active, .sheet.sheet-dock-left.active { transform:translateY(-50%) scale(1); } #rate-sheet { left:auto;right:20px;top:64px;bottom:auto;width:min(300px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right; } #rate-sheet.active { transform:translateY(0) scale(1); } #player-more-menu { left:auto;right:20px;top:64px;bottom:auto;width:min(240px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right; } #player-more-menu.active { transform:translateY(0) scale(1); } .sheet.sheet-dock-topright { left:auto;right:20px;top:64px;bottom:auto;width:min(320px,calc(100vw - 48px));transform:translateY(-8px) scale(0.97);transform-origin:top right;max-height:min(62vh,520px); } .sheet.sheet-dock-topright.active { transform:translateY(0) scale(1); } .lyrics-controls { right:auto;left:24px; } #player-lyrics-inner .lyrics-line { padding:10px 0;min-height:auto;transform:none;transform-origin:left center; } #player-lyrics-inner .lyrics-line.active { transform:none;color:var(--text-primary);font-weight:500;opacity:1; } #player-lyrics-inner .lyrics-line:not(.active) { opacity:0.55; } #lyrics-page .player-header { justify-content:center; } #back-to-player-btn, #lyrics-controls { display:none!important; } #lyrics-page .lyrics-container { padding-left:clamp(40px,12vw,200px);padding-right:clamp(40px,12vw,200px); } }
 @media (min-width:640px)and (max-height:500px) { .player-content { gap:28px;padding:4px 24px 16px;margin-top:0; } .player-swipe-layer { gap:28px; } .player-left { flex:0 0 auto;width:auto;max-width:340px;--ctrl-size:42px;--ctrl-gap:12px;clip-path:inset(-160px -124px -160px -2000px); } .disc-stage { margin-top:0; } .album-cover-wrap { width:min(46vh,230px);height:auto;max-height:none;margin-top:0; } .player-panel { width:100%; } .player-main-controls { margin:0; } .main-control-btn { font-size:18px; } .main-control-btn.play-pause { font-size:20px; } .player-lyrics { height:min(84vh,100%); } .player-lyrics-inner .lyrics-line { font-size:16px;line-height:1.8; } .album-cover-wrap::before { inset:-18px;filter:blur(18px); } .player-header { padding:8px 16px; } .player-title { padding:0 96px; } .player-song-name { font-size:15px; } .player-artist-name { font-size:12px; } }
@@ -11511,27 +11512,12 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     }
                     let songs;
                     if (idQuery) {
-                        const lookupMid = idQuery.kind === 'kuwo' ? idQuery.mid : idQuery.id;
-                        const [idHit, kwHit, keywordList] = await Promise.all([
-                            idQuery.kind === 'kuwo' ? null
-                                : withTimeoutOrNull(searchSongById(idQuery.id), 6000),
-                            withTimeoutOrNull(kuwoSongByMid(lookupMid, 3), 20000),
-                            idQuery.kind === 'kuwo' ? []
-                                : withTimeoutOrNull(searchSongs(q), 8000)
-                        ]);
+                        const isKuwo = idQuery.kind === 'kuwo';
+                        const lookupId = isKuwo ? idQuery.mid : idQuery.id;
+                        const head = await withTimeoutOrNull(
+                            searchSongById(lookupId, isKuwo), isKuwo ? 20000 : 6000);
                         if (searchToken !== searchSeq) return;
-                        const heads = [];
-                        if (kwHit && kwHit.name) heads.push(kwHit);
-                        if (idHit && !heads.some(s =>
-                            String(s.id) === String(idHit.id))) heads.push(idHit);
-                        const headIds = new Set(heads.map(s => String(s.id)));
-                        const kwMid = kwHit ? String(kwHit.kwid || '') : '';
-                        const rest = (keywordList || []).filter(s => {
-                            if (headIds.has(String(s.id))) return false;
-                            if (kwMid && String(s.kwid || '') === kwMid) return false;
-                            return true;
-                        });
-                        songs = heads.concat(rest);
+                        songs = head ? [head] : [];
                         if (!songs.length) throw new Error('ID 无结果');
                     } else {
                         songs = await searchSongs(q);
@@ -11670,10 +11656,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             async function oiapiKuwo(params, timeoutMs) {
                 const qs = Object.keys(params || {}).map(k =>
                     encodeURIComponent(k) + '=' + encodeURIComponent(params[k])).join('&');
-                const target = KUWO_API + '?' + qs;
-                const proxyUrl = CF_PROXY + '?key=' + encodeURIComponent(CF_PROXY_KEY) +
-                    '&url=' + encodeURIComponent(target);
-                const d = await fetchOne(u => u, proxyUrl, timeoutMs || 4500);
+                const d = await fetchOne(u => u, KUWO_API + '?' + qs, timeoutMs || 4500);
                 if (!d || typeof d !== 'object' || (!d.data && !Array.isArray(d.data))) {
                     throw new Error((d && d.message) || 'oiapi 酷我返回异常');
                 }
@@ -12297,7 +12280,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                             viaProxy ? 7000 : 3000);
                         const data = d && d.data;
                         const si = data && data.songinfo;
-                        if (!info && si && (si.songName || si.name)) info = si;
+                        if (!info && si && (si.songName || si.name || si.artist || si.album || si.duration)) info = si;
                         if (!lrcLine) {
                             lrcLine = String(((data && data.lrclist) || [])
                                 .map(x => (x && x.lineLyric) || '')[0] || '');
@@ -12387,10 +12370,10 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 }
                 return song;
             }
-            async function searchSongById(id) {
+            async function searchSongById(id, isKuwo) {
                 const sid = String(id || '');
-                if (sid.indexOf('kw_') === 0) {
-                    const rest = sid.slice(3);
+                if (isKuwo || sid.indexOf('kw_') === 0) {
+                    const rest = sid.replace(/^kw_/i, '');
                     if (/^\d+$/.test(rest)) return await kuwoSongByMid(rest);
                     return await kuwoSongFromLegacyId(sid);
                 }
@@ -13557,40 +13540,13 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     else groups.push({ time: t, lines: [text] });
                 });
                 groups.sort((a, b) => a.time - b.time);
-                const hanShare = (s) => {
-                    const arr = Array.from(s);
-                    if (!arr.length) return 0;
-                    return arr.filter(c => /[\u4e00-\u9fff]/.test(c)).length / arr.length;
-                };
-                const isZh = (s) => !/[\u3040-\u30ff\uac00-\ud7af]/.test(s)
-                    && hanShare(s) >= 0.3;
                 const rows = [];
                 const trans = [];
-                const addRow = (time, text) => {
-                    rows.push({ time: time, text: text });
-                    trans.push('');
-                };
                 groups.forEach(g => {
-                    const lines = g.lines;
-                    if (lines.length === 1) {
-                        const s = lines[0];
-                        const prev = rows[rows.length - 1];
-                        if (isZh(s) && prev && !isZh(prev.text)) trans[rows.length - 1] = s;
-                        else addRow(g.time, s);
-                        return;
-                    }
-                    const a = lines[0], b = lines[1];
-                    const az = isZh(a), bz = isZh(b);
-                    if (!az && bz) {
-                        addRow(g.time, a);
-                        trans[rows.length - 1] = b;
-                    } else if (az && !bz) {
-                        const prev = rows[rows.length - 1];
-                        if (prev && !isZh(prev.text)) trans[rows.length - 1] = a;
-                        addRow(g.time, b);
-                    } else {
-                        addRow(g.time, a);
-                    }
+                    g.lines.forEach(line => {
+                        rows.push({ time: g.time, text: line });
+                        trans.push('');
+                    });
                 });
                 if (!rows.length) throw new Error('酷我无歌词');
                 return { rows: rows, trans: trans, timed: true };
@@ -14250,35 +14206,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     showTranslation = saved === null ? true : saved === '1';
                 } catch (_) { showTranslation = true; }
             }
-            let lyricScanHold = 0;
-            let lyricScanHoldAt = 0;
-            const LYRIC_SCAN_HOLD_MAX = 2200;
-            function armLyricScanHold(t) {
-                lyricScanHold = t > 0 ? t : 0;
-                lyricScanHoldAt = performance.now();
-            }
-            function lyricScanTimeAt(currentTime) {
-                if (!(lyricScanHold > 0)) return currentTime;
-                if (!isPlaying) {
-                    lyricScanHold = 0;
-                    return currentTime;
-                }
-                const elapsedMs = performance.now() - lyricScanHoldAt;
-                if (elapsedMs > LYRIC_SCAN_HOLD_MAX) {
-                    lyricScanHold = 0;
-                    return currentTime;
-                }
-                const elapsed = elapsedMs / 1000;
-                const expect = lyricScanHold + elapsed;
-                if (currentTime < lyricScanHold - 0.3) return lyricScanHold;
-                if (currentTime > expect + 0.35) return expect;
-                if (elapsed > 0.9 && Math.abs(currentTime - expect) < 0.3) {
-                    lyricScanHold = 0;
-                }
-                return currentTime;
-            }
             function renderLyrics() {
-                lyricScanHold = 0;
                 lyricsLines = [];
                 lyricsLineOffsets = [];
                 activeLyricIdx = -1;
@@ -14704,7 +14632,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             }
             function updateLyrics(currentTime) {
                 if (!isFinite(currentTime) || currentTime < 0) return;
-                currentTime = lyricScanTimeAt(currentTime);
                 const wantPage = lyricsPage.classList.contains('active');
                 const wantDesk = isDeskLyricsVisible();
                 const wantCover = isCoverLyricActive();
@@ -16153,7 +16080,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (!isFinite(time) || time < 0) return;
                 if (!currentAudio) {
                     if (!currentSong && currentSongs.length === 0) return;
-                    armLyricScanHold(time);
                     restoreSeekTime = time;
                     const dur = (currentSong.duration || 0) / 1000;
                     if (dur > 0) progress.style.width = Math.min(100, (time / dur) * 100) + '%';
@@ -16175,7 +16101,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     const got = currentAudio.currentTime;
                     if (isFinite(got) && Math.abs(got - target) < 2) at = got;
                 } catch (_) {}
-                armLyricScanHold(target);
                 pendingSeekTime = null;
                 resetSmoothTime();
                 isLyricsScrolling = true;
@@ -16820,7 +16745,6 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             let dragCommitTs = 0;
             function commitDragSeek(t) {
                 dragCommitTs = Date.now();
-                lyricScanHold = 0;
                 if (currentAudio) {
                     try { currentAudio.currentTime = t; } catch (_) {}
                     if (!isPlaying) holdMediaPosition();
