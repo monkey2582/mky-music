@@ -592,6 +592,10 @@ body.has-mini-player .main-content { padding-bottom:calc(var(--tab-height) + env
 .fav-empty i { font-size:44px;opacity:0.28;display:block;margin-bottom:16px; }
 .fav-empty p i { display:inline;font-size:13px;opacity:0.9;margin:0 2px;vertical-align:-1px; }
 .fav-empty p { font-size:14px;line-height:1.7; }
+.error-state { display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:56px 24px;color:var(--text-secondary);gap:12px;cursor:pointer; }
+.error-state > i { font-size:42px;opacity:0.32; }
+.error-state p { font-size:14px;line-height:1.6;margin:0; }
+.loading[data-retry] { cursor:pointer; }
 .fav-item-index { flex-shrink:0;width:24px;text-align:center;font-size:13px;font-weight:600;color:var(--text-secondary);opacity:0.55;font-variant-numeric:tabular-nums; }
 .fav-item.playing .fav-item-index { color:var(--primary);opacity:1; }
 .fav-item { display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;background:var(--surface);border:1px solid transparent;margin-bottom:6px;cursor:pointer;transition:background 0.28s,border-color 0.28s,transform 0.15s; }
@@ -4872,7 +4876,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 activeChart = name;
                 syncChartChips();
                 chartLoading = true;
-                songList.innerHTML = '<li class="loading"><svg viewBox="0 0 24 24" aria-hidden="true"><circle class="ring-track" cx="12" cy="12" r="9"></circle><circle class="ring-arc" cx="12" cy="12" r="9"></circle></svg><span>加载中...</span></li>';
+                songList.innerHTML = loadingHtml('加载中...', 'li');
                 try {
                     const data = await fetchDirectOrProxy(
                         'https://node.api.xfabe.com/api/wangyi/musicChart?list=' +
@@ -4897,11 +4901,11 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                         }
                         if (currentSong) markPlayingRow(currentSong.id);
                     } else {
-                        songList.innerHTML = '<li class="loading error">加载失败，请稍后再试</li>';
+                        songList.innerHTML = '<li>' + errorStateHtml('fas fa-chart-bar', '加载失败，点击重试', 'chart') + '</li>';
                     }
                 } catch (e) {
                     console.error('加载榜单失败:', e);
-                    songList.innerHTML = '<li class="loading error">网络错误，请稍后再试</li>';
+                    songList.innerHTML = '<li>' + errorStateHtml('fas fa-chart-bar', '网络错误，点击重试', 'chart') + '</li>';
                 } finally {
                     chartLoading = false;
                 }
@@ -8112,11 +8116,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 renderAlbumSub(0);
                 setAlbumCover(presetCover || '');
                 if (albumList) {
-                    albumList.innerHTML = '<div class="loading">' +
-                        '<svg viewBox="0 0 24 24" aria-hidden="true">' +
-                        '<circle class="ring-track" cx="12" cy="12" r="9"></circle>' +
-                        '<circle class="ring-arc" cx="12" cy="12" r="9"></circle></svg>' +
-                        '<span>加载中...</span></div>';
+                    albumList.innerHTML = loadingHtml();
                 }
                 const seq = ++albumReqSeq;
                 try {
@@ -8148,8 +8148,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 } catch (e) {
                     if (seq !== albumReqSeq) return;
                     if (albumList) {
-                        albumList.innerHTML = '<div class="loading error"><span>加载失败：' +
-                            esc((e && e.message) || '') + '</span></div>';
+                        albumList.innerHTML = errorStateHtml('fas fa-compact-disc',
+                            '专辑加载失败，点击重试', 'album');
                     }
                 }
             }
@@ -8173,7 +8173,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (!albumList || !albumCtx) return;
                 const allSongs = albumCtx.songs || [];
                 if (!allSongs.length) {
-                    albumList.innerHTML = emptyStateHtml('fas fa-music', '暂无歌曲');
+                    albumList.innerHTML = emptyStateHtml('fas fa-compact-disc', '该专辑暂无歌曲');
                     renderAlbumSub(0);
                     return;
                 }
@@ -8244,12 +8244,11 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             }
             function showArtistState(text, isError) {
                 if (!artistList) return;
-                const svg = isError ? ''
-                    : '<svg viewBox="0 0 24 24" aria-hidden="true">' +
-                      '<circle class="ring-track" cx="12" cy="12" r="9"></circle>' +
-                      '<circle class="ring-arc" cx="12" cy="12" r="9"></circle></svg>';
-                artistList.innerHTML = '<div class="loading' + (isError ? ' error' : '') + '">' +
-                    svg + '<span>' + esc(text || '') + '</span></div>';
+                if (isError) {
+                    artistList.innerHTML = errorStateHtml('fas fa-user', text || '加载失败', 'artist');
+                    return;
+                }
+                artistList.innerHTML = loadingHtml(text);
             }
             async function loadArtistPage(id, name) {
                 artistCtx = { id: id, name: name, songs: [], more: false, total: 0, offset: 0 };
@@ -8320,8 +8319,9 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     renderArtistSongs();
                 } catch (e) {
                     if (seq !== artistReqSeq) return;
-                    const msg = (e && e.message) || '加载失败';
-                    showArtistState('加载失败：' + msg, true);
+                    const msg = (e && e.message) || '';
+                    showArtistState(msg.indexOf('未找到') >= 0
+                        ? '未找到歌手，点击重试' : '歌手加载失败，点击重试', true);
                 }
             }
             function renderArtistInfo(artist, total) {
@@ -8417,14 +8417,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 watchListCovers(artistList, shown);
                 syncScrollOverscrollPad(artistScroll);
                 if (!kw && artistCtx.more) {
-                    const more = document.createElement('div');
-                    more.className = 'loading';
-                    more.id = 'artist-load-more';
-                    more.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' +
-                        '<circle class="ring-track" cx="12" cy="12" r="9"></circle>' +
-                        '<circle class="ring-arc" cx="12" cy="12" r="9"></circle></svg>' +
-                        '<span>加载更多...</span>';
-                    artistList.appendChild(more);
+                    artistList.insertAdjacentHTML('beforeend',
+                        loadingHtml('加载更多...', 'div', 'artist-load-more'));
                 }
                 navFlushScroll('artist');
             }
@@ -8511,7 +8505,10 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     renderArtistSongs();
                 } catch (_) {
                     const lm = document.getElementById('artist-load-more');
-                    if (lm) lm.innerHTML = '<span>加载失败，滚动重试</span>';
+                    if (lm) {
+                        lm.setAttribute('data-retry', 'more');
+                        lm.innerHTML = '<span>加载失败，点击重试</span>';
+                    }
                 } finally {
                     artistLoadingMore = false;
                 }
@@ -9139,6 +9136,31 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 return '<div class="fav-empty"><i class="' + icon + '"></i><p>'
                     + html + '</p></div>';
             }
+            function errorStateHtml(icon, text, retry) {
+                return '<div class="error-state" data-retry="' + retry + '"><i class="' + icon + '"></i><p>' + esc(text)
+                    + '</p></div>';
+            }
+            function loadingHtml(text, tag, id) {
+                const el = tag || 'div';
+                const attr = id ? ' id="' + esc(id) + '"' : '';
+                return '<' + el + ' class="loading"' + attr + '>'
+                    + '<svg viewBox="0 0 24 24" aria-hidden="true">'
+                    + '<circle class="ring-track" cx="12" cy="12" r="9"></circle>'
+                    + '<circle class="ring-arc" cx="12" cy="12" r="9"></circle></svg>'
+                    + '<span>' + esc(text || '加载中...') + '</span></' + el + '>';
+            }
+            document.addEventListener('click', (e) => {
+                const btn = e.target.closest && e.target.closest('[data-retry]');
+                if (!btn) return;
+                const kind = btn.getAttribute('data-retry');
+                if (kind === 'chart') loadChart(activeChart);
+                else if (kind === 'artist' && artistCtx) loadArtistPage(artistCtx.id, artistCtx.name);
+                else if (kind === 'album' && albumCtx) {
+                    loadAlbumPage(albumCtx.id, albumCtx.name, albumCtx.artistName, '', albumCtx.src);
+                }
+                else if (kind === 'more') loadMoreArtistSongs();
+                else if (kind === 'search') doSearch(resultsQuery, { force: true });
+            });
             function emptySearchHtml(kw) {
                 return emptyStateHtml('fas fa-search', '没有找到「'
                     + esc(String(kw || '').trim()) + '」<br>换个关键词试试');
@@ -11500,7 +11522,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     else renderSongResults(cached.data);
                     return;
                 }
-                setResultsContent('<div class="loading"><svg viewBox="0 0 24 24" aria-hidden="true"><circle class="ring-track" cx="12" cy="12" r="9"></circle><circle class="ring-arc" cx="12" cy="12" r="9"></circle></svg><span>搜索中...</span></div>');
+                setResultsContent(loadingHtml('搜索中...'));
                 const idQuery = parseIdQuery(q);
                 try {
                     if (resultsTab === 'mv') {
@@ -11530,8 +11552,8 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                     console.error('搜索失败:', e);
                     const emptyTip = idQuery
                         ? '未找到该 ID 对应的歌曲，请检查后重试'
-                        : '搜索失败，请稍后再试';
-                    setResultsContent(emptyStateHtml('fas fa-search', emptyTip));
+                        : '搜索失败，点击重试';
+                    setResultsContent(errorStateHtml('fas fa-search', emptyTip, 'search'));
                     syncScrollOverscrollPad(resultsList);
                 }
             }
@@ -12860,7 +12882,7 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (!u || typeof u !== 'string') return true;
                 return /\/\d{5,12}\.jpg\?param=/i.test(u);
             }
-            const URL_WAIT_MS = 9000;
+            const URL_WAIT_MS = 12000;
             function withTimeout(promise, ms, label) {
                 let timer = null;
                 const guard = new Promise((_, reject) => {
@@ -12931,12 +12953,16 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 if (!want) throw new Error('咪咕缺少歌名');
                 const bad = /live|现场|演唱会|伴奏|纯音乐|dj|remix|翻唱|cover/i;
                 if (bad.test(String(name))) throw new Error('咪咕跳过非原版');
-                const key = (String(name) + ' ' + String(artist || '')).trim();
+                const keys = [];
+                const plain = String(name || '').trim();
+                if (plain) keys.push(plain);
+                const combo = (String(name) + ' ' + String(artist || '')).trim();
+                if (combo && combo !== plain) keys.push(combo);
                 let lastErr = null;
-                for (let n = 1; n <= 3; n++) {
+                for (const key of keys) {
                     try {
                         const d = await fetchDirectOrProxy(
-                            MIGU_API + '?msg=' + encodeURIComponent(key) + '&n=' + n,
+                            MIGU_API + '?msg=' + encodeURIComponent(key) + '&n=1',
                             { timeout: 7000, directFirst: true });
                         const x = d && d.data;
                         if (!x || !x.url) {
@@ -12974,10 +13000,11 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
                 const raw = String(name || '').trim();
                 const plain = raw.replace(/[（(【\[].*?[)）】\]]/g, ' ').replace(/\s+/g, ' ').trim();
                 const keys = [];
+                if (plain) keys.push(plain);
                 const first = (raw + ' ' + String(artist || '')).trim();
-                if (first) keys.push(first);
+                if (first && first !== plain) keys.push(first);
                 const second = (plain + ' ' + String(artist || '')).trim();
-                if (plain && second !== first) keys.push(second);
+                if (second && second !== first && second !== plain) keys.push(second);
                 let lastErr = null;
                 for (const key of keys) {
                     try {
@@ -16168,19 +16195,34 @@ body.select-from-chart.has-mini-player #select-more-menu { bottom:calc(var(--tab
             searchInput.addEventListener('blur', () => {
                 setTimeout(() => searchHistory.classList.remove('active'), 200);
             });
+            function switchResultsTab(tab) {
+                if (tab === resultsTab || !resultsTabs) return;
+                resultsTab = tab;
+                resultsTabs.querySelectorAll('.results-tab').forEach(b => {
+                    b.classList.toggle('active', b.dataset.tab === tab);
+                });
+                const q = (resultsQuery || resultsSearchInput.value || '').trim();
+                if (q) doSearch(q);
+            }
             if (resultsTabs) {
                 resultsTabs.querySelectorAll('.results-tab').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const tab = btn.dataset.tab;
-                        if (tab === resultsTab) return;
-                        resultsTab = tab;
-                        resultsTabs.querySelectorAll('.results-tab').forEach(b => {
-                            b.classList.toggle('active', b === btn);
-                        });
-                        const q = (resultsQuery || resultsSearchInput.value || '').trim();
-                        if (q) doSearch(q);
-                    });
+                    btn.addEventListener('click', () => switchResultsTab(btn.dataset.tab));
                 });
+            }
+            if (resultsList && !isDesktopPointer()) {
+                let rTouchX = 0, rTouchY = 0, rTouchT = 0;
+                resultsList.addEventListener('touchstart', (e) => {
+                    const t = e.changedTouches[0];
+                    if (!t) return;
+                    rTouchX = t.clientX; rTouchY = t.clientY; rTouchT = Date.now();
+                }, { passive: true });
+                resultsList.addEventListener('touchend', (e) => {
+                    const t = e.changedTouches[0];
+                    if (!t || Date.now() - rTouchT > 800) return;
+                    const dx = t.clientX - rTouchX, dy = t.clientY - rTouchY;
+                    if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.4) return;
+                    switchResultsTab(dx < 0 ? 'mv' : 'song');
+                }, { passive: true });
             }
             resultsSearchBtn.addEventListener('click', () => {
                 const q = resultsSearchInput.value.trim();
